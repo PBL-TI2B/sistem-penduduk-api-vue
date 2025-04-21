@@ -19,4 +19,9 @@ class KartuKeluarga extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

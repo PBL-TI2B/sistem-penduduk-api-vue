@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Penduduk extends Model
 {
@@ -18,6 +19,11 @@ class Penduduk extends Model
                 $model->uuid = Str::uuid(); 
             }
         });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
     }
 
     public function pekerjaan()
@@ -38,5 +44,12 @@ class Penduduk extends Model
     public function ibu()
     {
         return $this->belongsTo(Penduduk::class, 'ibu_id', 'id');
+    }
+
+    protected function foto() 
+    {
+        return Attribute::make(
+            get: fn ($foto) => url('/storage/penduduk/' . $foto),
+        );
     }
 }

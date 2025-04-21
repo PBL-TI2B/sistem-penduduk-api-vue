@@ -19,4 +19,9 @@ class KurangMampu extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

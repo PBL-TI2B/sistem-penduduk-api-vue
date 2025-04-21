@@ -20,6 +20,11 @@ class Domisili extends Model
         });
     }
 
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
     public function rt() {
         return $this->belongsTo(Rt::class, 'rt_id', 'id');
     }

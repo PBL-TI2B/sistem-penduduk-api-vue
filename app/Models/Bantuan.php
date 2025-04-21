@@ -18,4 +18,9 @@ class Bantuan extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

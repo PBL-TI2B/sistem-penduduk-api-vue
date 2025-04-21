@@ -18,4 +18,9 @@ class Notifikasi_Penerima extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

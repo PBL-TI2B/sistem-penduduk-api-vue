@@ -19,4 +19,9 @@ class Pindahan extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

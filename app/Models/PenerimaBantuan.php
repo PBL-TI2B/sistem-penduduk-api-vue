@@ -19,4 +19,9 @@ class PenerimaBantuan extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

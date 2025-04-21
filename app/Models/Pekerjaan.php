@@ -20,4 +20,9 @@ class Pekerjaan extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

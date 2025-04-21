@@ -18,4 +18,9 @@ class PeriodeJabatan extends Model
             }
         });
     }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }
