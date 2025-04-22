@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 
 class Berita extends Model
 {
@@ -22,5 +25,17 @@ class Berita extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    protected function thumbnail() 
+    {
+        return Attribute::make(
+            get: fn ($thumbnail) => url('/storage/berita/' . $thumbnail),
+        );
     }
 }

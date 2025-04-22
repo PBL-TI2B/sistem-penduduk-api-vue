@@ -20,13 +20,14 @@ class Kelahiran extends Model
         });
     }
 
-    public function penduduk()
-    {
-        return $this->belongsTo(Penduduk::class, 'penduduk_id', 'id');
-    }
-
     public function getRouteKeyName()
     {
         return 'uuid';
     }
+
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_id', 'id');
+    }
 }
+    
