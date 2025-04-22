@@ -19,9 +19,11 @@ class Kematian extends Model
             }
         });
     }
-
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+    public function penduduk() {
+        return $this->belongsTo(Penduduk::class, 'penduduk_id', 'id');
     }
 }

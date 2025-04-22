@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\KematianController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PendudukController;
@@ -14,6 +15,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/penduduk', PendudukController::class);
         Route::apiResource('/kelahiran', KelahiranController::class);
         Route::apiResource('/jabatan', JabatanController::class);
+        Route::apiResource('/kematian', KematianController::class);
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
