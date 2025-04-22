@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PendudukController;
+use App\Http\Controllers\Api\PekerjaanController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -10,6 +11,7 @@ Route::prefix('v1')->group(function () {
     
     Route::middleware('auth:sanctum')->group(function(){
         Route::apiResource('/penduduk', PendudukController::class);
+        Route::apiResource('/pekerjaan', PekerjaanController::class);
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
