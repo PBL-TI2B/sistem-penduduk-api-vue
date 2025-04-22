@@ -1,16 +1,30 @@
 import "./bootstrap";
 
 import { createApp, h } from "vue";
-import { createInertiaApp } from "@inertiajs/vue3";
+import { createInertiaApp, Head, Link } from "@inertiajs/vue3";
+import MasterLayout from "@/Layouts/MasterLayout.vue";
 
 createInertiaApp({
+    title: (title) => `Desa Jabung ${title}`,
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
-        return pages[`./Pages/${name}.vue`];
+        const page = pages[`./Pages/${name}.vue`];
+
+        page.default.layout = page.default.layout || MasterLayout;
+
+        return page;
+    },
+    progress: {
+        delay: 250,
+        color: "#0B391D",
+        includeCSS: true,
+        showSpinner: false,
     },
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .component("Link", Link)
+            .component("Head", Head)
             .mount(el);
     },
 });
