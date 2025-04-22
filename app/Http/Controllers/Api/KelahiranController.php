@@ -88,6 +88,6 @@ class KelahiranController extends Controller
     public function destroy(Kelahiran $kelahiran)
     {
         $kelahiran->delete();
-        return new ApiResource(true, 'Data Kelahiran Berhasil Dihapus');
+        return new ApiResource(true, 'Data Kelahiran Berhasil Dihapus', null);
     }
 }
