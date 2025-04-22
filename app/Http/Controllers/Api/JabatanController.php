@@ -76,7 +76,6 @@ class JabatanController extends Controller
      */
     public function destroy(Jabatan $jabatan)
     {
-        Storage::delete('jabatan/' . basename($jabatan->foto));
         $jabatan->delete();
         return new ApiResource(true, 'Data Jabatan Berhasil Dihapus', null);
     }
