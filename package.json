@@ -7,7 +7,7 @@
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.1.4",
-        "axios": "^1.8.2",
+        "axios": "^1.8.4",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.2.0",
         "tailwindcss": "^4.1.4",
@@ -15,7 +15,9 @@
     },
     "dependencies": {
         "@inertiajs/vue3": "^2.0.8",
+        "@tanstack/vue-table": "^8.21.3",
         "@vitejs/plugin-vue": "^5.2.3",
+        "@vueuse/core": "^13.1.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.501.0",
