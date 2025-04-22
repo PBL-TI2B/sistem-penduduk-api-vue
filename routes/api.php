@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\PendudukController;
 use App\Http\Controllers\Api\KelahiranController;
 use App\Http\Controllers\Api\JabatanController;
 use App\Http\Controllers\Api\BeritaController;
+use App\Http\Controllers\Api\AnggotaKeluargaController;
+use App\Http\Controllers\Api\StatusKeluargaController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -18,5 +20,8 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('/berita', BeritaController::class);
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::apiResource('anggota-keluarga', AnggotaKeluargaController::class);
+        Route::apiResource('status-keluarga', StatusKeluargaController::class);
     });
 });
