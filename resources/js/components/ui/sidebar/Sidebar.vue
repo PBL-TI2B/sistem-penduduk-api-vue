@@ -88,7 +88,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
         <div
             :class="
                 cn(
-                    'fixed inset-y-0 z-10 hidden max-h-full mb-10 w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+                    'fixed inset-y-0 z-10 hidden max-h-full w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
                     side === 'left'
                         ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
                         : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
@@ -103,7 +103,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
         >
             <div
                 data-sidebar="sidebar"
-                class="bg-sidebar-primary m-5 rounded-lg group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+                class="bg-sidebar-primary rounded-r-2xl group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
             >
                 <slot />
             </div>
