@@ -16,6 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware('auth:sanctum')->group(function(){
+        Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::apiResource('/penduduk', PendudukController::class);
         Route::apiResource('/pekerjaan', PekerjaanController::class);
         Route::apiResource('/kelahiran', KelahiranController::class);
