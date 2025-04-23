@@ -7,8 +7,9 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     @inertiaHead
+    @routes
 </head>
-<body>
+<body class="bg-card/40">
     @inertia
 </body>
 </html>
