@@ -12,7 +12,7 @@ class AnggotaKeluargaController extends Controller
 {
     public function index()
     {
-        $anggota = AnggotaKeluarga::with(['kk', 'penduduk', 'statusKeluarga'])->paginate(5);
+        $anggota = AnggotaKeluarga::with(['kk', 'penduduk', 'statusKeluarga'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Anggota Keluarga', $anggota);
     }
 

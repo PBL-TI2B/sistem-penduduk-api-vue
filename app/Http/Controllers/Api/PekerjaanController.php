@@ -12,7 +12,7 @@ class PekerjaanController extends Controller
 {
     public function index()
     {
-        $pekerjaan = Pekerjaan::paginate(5);
+        $pekerjaan = Pekerjaan::paginate(10);
         return new ApiResource(true, 'Daftar Pekerjaan', $pekerjaan);
     }
 

@@ -16,7 +16,7 @@ class KelahiranController extends Controller
      */
     public function index()
     {
-        $kelahiran = Kelahiran::with(['penduduk'])->paginate(5);
+        $kelahiran = Kelahiran::with(['penduduk'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Kelahiran', $kelahiran);
     }
 

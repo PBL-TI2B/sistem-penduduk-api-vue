@@ -12,7 +12,7 @@ class KematianController extends Controller
 {
     public function index()
     {
-        $kematian = Kematian::with(['penduduk'])->paginate(5);
+        $kematian = Kematian::with(['penduduk'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Kematian', $kematian);
     }
     public function store(Request $request)

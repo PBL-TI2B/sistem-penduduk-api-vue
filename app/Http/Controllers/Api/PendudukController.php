@@ -13,7 +13,7 @@ class PendudukController extends Controller
 {
     public function index()
     {
-        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan', 'ayah', 'ibu'])->paginate(5);
+        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan', 'ayah', 'ibu'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Penduduk', $penduduk);
     }
 
@@ -117,5 +117,20 @@ class PendudukController extends Controller
         Storage::delete('penduduk/' . basename($penduduk->foto));
         $penduduk->delete();
         return new ApiResource(true, 'Data Penduduk Berhasil Dihapus', null);
+    }
+
+    public function getFoto($filename, Request $request) 
+    {
+        if (!$request->user()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+    
+        $path = storage_path('app/private/penduduk/' . $filename);
+    
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+    
+        return response()->file($path);
     }
 }

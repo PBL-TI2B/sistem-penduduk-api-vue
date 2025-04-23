@@ -16,7 +16,7 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        $berita= Berita::with('users')->paginate(5);
+        $berita= Berita::with('users')->paginate(10);
         return new ApiResource(true, 'Daftar Data Berita', $berita);
     }
 
