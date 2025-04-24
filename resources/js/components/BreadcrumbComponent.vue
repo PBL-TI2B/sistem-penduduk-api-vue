@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,12 +8,11 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-defineProps<{
+defineProps({
     items: {
-        label: string;
-        href?: string;
-    }[];
-}>();
+        type: Array,
+    },
+});
 </script>
 
 <template>
