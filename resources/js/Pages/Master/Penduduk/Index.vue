@@ -1,7 +1,7 @@
 <script setup>
 import { route } from "ziggy-js";
-import { router } from "@inertiajs/vue3";
 import { ref, onMounted, watch } from "vue";
+import { apiGet } from "@/utils/api";
 
 import {
     Select,
@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
+import { FileText, Sheet } from "lucide-vue-next";
 
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { Eye, FileText, Sheet } from "lucide-vue-next";
-import { apiGet } from "@/utils/api";
+import { actionsIndex, columnsIndex } from "./table";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -35,7 +36,7 @@ const fetchData = async () => {
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
-        console.error("Error fetching data:", error);
+        useErrorHandler(error, "Gagal memuat data penduduk");
     } finally {
         isLoading.value = false;
     }
@@ -43,47 +44,6 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 watch(page, fetchData);
-
-const columns = [
-    { label: "Nama Lengkap", key: "nama_lengkap" },
-    {
-        label: "Jenis Kelamin",
-        key: "jenis_kelamin",
-        format: (value) => {
-            return value === "L" ? "Laki-laki" : "Perempuan";
-        },
-    },
-    { label: "Tempat Lahir", key: "tempat_lahir" },
-    { label: "Tanggal Lahir", key: "tanggal_lahir" },
-    {
-        label: "Pendidikan",
-        key: "pendidikan",
-        format: (val, row) => row.pendidikan?.jenjang || "-",
-    },
-    {
-        label: "Pekerjaan",
-        key: "pekerjaan",
-        format: (val, row) => row.pekerjaan?.nama_pekerjaan || "-",
-    },
-    {
-        label: "Status",
-        key: "status",
-    },
-    {
-        label: "Status Perkawinan",
-        key: "status_perkawinan",
-    },
-];
-
-const actions = [
-    {
-        label: "Manage",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("penduduk.show", item.uuid));
-        },
-    },
-];
 </script>
 
 <template>
@@ -115,7 +75,10 @@ const actions = [
                 </SelectContent>
             </Select>
             <Button asChild>
-                <Link :href="route('penduduk.create')">Tambah Data</Link>
+                <Link :href="route('penduduk.create')"> + Domisili</Link>
+            </Button>
+            <Button asChild>
+                <Link :href="route('penduduk.create')"> + Penduduk</Link>
             </Button>
         </div>
     </div>
@@ -162,8 +125,8 @@ const actions = [
         </div>
         <DataTable
             :items="items"
-            :columns="columns"
-            :actions="actions"
+            :columns="columnsIndex"
+            :actions="actionsIndex"
             :totalPages="totalPages"
             :page="page"
             :per-page="perPage"

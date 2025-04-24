@@ -1,93 +1,49 @@
 <script setup>
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import axios from "axios";
-import { onMounted, ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
 import Button from "@/components/ui/button/Button.vue";
 import { SquarePen, Trash } from "lucide-vue-next";
+import { rowsShow } from "./table";
+import { apiGet } from "@/utils/api";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import { onMounted, ref, onUnmounted } from "vue";
+import { usePage } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import Cookies from "js-cookie";
 
 const { uuid } = usePage().props;
 const items = ref({});
+const imageUrl = ref(null);
 
 const fetchData = async () => {
-    const res = await axios.get(`/api/v1/penduduk/${uuid}`, {
-        headers: {
-            Authorization: `Bearer 12|JJcBEx2Ii6neCGacxa7AZ0JQAQbAmrq8RXnSdy31cb6fc1c9`,
-        },
-    });
+    try {
+        const res = await apiGet(`/penduduk/${uuid}`);
+        items.value = res.data;
+        console.log(items.value);
 
-    const result = res.data.data;
-    items.value = result;
+        if (items.value.foto) {
+            const resImage = await axios.get(
+                `/api/v1/penduduk/foto/${items.value.foto}`,
+                {
+                    responseType: "blob",
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("token")}`,
+                    },
+                }
+            );
+            imageUrl.value = URL.createObjectURL(resImage.data);
+        }
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat detail penduduk");
+    }
 };
 
 onMounted(fetchData);
 
-const rows = [
-    {
-        label: "NIK",
-        key: "nik",
-    },
-    {
-        label: "Nama Lengkap",
-        key: "nama_lengkap",
-    },
-    {
-        label: "Jenis Kelamin",
-        key: "jenis_kelamin",
-        format: (value) => {
-            return value === "L" ? "Laki-laki" : "Perempuan";
-        },
-    },
-    {
-        label: "Tempat Lahir",
-        key: "tempat_lahir",
-    },
-    {
-        label: "Tanggal Lahir",
-        key: "tanggal_lahir",
-    },
-    {
-        label: "Agama",
-        key: "agama",
-    },
-    {
-        label: "Gol. Darah",
-        key: "gol_darah",
-    },
-    {
-        label: "Status Perkawinan",
-        key: "status_perkawinan",
-    },
-    {
-        label: "Status",
-        key: "status",
-    },
-    {
-        label: "Tinggi Badan",
-        key: "tinggi_badan",
-    },
-    {
-        label: "Pekerjaan",
-        key: "pekerjaan",
-        format: (val, row) => row.pendidikan?.nama_pekerjaan || "-",
-    },
-    {
-        label: "Pendidikan",
-        key: "pendidikan",
-        format: (val, row) => row.pendidikan?.jenjang || "-",
-    },
-    {
-        label: "Ayah",
-        key: "ayah",
-        format: (val, row) => row.ayah?.nama_lengkap || "-",
-    },
-    {
-        label: "Ibu",
-        key: "ibu",
-        format: (val, row) => row.ibu?.nama_lengkap || "-",
-    },
-];
+onUnmounted(() => {
+    if (imageUrl.value) {
+        URL.revokeObjectURL(imageUrl.value);
+    }
+});
 </script>
 
 <template>
@@ -116,9 +72,12 @@ const rows = [
         class="bg-primary-foreground p-2 rounded-lg flex gap-2 justify-between"
     >
         <div class="w-full">
+            <h2 class="text-lg font-bold p-2">
+                Detail Data {{ items.nama_lengkap }}
+            </h2>
             <table class="w-full gap-2 table">
                 <tr
-                    v-for="row in rows"
+                    v-for="row in rowsShow.slice(0, -3)"
                     :key="row.key"
                     class="even:bg-card/30 p-2"
                 >
@@ -136,13 +95,41 @@ const rows = [
             </table>
         </div>
         <img
-            :src="
-                items.foto
-                    ? '/api/v1/penduduk/foto/' + items.foto
-                    : 'https://placehold.co/300x400?text=No+Photo'
-            "
-            alt="Profile Picture"
-            class="rounded-md w-[300px] h-[400px] object-cover"
+            v-if="imageUrl"
+            :src="imageUrl"
+            alt="Foto Penduduk"
+            class="rounded-md w-[500px] h-[600px] object-cover"
         />
+        <img
+            v-else
+            src="https://placehold.co/300x400?text=No+Photo"
+            alt="No Photo"
+            class="rounded-md w-[500px] h-[600px] object-cover"
+        />
+    </div>
+    <div
+        class="bg-primary-foreground p-2 rounded-lg flex gap-2 justify-between my-4"
+    >
+        <div class="w-1/2">
+            <h2 class="text-lg font-bold p-2">Domisili Saat Ini</h2>
+            <table class="w-full gap-2 table">
+                <tr
+                    v-for="row in rowsShow.slice(14)"
+                    :key="row.key"
+                    class="even:bg-card/30 p-2"
+                >
+                    <td class="font-medium p-2">
+                        {{ row.label }}
+                    </td>
+                    <td>
+                        {{
+                            row.format
+                                ? row.format(items[row.key], items)
+                                : items[row.key]
+                        }}
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>

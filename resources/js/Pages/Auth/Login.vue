@@ -2,6 +2,8 @@
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
+import { apiGet, apiPost } from "@/utils/api";
+import Cookies from "js-cookie";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,10 +15,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { apiPost } from "@/utils/api";
-import Cookies from "js-cookie";
-import { toast } from "vue-sonner";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import { router } from "@inertiajs/vue3";
+import { onBeforeMount } from "vue";
 
+onBeforeMount(async () => {
+    try {
+        const res = await apiGet("/auth/me");
+        const user = res.data;
+        if (user) router.visit("/dashboard");
+    } catch (e) {
+        // user not logged in → biarkan tetap di halaman login
+    }
+});
 const formSchema = toTypedSchema(
     z.object({
         username: z.string().min(2).max(50),
@@ -31,19 +42,23 @@ const form = useForm({
 const onSubmit = form.handleSubmit(async () => {
     const data = form.values;
     try {
-        const response = await apiPost("/login", {
+        const response = await apiPost("/auth/login", {
             username: data.username,
             password: data.password,
         });
+        console.log("Response login:", response);
+
         Cookies.set("token", response.data.access_token, {
             expires: 1,
-            secure: true,
-            sameSite: "Strict",
+            secure: false,
+            sameSite: "Lax",
         });
-        toast.success("Login successful!");
+
+        if (response.success === true) {
+            router.visit("/dashboard");
+        }
     } catch (error) {
-        console.error("Login failed:", error);
-        // Handle login error, e.g., show an error message
+        useErrorHandler(error, "Login gagal");
     }
 });
 
