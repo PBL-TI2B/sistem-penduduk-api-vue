@@ -35,9 +35,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $token = $request->cookie('token');
         return [
-            ...parent::share($request),
-            //
+            ...parent::share($request), [
+                'auth' =>   [
+                    'user'=> $token,
+                ]
+            ]
         ];
     }
 }
