@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Controllers\Api\KematianController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\PendudukController;
-use App\Http\Controllers\Api\PekerjaanController;
-use App\Http\Controllers\Api\KelahiranController;
-use App\Http\Controllers\Api\JabatanController;
-use App\Http\Controllers\Api\BeritaController;
-use App\Http\Controllers\Api\AnggotaKeluargaController;
-use App\Http\Controllers\Api\StatusKeluargaController;
+use App\Http\Controllers\Api\V1\KematianController;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\PendudukController;
+use App\Http\Controllers\Api\V1\PekerjaanController;
+use App\Http\Controllers\Api\V1\KelahiranController;
+use App\Http\Controllers\Api\V1\JabatanController;
+use App\Http\Controllers\Api\V1\BeritaController;
+use App\Http\Controllers\Api\V1\AnggotaKeluargaController;
+use App\Http\Controllers\Api\V1\StatusKeluargaController;
 
 Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware('auth:sanctum')->group(function(){
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
@@ -24,7 +24,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/kematian', KematianController::class);
 
         Route::apiResource('/berita', BeritaController::class);
-        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::get('/auth/me', [AuthController::class, 'me'])->name('me');
+        Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::apiResource('anggota-keluarga', AnggotaKeluargaController::class);
         Route::apiResource('status-keluarga', StatusKeluargaController::class);
