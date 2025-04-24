@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "vue-sonner";
 
 const API = axios.create({
     baseURL:
@@ -10,6 +11,7 @@ const API = axios.create({
         "Content-Type": "application/json",
         Accept: "application/json",
     },
+    withCredentials: true,
 });
 
 API.interceptors.request.use((config) => {
@@ -18,12 +20,15 @@ API.interceptors.request.use((config) => {
     return config;
 });
 
-export async function apiGet(endpoint, params = {}) {
+export async function apiGet(endpoint, params = {}, config = {}) {
     try {
-        const res = await API.get(endpoint, { params });
+        const res = await API.get(endpoint, {
+            params,
+            ...config,
+        });
         return res.data;
     } catch (err) {
-        handleError(err);
+        errorHandler(err);
         throw err;
     }
 }
@@ -33,20 +38,20 @@ export async function apiPost(endpoint, data = {}) {
         const res = await API.post(endpoint, data);
         return res.data;
     } catch (err) {
-        handleError(err);
+        errorHandler(err);
         throw err;
     }
 }
 
-function handleError(err) {
+function errorHandler(err) {
     if (err.response) {
         console.error("Error response:", err.response.data);
-        alert(`Error: ${err.response.data.message}`);
+        toast.error(`Error: ${err.response.data.message}`);
     } else if (err.request) {
         console.error("Error request:", err.request);
-        alert("Error: tidak ada response dari server");
+        toast.error("Error: tidak ada response dari server");
     } else {
         console.error("Kesalahan:", err.message);
-        alert(`Kesalahan: ${err.message}`);
+        toast.error(`Kesalahan: ${err.message}`);
     }
 }
