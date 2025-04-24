@@ -46,6 +46,11 @@ class Penduduk extends Model
         return $this->belongsTo(Penduduk::class, 'ibu_id', 'id');
     }
 
+    public function domisili()
+    {
+        return $this->hasOne(Domisili::class);
+    }
+
     protected function foto() 
     {
         return Attribute::make(

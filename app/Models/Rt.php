@@ -24,4 +24,8 @@ class Rt extends Model
     {
         return 'uuid';
     }
+
+    public function rw() {
+        return $this->belongsTo(Rw::class);
+    }
 }
