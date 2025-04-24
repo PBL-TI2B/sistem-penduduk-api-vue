@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Penduduk;
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ class PendudukController extends Controller
 {
     public function index()
     {
-        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan', 'ayah', 'ibu'])->paginate(10);
+        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan', 'ayah', 'ibu', 'domisili'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Penduduk', $penduduk);
     }
 
@@ -67,6 +67,7 @@ class PendudukController extends Controller
 
     public function show(Penduduk $penduduk)
     {
+        $penduduk->load(['domisili', 'domisili.rt', 'domisili.rt.rw']);
         return new ApiResource(true, 'Detail Data Penduduk', $penduduk);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -67,6 +67,11 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type'=> 'Bearer',
         ]);
+    }
+
+    public function me()
+    {
+        return new ApiResource(true, 'Berhasil mendapatkan data user', Auth::user());
     }
 
     public function logout() 
