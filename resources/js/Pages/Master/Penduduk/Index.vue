@@ -33,6 +33,7 @@ const fetchData = async () => {
         isLoading.value = true;
         const res = await apiGet("/penduduk", { page: page.value });
         items.value = res.data.data;
+        console.log(items.value);
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
