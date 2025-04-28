@@ -3,12 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
-class Rt extends Model
+class Dusun extends Model
 {
     protected $guarded = [];
-    public $table = 'rt';
+    public $table = 'dusun';
 
     protected static function boot()
     {
@@ -23,13 +22,5 @@ class Rt extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
-    }
-
-    public function rw() {
-        return $this->belongsTo(Rw::class);
-    }
-
-    public function domisili() {
-        return $this->hasOne(Domisili::class);
     }
 }

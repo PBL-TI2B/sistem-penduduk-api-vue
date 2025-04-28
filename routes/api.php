@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\KematianController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\PendudukController;
+use App\Http\Controllers\Api\V1\PerangkatDesaController;
+use App\Http\Controllers\Api\V1\RwController;
+use App\Http\Controllers\Api\V1\RtController;
 use App\Http\Controllers\Api\V1\PekerjaanController;
 use App\Http\Controllers\Api\V1\KelahiranController;
 use App\Http\Controllers\Api\V1\JabatanController;
@@ -18,6 +21,9 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function(){
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::apiResource('/penduduk', PendudukController::class);
+        Route::apiResource('/perangkat-desa', PerangkatDesaController::class);
+        Route::apiResource('/rw', RwController::class);
+        Route::apiResource('/rt', RtController::class);
         Route::apiResource('/pekerjaan', PekerjaanController::class);
         Route::apiResource('/kelahiran', KelahiranController::class);
         Route::apiResource('/jabatan', JabatanController::class);
