@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\PerangkatDesa;
 use App\Http\Resources\ApiResource;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class PerangkatDesaController extends Controller
@@ -48,11 +49,39 @@ class PerangkatDesaController extends Controller
         return new ApiResource(true, 'Perangkat Desa Created', $perangkatDesa);
     }
 
-    public function show($uuid)
+    public function show(PerangkatDesa $perangkatDesa)
     {
-        // Fetch a specific perangkat desa by UUID
-        $perangkatDesa = load(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt']);
+        $perangkatDesa->load(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt']);
 
         return new ApiResource(true, 'Detail Perangkat Desa', $perangkatDesa);
+    }
+
+    public function update(Request $request, PerangkatDesa $perangkatDesa)
+    {
+        $validator = Validator::make($request->all(), [
+            'penduduk_id' => 'required|exists:penduduk,id',
+            'jabatan_id' => 'required|exists:jabatan,id',
+            'periode_jabatan_id' => 'required|exists:periode_jabatan,id',
+            'status_keaktifan' => 'required|in:aktif,tak aktif',
+            'desa_id' => 'nullable|exists:desa,id',
+            'dusun_id' => 'nullable|exists:dusun,id',
+            'rw_id' => 'nullable|exists:rw,id',
+            'rt_id' => 'nullable|exists:rt,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $data = $request->all();
+        $perangkatDesa->update($data);
+
+        return new ApiResource(true, 'Perangkat Desa Updated', $perangkatDesa);
+    }
+
+    public function destroy(PerangkatDesa $perangkatDesa)
+    {
+        // Delete a specific perangkat desa
+        $perangkatDesa->delete();
+        return new ApiResource(true, 'Perangkat Desa Deleted', null);
     }
 }

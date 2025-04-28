@@ -26,6 +26,19 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
+        DB::table('dusun')->insert([
+            [
+                'id' => 1,
+                'uuid' => Str::uuid(),
+                'nama' => 'Dusun Jabung',
+                'deskripsi' => 'Dusun Jabung adalah dusun yang terletak di Desa Jabung',
+                'lokasi' => 'Desa Jabung, Kabupaten Klaten',
+                'desa_id'=>1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]
+        ]);
+
         DB::table('pendidikan')->insert([
             [
                 'id' => 1,
@@ -369,6 +382,7 @@ class DatabaseSeeder extends Seeder
                 'periode_jabatan_id' => 1,
                 'status_keaktifan' => 'AKTIF',
                 'desa_id'=> 1,
+                'dusun_id' => 1,
                 'rt_id' => 1,
                 'rw_id' => 1,
                 'created_at' => Carbon::now(),
