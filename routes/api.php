@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\V1\AnggotaKeluargaController;
 use App\Http\Controllers\Api\V1\StatusKeluargaController;
 use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\NotifikasiPenerimaController;
+use App\Http\Controllers\Api\V1\PindahanController;
+use App\Http\Controllers\Api\V1\PendidikanController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
@@ -27,6 +29,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/notifikasi', NotifikasiController::class);
         Route::apiResource('/notifikasi-penerima', NotifikasiPenerimaController::class);
         Route::apiResource('/berita', BeritaController::class);
+        Route::apiResource('/pindahan', PindahanController::class);
+        Route::apiResource('/pendidikan', PendidikanController::class);
+
         Route::get('/auth/me', [AuthController::class, 'me'])->name('me');
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
 
