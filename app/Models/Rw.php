@@ -24,4 +24,9 @@ class Rw extends Model
     {
         return 'uuid';
     }
+
+    public function dusun()
+    {
+        return $this->belongsTo(Dusun::class);
+    }
 }
