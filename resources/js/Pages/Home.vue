@@ -1,5 +1,10 @@
 <script setup>
 import { Button } from "@/components/ui/button";
+import PublicLayout from "@/Layouts/PublicLayout.vue";
+
+defineOptions({
+    layout: PublicLayout,
+});
 </script>
 
 <template>

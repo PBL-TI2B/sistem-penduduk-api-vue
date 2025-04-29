@@ -8,5 +8,7 @@ use App\Http\Middleware\EnsureTokenAuthenticated;
 Route::inertia('/', 'Home');
 Route::inertia('/login', 'Auth/Login');
 
-    Route::inertia('/dashboard', 'Master/Dashboard');
-    Route::resource('/penduduk', PendudukController::class);
+Route::inertia('/dashboard', 'Master/Dashboard');
+Route::resource('/penduduk', PendudukController::class);
+
+Route::inertia('/bansos', 'Bansos');
