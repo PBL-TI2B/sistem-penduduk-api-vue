@@ -59,7 +59,7 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <div class="flex gap-4 items-center">
+        <div class="flex flex-wrap gap-4 items-center">
             <Select>
                 <SelectTrigger class="bg-primary-foreground">
                     <SelectValue placeholder="Export" />
