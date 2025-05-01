@@ -24,9 +24,4 @@ class Pindahan extends Model
     {
         return 'uuid';
     }
-
-    public function penduduk()
-    {
-        return $this->belongsTo(Penduduk::class);
-    }
 }
