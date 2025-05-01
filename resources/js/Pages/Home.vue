@@ -12,10 +12,12 @@ defineOptions({
     <div class="bg-[#0E462B] text-gray-800">
         <!-- Hero Section -->
         <section
-            class="relative bg-cover bg-center h-[500px] bg-[url('../../images/kantor-desa.png')]"
+          class="relative bg-cover bg-center h-[420px] sm:h-[540px] md:h-[760px] lg:h-[900px]"
+          style="background-image: url('/images/kantor-desa.png');"
         >
+          <div class="absolute inset-0 bg-black opacity-40"></div>
             <div
-                class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-white text-center"
+                class="absolute inset-0 flex flex-col justify-center items-center text-white text-center"
             >
                 <h1 class="text-4xl font-semibold mb-2">Selamat Datang</h1>
                 <p class="text-lg">
@@ -64,7 +66,7 @@ defineOptions({
                 <!-- Foto Kepala Desa -->
                 <div class="flex justify-center md:justify-start ml-16">
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         alt="Kepala Desa"
                         class="w-64 h-64 rounded-full object-cover"
                     />
@@ -132,7 +134,7 @@ defineOptions({
         </section>
 
         <!-- Struktur Organisasi -->
-        <section class="mx-auto mt-16 px-4">
+        <!-- <section class="mx-auto mt-16 px-4">
             <h2 class="text-2xl font-bold text-center mb-6 text-yellow-500">
                 Struktur Organisasi Pemerintahan Desa
             </h2>
@@ -142,11 +144,11 @@ defineOptions({
                 class="flex whitespace-nowrap gap-4 pb-4"
             >
                 <!-- item -->
-                <div
+                <!-- <div
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -158,7 +160,7 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -170,7 +172,7 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -182,7 +184,7 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -194,7 +196,7 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -206,7 +208,7 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
@@ -218,17 +220,17 @@ defineOptions({
                     class="flex-shrink-0 w-64 bg-green-800 rounded-lg shadow-lg text-center"
                 >
                     <img
-                        src="../../images/kepala-desa.png"
+                        src="@/images/kepala-desa.png"
                         class="w-64 h-64 object-cover mr-0 mb-2 rounded-t-lg"
                         alt="Foto"
                     />
                     <div class="font-semibold text-white">Kamal</div>
                     <div class="text-sm text-white mb-2">Staff</div>
-                </div>
+                </div> --> -->
 
                 <!-- Tambahin sebanyak apapun -->
-            </div>
-        </section>
+            <!-- </div>
+        </section> -->
 
         <!-- Berita Desa -->
         <div class="bg-gray-100 mt-8 pt-8 pb-8">
@@ -251,7 +253,7 @@ defineOptions({
                         class="rounded p-4 flex flex-col items-left text-left pl-24"
                     >
                         <img
-                            src="../../images/berita-utama.png"
+                            src="@/images/berita-utama.png"
                             class="mb-4 rounded max-w-md w-full"
                             alt="Berita"
                         />
@@ -272,7 +274,7 @@ defineOptions({
                     <div class="flex flex-col gap-4">
                         <div class="flex gap-4 p-2 rounded items-left">
                             <img
-                                src="../../images/berita-lain.png"
+                                src="@/images/berita-lain.png"
                                 class="w-24 h-24 object-cover rounded"
                                 alt="Berita kecil"
                             />
@@ -292,7 +294,7 @@ defineOptions({
 
                         <div class="flex gap-4 p-2 rounded items-left">
                             <img
-                                src="../../images/berita-lain.png"
+                                src="@/images/berita-lain.png"
                                 class="w-24 h-24 object-cover rounded"
                                 alt="Berita kecil"
                             />
@@ -312,7 +314,7 @@ defineOptions({
 
                         <div class="flex gap-4 p-2 rounded items-left">
                             <img
-                                src="../../images/berita-lain.png"
+                                src="@/images/berita-lain.png"
                                 class="w-24 h-24 object-cover rounded"
                                 alt="Berita kecil"
                             />
@@ -353,42 +355,42 @@ defineOptions({
                 class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 px-4"
             >
                 <img
-                    src="../../images/kepala-desa.png"
+                    src="@/images/kepala-desa.png"
                     alt="Galeri 1"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/kantor-desa.png"
+                    src="@/images/kantor-desa.png"
                     alt="Galeri 2"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/berita-utama.png"
+                    src="@/images/berita-utama.png"
                     alt="Galeri 3"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/kepala-desa.png"
+                    src="@/images/kepala-desa.png"
                     alt="Galeri 4"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/berita-lain.png"
+                    src="@/images/berita-lain.png"
                     alt="Galeri 5"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/kantor-desa.png"
+                    src="@/images/kantor-desa.png"
                     alt="Galeri 6"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/kepala-desa.png"
+                    src="@/images/kepala-desa.png"
                     alt="Galeri 5"
                     class="w-full rounded-lg object-cover"
                 />
                 <img
-                    src="../../images/kantor-desa.png"
+                    src="@/images/kantor-desa.png"
                     alt="Galeri 6"
                     class="w-full rounded-lg object-cover"
                 />

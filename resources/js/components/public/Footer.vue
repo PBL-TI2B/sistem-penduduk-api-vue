@@ -7,11 +7,11 @@
         <div
             class="flex flex-col sm:flex-row sm:space-x-4 items-center sm:items-start text-center sm:text-left"
         >
-            <!-- <img
-                src="../../src/logo.png"
+            <img
+                src=""
                 alt="Logo Desa"
                 class="h-20 mb-4 sm:mb-0"
-            /> -->
+            />
             <div>
                 <h2 class="font-semibold text-lg mb-2">
                     Pemerintah Desa Jabung
