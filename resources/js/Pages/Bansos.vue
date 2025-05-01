@@ -8,6 +8,7 @@ defineOptions({
 </script>
 
 <template>
+    <Head title=" - Infografis Bantuan Sosial" />
     <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8">
         <!-- Judul & Navigasi -->
         <div

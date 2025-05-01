@@ -40,10 +40,10 @@
                 <h3 class="font-semibold mb-3 text-base">Jelajahi Juga</h3>
                 <ul class="space-y-4 text-sm">
                     <li>
-                        <a href="#" class="hover:underline">Website Kecamatan Gantiwarno</a>
+                        <a href="https://gantiwarno.klaten.go.id/" class="hover:underline">Website Kecamatan Gantiwarno</a>
                     </li>
                     <li>
-                        <a href="#" class="hover:underline">Website Kabupaten Klaten</a>
+                        <a href="https://klaten.go.id/" class="hover:underline">Website Kabupaten Klaten</a>
                     </li>
                 </ul>
             </div>

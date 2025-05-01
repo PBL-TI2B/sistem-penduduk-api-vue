@@ -18,7 +18,7 @@ defineOptions({
 </style>
 
 <template>
-    <Head title=" | Beranda" />
+    <Head title=" - Beranda" />
     <div class="bg-[#0E462B] text-gray-800">
 
         <!-- Hero Section -->
