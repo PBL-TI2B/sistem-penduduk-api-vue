@@ -69,7 +69,7 @@ onUnmounted(() => {
         </div>
     </div>
     <div
-        class="bg-primary-foreground p-2 rounded-lg flex gap-2 justify-between"
+        class="bg-primary-foreground p-2 rounded-lg flex flex-col sm:flex-row gap-2 justify-between"
     >
         <div class="w-full">
             <h2 class="text-lg font-bold p-2">
