@@ -12,8 +12,8 @@ import Navbar from "@/components/public/Navbar.vue";
     <Toaster position="top-right" />
 </template>
 
-<script>
+<!-- <script>
 export default {
     name: "LoginLayout",
 };
-</script>
+</script> -->

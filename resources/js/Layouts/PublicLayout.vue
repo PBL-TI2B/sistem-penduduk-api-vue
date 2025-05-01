@@ -11,7 +11,6 @@ import { Toaster } from "vue-sonner";
             <slot />
         </div>
     </main>
-    <slot />
     <!-- <Toaster position="top-right" /> -->
     <Footer />
 </template>

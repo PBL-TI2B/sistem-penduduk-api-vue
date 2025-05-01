@@ -66,7 +66,7 @@ onUnmounted(() => {
             <!-- Menu -->
             <div
                 :class="[
-                    'flex w-full md:w-auto mt-4 md:mt-0 justify-end space-x-4 font-medium text-sm md:text-xl',
+                    'flex w-full md:w-auto mt-4 md:mt-0 items-center space-x-4 md:space-x-6 font-medium text-sm md:text-xl',
                     isOpen ? '' : 'hidden md:block'
                 ]"
             >
@@ -113,6 +113,12 @@ onUnmounted(() => {
                     ]"
                 >
                     Galeri
+                </Link>
+                <Link
+                    href="/login"
+                    class="bg-[#e59e19] text-[#1a1a1a] py-2 px-12 rounded-full hover:bg-[#d4880f] transition"
+                >
+                    Masuk
                 </Link>
             </div>
         </div>
