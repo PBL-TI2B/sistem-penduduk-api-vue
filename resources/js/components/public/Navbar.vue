@@ -1,21 +1,38 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
 const isOpen = ref(false);
+const isScrolled = ref(false); // State for scroll detection
 
 // State untuk halaman saat ini
 const page = usePage();
 
 // Fungsi untuk memeriksa apakah path aktif
 const isActive = (path) => page.url.startsWith(path); // Gunakan startsWith untuk mencocokkan awal URL
+
+// Fungsi untuk mendeteksi scroll
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 0;
+};
+
+// Tambahkan event listener saat komponen dimount
+onMounted(() => {
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Inisialisasi state saat komponen dimuat
+});
+
+// Hapus event listener saat komponen dilepas
+onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <template>
     <nav
         :class="[
-            'fixed top-0 w-full z-50 px-4 md:px-8 py-3 transition-colors duration-300',
-            !isActive('/beranda') ? 'bg-[#0B391D]' : 'text-[#F6C646]',
+            'fixed w-full text-white px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
+            isScrolled || !isActive('/beranda') ? 'bg-[#0B391D]' : ''
         ]"
     >
         <div class="max-w-7xl md:px-auto flex flex-wrap justify-between items-center mx-auto">
