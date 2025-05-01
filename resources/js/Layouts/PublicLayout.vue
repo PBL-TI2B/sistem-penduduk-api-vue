@@ -6,7 +6,12 @@ import { Toaster } from "vue-sonner";
 
 <template>
     <Navbar />
+    <main>
+        <div>
+            <slot />
+        </div>
+    </main>
     <slot />
-    <Toaster position="top-right" />
+    <!-- <Toaster position="top-right" /> -->
     <Footer />
 </template>
