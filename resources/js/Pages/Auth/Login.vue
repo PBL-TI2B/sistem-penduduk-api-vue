@@ -14,7 +14,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import PublicLayout from "@/Layouts/PublicLayout.vue";
+// import PublicLayout from "@/Layouts/PublicLayout.vue";
+import LoginLayout from "@/Layouts/LoginLayout.vue";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router } from "@inertiajs/vue3";
 import { onBeforeMount } from "vue";
@@ -63,7 +64,8 @@ const onSubmit = form.handleSubmit(async () => {
 });
 
 defineOptions({
-    layout: PublicLayout,
+    // layout: PublicLayout,
+    layout: LoginLayout,
 });
 </script>
 
