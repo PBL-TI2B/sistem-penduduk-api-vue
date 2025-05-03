@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Rw;
 use App\Http\Resources\ApiResource;
+use App\Http\Resources\RwResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,14 @@ class RwController extends Controller
     {
         // Fetch all RW
         $rw = Rw::with(['dusun'])->paginate(10);
-        return new ApiResource(true, 'Daftar RW', $rw);
+        $collection = RwResource::collection($rw->getCollection());
+        $rw->setCollection(collect($collection));
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data RW',
+            'data' => RwResource::collection($rw),
+        ]);
     }
 
     public function store(Request $request)
@@ -33,12 +41,20 @@ class RwController extends Controller
             'dusun_id' => $request->dusun_id,
         ]);
 
-        return new ApiResource(true, 'RW Created', $rw);
+        return response()->json([
+            'success' => true,
+            'message' => 'RW Created',
+            'data' => new RwResource($rw),
+        ]);
     }
 
     public function show(Rw $rw)
     {
         $rw->load(['dusun']);
-        return new ApiResource(true, 'Detail RW', $rw);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data RW',
+            'data' => new RwResource($rw),
+        ]);
     }
 }
