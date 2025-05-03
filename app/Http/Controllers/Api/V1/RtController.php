@@ -7,6 +7,7 @@ use App\Http\Resources\ApiResource;
 use App\Http\Resources\RtResource;
 use App\Http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class RtController extends Controller
@@ -17,6 +18,7 @@ class RtController extends Controller
         $rt = Rt::with(['rw'])->paginate(10);
         $collection = RtResource::collection($rt->getCollection());
         $rt->setCollection(collect($collection));
+        
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data RT',
