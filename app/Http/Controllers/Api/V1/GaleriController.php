@@ -32,14 +32,6 @@ class GaleriController extends Controller
      */
     public function store(Request $request)
     {
-        // $table->uuid('uuid')->unique();
-        // $table->string('judul');
-        // $table->string('slug')->unique();
-        // $table->string('thumbnail')->nullable();
-        // $table->text('deskripsi')->nullable();
-        // $table->datetime('tanggal_post');
-        // $table->string('url_media');
-
         $validator = Validator::make($request->all(), [
             'judul' => 'required',
             'slug' => 'required|unique:galeri',
@@ -132,7 +124,7 @@ class GaleriController extends Controller
         ]);
     }
 
-    public function getGaler($filename, Request $request) 
+    public function getGaleri($filename, Request $request) 
     {
         if (!$request->user()) {
             return response()->json(['message' => 'Unauthorized'], 403);
