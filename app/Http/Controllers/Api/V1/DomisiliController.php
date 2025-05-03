@@ -15,7 +15,7 @@ class DomisiliController extends Controller
      */
     public function index()
     {
-        $domisili = Domisili::with('penduduk', 'rt')->paginate(10);
+        $domisili = Domisili::with('penduduk', 'rt','rt.rw')->paginate(10);
         $collection = DomisiliResource::collection($domisili->getCollection());
         $domisili->setCollection(collect($collection));
         return response()->json([
@@ -24,6 +24,7 @@ class DomisiliController extends Controller
             'data'    => $domisili,
         ]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -33,7 +34,7 @@ class DomisiliController extends Controller
         $validator = Validator::make($request->all(), [
             'penduduk_id' => 'required|exists:penduduk,id',
             'rt_id'       => 'required|exists:rt,id',
-            'status_tempat_tinggal' => 'required|in:tetap,pendatang',
+            'status_tempat_tinggal' => 'required|in:tetap,sementara',
         ]);
 
         if ($validator->fails()) {
@@ -49,7 +50,7 @@ class DomisiliController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Domisili Berhasil Ditambahkan',
-            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt.rw'))
+            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt', 'rt.rw',))
         ]);
     }
 
@@ -58,23 +59,23 @@ class DomisiliController extends Controller
      */
     public function show(Domisili $domisili)
     {
-        $domisili->load(['penduduk','rt', 'rt.rw']);
+        $domisili->load(['penduduk','rt', 'rt.rw',]);
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Domisili',
-            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt.rw'))
+            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt.rw',))
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Domisili $domisili): void
+    public function update(Request $request, Domisili $domisili)
     {
         $validator = Validator::make($request->all(), [
             'penduduk_id' => 'required|exists:penduduk,id',
             'rt_id'       => 'required|exists:rt,id',
-            'status_tempat_tinggal' => 'required|in:tetap,pendatang',
+            'status_tempat_tinggal' => 'required|in:tetap,sementara',
         ]);
 
         if ($validator->fails()) {
@@ -87,7 +88,7 @@ class DomisiliController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Domisili Berhasil Diubah',
-            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt.rw'))
+            'data'    => new DomisiliResource($domisili->load('penduduk', 'rt', 'rt.rw',))
         ]);
     }
 

@@ -16,7 +16,7 @@ class GaleriController extends Controller
      */
     public function index()
     {
-        $galeri = Galeri::paginate(10);
+        $galeri = Galeri::with('user')->paginate(10);
         $collection = GaleriResource::collection($galeri->getCollection());
         $galeri->setCollection(collect($collection));
         return response()->json([
@@ -47,6 +47,7 @@ class GaleriController extends Controller
             'deskripsi' => 'nullable',
             'tanggal_post' => 'required|date',
             'url_media' => 'required|url',
+            'user_id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -60,11 +61,12 @@ class GaleriController extends Controller
             'deskripsi' => $request->deskripsi,
             'tanggal_post' => $request->tanggal_post,
             'url_media' => $request->url_media,
+            'user_id' => $request->user_id,
         ]);
         return response()->json([
             'success' => true,
             'message' => 'Data Galeri Berhasil Ditambahkan',
-            'data'    => new GaleriResource($galeri)
+            'data'    => new GaleriResource($galeri->load('user'))
         ]);
     }
 
@@ -73,10 +75,11 @@ class GaleriController extends Controller
      */
     public function show(Galeri $galeri)
     {
+        $galeri->load(['user']);
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Galeri',
-            'data'    => new GaleriResource($galeri)
+            'data'    => new GaleriResource($galeri->load('user'))
         ]);
     }
 
@@ -84,9 +87,8 @@ class GaleriController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Galeri $galeri, )
     {
-        $galeri = Galeri::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'judul' => 'required',
             'slug' => 'required|unique:galeri,slug,' . $galeri->id,
@@ -94,6 +96,7 @@ class GaleriController extends Controller
             'deskripsi' => 'nullable',
             'tanggal_post' => 'required|date',
             'url_media' => 'required|url',
+            'user_id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -111,7 +114,7 @@ class GaleriController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Galeri Berhasil Diubah',
-            'data'    => new GaleriResource($galeri)
+            'data'    => new GaleriResource($galeri->load('user'))
         ]);
     }
 

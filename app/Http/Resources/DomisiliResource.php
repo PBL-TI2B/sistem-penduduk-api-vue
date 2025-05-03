@@ -16,18 +16,20 @@ class DomisiliResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'penduduk_id' => [
+            'penduduk' => [
+                'id' => $this->penduduk->id,
                 'nama_lengkap' => $this->penduduk->nama_lengkap,
             ],
             'status_tempat_tinggal' => $this->status_tempat_tinggal,
-            'rt_id' => [
-                'nomor' => $this->rt->nomor,
+            'rt' => [
+                'id' => $this->rt->id,
+                'nomor' => $this->rt->nomor_rt,
                 'rw' => [
-                    'nomor' => $this->rt->rw->nomor,
+                    'id' => $this->rt->rw->id,
+                    'nomor' => $this->rt->rw->nomor_rw,
                 ],
             ],
-
         ];
-
     }
+    
 }
