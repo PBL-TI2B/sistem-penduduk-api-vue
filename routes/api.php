@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\NotifikasiPenerimaController;
 use App\Http\Controllers\Api\V1\PindahanController;
 use App\Http\Controllers\Api\V1\PendidikanController;
+use App\Http\Controllers\Api\V1\DomisiliController;
+use App\Http\Controllers\Api\V1\GaleriController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
@@ -43,7 +45,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/berita', BeritaController::class);
         Route::apiResource('/pindahan', PindahanController::class);
         Route::apiResource('/pendidikan', PendidikanController::class);
-
+        Route::apiResource('/galeri', GaleriController::class);
+        Route::apiResource('/domisili', DomisiliController::class);
         Route::get('/auth/me', [AuthController::class, 'me'])->name('me');
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
 
