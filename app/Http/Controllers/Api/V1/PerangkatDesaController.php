@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\PerangkatDesa;
 use App\Http\Resources\ApiResource;
+use App\Http\Resources\PerangkatDesaResource;
+use App\Http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,7 +16,14 @@ class PerangkatDesaController extends Controller
     {
         // Fetch all perangkat desa
         $perangkatDesa = PerangkatDesa::with(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt'])->paginate(10);
-        return new ApiResource(true, 'Daftar Perangkat Desa', $perangkatDesa);
+        $collection = PerangkatDesaResource::collection($perangkatDesa->getCollection());
+        $perangkatDesa->setCollection(collect($collection));
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data perangkat desa',
+            'data' => $perangkatDesa,
+        ]);
     }
 
     public function store(Request $request)
@@ -46,14 +55,22 @@ class PerangkatDesaController extends Controller
             'rt_id' => $request->rt_id,
         ]);
 
-        return new ApiResource(true, 'Perangkat Desa Created', $perangkatDesa);
+        return response()->json([
+            'success' => true,
+            'message' => 'Perangkat Desa Created',
+            'data' => new PerangkatDesaResource($perangkatDesa),
+        ]);
     }
 
     public function show(PerangkatDesa $perangkatDesa)
     {
         $perangkatDesa->load(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt']);
 
-        return new ApiResource(true, 'Detail Perangkat Desa', $perangkatDesa);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data perangkat desa',
+            'data' => new PerangkatDesaResource($perangkatDesa->load(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt'])),
+        ]);
     }
 
     public function update(Request $request, PerangkatDesa $perangkatDesa)
@@ -75,13 +92,21 @@ class PerangkatDesaController extends Controller
         $data = $request->all();
         $perangkatDesa->update($data);
 
-        return new ApiResource(true, 'Perangkat Desa Updated', $perangkatDesa);
+        return response()->json([
+            'success' => true,
+            'message' => 'Perangkat Desa Updated',
+            'data' => new PerangkatDesaResource($perangkatDesa),
+        ]);
     }
 
     public function destroy(PerangkatDesa $perangkatDesa)
     {
         // Delete a specific perangkat desa
         $perangkatDesa->delete();
-        return new ApiResource(true, 'Perangkat Desa Deleted', null);
+        return response()->json([
+            'success' => true,
+            'message' => 'Perangkat Desa Deleted',
+            'data' => null,
+        ]);
     }
 }
