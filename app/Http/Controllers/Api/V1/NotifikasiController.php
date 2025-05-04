@@ -54,7 +54,6 @@ class NotifikasiController extends Controller
             'message' => 'Detail Notifikasi',
             'data' => new NotifikasiResource($notifikasi),
         ]);
-
     }
 
     public function update(Request $request, Notifikasi $notifikasi)

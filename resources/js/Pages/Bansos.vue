@@ -9,7 +9,7 @@ defineOptions({
 
 <template>
     <Head title=" - Infografis Bantuan Sosial" />
-    <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8">
+    <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
         <!-- Judul & Navigasi -->
         <div
             class="flex justify-between items-center flex-wrap gap-4 mt-6 mb-8"
@@ -59,75 +59,96 @@ defineOptions({
                 </a>
             </div>
         </div>
+        <!-- section deskripsi -->
+        <div class="flex justify-between items-start mt-8">
+            <div class="max-w-md">
+                <h2 class="text-[#2FB586] font-bold text-xl mb-2">
+                    BANTUAN SOSIAL
+                </h2>
+                <p class="text-sm text-gray-700">
+                    Memberikan informasi mengenai jumlah serta jenis bantuan
+                    sosial yang diterima oleh masyarakat. Disini juga dapat
+                    dilakukan pencarian pemenerima bantuan sosial dengan
+                    memasukkan NIK pada kolom pencarian bantuan sosial.
+                </p>
+            </div>
+        </div>
 
         <!-- Judul Section -->
-        <h2 class="text-xl font-bold text-[#E5A025] mb-4">
+        <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-8">
             Jumlah Penerima Bansos
         </h2>
 
         <!-- Grid Cards -->
         <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-8">
-            <div class="bg-[#C5DCBE] rounded-[20px] shadow px-6 py-4">
-                <p class="text-2xl font-bold text-green-700">
-                    67
-                    <span class="text-sm text-gray-700 font-normal"
-                        >Penduduk</span
-                    >
-                </p>
-                <p class="text-sm text-gray-800 mt-1">
-                    Mendapatkan Bantuan <br /><span class="font-bold"
-                        >BPJS PBI Ketenagakerjaan</span
-                    >
-                </p>
-            </div>
-            <div class="bg-[#C5DCBE] rounded-[20px] shadow px-6 py-4">
-                <p class="text-2xl font-bold text-green-700">
-                    41
-                    <span class="text-sm text-gray-700 font-normal"
-                        >Penduduk</span
-                    >
-                </p>
-                <p class="text-sm text-gray-800 mt-1">
-                    Mendapatkan Bantuan <br /><span class="font-bold">PKH</span>
+            <div
+                class="bg-white rounded-[20px] shadow px-6 py-4 flex items-center space-x-4"
+            >
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-[#233D34] leading-tight">
+                        67
+                    </p>
+                    <p class="text-sm text-black -mt-1">Penduduk</p>
+                </div>
+                <p class="text-sm text-black">
+                    mendapatkan bantuan <br />
+                    <span class="font-bold">BPJS PBI Ketenagakerjaan</span>
                 </p>
             </div>
-            <div class="bg-[#C5DCBE] rounded-[20px] shadow px-6 py-4">
-                <p class="text-2xl font-bold text-green-700">
-                    35
-                    <span class="text-sm text-gray-700 font-normal"
-                        >Penduduk</span
-                    >
-                </p>
-                <p class="text-sm text-gray-800 mt-1">
-                    Mendapatkan Bantuan <br /><span class="font-bold"
-                        >BPNT</span
-                    >
-                </p>
-            </div>
-            <div class="bg-[#C5DCBE] rounded-[20px] shadow px-6 py-4">
-                <p class="text-2xl font-bold text-green-700">
-                    0
-                    <span class="text-sm text-gray-700 font-normal"
-                        >Penduduk</span
-                    >
-                </p>
-                <p class="text-sm text-gray-800 mt-1">
-                    Mendapatkan Bantuan <br /><span class="font-bold"
-                        >PSTN</span
-                    >
+            <div
+                class="bg-white rounded-[20px] shadow px-6 py-4 flex items-center space-x-4"
+            >
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-[#233D34] leading-tight">
+                        41
+                    </p>
+                    <p class="text-sm text-black -mt-1">Penduduk</p>
+                </div>
+                <p class="text-sm text-black">
+                    mendapatkan bantuan <br />
+                    <span class="font-bold">PKH</span>
                 </p>
             </div>
-            <div class="bg-[#C5DCBE] rounded-[20px] shadow px-6 py-4">
-                <p class="text-2xl font-bold text-green-700">
-                    0
-                    <span class="text-sm text-gray-700 font-normal"
-                        >Penduduk</span
-                    >
+            <div
+                class="bg-white rounded-[20px] shadow px-6 py-4 flex items-center space-x-4"
+            >
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-[#233D34] leading-tight">
+                        35
+                    </p>
+                    <p class="text-sm text-black -mt-1">Penduduk</p>
+                </div>
+                <p class="text-sm text-black">
+                    mendapatkan bantuan <br />
+                    <span class="font-bold">BPNT</span>
                 </p>
-                <p class="text-sm text-gray-800 mt-1">
-                    Mendapatkan Bantuan <br /><span class="font-bold"
-                        >BLT 2024</span
-                    >
+            </div>
+            <div
+                class="bg-white rounded-[20px] shadow px-6 py-4 flex items-center space-x-4"
+            >
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-[#233D34] leading-tight">
+                        0
+                    </p>
+                    <p class="text-sm text-black -mt-1">Penduduk</p>
+                </div>
+                <p class="text-sm text-black">
+                    mendapatkan bantuan <br />
+                    <span class="font-bold">PSTN</span>
+                </p>
+            </div>
+            <div
+                class="bg-white rounded-[20px] shadow px-6 py-4 flex items-center space-x-4"
+            >
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-[#233D34] leading-tight">
+                        0
+                    </p>
+                    <p class="text-sm text-black -mt-1">Penduduk</p>
+                </div>
+                <p class="text-sm text-black">
+                    mendapatkan bantuan <br />
+                    <span class="font-bold">BLT 2024</span>
                 </p>
             </div>
         </div>
@@ -142,6 +163,37 @@ defineOptions({
                 placeholder="Masukkan NIK Penerima Bansos"
                 class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#E5A025]"
             />
+        </div>
+
+        <!-- Tabel Penerima -->
+        <div class="overflow-x-auto mt-6">
+            <table
+                class="min-w-full divide-y divide-gray-200 bg-white shadow rounded-lg overflow-hidden text-sm"
+            >
+                <thead
+                    class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold"
+                >
+                    <tr>
+                        <th class="px-6 py-3 text-center" rowspan="2">
+                            Nama Penerima
+                        </th>
+                        <th class="px-6 py-3 text-center" rowspan="2">NIK</th>
+                        <th class="px-6 py-3 text-center" colspan="2">PKH</th>
+                    </tr>
+                    <tr>
+                        <th class="px-6 py-3 text-center">Status</th>
+                        <th class="px-6 py-3 text-center">Periode</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-800">
+                    <tr>
+                        <td class="px-6 py-4 text-center">Supatmo</td>
+                        <td class="px-6 py-4 text-center">44332211667788</td>
+                        <td class="px-6 py-4 text-center">Sudah Diberikan</td>
+                        <td class="px-6 py-4 text-center">Jan - Mar 2025</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
