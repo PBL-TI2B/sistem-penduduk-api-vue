@@ -1,14 +1,47 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import { ChartArea, House, Images, Newspaper } from "lucide-vue-next";
+import { ChartArea, House, Images, Menu, Newspaper, X } from "lucide-vue-next";
 import Button from "../ui/button/Button.vue";
+import { onUnmounted } from "vue";
+import { apiGet } from "@/utils/api";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const isOpen = ref(false);
+const isScrolled = ref(0);
+const user = ref(null);
+
+const fetchUserLoggedIn = async () => {
+    try {
+        const res = await apiGet("/auth/me");
+        user.value = res.data;
+        console.log(user.value);
+    } catch (error) {
+        useErrorHandler(error, "Unauthorized");
+    }
+};
 
 const page = usePage();
 
 const isActive = (path) => page.url.startsWith(path);
+const isHomePath = page.url === "/";
+
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 0;
+};
+
+onMounted(() => fetchUserLoggedIn());
+
+onMounted(() => {
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+});
+
+onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+});
+
+console.log(isScrolled);
 
 const menus = [
     { name: "Beranda", path: "/", icon: House },
@@ -21,7 +54,8 @@ const menus = [
 <template>
     <nav
         :class="[
-            'fixed w-full text-white px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
+            'fixed w-full px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
+            isHomePath ? 'text-white ' : 'bg-primary-foreground text-gray-600',
         ]"
     >
         <div
@@ -47,26 +81,25 @@ const menus = [
                 @click="isOpen = !isOpen"
                 class="md:hidden focus:outline-none"
             >
-                <svg
-                    class="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"
-                    />
-                </svg>
+                <Menu
+                    v-if="isOpen === false"
+                    :class="isScrolled ? 'text-black' : 'text-white'"
+                    :size="30"
+                />
+                <X
+                    v-else
+                    :class="isScrolled ? 'text-black' : 'text-white'"
+                    :size="30"
+                />
             </button>
 
             <!-- Menu -->
             <ul
                 :class="[
-                    'w-full md:w-auto mt-4 md:mt-0 items-center space-x-4 md:space-x-6 text-sm md:text-lg',
-                    isOpen ? '' : 'hidden md:flex',
+                    'w-full md:w-auto mt-3 md:mt-0 items-center space-x-4 md:space-x-6 text-sm md:text-lg',
+                    isOpen
+                        ? 'grid gap-y-4 backdrop-blur-sm rounded-b-lg p-4'
+                        : 'hidden md:flex',
                 ]"
             >
                 <li v-for="menu in menus" :key="menu.path">
@@ -83,7 +116,17 @@ const menus = [
                         {{ menu.name }}
                     </Link>
                 </li>
-                <Button asChild variant="frontend">
+
+                <Button v-if="user" asChild variant="frontend">
+                    <Link
+                        href="/dashboard"
+                        class="text-primary-foreground bg-gradient-to-r from-secondary to-border py-2 px-12 rounded-full transition"
+                    >
+                        Dashboard
+                    </Link>
+                </Button>
+
+                <Button v-else asChild variant="frontend">
                     <Link
                         href="/login"
                         class="text-primary-foreground bg-gradient-to-r from-secondary to-border py-2 px-12 rounded-full transition"

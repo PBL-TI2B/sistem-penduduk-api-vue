@@ -15,6 +15,7 @@ class NotifikasiResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'aksi_user' => [
                 'id' => $this->aksi_user_id,

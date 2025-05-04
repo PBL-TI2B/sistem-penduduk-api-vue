@@ -15,6 +15,7 @@ class RwResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nomor_rw' => $this->nomor_rw,
             'dusun' => ($this->dusun)->nama,

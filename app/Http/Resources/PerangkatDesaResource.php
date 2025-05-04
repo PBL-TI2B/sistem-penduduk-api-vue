@@ -16,6 +16,7 @@ class PerangkatDesaResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'penduduk' => $this->penduduk->nama_lengkap,
             'jabatan' => $this->jabatan->jabatan,
             'desa' => $this->desa->nama,

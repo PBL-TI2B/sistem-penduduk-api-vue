@@ -80,7 +80,7 @@ const news = [
                 />
 
                 <!-- Kolom kanan: 3 berita kecil -->
-                <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-6">
                     <BeritaCard
                         v-for="(newsItem, i) in news.slice(1, 4)"
                         :key="i"

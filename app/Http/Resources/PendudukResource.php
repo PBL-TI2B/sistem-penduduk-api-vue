@@ -16,6 +16,7 @@ class PendudukResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nik' => $this->nik,
             'nama_lengkap' => $this->nama_lengkap,

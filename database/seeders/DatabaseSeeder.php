@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -396,7 +397,7 @@ class DatabaseSeeder extends Seeder
                 'id' => 1,
                 'uuid' => Str::uuid(),
                 'username' => 'admin',
-                'password' => bcrypt('password'),
+                'password' => Hash::make('password'),
                 'role' => 'ADMIN',
                 'status' => 'AKTIF',
                 'perangkat_id' => 1, 

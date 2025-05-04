@@ -33,7 +33,7 @@ const scaleValue = computed(() =>
             :class="[
                 'relative overflow-hidden',
                 isLarge
-                    ? 'w-full h-80 rounded-t-xl'
+                    ? 'w-full h-72 rounded-t-xl'
                     : 'w-52 h-auto rounded-l-xl',
             ]"
         >
