@@ -12,3 +12,5 @@ Route::inertia('/dashboard', 'Master/Dashboard');
 Route::resource('/penduduk', PendudukController::class);
 
 Route::inertia('/bansos', 'Bansos');
+Route::inertia('/infografis', 'Infografis');
+Route::inertia('/berita', 'Berita');
