@@ -7,6 +7,15 @@ import {
     TableHead,
     TableCell,
 } from "@/components/ui/table";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { computed } from "vue";
@@ -77,36 +86,53 @@ const visiblePages = computed(() => {
 
 <template>
     <div class="bg-primary-foreground p-4 rounded-lg overflow-x-auto">
-        <div class="flex gap-2 justify-end items-center">
-            <Button
-                :disabled="page <= 1"
-                variant="ghost"
-                @click="emit('update:page', page - 1)"
-            >
-                <ChevronLeft />
-            </Button>
-            <Button
-                v-for="n in visiblePages"
-                :key="n"
-                @click="typeof n === 'number' && emit('update:page', n)"
-                :disabled="n === '...'"
-                :class="[
-                    'w-[30px] h-[30px] border rounded-md',
-                    page === n
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted',
-                    n === '...' ? 'cursor-default' : 'cursor-pointer',
-                ]"
-                size="sm"
-                >{{ n }}</Button
-            >
-            <Button
-                :disabled="page === totalPages"
-                variant="ghost"
-                @click="emit('update:page', page + 1)"
-            >
-                <ChevronRight />
-            </Button>
+        <div class="flex justify-between items-center">
+            <Select>
+                <SelectTrigger class="bg-primary-foreground">
+                    <SelectValue placeholder="Export" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Export Ke</SelectLabel>
+                        <SelectItem value="pdf">
+                            <FileText />
+                            Pdf
+                        </SelectItem>
+                        <SelectItem value="excel"> <Sheet /> Excel </SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+            <div class="flex gap-2 justify-end items-center">
+                <Button
+                    :disabled="page <= 1"
+                    variant="ghost"
+                    @click="emit('update:page', page - 1)"
+                >
+                    <ChevronLeft />
+                </Button>
+                <Button
+                    v-for="n in visiblePages"
+                    :key="n"
+                    @click="typeof n === 'number' && emit('update:page', n)"
+                    :disabled="n === '...'"
+                    :class="[
+                        'w-[30px] h-[30px] border rounded-md',
+                        page === n
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted',
+                        n === '...' ? 'cursor-default' : 'cursor-pointer',
+                    ]"
+                    size="sm"
+                    >{{ n }}</Button
+                >
+                <Button
+                    :disabled="page === totalPages"
+                    variant="ghost"
+                    @click="emit('update:page', page + 1)"
+                >
+                    <ChevronRight />
+                </Button>
+            </div>
         </div>
         <Table>
             <TableHeader>
