@@ -54,16 +54,7 @@ class NotifikasiController extends Controller
             'message' => 'Detail Notifikasi',
             'data' => new NotifikasiResource($notifikasi),
         ]);
-    }
 
-        $notifikasi = Notifikasi::create([
-            'aksi_user_id' => $request->aksi_user_id,
-            'jenis' => $request->jenis,
-            'deskripsi' => $request->deskripsi,
-            'waktu_aksi' => $request->waktu_aksi,
-        ]);
-
-        return new ApiResource(true, 'Notifikasi Berhasil Ditambahkan', $notifikasi);
     }
 
     public function update(Request $request, Notifikasi $notifikasi)
