@@ -23,4 +23,14 @@ class Notifikasi extends Model
     {
         return 'uuid';
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'aksi_user_id', 'id');
+    }
+
+    public function notifikasiPenerima()
+    {
+        return $this->hasMany(Notifikasi_Penerima::class, 'notifikasi_id', 'id');
+    }
 }

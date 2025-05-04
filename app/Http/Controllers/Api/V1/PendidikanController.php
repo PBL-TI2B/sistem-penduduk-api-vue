@@ -4,29 +4,28 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Resources\ApiResource;
 use App\Models\Pendidikan;
+use App\Http\Resources\PendidikanResource;
 use Illuminate\Support\Facades\Validator;
 
 class PendidikanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $pendidikan = Pendidikan::paginate(10);
-        return new ApiResource(true, 'Daftar Data Pendidikan', $pendidikan);
-
+        $collection = PendidikanResource::collection($pendidikan->getCollection());
+        $pendidikan->setCollection(collect($collection));
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Data Pendidikan',
+            'data'    => $pendidikan,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'jenjang' => 'required',
+            'jenjang' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -37,21 +36,23 @@ class PendidikanController extends Controller
             'jenjang' => $request->jenjang,
         ]);
 
-        return new ApiResource(true, 'Data Pendidikan Baru Berhasil Ditambahkan', $pendidikan);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Pendidikan Baru Berhasil Ditambahkan',
+            'data'    => new PendidikanResource($pendidikan->load('penduduk'))
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Pendidikan $pendidikan)
     {
         $pendidikan->load('penduduk');
-        return new ApiResource(true, 'Detail Data Pendidikan', $pendidikan);
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail Data Pendidikan',
+            'data'    => new PendidikanResource($pendidikan->load('penduduk'))
+        ]);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
+  
     public function update(Request $request, Pendidikan $pendidikan)
     {
         $validator = Validator::make($request->all(), [
@@ -62,20 +63,25 @@ class PendidikanController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $data = $request->all();
-        $pendidikan->update($data);
+        $pendidikan->update([
+            'jenjang' => $request->jenjang,
+        ]);
 
-        return new ApiResource(true, 'Data Pendidikan Berhasil Diubah', $pendidikan);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Pendidikan Berhasil Diupdate',
+            'data'    => new PendidikanResource($pendidikan->load('penduduk'))
+        ]);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Pendidikan $pendidikan)
     {
         $pendidikan->delete();
-        return new ApiResource(true, 'Data Pendidikan Berhasil Dihapus', null);
-    }
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Pendidikan Berhasil Dihapus',
+            'data'    => null
+        ]);
+    }
 }
