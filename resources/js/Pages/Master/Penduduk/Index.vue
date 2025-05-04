@@ -60,21 +60,6 @@ watch(page, fetchData);
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
-            <Select>
-                <SelectTrigger class="bg-primary-foreground">
-                    <SelectValue placeholder="Export" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Export Ke</SelectLabel>
-                        <SelectItem value="pdf">
-                            <FileText />
-                            Pdf
-                        </SelectItem>
-                        <SelectItem value="excel"> <Sheet /> Excel </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
             <Button asChild>
                 <Link :href="route('penduduk.create')"> + Domisili</Link>
             </Button>
