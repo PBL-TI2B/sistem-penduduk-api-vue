@@ -1,5 +1,6 @@
 <script setup>
 import PublicLayout from "@/Layouts/PublicLayout.vue";
+import Navbar from "@/components/public/Navbar.vue";
 
 defineOptions({
     layout: PublicLayout,

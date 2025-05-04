@@ -53,14 +53,14 @@ onMounted(() => {
             class="text-white md:-mt-40 lg:-mt-60 flex md:px-6 py-6 max-w-6xl mx-auto md:px-auto md:justify-center items-center"
         >
             <div
-                class="hidden md:block bg-center bg-no-repeat bg-contain drop-shadow-2xl"
+                class="hidden md:block min-h-[475px] bg-center bg-no-repeat bg-contain drop-shadow-2xl"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="1000"
                     height="380"
                     viewBox="0 0 1372 473"
-                    :class="'relative md:w-full'"
+                    :class="'sm:w-[600px] md:w-[700px] lg:w-[1000px] lg:h-[400px]'"
                 >
                     <defs>
                         <linearGradient
@@ -97,29 +97,29 @@ onMounted(() => {
                 class="w-full md:w-auto md:absolute flex flex-col gap-4 md:gap-0 md:flex-row"
                 id="statistic-section"
             >
-                <div class="w-full md:hidden">
+                <div class="w-full sm:hidden">
                     <h2
-                        class="md:hidden w-1/2 mx-auto rounded-full p-2 bg-emerald-100 drop-shadow-md text-lg text-center text-emerald-800 font-semibold"
+                        class="sm:hidden w-1/2 mx-auto rounded-full p-2 bg-emerald-100 drop-shadow-md text-lg text-center text-emerald-800 font-semibold"
                     >
                         Statistik Desa
                     </h2>
                 </div>
-                <p class="md:hidden text-gray-600 text-center">
+                <p class="sm:hidden text-gray-600 text-center">
                     Data terbaru mengenai informasi geografis Desa Jabung
                 </p>
                 <template v-for="(stat, index) in statistics" :key="stat.id">
                     <template v-if="index > 0">
                         <div
-                            class="hidden md:block border-l border-gray-100 h-16 sm:h-20 lg:h-40 "
+                            class="hidden md:block border-l border-gray-100 h-16 sm:h-20 lg:h-40 md:mx-4"
                         ></div>
                     </template>
 
                     <div
-                        class="flex items-center justify-between md:text-center mx-4 md:mx-2 lg:mx-4 bg-gradient-to-br from-emerald-400 to-emerald-600 md:bg-none p-2 px-4 rounded-lg"
+                        class="flex justify-between md:text-center mx-4 bg-gradient-to-br from-emerald-400 to-emerald-600 sm:bg-none p-2 px-4 rounded-lg"
                     >
                         <div class="w-full">
                             <div
-                                class="text-xl md:text-3xl lg:text-6xl font-bold"
+                                class="text-xl sm:text-3xl lg:text-6xl font-bold"
                             >
                                 {{
                                     displayValues[index].toLocaleString("id-ID")
@@ -128,22 +128,17 @@ onMounted(() => {
                             <div class="flex items-center gap-2">
                                 <component
                                     :is="stat.icon"
-                                    class="hidden md:block lg:hidden"
-                                    size="16"
-                                />
-                                <component
-                                    :is="stat.icon"
-                                    class="hidden lg:block"
+                                    class="block"
                                     size="25"
                                 />
-                                <div class="text-base lg:text-2xl">
+                                <div class="text-base sm:text-xl lg:text-2xl">
                                     {{ stat.name }}
                                 </div>
                             </div>
                         </div>
                         <component
                             :is="stat.icon"
-                            class="block opacity-20 md:hidden"
+                            class="block opacity-20 sm:hidden"
                             size="50"
                         />
                     </div>

@@ -21,7 +21,7 @@ const menus = [
 <template>
     <nav
         :class="[
-            'fixed w-full text-gray-600 px-4 md:px-8 py-3 z-50 top-0 transition-colors drop-shadow-md duration-300 bg-primary-foreground',
+            'fixed w-full text-white px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
         ]"
     >
         <div
