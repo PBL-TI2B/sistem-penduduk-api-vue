@@ -23,4 +23,14 @@ class Desa extends Model
     {
         return 'uuid';
     }
+
+    public function dusun()
+    {
+        return $this->hasMany(Dusun::class, 'desa_id', 'id');
+    }
+
+    public function perangkatDesa()
+    {
+        return $this->hasOne(PerangkatDesa::class, 'desa_id', 'id');
+    }
 }

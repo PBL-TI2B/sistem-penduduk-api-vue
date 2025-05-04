@@ -8,6 +8,7 @@ export function useAuthGuard(requiredRole = null) {
         try {
             const res = await apiGet("/auth/me");
             const user = res.data;
+            console.log(requiredRole);
 
             if (!user) return router.visit("/login");
             if (requiredRole && user.role !== requiredRole)

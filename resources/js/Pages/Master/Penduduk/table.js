@@ -114,12 +114,12 @@ const rowsShow = [
     {
         label: "RT",
         key: "rt",
-        format: (val, row) => row.domisili?.rt?.nomor_rt || "-",
+        format: (val, row) => row.domisili?.rt || "-",
     },
     {
         label: "RW",
         key: "rw",
-        format: (val, row) => row.domisili?.rt?.rw?.nomor_rw || "-",
+        format: (val, row) => row.domisili?.rw || "-",
     },
 ];
 

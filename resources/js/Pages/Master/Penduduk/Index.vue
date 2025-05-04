@@ -33,6 +33,7 @@ const fetchData = async () => {
         isLoading.value = true;
         const res = await apiGet("/penduduk", { page: page.value });
         items.value = res.data.data;
+        console.log(items.value);
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
@@ -58,7 +59,7 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <div class="flex gap-4 items-center">
+        <div class="flex flex-wrap gap-4 items-center">
             <Select>
                 <SelectTrigger class="bg-primary-foreground">
                     <SelectValue placeholder="Export" />

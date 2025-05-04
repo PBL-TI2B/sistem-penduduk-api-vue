@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Penduduk;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ApiResource;
+use App\Http\Resources\PendudukResource;
+use App\Http\Resources\PaginatedResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -13,8 +14,15 @@ class PendudukController extends Controller
 {
     public function index()
     {
-        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan', 'ayah', 'ibu', 'domisili'])->paginate(10);
-        return new ApiResource(true, 'Daftar Data Penduduk', $penduduk);
+        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->paginate(10);
+        $collection = PendudukResource::collection($penduduk->getCollection());
+        $penduduk->setCollection(collect($collection));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data penduduk',
+            'data' => $penduduk,
+        ]);
     }
 
     public function store(Request $request)
@@ -62,13 +70,21 @@ class PendudukController extends Controller
             'ayah_id' => $request->ayah_id,
         ]);
 
-        return new ApiResource(true, 'Data Penduduk Berhasil Ditambahkan', $penduduk);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data penduduk',
+            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+        ]);
     }
 
     public function show(Penduduk $penduduk)
     {
         $penduduk->load(['domisili', 'domisili.rt', 'domisili.rt.rw']);
-        return new ApiResource(true, 'Detail Data Penduduk', $penduduk);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil detail data penduduk',
+            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+        ]);
     }
 
     public function update(Request $request, Penduduk $penduduk) 
@@ -109,15 +125,22 @@ class PendudukController extends Controller
         }
 
         $penduduk->update($data);
-
-        return new ApiResource(true, 'Data Penduduk Berhasil Diubah', $penduduk);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ubah data penduduk',
+            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+        ]);
     }
 
     public function destroy(Penduduk $penduduk)
     {
         Storage::delete('penduduk/' . basename($penduduk->foto));
         $penduduk->delete();
-        return new ApiResource(true, 'Data Penduduk Berhasil Dihapus', null);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil hapus data penduduk',
+            'data' => null,
+        ]);
     }
 
     public function getFoto($filename, Request $request) 

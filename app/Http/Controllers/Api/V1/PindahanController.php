@@ -17,6 +17,7 @@ class PindahanController extends Controller
     public function index()
     {
         $pindahan = Pindahan::with('penduduk')->paginate(10);
+
         $collection = PindahanResource::collection($pindahan->getCollection());
         $pindahan->setCollection(collect($collection));
         return response()->json([
