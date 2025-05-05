@@ -1,38 +1,30 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { ChartArea, House, Images, Menu, Newspaper, X } from "lucide-vue-next";
 import Button from "../ui/button/Button.vue";
-import { onUnmounted } from "vue";
 import { apiGet } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const isOpen = ref(false);
-const isScrolled = ref(0);
+const isScrolled = ref(false);
 const user = ref(null);
 
 const fetchUserLoggedIn = async () => {
     try {
         const res = await apiGet("/auth/me");
         user.value = res.data;
-        console.log(user.value);
     } catch (error) {
         useErrorHandler(error, "Unauthorized");
     }
 };
 
-const page = usePage();
-
-const isActive = (path) => page.url.startsWith(path);
-const isHomePath = page.url === "/";
-
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 0;
 };
 
-onMounted(() => fetchUserLoggedIn());
-
 onMounted(() => {
+    fetchUserLoggedIn();
     window.addEventListener("scroll", handleScroll);
     handleScroll();
 });
@@ -41,25 +33,32 @@ onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll);
 });
 
-console.log(isScrolled);
+const page = usePage();
+const isHomePath = computed(() => page.url === "/");
+
+const isActive = (path) => {
+    if (path === "") return page.url === "/";
+    return page.url.startsWith("/" + path);
+};
 
 const menus = [
-    { name: "Beranda", path: "/", icon: House },
-    { name: "Infografis", path: "/infografis", icon: ChartArea },
-    { name: "Berita", path: "/berita", icon: Newspaper },
-    { name: "Galeri", path: "/galeri", icon: Images },
+    { name: "Beranda", path: "", icon: House },
+    { name: "Infografis", path: "infografis", icon: ChartArea },
+    { name: "Berita", path: "berita", icon: Newspaper },
+    { name: "Galeri", path: "galeri", icon: Images },
 ];
 </script>
 
 <template>
     <nav
         :class="[
-            'fixed w-full px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
-            isHomePath ? 'text-white ' : 'bg-primary-foreground text-gray-600',
+            'fixed w-full px-4 md:px-8 py-3 top-0 z-50 transition-all duration-300',
+            isHomePath ? 'text-white' : 'text-gray-600 bg-white',
+            isScrolled && !isHomePath ? 'shadow-md' : '',
         ]"
     >
         <div
-            class="max-w-7xl md:px-auto flex flex-wrap justify-between items-center mx-auto"
+            class="max-w-7xl flex flex-wrap justify-between items-center mx-auto"
         >
             <!-- Logo -->
             <div class="flex items-center space-x-3">
@@ -76,40 +75,38 @@ const menus = [
                 </div>
             </div>
 
-            <!-- Hamburger (Mobile) -->
+            <!-- Hamburger Button -->
             <button
                 @click="isOpen = !isOpen"
                 class="md:hidden focus:outline-none"
             >
-                <Menu
-                    v-if="isOpen === false"
-                    :class="isScrolled ? 'text-black' : 'text-white'"
-                    :size="30"
-                />
-                <X
-                    v-else
-                    :class="isScrolled ? 'text-black' : 'text-white'"
+                <component
+                    :is="isOpen ? X : Menu"
+                    :class="
+                        isScrolled || !isHomePath ? 'text-black' : 'text-white'
+                    "
                     :size="30"
                 />
             </button>
 
-            <!-- Menu -->
+            <!-- Menu Items -->
             <ul
                 :class="[
-                    'w-full md:w-auto mt-3 md:mt-0 items-center space-x-4 md:space-x-6 text-sm md:text-lg',
+                    'w-full md:w-auto mt-3 md:mt-0 items-center text-sm md:text-lg',
                     isOpen
-                        ? 'grid gap-y-4 backdrop-blur-sm rounded-b-lg p-4'
-                        : 'hidden md:flex',
+                        ? 'grid gap-y-4 p-4 backdrop-blur-sm rounded-b-lg'
+                        : 'hidden md:flex space-x-4 md:space-x-6',
                 ]"
             >
                 <li v-for="menu in menus" :key="menu.path">
                     <Link
-                        :href="menu.path"
+                        :href="'/' + menu.path"
+                        @click="isOpen = false"
                         :class="[
                             'flex items-center gap-1 hover:text-emerald-500 transition-colors',
-                            !isActive(menu.path)
-                                ? ''
-                                : 'text-emerald-500 font-semibold',
+                            isActive(menu.path)
+                                ? 'text-emerald-500 font-semibold'
+                                : '',
                         ]"
                     >
                         <component :is="menu.icon" size="15" />
@@ -121,6 +118,7 @@ const menus = [
                     <Link
                         href="/dashboard"
                         class="text-primary-foreground bg-gradient-to-r from-secondary to-border py-2 px-12 rounded-full transition"
+                        @click="isOpen = false"
                     >
                         Dashboard
                     </Link>
@@ -130,6 +128,7 @@ const menus = [
                     <Link
                         href="/login"
                         class="text-primary-foreground bg-gradient-to-r from-secondary to-border py-2 px-12 rounded-full transition"
+                        @click="isOpen = false"
                     >
                         Masuk
                     </Link>

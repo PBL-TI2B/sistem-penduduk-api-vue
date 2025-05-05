@@ -32,7 +32,7 @@ const images = [
 
 <template>
     <section>
-        <div class="relative bg-gray-100">
+        <div class="relative">
             <div class="mx-4 max-w-6xl lg:mx-auto">
                 <!-- Header judul + tombol -->
                 <div class="flex items-center justify-between mb-8">

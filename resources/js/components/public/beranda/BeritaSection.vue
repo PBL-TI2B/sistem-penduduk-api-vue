@@ -47,7 +47,7 @@ const news = [
 </script>
 
 <template>
-    <section class="bg-gray-100 pt-5">
+    <section class="pt-5">
         <div class="mx-4 max-w-6xl lg:mx-auto">
             <!-- Header judul + tombol -->
             <div class="flex items-center justify-between mb-8">
