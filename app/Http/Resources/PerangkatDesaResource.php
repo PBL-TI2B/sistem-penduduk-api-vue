@@ -25,6 +25,7 @@ class PerangkatDesaResource extends JsonResource
             'rt' => $this->rt->nomor_rt,
             'status_keaktifan' => $this->status_keaktifan,
             'periode_jabatan' => [
+                'id'=> $this->periode_jabatan->id,
                 'awal_menjabat' => $this->periode_jabatan->awal_menjabat,
                 'akhir_menjabat' => $this->periode_jabatan->akhir_menjabat,
             ],
