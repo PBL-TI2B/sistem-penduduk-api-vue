@@ -14,11 +14,10 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import { FileText, Sheet } from "lucide-vue-next";
 
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { actionsIndex, columnsIndex } from "./table";
+import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const items = ref([]);
@@ -67,7 +66,7 @@ watch(page, fetchData);
             </Button>
         </div>
     </div>
-    <div class="w-full grid gap-2">
+    <div class="drop-shadow-md w-full grid gap-2">
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
