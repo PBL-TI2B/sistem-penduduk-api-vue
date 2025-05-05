@@ -18,6 +18,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@formkit/auto-animate": "^0.8.2",
         "@inertiajs/vue3": "^2.0.8",
         "@tanstack/vue-table": "^8.21.3",
         "@vee-validate/zod": "^4.15.0",
