@@ -14,3 +14,6 @@ Route::resource('/penduduk', PendudukController::class);
 Route::inertia('/bansos', 'Bansos');
 Route::inertia('/infografis', 'Infografis');
 Route::inertia('/berita', 'Berita');
+Route::inertia('/profildesa', 'ProfilDesa');
+Route::inertia('/galeri', 'Galeri');
+Route::inertia('/detailberita', 'DetailBerita');
