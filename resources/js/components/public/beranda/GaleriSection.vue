@@ -49,7 +49,7 @@ const images = [
                         </p>
                     </div>
                     <Button asChild variant="frontend">
-                        <Link href="../../pages/berita">
+                        <Link href="/galeri">
                             Jelajahi Galeri Desa
                         </Link>
                     </Button>
