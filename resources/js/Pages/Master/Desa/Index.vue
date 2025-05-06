@@ -14,13 +14,14 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import { FileText, Sheet } from "lucide-vue-next";
 
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { actionsIndex, columnsIndex } from "./utils/table";
+import { actionsIndex, columnsIndex } from "./utils/tableDesa";
+import { actionsIndex2, columnsIndex2 } from "./utils/tableDusun";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 
+// TABEL DESA
 const items = ref([]);
 const totalPages = ref(1);
 const page = ref(1);
@@ -36,7 +37,7 @@ const fetchData = async () => {
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
-        useErrorHandler(error, "Gagal memuat data penduduk");
+        useErrorHandler(error, "Gagal memuat data desa");
     } finally {
         isLoading.value = false;
     }
@@ -44,57 +45,61 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 watch(page, fetchData);
+
+// TABEL DUSUN
+const items2 = ref([]);
+const totalPages2 = ref(1);
+const page2 = ref(1);
+const perPage2 = ref(10);
+const isLoading2 = ref(false);
+const search2 = ref("");
+
+const fetchData2 = async () => {
+    try {
+        items2.value = [];
+        isLoading2.value = true;
+        const res = await apiGet("/dusun", {
+            page: page2.value,
+            search: search2.value,
+        });
+        items2.value = res.data.data;
+        perPage2.value = res.data.per_page;
+        totalPages2.value = res.data.last_page;
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data dusun");
+    } finally {
+        isLoading2.value = false;
+    }
+};
+
+onMounted(fetchData2);
+watch([page2, search2], fetchData2);
 </script>
 
 <template>
-    <Head title=" | Data Desa" />
+    <Head title=" | Data Desa & Dusun" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
-            <h1 class="text-3xl font-bold">Data Desa</h1>
+            <h1 class="text-3xl font-bold">Data Desa & Dusun</h1>
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data Desa' },
+                    { label: 'Data desa' },
                 ]"
             />
         </div>
-        <div class="flex gap-4 items-center">
-            <Select>
-                <SelectTrigger class="bg-primary-foreground">
-                    <SelectValue placeholder="Export" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Export Ke</SelectLabel>
-                        <SelectItem value="pdf">
-                            <FileText />
-                            Pdf
-                        </SelectItem>
-                        <SelectItem value="excel"> <Sheet /> Excel </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+        <div class="flex flex-wrap gap-4 items-center">
+            <Button asChild>
+                <Link> + Dusun</Link>
+            </Button>
             <Button asChild>
                 <Link :href="route('desa.create')"> + Desa</Link>
             </Button>
-            <Button asChild>
-                <Link :href="route('dusun.create')"> + Dusun</Link>
-            </Button>
         </div>
     </div>
-    <div class="w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="search"
-                placeholder="Cari penduduk berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
-                <Button class="cursor-pointer">Terapkan</Button>
-            </div>
-        </div>
+
+    <div class="drop-shadow-md w-full grid gap-2">
+        <!-- TABEL DESA (tanpa filter) -->
         <DataTable
             :items="items"
             :columns="columnsIndex"
@@ -104,6 +109,36 @@ watch(page, fetchData);
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
+        />
+
+        <!-- TABEL DUSUN -->
+        <h2 class="text-2xl font-semibold mt-8">Data Dusun</h2>
+
+        <!-- Search/filter khusus dusun -->
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+        >
+            <Input
+                v-model="search2"
+                placeholder="Cari dusun berdasarkan nama"
+                class="md:w-1/3"
+            />
+            <div class="flex gap-4">
+                <Button class="cursor-pointer" @click="fetchData2"
+                    >Terapkan</Button
+                >
+            </div>
+        </div>
+
+        <DataTable
+            :items="items2"
+            :columns="columnsIndex2"
+            :actions="actionsIndex2"
+            :totalPages="totalPages2"
+            :page="page2"
+            :per-page="perPage2"
+            :is-loading="isLoading2"
+            @update:page="page2 = $event"
         />
     </div>
 </template>

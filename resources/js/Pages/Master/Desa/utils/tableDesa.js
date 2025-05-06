@@ -2,7 +2,9 @@ import { Eye } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
 const columnsIndex = [
-    { label: "Nama Pekerjaan", key: "nama_pekerjaan" },
+    { label: "Nama Desa", key: "nama" },
+    { label: "Deskripsi", key: "deskripsi" },
+    { label: "Lokasi", key: "lokasi" },
 ];
 
 const actionsIndex = [
@@ -16,7 +18,18 @@ const actionsIndex = [
 ];
 
 const rowsShow = [
-    { label: "Nama Pekerjaan", key: "nama_pekerjaan" },
+    {
+        label: "Nama Desa",
+        key: "nama",
+    },
+    {
+        label: "Deskripsi",
+        key: "deskripsi",
+    },
+    {
+        label: "Lokasi",
+        key: "lokasi",
+    },
 ];
 
 export { columnsIndex, actionsIndex, rowsShow };

@@ -46,10 +46,10 @@ watch(page, fetchData);
 </script>
 
 <template>
-    <Head title=" | Data pekerjaan" />
+    <Head title=" | Data Pekerjaan" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
-            <h1 class="text-3xl font-bold">Data pekerjaan</h1>
+            <h1 class="text-3xl font-bold">Data Pekerjaan</h1>
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
