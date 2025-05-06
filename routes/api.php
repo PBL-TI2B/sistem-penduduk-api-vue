@@ -16,6 +16,16 @@ use App\Http\Controllers\Api\V1\PeriodeJabatanController;
 use App\Http\Controllers\Api\V1\BeritaController;
 use App\Http\Controllers\Api\V1\AnggotaKeluargaController;
 use App\Http\Controllers\Api\V1\StatusKeluargaController;
+use App\Http\Controllers\Api\V1\NotifikasiController;
+use App\Http\Controllers\Api\V1\NotifikasiPenerimaController;
+use App\Http\Controllers\Api\V1\PindahanController;
+use App\Http\Controllers\Api\V1\PendidikanController;
+use App\Http\Controllers\Api\V1\DomisiliController;
+use App\Http\Controllers\Api\V1\GaleriController;
+use App\Http\Controllers\Api\V1\KartuKeluargaController;
+use App\Http\Controllers\Api\V1\KurangMampuController;
+use App\Http\Controllers\Api\V1\KategoriBantuanController;
+use App\Http\Controllers\Api\V1\BantuanController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
@@ -34,12 +44,21 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/jabatan', JabatanController::class);
         Route::apiResource('/periode-jabatan', PeriodeJabatanController::class);
         Route::apiResource('/kematian', KematianController::class);
-
+        Route::apiResource('/notifikasi', NotifikasiController::class);
+        Route::apiResource('/notifikasi-penerima', NotifikasiPenerimaController::class);
         Route::apiResource('/berita', BeritaController::class);
+        Route::apiResource('/pindahan', PindahanController::class);
+        Route::apiResource('/pendidikan', PendidikanController::class);
+        Route::apiResource('/galeri', GaleriController::class);
+        Route::apiResource('/domisili', DomisiliController::class);
         Route::get('/auth/me', [AuthController::class, 'me'])->name('me');
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::apiResource('anggota-keluarga', AnggotaKeluargaController::class);
         Route::apiResource('status-keluarga', StatusKeluargaController::class);
+        Route::apiResource('kartu-keluarga', KartuKeluargaController::class);
+        Route::apiResource('kurang-mampu', KurangMampuController::class);
+        Route::apiResource('kategori-bantuan', KategoriBantuanController::class);
+        Route::apiResource('bantuan', BantuanController::class);
     });
 });

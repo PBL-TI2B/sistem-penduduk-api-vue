@@ -2,7 +2,7 @@
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import Button from "@/components/ui/button/Button.vue";
 import { SquarePen, Trash } from "lucide-vue-next";
-import { rowsShow } from "./table";
+import { rowsShow } from "./utils/table";
 import { apiGet } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { onMounted, ref, onUnmounted } from "vue";
@@ -18,7 +18,6 @@ const fetchData = async () => {
     try {
         const res = await apiGet(`/penduduk/${uuid}`);
         items.value = res.data;
-        console.log(items.value);
 
         if (items.value.foto) {
             const resImage = await axios.get(
@@ -69,7 +68,7 @@ onUnmounted(() => {
         </div>
     </div>
     <div
-        class="bg-primary-foreground p-2 rounded-lg flex gap-2 justify-between"
+        class="bg-primary-foreground p-2 rounded-lg flex flex-col sm:flex-row gap-2 justify-between"
     >
         <div class="w-full">
             <h2 class="text-lg font-bold p-2">
@@ -98,7 +97,7 @@ onUnmounted(() => {
             v-if="imageUrl"
             :src="imageUrl"
             alt="Foto Penduduk"
-            class="rounded-md w-[500px] h-[600px] object-cover"
+            class="rounded-md w-[450px] h-[600px] object-cover"
         />
         <img
             v-else

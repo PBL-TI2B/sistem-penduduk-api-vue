@@ -1,16 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
-import {
-    LayoutDashboard,
-    UsersRound,
-    IdCard,
-    Network,
-    MapPinHouse,
-    LayoutTemplate,
-    ChevronDown,
-    ChevronRight,
-} from "lucide-vue-next";
+import { router, usePage } from "@inertiajs/vue3";
+import { ChevronDown, ChevronRight, LogOut } from "lucide-vue-next";
 import {
     Sidebar,
     SidebarContent,
@@ -21,6 +12,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Button from "../../ui/button/Button.vue";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import Cookies from "js-cookie";
+import { apiPost } from "@/utils/api";
+import { items } from "./sidebarItems";
 
 const page = usePage();
 
@@ -32,56 +28,17 @@ const toggleDropdown = (title) => {
     openDropdowns.value[title] = !openDropdowns.value[title];
 };
 
-const items = [
-    {
-        title: "Dashboard",
-        icon: LayoutDashboard,
-        to: "/dashboard",
-    },
-    {
-        title: "Master Penduduk",
-        icon: UsersRound,
-        children: [
-            {
-                title: "Penduduk",
-                to: "/penduduk",
-            },
-            {
-                title: "Kematian",
-                to: "/kematian",
-            },
-            {
-                title: "Kelahiran",
-                to: "/kelahiran",
-            },
-        ],
-    },
-    {
-        title: "Perangkat Desa",
-        icon: Network,
-        to: "/perangkat-desa",
-    },
-    {
-        title: "Keluarga",
-        icon: IdCard,
-        to: "/keluarga",
-    },
-    {
-        title: "Data Desa",
-        icon: MapPinHouse,
-        to: "/desa",
-    },
-    {
-        title: "Konten Web",
-        icon: LayoutTemplate,
-        children: [
-            {
-                title: "Berita",
-                to: "/berita",
-            },
-        ],
-    },
-];
+const logout = async () => {
+    try {
+        const res = await apiPost("/auth/logout");
+        if (res.success) {
+            Cookies.remove("token");
+            router.visit("/");
+        }
+    } catch (error) {
+        useErrorHandler(error, "Gagal keluar");
+    }
+};
 </script>
 
 <template>
@@ -173,6 +130,14 @@ const items = [
                             </template>
                         </SidebarMenuItem>
                     </SidebarMenu>
+                    <Button
+                        class="absolute bottom-2 w-[93%]"
+                        variant="secondary"
+                        @click="logout"
+                    >
+                        <LogOut />
+                        <span> Keluar </span>
+                    </Button>
                 </SidebarGroupContent>
             </SidebarGroup>
         </SidebarContent>

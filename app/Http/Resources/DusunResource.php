@@ -15,6 +15,7 @@ class DusunResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nama' => $this->nama,
             'deskripsi' => $this->deskripsi,

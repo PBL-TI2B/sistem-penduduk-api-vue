@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
 
 class Galeri extends Model
 {
@@ -22,5 +25,18 @@ class Galeri extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function getThumbnailAttribute($thumbnail)
+    
+    {
+        return new Attribute(
+            get: fn ($thumbnail) => url('/storage/galeri/' . $thumbnail)
+        );
     }
 }
