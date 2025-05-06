@@ -59,9 +59,6 @@ watch(page, fetchData);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('penduduk.create')"> + Domisili</Link>
-            </Button>
-            <Button asChild>
                 <Link :href="route('penduduk.create')"> + Penduduk</Link>
             </Button>
         </div>

@@ -163,8 +163,14 @@ onMounted(async () => {
                 />
             </div>
 
-            <div class="col-span-2">
-                <Button type="submit" class="w-full">Simpan</Button>
+            <div class="flex col-span-2 justify-between items-center">
+                <div>
+                    <p>Peringatan</p>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <Button type="submit">Batal</Button>
+                    <Button type="submit">Simpan</Button>
+                </div>
             </div>
         </form>
     </div>
