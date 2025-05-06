@@ -470,12 +470,20 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
+        DB::table('kategori_bantuan')->insert([
+            'id'=>1,
+            'uuid'=>Str::uuid(),
+            'kategori'=>'tunai',
+            'keterangan'=>''
+        ]);
+
         DB::table('bantuan')->insert([
             [
                 'id' => 1,
                 'uuid' => Str::uuid(),
                 'nama_bantuan' => 'Bantuan Sosial Tunai',
                 'jenis_bantuan' => 'tunai',
+                'kategori_bantuan_id'=>1,
                 'periode' => '2021',
                 'lama_periode' => 3,
                 'instansi' => 'Pemerintah',
