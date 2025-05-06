@@ -24,9 +24,4 @@ class Pendidikan extends Model
     {
         return 'uuid';
     }
-
-    public function penduduk()
-    {
-        return $this->hasMany(Penduduk::class, 'pendidikan_id', 'id');
-    }
 }

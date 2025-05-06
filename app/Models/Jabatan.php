@@ -24,9 +24,4 @@ class Jabatan extends Model
     {
         return 'uuid';
     }
-
-    public function perangkatDesa()
-    {
-        return $this->hasOne(PerangkatDesa::class);
-    }
 }

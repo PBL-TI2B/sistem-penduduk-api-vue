@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Berita;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BeritaResource;
+use App\Http\Resources\ApiResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -17,13 +17,7 @@ class BeritaController extends Controller
     public function index()
     {
         $berita= Berita::with('users')->paginate(10);
-        $collection = BeritaResource::collection($berita->getCollection());
-        $berita->setCollection(collect($collection));
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar Data Berita',
-            'data'    => $berita,
-        ]);
+        return new ApiResource(true, 'Daftar Data Berita', $berita);
     }
 
     public function store(Request $request)
@@ -55,19 +49,11 @@ class BeritaController extends Controller
             'status' => $request->input('status', 'draft'),
             'user_id' => $request->user_id,
         ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Berita Berhasil Ditambahkan',
-            'data'    => new BeritaResource($berita->load('users')),
-        ]);
+        return new ApiResource(true, 'Berita Berhasil Ditambahkan', $berita);
     }
     public function show(Berita $berita)
     {
-        return response()->json([
-            'success' => true,
-            'message' => 'Detail Data Berita',
-            'data'    => new BeritaResource($berita->load('users')),
-        ]);
+        return new ApiResource(true, 'Detail Data Berita', $berita);
     }
 
     public function update(Request $request, Berita $berita)
@@ -100,33 +86,13 @@ class BeritaController extends Controller
         }
 
         $berita->update($data);
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Berita Berhasil Diubah',
-            'data'    => new BeritaResource($berita->load('users')),
-        ]);
+        return new ApiResource(true, 'Berita Berhasil Diupdate', $berita);
     }
 
     public function destroy(Berita $berita)
     {
         Storage::delete('berita/' . basename($berita->thumbnail));
         $berita->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Berita Berhasil Dihapus',
-            'data'    => null
-        ]);
-    }
-
-    public function getBerita($filename, Request $request)
-    {
-        if(!$request->user()){
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-        $path = storage_path('app/private/berita/' . $filename);
-        if (!file_exists($path)) {
-            return response()->json(['message' => 'File not found'], 404);
-        }
-        return response()->file($path);
+        return new ApiResource(true, 'Berita Berhasil Dihapus', null);
     }
 }

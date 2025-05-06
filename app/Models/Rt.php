@@ -29,10 +29,6 @@ class Rt extends Model
         return $this->belongsTo(Rw::class);
     }
 
-    public function perangkatDesa() {
-        return $this->hasOne(PerangkatDesa::class);
-    }
-
     public function domisili() {
         return $this->hasOne(Domisili::class);
     }

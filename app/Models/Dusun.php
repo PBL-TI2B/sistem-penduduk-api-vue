@@ -23,19 +23,4 @@ class Dusun extends Model
     {
         return 'uuid';
     }
-
-    public function desa()
-    {
-        return $this->belongsTo(Desa::class);
-    }
-
-    public function perangkatDesa()
-    {
-        return $this->hasOne(PerangkatDesa::class);
-    }
-
-    public function rw()
-    {
-        return $this->hasMany(Rw::class);
-    }
 }

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('nomor_rw', 50);
-            $table->foreignId('dusun_id')->constrained('dusun')->onDelete('cascade');
+            
+            $table->foreignId('desa_id')->constrained('desa')->onDelete('cascade');
             $table->timestamps();
         });
     }

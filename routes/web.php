@@ -5,7 +5,7 @@ use App\Http\Controllers\Web\Master\PendudukController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureTokenAuthenticated;
 
-Route::inertia('/', 'Beranda');
+Route::inertia('/beranda', 'Beranda');
 Route::inertia('/login', 'Auth/Login');
 
 Route::inertia('/dashboard', 'Master/Dashboard');

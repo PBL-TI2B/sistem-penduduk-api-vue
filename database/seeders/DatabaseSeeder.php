@@ -342,8 +342,7 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 1,
                 'uuid' => Str::uuid(),
-                'awal_menjabat' => '2021-01-01',
-                'akhir_menjabat' => '2023-01-01',
+                'nama' => 'Periode 2021-2026',
                 'keterangan' => '',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -357,7 +356,7 @@ class DatabaseSeeder extends Seeder
                 'id' => 1,
                 'uuid' => $rwUuid,
                 'nomor_rw' => '001',
-                'dusun_id'=> 1,
+                'desa_id'=>1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

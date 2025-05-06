@@ -5,6 +5,7 @@ import Navbar from "@/components/public/Navbar.vue";
 </script>
 
 <template>
+    <Navbar />
     <main>
         <slot />
     </main>

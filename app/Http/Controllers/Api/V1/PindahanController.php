@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Resources\PindahanResource;
+use App\Http\Resources\ApiResource;
 use App\Models\Pindahan;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,14 +17,7 @@ class PindahanController extends Controller
     public function index()
     {
         $pindahan = Pindahan::with('penduduk')->paginate(10);
-
-        $collection = PindahanResource::collection($pindahan->getCollection());
-        $pindahan->setCollection(collect($collection));
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar Data Pindahan',
-            'data'    => $pindahan,
-        ]);
+        return new ApiResource(true, 'Daftar Data Pindahan', $pindahan);
     }
 
 
@@ -35,7 +28,7 @@ class PindahanController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'penduduk_id' => 'required|exists:penduduk,id',
-            'status_pindahan' => 'required|in:masuk,keluar',
+            'status_pindahan' => 'required|in:masuk, keluar',
             'tanggal_pindahan'=> 'required|date',
             'alamat_asal_tujuan' => 'nullable|string',
         ]);
@@ -51,11 +44,7 @@ class PindahanController extends Controller
             'alamat_asal_tujuan' => $request->alamat_asal_tujuan,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Pindahan Berhasil Ditambahkan',
-            'data'    => new PindahanResource($pindahan->load('penduduk'))
-        ]);
+        return new ApiResource(true, 'Data Pindahan Berhasil Ditambahkan', $pindahan);
     }
 
     /**
@@ -64,11 +53,7 @@ class PindahanController extends Controller
     public function show(Pindahan $pindahan)
     {
         $pindahan->load('penduduk');
-        return response()->json([
-            'success' => true,
-            'message' => 'Detail Data Pindahan',
-            'data'    => new PindahanResource($pindahan->load('penduduk'))
-        ]);
+        return new ApiResource(true, 'Detail Data Pindahan', $pindahan);
     }
 
     /**
@@ -76,38 +61,14 @@ class PindahanController extends Controller
      */
     public function update(Request $request, Pindahan $pindahan)
     {
-        $validator = Validator::make($request->all(), [
-            'penduduk_id' => 'required|exists:penduduk,id',
-            'status_pindahan' => 'required|in:masuk,keluar',
-            'tanggal_pindahan'=> 'required|date',
-            'alamat_asal_tujuan' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = $request->all();
-        $pindahan->update($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Pindahan Berhasil Diupdate',
-            'data'    => new PindahanResource($pindahan->load('penduduk'))
-        ]);   
+        
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pindahan $pindahan)
+    public function destroy(string $id)
     {
-        $pindahan->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Pindahan Berhasil Dihapus',
-            'data'    => null
-        ]);
+        //
     }
 }

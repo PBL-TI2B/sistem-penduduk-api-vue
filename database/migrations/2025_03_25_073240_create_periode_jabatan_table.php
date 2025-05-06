@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('periode_jabatan', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
-            $table->date('awal_menjabat')->nullable();
-            $table->date('akhir_menjabat')->nullable();
+            $table->string('nama');
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
