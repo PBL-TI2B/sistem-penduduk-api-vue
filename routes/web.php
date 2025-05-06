@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureTokenAuthenticated;
 
 Route::inertia('/', 'Beranda');
+Route::inertia('/', 'Beranda');
 Route::inertia('/login', 'Auth/Login');
 
 Route::inertia('/dashboard', 'Master/Dashboard');
