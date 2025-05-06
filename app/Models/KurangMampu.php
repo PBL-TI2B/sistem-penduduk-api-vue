@@ -24,4 +24,9 @@ class KurangMampu extends Model
     {
         return 'uuid';
     }
+
+    public function anggotaKeluarga()
+    {
+        return $this->belongsTo(AnggotaKeluarga::class, 'anggota_keluarga_id', 'id');
+    }
 }

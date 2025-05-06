@@ -48,7 +48,9 @@ class PendudukController extends Controller
      */
     public function edit(Penduduk $penduduk)
     {
-        //
+        return Inertia::render('Master/Penduduk/Edit', [
+            'uuid'=>$penduduk->uuid
+        ]);
     }
 
     /**

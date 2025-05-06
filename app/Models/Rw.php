@@ -29,4 +29,14 @@ class Rw extends Model
     {
         return $this->belongsTo(Dusun::class);
     }
+
+    public function perangkatDesa()
+    {
+        return $this->hasOne(PerangkatDesa::class);
+    }
+
+    public function rt()
+    {
+        return $this->hasMany(Rt::class);
+    }
 }

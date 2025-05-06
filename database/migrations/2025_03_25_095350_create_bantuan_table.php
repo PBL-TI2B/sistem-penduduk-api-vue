@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('nama_bantuan', 50);
+
+            // Foreign key seperti di file kematian
+            $table->foreignId('kategori_bantuan_id')->constrained('kategori_bantuan')->cascadeOnDelete();
+
             $table->enum('jenis_bantuan', ['tunai', 'pangan', 'pendidikan', 'kesehatan', 'perumahan','lainnya']);
             $table->string('nominal', 50)->nullable();
             $table->string('periode', 50);
