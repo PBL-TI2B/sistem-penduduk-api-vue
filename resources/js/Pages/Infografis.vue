@@ -1,5 +1,6 @@
 <script setup>
 import PublicLayout from "@/Layouts/PublicLayout.vue";
+import { motion } from "motion-v";
 import { onMounted } from "vue";
 import Chart from "chart.js/auto";
 
@@ -289,191 +290,197 @@ const kepercayaan = [
 <template>
     <Head title=" - Infografis Penduduk" />
     <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
-        <!-- Judul & Navigasi -->
-        <div
-            class="flex justify-between items-center flex-wrap gap-4 mt-6 mb-8"
-        >
-            <!-- Judul -->
-            <h1 class="text-2xl font-bold text-[#E5A025]">
-                INFOGRAFIS<br class="sm:hidden" />
-                DESA JABUNG
-            </h1>
+        <section class="container mx-auto py-8">
+            <!-- Judul & Navigasi -->
+            <div
+                class="flex justify-between items-center flex-wrap gap-4 mt-6 mb-8"
+            >
+                <!-- Judul -->
+                <h1 class="text-3xl font-bold text-[#E5A025]">
+                    INFOGRAFIS<br class="sm:hidden" />
+                    DESA JABUNG
+                </h1>
 
-            <!-- Navigasi Tab -->
-            <div class="flex space-x-6">
-                <a href="../infografis">
-                    <div
-                        class="flex items-center space-x-2 text-gray-800 border-b-2 border-[#E5A025] pb-1 hover:text-[#E5A025] transition"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
+                <!-- Navigasi Tab -->
+                <div class="flex space-x-6">
+                    <a href="../infografis">
+                        <div
+                            class="flex items-center space-x-2 text-gray-800 border-b-2 border-[#E5A025] pb-1 hover:text-[#E5A025] transition"
                         >
-                            <path
-                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5s-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-                            />
-                        </svg>
-                        <span class="font-medium">Penduduk</span>
-                    </div>
-                </a>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5s-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+                                />
+                            </svg>
+                            <span class="font-medium">Penduduk</span>
+                        </div>
+                    </a>
 
-                <a href="../bansos">
-                    <div
-                        class="flex items-center space-x-2 text-gray-500 hover:text-gray-800 hover:border-b-2 hover:border-[#E5A025] pb-1 transition"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
+                    <a href="../bansos">
+                        <div
+                            class="flex items-center space-x-2 text-gray-500 hover:text-gray-800 hover:border-b-2 hover:border-[#E5A025] pb-1 transition"
                         >
-                            <path
-                                d="M20 6H4c-1.1 0-2 .9-2 2v11h2v-1h16v1h2V8c0-1.1-.9-2-2-2zm0 10H4V8h16v8zM6 10h5v5H6z"
-                            />
-                        </svg>
-                        <span class="font-medium">Bansos</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <!-- section deskripsi -->
-        <div class="flex justify-between items-start mt-8">
-            <div class="max-w-md">
-                <h2 class="text-[#2FB586] font-bold text-xl mb-2">
-                    DEMOGRAFI PENDUDUK
-                </h2>
-                <p class="text-sm text-gray-700">
-                    Memberikan informasi lengkap mengenai karakteristik
-                    demografi penduduk suatu wilayah. Mulai dari jumlah
-                    penduduk, usia, jenis kelamin, tingkat pendidikan,
-                    pekerjaan, agama, dan aspek penting lainnya yang
-                    menggambarkan komposisi populasi secara rinci.
-                </p>
-            </div>
-        </div>
-
-        <!-- Demografi Penduduk -->
-        <h2 class="text-lg font-bold text-[#233D34] mb-4 mt-8">
-            Jumlah Penduduk dan Kepala Keluarga
-        </h2>
-        <div
-            class="grid grid-cols-2 md:grid-cols-2 gap-4 text-white text-center"
-        >
-            <div
-                class="bg-[#40798C] p-4 rounded-[20px] flex items-center gap-3"
-            >
-                <img
-                    src="@/images/ttlpenduduk.png"
-                    alt="Total Penduduk"
-                    class="w-12 h-12"
-                />
-                <div>
-                    <p class="text-sm">TOTAL PENDUDUK</p>
-                    <p class="text-xl font-bold">1.150 Jiwa</p>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M20 6H4c-1.1 0-2 .9-2 2v11h2v-1h16v1h2V8c0-1.1-.9-2-2-2zm0 10H4V8h16v8zM6 10h5v5H6z"
+                                />
+                            </svg>
+                            <span class="font-medium">Bansos</span>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <div
-                class="bg-[#70A9A1] p-4 rounded-[20px] flex items-center gap-3"
-            >
-                <img
-                    src="@/images/kepalakeluarga.png"
-                    alt="Kepala Keluarga"
-                    class="w-12 h-12"
-                />
-                <div>
-                    <p class="text-sm">KEPALA KELUARGA</p>
-                    <p class="text-xl font-bold">304 Jiwa</p>
-                </div>
-            </div>
-            <div
-                class="bg-[#CD8B76] p-4 rounded-[20px] flex items-center gap-3"
-            >
-                <img
-                    src="@/images/laki.png"
-                    alt="Laki-Laki"
-                    class="w-12 h-12"
-                />
-                <div>
-                    <p class="text-sm">LAKI-LAKI</p>
-                    <p class="text-xl font-bold">607 Jiwa</p>
-                </div>
-            </div>
-            <div
-                class="bg-[#734B5E] p-4 rounded-[20px] flex items-center gap-3"
-            >
-                <img
-                    src="@/images/perempuan.png"
-                    alt="Perempuan"
-                    class="w-12 h-12"
-                />
-                <div>
-                    <p class="text-sm">PEREMPUAN</p>
-                    <p class="text-xl font-bold">543 Jiwa</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grafik kelompok umur -->
-        <section>
-            <h2 class="text-lg font-bold text-[#233D34] mb-4 mt-8">
-                Berdasarkan Kelompok Umur
-            </h2>
-
-            <canvas id="umurChart" height="100"></canvas>
-        </section>
-
-        <!-- Pendidikan -->
-        <section>
-            <h2 class="text-lg font-bold text-[#233D34] mb-4 mt-8">
-                Berdasarkan Pendidikan
-            </h2>
-            <canvas id="pendidikanChart" height="150"></canvas>
-        </section>
-
-        <!-- Pekerjaan -->
-        <section>
-            <h2 class="text-lg font-bold text-[#233D34] mb-4 mt-8">
-                Berdasarkan Pekerjaan
-            </h2>
-            <canvas id="pekerjaanChart" height="150"></canvas>
-        </section>
-
-        <!-- Agama -->
-        <section>
-            <h2 class="text-lg font-bold text-[#233D34] mb-4 mt-8">
-                Berdasarkan Kepercayaan
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
-                <div
-                    v-for="(item, index) in kepercayaan"
-                    :key="index"
-                    class="bg-white shadow p-4 rounded-[20px] flex flex-col items-center justify-center"
-                >
-                    <img :src="item.icon" alt="" class="w-12 h-12 mb-2" />
-                    <p class="text-[#233D34] font-medium">{{ item.nama }}</p>
-                    <p
-                        :class="{
-                            'text-[#E5A025] font-semibold': item.jumlah > 0,
-                            'text-orange-400': item.jumlah === 0,
-                        }"
-                    >
-                        {{ item.jumlah.toLocaleString("id-ID") }}
+            <!-- section deskripsi -->
+            <div class="flex justify-between items-start mt-8 mb-6">
+                <div class="max-w">
+                    <h2 class="text-[#2FB586] font-bold text-2xl mb-2">
+                        DEMOGRAFI PENDUDUK
+                    </h2>
+                    <p class="text-sm md:text-lg text-gray-600 mb-2">
+                        Memberikan informasi lengkap mengenai karakteristik
+                        demografi penduduk suatu wilayah. Mulai dari jumlah
+                        penduduk, usia, jenis kelamin, tingkat pendidikan,
+                        pekerjaan, agama, dan aspek penting lainnya yang
+                        menggambarkan komposisi populasi secara rinci.
                     </p>
                 </div>
             </div>
-        </section>
 
-        <!-- Kelahiran & Kematian -->
-        <section>
-            <div class="flex items-center justify-between mb-4 mt-8">
-                <h2 class="text-lg font-bold text-[#233D34]">
-                    Angka Kelahiran dan Kematian
-                </h2>
-                <span class="text-sm text-gray-500">Tahun 2024</span>
+            <!-- Demografi Penduduk -->
+            <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-8">
+                Jumlah Penduduk dan Kepala Keluarga
+            </h2>
+            <div
+                class="grid grid-cols-2 md:grid-cols-2 gap-4 text-white text-center"
+            >
+                <div
+                    class="bg-[#40798C] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                >
+                    <img
+                        src="@/images/ttlpenduduk.png"
+                        alt="Total Penduduk"
+                        class="w-12 h-12"
+                    />
+                    <div>
+                        <p class="text-sm md:text-lg">TOTAL PENDUDUK</p>
+                        <p class="text-xl font-bold">1.150 Jiwa</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-[#70A9A1] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                >
+                    <img
+                        src="@/images/kepalakeluarga.png"
+                        alt="Kepala Keluarga"
+                        class="w-12 h-12"
+                    />
+                    <div>
+                        <p class="text-sm md:text-lg">KEPALA KELUARGA</p>
+                        <p class="text-xl font-bold">304 Jiwa</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-[#CD8B76] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                >
+                    <img
+                        src="@/images/laki.png"
+                        alt="Laki-Laki"
+                        class="w-12 h-12"
+                    />
+                    <div>
+                        <p class="text-sm md:text-lg">LAKI-LAKI</p>
+                        <p class="text-xl font-bold">607 Jiwa</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-[#734B5E] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                >
+                    <img
+                        src="@/images/perempuan.png"
+                        alt="Perempuan"
+                        class="w-12 h-12"
+                    />
+                    <div>
+                        <p class="text-sm md:text-lg">PEREMPUAN</p>
+                        <p class="text-xl font-bold">543 Jiwa</p>
+                    </div>
+                </div>
             </div>
-            <canvas id="kelahiranKematianChart" height="100"></canvas>
+
+            <!-- Grafik kelompok umur -->
+            <section>
+                <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
+                    Berdasarkan Kelompok Umur
+                </h2>
+
+                <canvas id="umurChart" height="100"></canvas>
+            </section>
+
+            <!-- Pendidikan -->
+            <section>
+                <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
+                    Berdasarkan Pendidikan
+                </h2>
+                <canvas id="pendidikanChart" height="150"></canvas>
+            </section>
+
+            <!-- Pekerjaan -->
+            <section>
+                <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
+                    Berdasarkan Pekerjaan
+                </h2>
+                <canvas id="pekerjaanChart" height="150"></canvas>
+            </section>
+
+            <!-- Agama -->
+            <section>
+                <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
+                    Berdasarkan Kepercayaan
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+                    <div
+                        v-for="(item, index) in kepercayaan"
+                        :key="index"
+                        class="bg-white shadow-sm hover:drop-shadow-lg p-4 rounded-[20px] flex flex-col items-center justify-center"
+                    >
+                        <img :src="item.icon" alt="" class="w-12 h-12 mb-2" />
+                        <p class="text-[#233D34] font-medium">
+                            {{ item.nama }}
+                        </p>
+                        <p
+                            :class="{
+                                'text-[#E5A025] font-semibold': item.jumlah > 0,
+                                'text-orange-400': item.jumlah === 0,
+                            }"
+                        >
+                            {{ item.jumlah.toLocaleString("id-ID") }}
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kelahiran & Kematian -->
+            <section>
+                <div class="flex items-center justify-between mb-4 mt-10">
+                    <h2 class="text-xl font-bold text-[#233D34]">
+                        Angka Kelahiran dan Kematian
+                    </h2>
+                    <span class="text-sm md:text-lg text-gray-500"
+                        >Tahun 2024</span
+                    >
+                </div>
+                <canvas id="kelahiranKematianChart" height="100"></canvas>
+            </section>
         </section>
     </div>
 </template>
