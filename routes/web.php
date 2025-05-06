@@ -11,8 +11,8 @@ Route::inertia('/login', 'Auth/Login');
 Route::inertia('/dashboard', 'Master/Dashboard');
 Route::resource('/penduduk', PendudukController::class);
 
-Route::inertia('/bansos', 'Bansos');
-Route::inertia('/infografis', 'Infografis');
+Route::inertia('/infografis/bansos', 'InfografisBansos');
+Route::inertia('/infografis/penduduk', 'InfografisPenduduk');
 Route::inertia('/berita', 'Berita');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');

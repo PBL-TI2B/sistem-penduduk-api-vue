@@ -8,7 +8,7 @@ defineOptions({
 <template>
     <Head title=" - Berita Desa" />
     <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
-        <section class="container mx-auto py-8">
+        <section class="flex flex-col max-w-6xl mx-auto py-8">
             <!-- judul -->
             <div
                 class="flex justify-between items-center flex-wrap gap-4 mt-6 mb-8"

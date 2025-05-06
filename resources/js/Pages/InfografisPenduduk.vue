@@ -289,8 +289,8 @@ const kepercayaan = [
 
 <template>
     <Head title=" - Infografis Penduduk" />
-    <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
-        <section class="container mx-auto py-8">
+    <div class="bg-gray-50 min-h-screen px-6 py-8 pt-15">
+        <section class="flex flex-col max-w-6xl mx-auto py-8">
             <!-- Judul & Navigasi -->
             <div
                 class="flex justify-between items-center flex-wrap gap-4 mt-6 mb-8"
@@ -303,7 +303,7 @@ const kepercayaan = [
 
                 <!-- Navigasi Tab -->
                 <div class="flex space-x-6">
-                    <a href="../infografis">
+                    <a href="../infografis/penduduk">
                         <div
                             class="flex items-center space-x-2 text-gray-800 border-b-2 border-[#E5A025] pb-1 hover:text-[#E5A025] transition"
                         >
@@ -321,7 +321,7 @@ const kepercayaan = [
                         </div>
                     </a>
 
-                    <a href="../bansos">
+                    <a href="../infografis/bansos">
                         <div
                             class="flex items-center space-x-2 text-gray-500 hover:text-gray-800 hover:border-b-2 hover:border-[#E5A025] pb-1 transition"
                         >

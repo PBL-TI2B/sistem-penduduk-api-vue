@@ -8,7 +8,7 @@ defineOptions({
 <template>
     <Head title=" - Galeri Desa" />
     <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
-        <section class="container mx-auto px-4 py-8">
+        <section class="flex flex-col max-w-6xl mx-auto py-8">
             <h2 class="text-3xl font-bold text-[#E5A025] mt-6 mb-8">
                 GALERI DESA
             </h2>
