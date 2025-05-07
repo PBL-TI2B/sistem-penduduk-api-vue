@@ -206,8 +206,19 @@ onMounted(async () => {
                 </div>
             </div>
 
-            <div class="col-span-2">
-                <Button type="submit" class="w-full">Simpan Perubahan</Button>
+            <div class="flex col-span-2 justify-between items-center">
+                <div>
+                    <p>Peringatan</p>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <Button
+                        @click="router.visit('/penduduk')"
+                        type="button"
+                        variant="secondary"
+                        >Batal</Button
+                    >
+                    <Button type="submit">Simpan</Button>
+                </div>
             </div>
         </form>
     </div>

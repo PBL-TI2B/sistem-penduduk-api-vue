@@ -1,6 +1,6 @@
 <script setup>
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import Button from "@/components/ui/button/Button.vue";
+import { Button } from "@/components/ui/button";
 import { SquarePen, SquarePlus, Trash, Trash2 } from "lucide-vue-next";
 import { rowsShow } from "./utils/table";
 import { apiGet } from "@/utils/api";
@@ -140,7 +140,11 @@ onUnmounted(() => {
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold p-2">Domisili Saat Ini</h2>
                 <div class="flex gap-2">
-                    <Button @click="createDomisiliPenduduk" variant="secondary">
+                    <Button
+                        @click="createDomisiliPenduduk"
+                        type="button"
+                        variant="secondary"
+                    >
                         Tambah
                         <SquarePlus />
                     </Button>

@@ -168,7 +168,12 @@ onMounted(async () => {
                     <p>Peringatan</p>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <Button type="submit">Batal</Button>
+                    <Button
+                        @click="router.visit('/penduduk')"
+                        type="button"
+                        variant="secondary"
+                        >Batal</Button
+                    >
                     <Button type="submit">Simpan</Button>
                 </div>
             </div>

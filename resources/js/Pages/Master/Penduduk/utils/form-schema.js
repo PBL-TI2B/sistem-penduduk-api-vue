@@ -10,7 +10,7 @@ export const formSchemaPenduduk = toTypedSchema(
         tempat_lahir: z.string().min(1),
         tanggal_lahir: z.string(),
         agama: z.string(),
-        gol_darah: z.string().optional(),
+        gol_darah: z.string().nullable().optional(),
         status_perkawinan: z.string(),
         tinggi_badan: z.string().nullable().optional(),
         status: z.string(),
