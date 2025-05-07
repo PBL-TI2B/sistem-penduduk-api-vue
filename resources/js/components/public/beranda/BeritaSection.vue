@@ -63,7 +63,7 @@ const news = [
                     </p>
                 </div>
                 <Button asChild variant="frontend">
-                    <Link href="../../pages/berita">
+                    <Link href="/berita">
                         Jelajahi Berita Desa
                     </Link>
                 </Button>
