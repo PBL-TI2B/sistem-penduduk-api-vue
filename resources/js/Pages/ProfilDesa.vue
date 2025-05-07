@@ -9,7 +9,7 @@ defineOptions({
     <Head title=" - Profil Desa" />
     <div class="bg-gray-50 min-h-screen px-6 md:px-20 py-8 pt-15">
         <!-- Profil Desa -->
-        <section class="container mx-auto py-8">
+        <section class="flex flex-col max-w-6xl mx-auto py-8">
             <h1 class="text-3xl font-bold text-[#E5A025] mt-6 mb-8">
                 PROFIL DESA
             </h1>
@@ -71,7 +71,7 @@ defineOptions({
                 PERANGKAT DESA
             </h2>
             <div
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
             >
                 <!-- Kartu Perangkat Desa -->
                 <div
