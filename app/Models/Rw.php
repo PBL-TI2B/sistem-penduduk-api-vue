@@ -24,4 +24,19 @@ class Rw extends Model
     {
         return 'uuid';
     }
+
+    public function dusun()
+    {
+        return $this->belongsTo(Dusun::class);
+    }
+
+    public function perangkatDesa()
+    {
+        return $this->hasOne(PerangkatDesa::class);
+    }
+
+    public function rt()
+    {
+        return $this->hasMany(Rt::class);
+    }
 }

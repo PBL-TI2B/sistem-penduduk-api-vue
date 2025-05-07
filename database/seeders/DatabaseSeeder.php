@@ -26,6 +26,19 @@ class DatabaseSeeder extends Seeder
             ]
         ]);
 
+        DB::table('dusun')->insert([
+            [
+                'id' => 1,
+                'uuid' => Str::uuid(),
+                'nama' => 'Dusun Jabung',
+                'deskripsi' => 'Dusun Jabung adalah dusun yang terletak di Desa Jabung',
+                'lokasi' => 'Desa Jabung, Kabupaten Klaten',
+                'desa_id'=>1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]
+        ]);
+
         DB::table('pendidikan')->insert([
             [
                 'id' => 1,
@@ -329,7 +342,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 1,
                 'uuid' => Str::uuid(),
-                'nama' => 'Periode 2021-2026',
+                'awal_menjabat' => '2021-01-01',
+                'akhir_menjabat' => '2023-01-01',
                 'keterangan' => '',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -343,7 +357,7 @@ class DatabaseSeeder extends Seeder
                 'id' => 1,
                 'uuid' => $rwUuid,
                 'nomor_rw' => '001',
-                'desa_id'=>1,
+                'dusun_id'=> 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
@@ -369,6 +383,7 @@ class DatabaseSeeder extends Seeder
                 'periode_jabatan_id' => 1,
                 'status_keaktifan' => 'AKTIF',
                 'desa_id'=> 1,
+                'dusun_id' => 1,
                 'rt_id' => 1,
                 'rw_id' => 1,
                 'created_at' => Carbon::now(),

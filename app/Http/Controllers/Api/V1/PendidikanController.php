@@ -52,11 +52,11 @@ class PendidikanController extends Controller
             'data'    => new PendidikanResource($pendidikan->load('penduduk'))
         ]);
     }
-
+  
     public function update(Request $request, Pendidikan $pendidikan)
     {
         $validator = Validator::make($request->all(), [
-            'jenjang' => 'required|string|max:255',
+            'jenjang' => 'required',
         ]);
 
         if ($validator->fails()) {

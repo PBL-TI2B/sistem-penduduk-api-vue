@@ -6,7 +6,7 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureTokenAuthenticated;
 use App\Http\Controllers\Web\Master\PendidikanController;
 
-Route::inertia('/', 'Home');
+Route::inertia('/', 'Beranda');
 Route::inertia('/login', 'Auth/Login');
 
 Route::inertia('/dashboard', 'Master/Dashboard');

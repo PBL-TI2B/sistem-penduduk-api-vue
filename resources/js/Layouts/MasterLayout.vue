@@ -1,6 +1,6 @@
 <script setup>
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/master/AppSidebar.vue";
+import AppSidebar from "@/components/master/sidebar/AppSidebar.vue";
 import { Toaster } from "vue-sonner";
 import { useAuthGuard } from "@/composables/useAuthGuard";
 
