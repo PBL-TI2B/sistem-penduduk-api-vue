@@ -1,7 +1,16 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import { Blinds, ChartArea, House, Images, Menu, Newspaper, Store, X } from "lucide-vue-next";
+import {
+    Blinds,
+    ChartArea,
+    House,
+    Images,
+    Menu,
+    Newspaper,
+    Store,
+    X,
+} from "lucide-vue-next";
 import Button from "../ui/button/Button.vue";
 import { apiGet } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
@@ -44,7 +53,7 @@ const isActive = (path) => {
 const menus = [
     { name: "Beranda", path: "", icon: House },
     { name: "Profil Desa", path: "profildesa", icon: Blinds },
-    { name: "Infografis", path: "infografis/penduduk" || "infografis/bansos", icon: ChartArea },
+    { name: "Infografis", path: "infografis", icon: ChartArea },
     { name: "Berita", path: "berita", icon: Newspaper },
     { name: "Galeri", path: "galeri", icon: Images },
     // { name: "UMKM", path: "umkm", icon: Store },
