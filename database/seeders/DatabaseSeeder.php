@@ -17,6 +17,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            RolePermissionSeeder::class,
+        ]);
+
         DB::table('desa')->insert([
             [
                 'id'=>1,
@@ -392,19 +396,18 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        DB::table('users')->insert([
-            [
+        $user = User::create([
                 'id' => 1,
-                'uuid' => Str::uuid(),
-                'username' => 'admin',
+                'uuid' => (string) Str::uuid(),
+                'username' => 'superadmin',
                 'password' => Hash::make('password'),
-                'role' => 'ADMIN',
                 'status' => 'AKTIF',
                 'perangkat_id' => 1, 
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ],
         ]);
+
+        $user->assignRole('superadmin');
 
         DB::table('domisili')->insert([
             [
