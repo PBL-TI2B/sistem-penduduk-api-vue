@@ -27,7 +27,7 @@ use App\Http\Controllers\Api\V1\KartuKeluargaController;
 use App\Http\Controllers\Api\V1\KurangMampuController;
 use App\Http\Controllers\Api\V1\KategoriBantuanController;
 use App\Http\Controllers\Api\V1\BantuanController;
-use App\Models\PenerimaBantuan;
+use App\Http\Controllers\Api\V1\PenerimaBantuanController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
@@ -56,12 +56,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/auth/me', [AuthController::class, 'me'])->name('me');
         Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
 
-        Route::apiResource('/anggota-keluarga', AnggotaKeluargaController::class);
-        Route::apiResource('/status-keluarga', StatusKeluargaController::class);
-        Route::apiResource('/kartu-keluarga', KartuKeluargaController::class);
-        Route::apiResource('/kurang-mampu', KurangMampuController::class);
-        Route::apiResource('/kategori-bantuan', KategoriBantuanController::class);
-        Route::apiResource('/bantuan', BantuanController::class);
-        // Route::apiResource('/penerima-bantuan', PenerimaBantuanController::class);
+        Route::apiResource('anggota-keluarga', AnggotaKeluargaController::class);
+        Route::apiResource('status-keluarga', StatusKeluargaController::class);
+        Route::apiResource('kartu-keluarga', KartuKeluargaController::class);
+        Route::apiResource('kurang-mampu', KurangMampuController::class);
+        Route::apiResource('kategori-bantuan', KategoriBantuanController::class);
+        Route::apiResource('bantuan', BantuanController::class);
+        Route::apiResource('penerima-bantuan', PenerimaBantuanController::class);
     });
 });
