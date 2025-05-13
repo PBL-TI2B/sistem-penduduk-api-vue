@@ -1,4 +1,7 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
 import IslamIcon from "@/images/islam.svg";
 import KristenIcon from "@/images/kristen.svg";
 import KatolikIcon from "@/images/katolik.svg";
@@ -6,16 +9,36 @@ import HinduIcon from "@/images/hindu.svg";
 import BuddhaIcon from "@/images/budha.svg";
 import KonghucuIcon from "@/images/konghucu.svg";
 
-// Kepercayaan
-const kepercayaan = [
-    { icon: IslamIcon, nama: "Islam", jumlah: 1150 },
-    { icon: KristenIcon, nama: "Kristen", jumlah: 500 },
-    { icon: KatolikIcon, nama: "Katolik", jumlah: 200 },
-    { icon: HinduIcon, nama: "Hindu", jumlah: 5 },
-    { icon: BuddhaIcon, nama: "Buddha", jumlah: 0 },
-    { icon: KonghucuIcon, nama: "Konghucu", jumlah: 10 },
-];
+// Peta agama ke ikon
+const iconMap = {
+    Islam: IslamIcon,
+    Kristen: KristenIcon,
+    Katolik: KatolikIcon,
+    Hindu: HinduIcon,
+    Buddha: BuddhaIcon,
+    Khonghucu: KonghucuIcon,
+};
+
+const kepercayaan = ref([]); // data dinamis
+
+onMounted(async () => {
+    try {
+        const res = await axios.get(
+            "http://127.0.0.1:8000/api/v1/statistik/agama"
+        );
+        const apiData = res.data.data;
+
+        kepercayaan.value = apiData.map((item) => ({
+            icon: iconMap[item.agama] || "", // fallback kosong jika tidak ada icon
+            nama: item.agama,
+            jumlah: item.jumlah,
+        }));
+    } catch (error) {
+        console.error("Gagal ambil data statistik agama:", error);
+    }
+});
 </script>
+
 <template>
     <!-- Agama -->
     <section>
