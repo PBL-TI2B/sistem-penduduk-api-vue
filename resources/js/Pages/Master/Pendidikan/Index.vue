@@ -1,13 +1,17 @@
 <script setup>
-import { ref, onMounted, watch, h } from "vue";
-import { apiGet } from "@/utils/api";
+import { ref, onMounted, watch } from "vue";
+import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { columnsIndex, actionsIndex } from "./utils/table";
+import { columnsIndex } from "./utils/table";
+import { Pencil, Trash2 } from "lucide-vue-next";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import FormDialogPendidikan from "./FormDialogPendidikan.vue";
+import { toast } from "vue-sonner";
 
 // State
 const items = ref([]);
@@ -24,10 +28,7 @@ const search = ref("");
 const fetchData = async () => {
   try {
     isLoading.value = true;
-    const res = await apiGet("/pendidikan", {
-      page: page.value,
-      search: search.value, // kalau API-nya support
-    });
+    const res = await apiGet("/pendidikan", { page: page.value });
     items.value = res.data.data;
     perPage.value = res.data.per_page;
     totalPages.value = res.data.last_page;
@@ -38,30 +39,65 @@ const fetchData = async () => {
   }
 };
 
-// Dialog open
+// Buka Dialog
 const openDialog = (mode, data = {}) => {
   dialogMode.value = mode;
   selectedData.value = data;
   isDialogOpen.value = true;
 };
 
-// Saat simpan data baru / edit
-const handleSave = (formData) => {
-  console.log("Data yang disimpan:", formData);
+// Hapus Data
+const handleDelete = async (item) => {
+  if (confirm("Yakin ingin menghapus data ini?")) {
+    try {
+      await apiDelete(`/pendidikan/${item.uuid}`); 
+      toast.success("Data berhasil dihapus");
+      fetchData(); 
+    } catch (error) {
+      console.error("Error saat menghapus data:", error); 
+    }
+  }
+};
+
+// Saat simpan data dari dialog
+const handleSave = () => {
+  fetchData();
   isDialogOpen.value = false;
+};
+
+// Search
+const applySearch = () => {
+  page.value = 1;
   fetchData();
 };
 
-// Saat klik Terapkan (search)
-const applySearch = () => {
-  page.value = 1; // reset ke page 1 kalau search
-  fetchData();
-};
+// Actions Index
+const actionsIndex = [
+  {
+    label: "Edit",
+    icon: Pencil,
+    handler: (item) => openDialog("edit", item),
+  },
+  {
+    label: "Hapus",
+    icon: Trash2,
+    handler: (item) => handleDelete(item),
+  },
+];
 
 // Lifecycle
 onMounted(fetchData);
 watch(page, fetchData);
+
+// Auto refresh saat dialog ditutup
+watch(isDialogOpen, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    fetchData();
+  }
+});
 </script>
+
+
 
 <template>
   <Head title=" | Data Pendidikan" />
@@ -77,22 +113,18 @@ watch(page, fetchData);
         ]"
       />
     </div>
-    <div class="flex flex-wrap gap-4 items-center">
-      <Button @click="openDialog('create')">+ Pendidikan</Button>
-    </div>
+    <Button @click="openDialog('create')">+ Pendidikan</Button>
   </div>
 
   <!-- Filter -->
   <div class="drop-shadow-md w-full grid gap-2">
-    <div
-      class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-    >
+    <div class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between">
       <Input
         v-model="search"
         placeholder="Cari pendidikan berdasarkan jenjang"
         class="md:w-1/3"
       />
-      <Button class="cursor-pointer" @click="applySearch">Terapkan</Button>
+      <Button @click="applySearch">Terapkan</Button>
     </div>
 
     <DataTable
@@ -103,16 +135,18 @@ watch(page, fetchData);
         :page="page"
         :per-page="perPage"
         :is-loading="isLoading"
-        @update:page="(val) => (page.value = val)"
+        @update:page="page = $event"
+        @edit-item="(item) => openDialog('edit', item)"
+        @delete-item="(item) => handleDelete(item)"
     />
+
   </div>
 
-  <!-- Dialog Pendidikan -->
   <FormDialogPendidikan
-    :isOpen="isDialogOpen"
+    v-model:isOpen="isDialogOpen"
     :mode="dialogMode"
     :initialData="selectedData"
-    @update:isOpen="(val) => (isDialogOpen.value = val)"
     @save="handleSave"
+    @success="fetchData"
   />
 </template>
