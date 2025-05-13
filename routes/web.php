@@ -21,9 +21,7 @@ Route::resource('/kurang-mampu', KurangMampuController::class);
 Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
 
 Route::inertia('/berita', 'Berita');
-Route::inertia('/infografis/bansos', 'InfografisBansos');
-Route::inertia('/infografis/penduduk', 'InfografisPenduduk');
+Route::inertia('/infografis', 'Infografis');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');
 Route::inertia('/detailberita', 'DetailBerita');
-Route::inertia('/bansos', 'bansos');
