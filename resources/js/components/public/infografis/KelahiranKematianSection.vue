@@ -1,68 +1,100 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import Chart from "chart.js/auto";
-import { onMounted } from "vue";
+import axios from "axios";
 
-onMounted(() => {
-    // chart kelahiran kematian
-    const ctxMatiLahir = document
+const tahun = 2021;
+const chartInstance = ref(null);
+
+const getDataPerBulan = (data) => {
+    const perBulan = Array(12).fill(0);
+    data.forEach((item) => {
+        const bulanIndex = item.bulan - 1; // 0-indexed
+        perBulan[bulanIndex] = item.jumlah;
+    });
+    return perBulan;
+};
+
+onMounted(async () => {
+    const ctx = document
         .getElementById("kelahiranKematianChart")
         ?.getContext("2d");
-    if (!ctxMatiLahir) return;
+    if (!ctx) return;
 
-    new Chart(ctxMatiLahir, {
-        type: "line",
-        data: {
-            labels: [
-                "Januari",
-                "Februari",
-                "Maret",
-                "April",
-                "Mei",
-                "Juni",
-                "Juli",
-                "Agustus",
-                "September",
-                "Oktober",
-                "November",
-                "Desember",
-            ],
-            datasets: [
-                {
-                    label: "Kelahiran",
-                    data: [29, 44, 47, 31, 18, 44, 23, 45, 8, 32, 40, 16],
-                    borderColor: "#F59E0B", // amber-500
-                    backgroundColor: "#F59E0B",
-                    fill: false,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
+    try {
+        const [kematianRes, kelahiranRes] = await Promise.all([
+            axios.get(
+                "http://127.0.0.1:8000/api/v1/statistik/kematian?tahun=2021"
+            ),
+            axios.get(
+                "http://127.0.0.1:8000/api/v1/statistik/kelahiran?tahun=2021"
+            ),
+        ]);
+
+        const kematianData = getDataPerBulan(kematianRes.data.data);
+        const kelahiranData = getDataPerBulan(kelahiranRes.data.data);
+
+        if (chartInstance.value) {
+            chartInstance.value.destroy(); // Hapus chart lama
+        }
+
+        chartInstance.value = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [
+                    "Januari",
+                    "Februari",
+                    "Maret",
+                    "April",
+                    "Mei",
+                    "Juni",
+                    "Juli",
+                    "Agustus",
+                    "September",
+                    "Oktober",
+                    "November",
+                    "Desember",
+                ],
+                datasets: [
+                    {
+                        label: "Kelahiran",
+                        data: kelahiranData,
+                        borderColor: "#F59E0B",
+                        backgroundColor: "#F59E0B",
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: "Kematian",
+                        data: kematianData,
+                        borderColor: "#14532D",
+                        backgroundColor: "#14532D",
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: "bottom" },
                 },
-                {
-                    label: "Kematian",
-                    data: [47, 25, 13, 44, 22, 22, 25, 11, 42, 28, 21, 20],
-                    borderColor: "#14532D", // emerald-900
-                    backgroundColor: "#14532D",
-                    fill: false,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: "bottom",
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0,
+                    },
                 },
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
-        },
-    });
+        });
+    } catch (error) {
+        console.error("Gagal mengambil data:", error);
+    }
 });
 </script>
 <template>
@@ -71,7 +103,7 @@ onMounted(() => {
             <h2 class="text-xl font-bold text-[#233D34]">
                 Angka Kelahiran dan Kematian
             </h2>
-            <span class="text-sm md:text-lg text-gray-500">Tahun 2024</span>
+            <span class="text-sm md:text-lg text-gray-500">{{ tahun }}</span>
         </div>
         <canvas id="kelahiranKematianChart" height="100"></canvas>
     </section>
