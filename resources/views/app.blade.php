@@ -9,7 +9,7 @@
     @inertiaHead
     @routes
 </head>
-<body class="bg-card/40">
+<body>
     @inertia
 </body>
 </html>

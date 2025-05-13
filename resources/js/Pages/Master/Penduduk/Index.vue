@@ -14,11 +14,10 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import { FileText, Sheet } from "lucide-vue-next";
 
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { actionsIndex, columnsIndex } from "./table";
+import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const items = ref([]);
@@ -33,7 +32,6 @@ const fetchData = async () => {
         isLoading.value = true;
         const res = await apiGet("/penduduk", { page: page.value });
         items.value = res.data.data;
-        console.log(items.value);
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
@@ -60,30 +58,12 @@ watch(page, fetchData);
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
-            <Select>
-                <SelectTrigger class="bg-primary-foreground">
-                    <SelectValue placeholder="Export" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Export Ke</SelectLabel>
-                        <SelectItem value="pdf">
-                            <FileText />
-                            Pdf
-                        </SelectItem>
-                        <SelectItem value="excel"> <Sheet /> Excel </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-            <Button asChild>
-                <Link :href="route('penduduk.create')"> + Domisili</Link>
-            </Button>
             <Button asChild>
                 <Link :href="route('penduduk.create')"> + Penduduk</Link>
             </Button>
         </div>
     </div>
-    <div class="w-full grid gap-2">
+    <div class="drop-shadow-md w-full grid gap-2">
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >

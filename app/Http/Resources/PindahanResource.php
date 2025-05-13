@@ -12,6 +12,7 @@ class PindahanResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'penduduk_id' => [
                 'nama_lengkap' => $this->penduduk->nama_lengkap,

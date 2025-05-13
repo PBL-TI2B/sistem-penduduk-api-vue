@@ -33,9 +33,15 @@ export async function apiGet(endpoint, params = {}, config = {}) {
     }
 }
 
-export async function apiPost(endpoint, data = {}) {
+export async function apiPost(endpoint, data = {}, params = {}, config = {}) {
     try {
-        const res = await API.post(endpoint, data);
+        const res = await API.post(endpoint, data, {
+            ...config,
+            headers: {
+                "Content-Type": "multipart/form-data",
+                ...(config.headers || {}),
+            },
+        });
         return res.data;
     } catch (err) {
         errorHandler(err);
