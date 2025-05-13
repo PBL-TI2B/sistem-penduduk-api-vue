@@ -5,7 +5,6 @@ use App\Http\Controllers\Web\Master\PendudukController;
 use App\Http\Controllers\Web\Master\PekerjaanController;
 use App\Http\Controllers\Web\Master\DesaController;
 use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Middleware\EnsureTokenAuthenticated;
 
 Route::inertia('/', 'Beranda');
 Route::inertia('/', 'Beranda');
