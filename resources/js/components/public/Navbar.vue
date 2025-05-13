@@ -1,26 +1,66 @@
 <script setup>
-import { ref, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
+import { Blinds, ChartArea, House, Images, Menu, Newspaper, Store, X } from "lucide-vue-next";
+import Button from "../ui/button/Button.vue";
+import { apiGet } from "@/utils/api";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const isOpen = ref(false);
+const isScrolled = ref(false);
+const user = ref(null);
 
-const page = usePage();
+const fetchUserLoggedIn = async () => {
+    try {
+        const res = await apiGet("/auth/me");
+        user.value = res.data;
+    } catch (error) {
+        useErrorHandler(error, "Unauthorized");
+    }
+};
 
-const isActive = (path) => page.url.startsWith(path);
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 0;
+};
+
+onMounted(() => {
+    fetchUserLoggedIn();
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+});
 
 onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll);
 });
+
+const page = usePage();
+const isHomePath = computed(() => page.url === "/");
+
+const isActive = (path) => {
+    if (path === "") return page.url === "/";
+    return page.url.startsWith("/" + path);
+};
+
+const menus = [
+    { name: "Beranda", path: "", icon: House },
+    { name: "Profil Desa", path: "profildesa", icon: Blinds },
+    { name: "Infografis", path: "infografis/penduduk" || "infografis/bansos", icon: ChartArea },
+    { name: "Berita", path: "berita", icon: Newspaper },
+    { name: "Galeri", path: "galeri", icon: Images },
+    // { name: "UMKM", path: "umkm", icon: Store },
+];
 </script>
 
 <template>
     <nav
         :class="[
-            'fixed w-full text-white px-4 md:px-8 py-3 z-50 top-0 transition-colors duration-300',
+            'fixed w-full px-4 md:px-8 py-3 top-0 z-50 transition-all duration-300',
+            isHomePath ? 'text-white' : 'text-gray-600 bg-white',
+            isScrolled && !isHomePath ? 'shadow-md' : '',
         ]"
     >
         <div
-            class="max-w-7xl md:px-auto flex flex-wrap justify-between items-center mx-auto"
+            class="max-w-7xl flex flex-wrap justify-between items-center mx-auto"
         >
             <!-- Logo -->
             <div class="flex items-center space-x-3">
@@ -30,87 +70,72 @@ onUnmounted(() => {
                     class="h-8 md:h-14"
                 />
                 <div class="leading-tight">
-                    <p class="text-sm md:text-2xl font-bold text-[#E5A025]">
+                    <p class="text-sm md:text-2xl font-bold text-emerald-500">
                         Desa Jabung
                     </p>
-                    <p class="text-xs md:text-xl text-white">
-                        Kabupaten Klaten
-                    </p>
+                    <p class="text-xs md:text-xl">Kabupaten Klaten</p>
                 </div>
             </div>
 
-            <!-- Hamburger (Mobile) -->
+            <!-- Hamburger Button -->
             <button
                 @click="isOpen = !isOpen"
                 class="md:hidden focus:outline-none"
             >
-                <svg
-                    class="h-6 w-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"
-                    />
-                </svg>
+                <component
+                    :is="isOpen ? X : Menu"
+                    :class="
+                        isScrolled || !isHomePath ? 'text-black' : 'text-white'
+                    "
+                    :size="30"
+                />
             </button>
 
-            <!-- Menu -->
-            <div
+            <!-- Menu Items -->
+            <ul
                 :class="[
-                    'flex w-full md:w-auto mt-4 md:mt-0 items-center space-x-4 md:space-x-6 font-medium text-sm md:text-xl',
-                    isOpen ? '' : 'hidden md:block',
+                    'w-full md:w-auto mt-3 md:mt-0 items-center text-sm md:text-lg',
+                    isOpen
+                        ? 'grid gap-y-4 p-4 backdrop-blur-sm rounded-b-lg'
+                        : 'hidden md:flex space-x-4 md:space-x-6',
                 ]"
             >
-                <Link
-                    href="/beranda"
-                    :class="[
-                        ' hover:text-[#F6C646]',
-                        !isActive('/') ? 'text-white' : 'text-[#F6C646]',
-                    ]"
-                >
-                    Beranda
-                </Link>
-                <Link
-                    href="/infografis"
-                    :class="[
-                        'hover:text-[#F6C646]',
-                        !isActive('/infografis')
-                            ? 'text-white'
-                            : 'text-[#F6C646]',
-                    ]"
-                >
-                    Infografis
-                </Link>
-                <Link
-                    href="/berita"
-                    :class="[
-                        'hover:text-[#F6C646]',
-                        !isActive('/berita') ? 'text-white' : 'text-[#F6C646]',
-                    ]"
-                >
-                    Berita
-                </Link>
-                <Link
-                    href="/galeri"
-                    :class="[
-                        'hover:text-[#F6C646]',
-                        !isActive('/galeri') ? 'text-white' : 'text-[#F6C646]',
-                    ]"
-                >
-                    Galeri
-                </Link>
-                <Link
-                    href="/login"
-                    class="bg-[#e59e19] text-[#1a1a1a] py-2 px-12 rounded-full hover:bg-[#d4880f] transition"
-                >
-                    Masuk
-                </Link>
-            </div>
+                <li v-for="menu in menus" :key="menu.path">
+                    <Link
+                        :href="'/' + menu.path"
+                        @click="isOpen = false"
+                        :class="[
+                            'flex items-center gap-1 hover:text-emerald-500 transition-colors',
+                            isActive(menu.path)
+                                ? 'text-emerald-500 font-semibold'
+                                : '',
+                        ]"
+                    >
+                        <component :is="menu.icon" size="15" />
+                        {{ menu.name }}
+                    </Link>
+                </li>
+
+                <Button v-if="user" asChild variant="frontend">
+                    <Link
+                        href="/dashboard"
+                        class="py-2 px-12 rounded-full transition"
+                        @click="isOpen = false"
+                    >
+                        Dashboard
+                    </Link>
+                </Button>
+
+                <Button v-else asChild variant="frontend">
+                    <Link
+                        href="/login"
+                        class="py-2 px-12 rounded-full transition"
+                        @click="isOpen = false"
+                    >
+                        Masuk
+                    </Link>
+                </Button>
+            </ul>
         </div>
     </nav>
 </template>

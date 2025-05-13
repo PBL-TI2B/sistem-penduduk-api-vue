@@ -16,6 +16,7 @@ class PendudukResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nik' => $this->nik,
             'nama_lengkap' => $this->nama_lengkap,
@@ -30,12 +31,15 @@ class PendudukResource extends JsonResource
             'status' => $this->status,
 
             'pekerjaan' => [
+                'id' => $this->pekerjaan?->id,
                 'nama_pekerjaan' => $this->pekerjaan?->nama_pekerjaan,
             ],
             'pendidikan' => [
+                'id' => $this->pendidikan?->id,
                 'jenjang' => $this->pendidikan?->jenjang,
             ],
             'domisili' => [
+                'id' => $this->domisili?->id,
                 'status_tempat_tinggal' => $this->domisili?->status_tempat_tinggal,
                 'rt' => $this->domisili?->rt?->nomor_rt,
                 'rw' => $this->domisili?->rt?->rw?->nomor_rw,

@@ -1,16 +1,12 @@
 <script setup>
 import Navbar from "@/components/public/Navbar.vue";
 import Footer from "@/components/public/Footer.vue";
-import { Toaster } from "vue-sonner";
 </script>
 
 <template>
     <Navbar />
-    <main>
-        <div>
-            <slot />
-        </div>
+    <main class="grid gap-y-12 overflow-x-hidden">
+        <slot />
     </main>
-    <!-- <Toaster position="top-right" /> -->
     <Footer />
 </template>

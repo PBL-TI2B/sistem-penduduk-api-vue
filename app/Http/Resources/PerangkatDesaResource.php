@@ -16,6 +16,7 @@ class PerangkatDesaResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'penduduk' => $this->penduduk->nama_lengkap,
             'jabatan' => $this->jabatan->jabatan,
             'desa' => $this->desa->nama,
@@ -24,6 +25,7 @@ class PerangkatDesaResource extends JsonResource
             'rt' => $this->rt->nomor_rt,
             'status_keaktifan' => $this->status_keaktifan,
             'periode_jabatan' => [
+                'id'=> $this->periode_jabatan->id,
                 'awal_menjabat' => $this->periode_jabatan->awal_menjabat,
                 'akhir_menjabat' => $this->periode_jabatan->akhir_menjabat,
             ],

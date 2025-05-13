@@ -15,6 +15,7 @@ class RtResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nomor_rt' => $this->nomor_rt,
             'rw' => $this->rw->nomor_rw,
