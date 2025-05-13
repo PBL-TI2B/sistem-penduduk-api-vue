@@ -49,6 +49,19 @@ export async function apiPost(endpoint, data = {}, params = {}, config = {}) {
     }
 }
 
+export async function apiDelete(endpoint, params = {}, config = {}) {
+    try {
+        const res = await API.delete(endpoint, {
+            params,
+            ...config,
+        });
+        return res.data;
+    } catch (err) {
+        errorHandler(err);
+        throw err;
+    }
+}
+
 function errorHandler(err) {
     if (err.response) {
         console.error("Error response:", err.response.data);

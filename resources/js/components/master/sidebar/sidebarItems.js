@@ -15,22 +15,27 @@ export const items = [
         title: "Dashboard",
         icon: LayoutDashboard,
         to: "/dashboard",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Master Penduduk",
         icon: UsersRound,
+        roles: ["admin", "superadmin"],
         children: [
             {
                 title: "Penduduk",
                 to: "/penduduk",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Kematian",
                 to: "/kematian",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Kelahiran",
                 to: "/kelahiran",
+                roles: ["admin", "superadmin"],
             },
         ],
     },
@@ -38,16 +43,19 @@ export const items = [
         title: "Perangkat Desa",
         icon: Network,
         to: "/perangkat-desa",
+        roles: ["superadmin"],
     },
     {
         title: "Keluarga",
         icon: IdCard,
         to: "/keluarga",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Data Desa",
         icon: MapPinHouse,
         to: "/desa",
+        roles: ["admin", "superadmin"],
     },
     {
         title: "Konten Web",
@@ -56,10 +64,12 @@ export const items = [
             {
                 title: "Berita",
                 to: "/berita",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Galeri",
                 to: "/galeri",
+                roles: ["admin", "superadmin"],
             },
         ],
     },
@@ -67,11 +77,13 @@ export const items = [
         title: "Pendidikan",
         icon: GraduationCap,
         to: "/pendidikan",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Pekerjaan",
         icon: BriefcaseBusiness,
         to: "/pekerjaan",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Master Bantuan",
@@ -94,5 +106,6 @@ export const items = [
                 to: "/kategori-bantuan",
             },
         ],
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
 ];
