@@ -23,4 +23,9 @@ class Bantuan extends Model
     {
         return 'uuid';
     }
+
+    public function kategori_bantuan()
+    {
+        return $this->belongsTo(KategoriBantuan::class, 'kategori_bantuan_id', 'id');
+    }
 }
