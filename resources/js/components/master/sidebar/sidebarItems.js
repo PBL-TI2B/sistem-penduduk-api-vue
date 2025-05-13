@@ -74,8 +74,23 @@ export const items = [
         to: "/pekerjaan",
     },
     {
-        title: "Bantuan",
+        title: "Master Bantuan",
         icon: Boxes,
-        to: "/bantuan",
+        children: [
+            {
+                title: "Bantuan",
+                to: "/bantuan",
+            },
+            {
+                title: "Kurang Mampu",
+                icon: Boxes,
+                to: "/kurang-mampu",
+            },
+            {
+                title: "Penerima Bantuan",
+                icon: Boxes,
+                to: "/penerima-bantuan",
+            },
+        ],
     },
 ];

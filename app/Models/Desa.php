@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Desa extends Model
 {
@@ -14,7 +16,7 @@ class Desa extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid(); 
+                $model->uuid = Str::uuid();
             }
         });
     }

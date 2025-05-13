@@ -18,7 +18,7 @@ class DesaController extends Controller
     {
         return Inertia::render('Master/Desa/Create');
     }
-    
+  
     public function store(Request $request)
     {
         abort(404);
@@ -47,4 +47,3 @@ class DesaController extends Controller
     {
         abort(404);
     }
-}
