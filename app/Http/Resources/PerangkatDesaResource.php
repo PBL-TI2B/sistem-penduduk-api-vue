@@ -17,17 +17,17 @@ class PerangkatDesaResource extends JsonResource
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
-            'penduduk' => $this->penduduk->nama_lengkap,
-            'jabatan' => $this->jabatan->jabatan,
-            'desa' => $this->desa->nama,
-            'dusun' => $this->dusun->nama,
-            'rw' => $this->rw->nomor_rw,
-            'rt' => $this->rt->nomor_rt,
+            'nama_lengkap' => $this->penduduk?->nama_lengkap,
+            'jabatan' => $this->jabatan?->jabatan,
+            'desa' => $this->desa?->nama,
+            'dusun' => $this->dusun?->nama,
+            'rw' => $this->rw?->nomor_rw,
+            'rt' => $this->rt?->nomor_rt,
             'status_keaktifan' => $this->status_keaktifan,
             'periode_jabatan' => [
-                'id'=> $this->periode_jabatan->id,
-                'awal_menjabat' => $this->periode_jabatan->awal_menjabat,
-                'akhir_menjabat' => $this->periode_jabatan->akhir_menjabat,
+                'id'=> $this->periode_jabatan?->id,
+                'awal_menjabat' => $this->periode_jabatan?->awal_menjabat,
+                'akhir_menjabat' => $this->periode_jabatan?->akhir_menjabat,
             ],
         ];
     }

@@ -9,6 +9,7 @@ use App\Http\Resources\PaginatedResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PendudukController extends Controller
 {
@@ -79,13 +80,16 @@ class PendudukController extends Controller
 
     public function show(Penduduk $penduduk)
     {
-        $penduduk->load(['domisili', 'domisili.rt', 'domisili.rt.rw']);
+        // Panggil load untuk memuat semua relasi yang diperlukan
+        $penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw']);
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil detail data penduduk',
-            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+            'data' => new PendudukResource($penduduk),
         ]);
     }
+
 
     public function update(Request $request, Penduduk $penduduk) 
     {
@@ -156,5 +160,15 @@ class PendudukController extends Controller
         }
     
         return response()->file($path);
+    }
+
+    public function exportPdf()
+    {
+        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->get();
+        $pdf = \PDF::loadView('exports.penduduk', compact('penduduk'));
+        // return $response->stream('penduduk.pdf', function () use ($pdf) {
+        //     return $pdf->download('penduduk.pdf');
+        // });
+        return $pdf->download('penduduk.pdf');
     }
 }
