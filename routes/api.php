@@ -20,7 +20,6 @@ use App\Http\Controllers\Api\V1\NotifikasiController;
 use App\Http\Controllers\Api\V1\NotifikasiPenerimaController;
 use App\Http\Controllers\Api\V1\PindahanController;
 use App\Http\Controllers\Api\V1\PendidikanController;
-// use App\Http\Controllers\Api\V1\PenerimaBantuanController;
 use App\Http\Controllers\Api\V1\DomisiliController;
 use App\Http\Controllers\Api\V1\GaleriController;
 use App\Http\Controllers\Api\V1\KartuKeluargaController;
@@ -33,7 +32,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
     Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
 
-    Route::middleware('auth:sanctum')->group(function(){
+    Route::middleware('auth:sanctum')->group(function () {
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::apiResource('/penduduk', PendudukController::class);
         Route::apiResource('/perangkat-desa', PerangkatDesaController::class);
