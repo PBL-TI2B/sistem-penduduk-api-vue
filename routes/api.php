@@ -53,6 +53,5 @@ Route::prefix('v1')->group(function () {
         RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
         RoutePermission('notifikasi', NotifikasiController::class, 'notifikasi');
         // RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
-        
     });
 });

@@ -324,7 +324,7 @@ class DatabaseSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-        ]);        
+        ]);
 
         DB::table('jabatan')->insert([
             [
@@ -383,8 +383,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 1,
                 'uuid' => Str::uuid(),
-                'penduduk_id' => 1, 
-                'jabatan_id' => 1, 
+                'penduduk_id' => 1,
+                'jabatan_id' => 1,
                 'periode_jabatan_id' => 1,
                 'status_keaktifan' => 'AKTIF',
                 'desa_id'=> 1,
@@ -402,7 +402,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'superadmin',
                 'password' => Hash::make('password'),
                 'status' => 'AKTIF',
-                'perangkat_id' => 1, 
+                'perangkat_id' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
         ]);
@@ -485,7 +485,7 @@ class DatabaseSeeder extends Seeder
                 'id' => 1,
                 'uuid' => Str::uuid(),
                 'nama_bantuan' => 'Bantuan Sosial Tunai',
-                'jenis_bantuan' => 'tunai',
+                // 'kategori_bantuan' => 'tunai',
                 'kategori_bantuan_id'=>1,
                 'periode' => '2021',
                 'lama_periode' => 3,

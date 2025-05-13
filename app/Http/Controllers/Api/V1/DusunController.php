@@ -8,6 +8,7 @@ use App\Http\Resources\DusunResource;
 use App\Http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DusunController extends Controller
 {
