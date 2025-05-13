@@ -19,7 +19,7 @@ Route::resource('/pekerjaan', PekerjaanController::class);
 Route::resource('/desa', DesaController::class);
 Route::resource('/bantuan', BantuanController::class);
 Route::resource('/kurang-mampu', KurangMampuController::class);
-Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
+// Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
 Route::resource('/kategori-bantuan', KategoriBantuanController::class);
 
 Route::inertia('/berita', 'Berita');

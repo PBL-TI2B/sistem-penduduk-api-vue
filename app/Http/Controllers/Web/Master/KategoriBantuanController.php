@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Web\Master;
+
 use App\Http\Controllers\Controller;
 use App\Models\KategoriBantuan;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class KategoriBantuanController extends Controller
      */
     public function create()
     {
-        abort(404);
+        return Inertia::render('Master/KategoriBantuan/Create');
     }
 
     /**

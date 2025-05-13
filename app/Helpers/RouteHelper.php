@@ -1,6 +1,9 @@
 <?php
 
-function RoutePermission($path, $controller, $model, $publicGet = false) {
+use Illuminate\Support\Facades\Route;
+
+function RoutePermission($path, $controller, $model, $publicGet = false)
+{
     Route::prefix($path)->group(function () use ($path, $controller, $model, $publicGet) {
         if ($publicGet) {
             Route::get('/', [$controller, 'index']);
@@ -20,4 +23,3 @@ function RoutePermission($path, $controller, $model, $publicGet = false) {
             ->middleware(["auth:sanctum", "permission:{$path}.delete"]);
     });
 }
-
