@@ -18,3 +18,10 @@ export const formSchemaPenduduk = toTypedSchema(
         pendidikan_id: z.string(),
     })
 );
+
+export const formSchmemaDomisili = toTypedSchema(
+    z.object({
+        status_tempat_tinggal: z.string(),
+        rt_id: z.number(),
+    })
+);

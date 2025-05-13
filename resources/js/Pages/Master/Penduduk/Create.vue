@@ -16,15 +16,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
-import { apiGet, apiPost } from "@/utils/api";
-import { useErrorHandler } from "@/composables/useErrorHandler";
+import { apiGet } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
-import { toast } from "vue-sonner";
+import { formSchemaPenduduk } from "./utils/form-schema";
+import { usePenduduk } from "@/composables/usePenduduk";
 
 const fotoFile = ref(null);
 const fields = ref([]);
@@ -34,53 +32,19 @@ const onFileChange = (e) => {
     fotoFile.value = target.files?.[0] || null;
 };
 
-const formSchema = toTypedSchema(
-    z.object({
-        nik: z.string().length(16, "NIK harus 16 digit"),
-        nama_lengkap: z.string().min(4, "Nama minimal 4 huruf"),
-        foto: z.any().optional(),
-        jenis_kelamin: z.enum(["L", "P"]),
-        tempat_lahir: z.string().min(1),
-        tanggal_lahir: z.string(),
-        agama: z.string(),
-        gol_darah: z.string().optional(),
-        status_perkawinan: z.string(),
-        tinggi_badan: z.string().nullable().optional(),
-        status: z.string(),
-        pekerjaan_id: z.string(),
-        pendidikan_id: z.string(),
-    })
-);
-
-const { handleSubmit, resetForm } = useForm({ validationSchema: formSchema });
-
-const onSubmit = handleSubmit(async (values) => {
-    try {
-        const formData = new FormData();
-
-        for (const [key, value] of Object.entries(values)) {
-            formData.append(key, value ?? "");
-        }
-
-        if (fotoFile.value) {
-            formData.append("foto", fotoFile.value);
-        }
-        console.log(fotoFile.value);
-
-        const res = await apiPost("/penduduk", formData);
-
-        resetForm();
-        toast.success("Berhasil Tambah Data Penduduk");
-        router.visit("/penduduk");
-    } catch (error) {
-        useErrorHandler(error);
-    }
+const { handleSubmit, resetForm } = useForm({
+    validationSchema: formSchemaPenduduk,
 });
+
+const { createPenduduk } = usePenduduk();
+
+const onSubmit = handleSubmit(async (values) =>
+    createPenduduk(values, resetForm)
+);
 
 onMounted(async () => {
     const pekerjaanRes = await apiGet("/pekerjaan");
     const pendidikanRes = await apiGet("/pendidikan");
-    console.log(pekerjaanRes);
 
     const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
         value: item.id.toString(),
