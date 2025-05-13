@@ -28,3 +28,4 @@ Route::inertia('/infografis/penduduk', 'InfografisPenduduk');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');
 Route::inertia('/detailberita', 'DetailBerita');
+Route::inertia('/bansos', 'bansos');
