@@ -25,7 +25,7 @@ class PenerimaBantuanResource extends JsonResource
             'keterangan' => $this->keterangan,
             'kurang_mampu_id' => [
                 'id' => $this->kurangMampu?->id,
-                'anggota_keluarga_id' => $this->kurangMampu?->anggotaKeluarga?->penduduk?->nama_lengkap,
+                'nama_penerima' => $this->kurangMampu?->anggotaKeluarga?->penduduk?->nama_lengkap,
                 'pendapatan_per_hari' => $this->kurangMampu?->pendapatan_per_hari,
                 'pendapatan_per_bulan' => $this->kurangMampu?->pendapatan_per_bulan,
                 'jumlah_tanggungan' => $this->kurangMampu?->jumlah_tanggungan,
@@ -35,7 +35,7 @@ class PenerimaBantuanResource extends JsonResource
             'bantuan_id' => [
                 'id' => $this->bantuan?->id,
                 'nama_bantuan' => $this->bantuan?->nama_bantuan,
-                'kategori_bantuan_id' => $this->bantuan?->kategoriBantuan?->kategori,
+                'kategori_bantuan' => $this->bantuan?->kategoriBantuan?->kategori,
                 'jenis_bantuan' => $this->bantuan?->jenis_bantuan,
                 'nominal' => $this->bantuan?->nominal,
                 'periode' => $this->bantuan?->periode,

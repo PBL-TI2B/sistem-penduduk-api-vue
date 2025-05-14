@@ -5,30 +5,26 @@ const columnsIndex = [
     // { label: "Nama Penduduk", key: "anggota_keluarga_id" },
     {
         label: "Nama Penduduk",
-        key: "anggota_keluarga",
-        format: (val, row) => row.anggota_keluarga?.penduduk_id?.nama_lengkap || "-",
+        key: "kurang_mampu_id",
+        format: (val, row) => row.kurang_mampu_id?.nama_penerima || "-",
     },
-    { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari",
-        format: (value) => {
-            return value?? '-';
-        },
+    { label: "Nama Bantuan", key: "bantuan_id",
+        format: (val, row) => row.bantuan_id?.nama_bantuan || "-",
+
     },
-    { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan",
-        format: (value) => {
-            return value?? '-';
-        },
+    { label: "Pendapatan Per-Hari (Rp.)", key: "kurang_mampu_id",
+        format: (val, row) => row.kurang_mampu_id?.pendapatan_per_hari || "-",
+
     },
-    { label: "Tanggungan", key: "jumlah_tanggungan" ,
-        format: (value) => {
-            return value?? '0';
-        },
+    { label: "Pendapatan Per-Bulan (Rp.)", key: "kurang_mampu_id",
+        format: (val, row) => row.kurang_mampu_id?.pendapatan_per_hari || "-",
     },
-    { label: "Status Valiasi", key: "status_validasi" },
-    { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value?? '-';
-        },
+    { label: "Tanggungan", key: "kurang_mampu_id" ,
+        format: (val, row) => row.kurang_mampu_id?.jumlah_tanggungan || "-",
+
     },
+    { label: "Status Valiasi", key: "status" },
+
 ];
 
 const actionsIndex = [
