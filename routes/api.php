@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaControl
     BeritaController, UserController, PerangkatDesaController, KematianController,
     PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
     AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
-    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController,
+    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
     // PenerimaBantuanController, 
     PendidikanController, RtController, RwController
 };
@@ -26,7 +26,17 @@ Route::prefix('v1')->group(function () {
     RoutePermission('bantuan', BantuanController::class, 'bantuan', true);
     RoutePermission('pekerjaan', PekerjaanController::class, 'pekerjaan', true);
     RoutePermission('pendidikan', PendidikanController::class, 'pendidikan', true);
-    
+
+    Route::prefix('statistik')->controller(InfografisController::class)->group(function () {
+        Route::get('/pendidikan', 'statistikPendidikan');
+        Route::get('/pekerjaan', 'statistikPekerjaan');
+        Route::get('/kelahiran', 'statistikKelahiran');
+        Route::get('/kematian', 'statistikKematian');
+        Route::get('/agama', 'statistikAgama');
+        Route::get('/umur', 'statistikUmur');
+        Route::get('/demografi', 'statistikDemografi');
+    });
+
     // AUTHENTICATED ROUTES
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/penduduk/export/pdf', [PendudukController::class, 'exportPdf']);
