@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaControl
     BeritaController, UserController, PerangkatDesaController, KematianController,
     PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
     AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
-    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController,
+    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
     // PenerimaBantuanController, 
     PendidikanController, RtController, RwController
 };
@@ -15,7 +15,6 @@ Route::prefix('v1')->group(function () {
     // PUBLIC ROUTES
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
-
     
     RoutePermission('galeri', GaleriController::class, 'galeri', true);
     RoutePermission('berita', BeritaController::class, 'berita', true);
@@ -26,10 +25,27 @@ Route::prefix('v1')->group(function () {
     RoutePermission('bantuan', BantuanController::class, 'bantuan', true);
     RoutePermission('pekerjaan', PekerjaanController::class, 'pekerjaan', true);
     RoutePermission('pendidikan', PendidikanController::class, 'pendidikan', true);
-    
+
+    Route::prefix('statistik')->controller(InfografisController::class)->group(function () {
+        Route::get('/pendidikan', 'statistikPendidikan');
+        Route::get('/pekerjaan', 'statistikPekerjaan');
+        Route::get('/kelahiran', 'statistikKelahiran');
+        Route::get('/kematian', 'statistikKematian');
+        Route::get('/agama', 'statistikAgama');
+        Route::get('/umur', 'statistikUmur');
+        Route::get('/demografi', 'statistikDemografi');
+    });
+
     // AUTHENTICATED ROUTES
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/penduduk/export/pdf', [PendudukController::class, 'exportPdf']);
+        Route::get('/penduduk/export/excel', [PendudukController::class, 'exportExcel']);
+        Route::get('/dusun/export/pdf', [DusunController::class, 'exportPdf']);
+        Route::get('/kurang-mampu/export/pdf', [KurangMampuController::class, 'exportPdf']);
+        Route::get('/pekerjaan/export/pdf', [PekerjaanController::class, 'exportPdf']);
+        Route::get('/pendidikan/export/pdf', [PendidikanController::class, 'exportPdf']);
+        Route::get('/perangkat-desa/export/pdf', [PerangkatDesaController::class, 'exportPdf']);
+        Route::get('/pindahan/export/pdf', [PindahanController::class, 'exportPdf']);
 
         
         Route::get('/auth/me', [AuthController::class, 'me']);

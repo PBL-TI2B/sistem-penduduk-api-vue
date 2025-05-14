@@ -24,4 +24,17 @@ class PenerimaBantuan extends Model
     {
         return 'uuid';
     }
+
+    public function kurang_mampu()
+    {
+        return $this->belongsTo(KurangMampu::class, 'kurang_mampu_id', 'id');
+    }
+    public function bantuan()
+    {
+        return $this->belongsTo(Bantuan::class, 'bantuan_id', 'id');
+    }
+    public function penerimaBantuan()
+    {
+        return $this->hasMany(PenerimaBantuan::class, 'penerima_bantuan_id', 'id');
+    }
 }

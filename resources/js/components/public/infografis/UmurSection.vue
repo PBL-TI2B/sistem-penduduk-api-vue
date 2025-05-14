@@ -1,50 +1,50 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import Chart from "chart.js/auto";
-// chart umur
-onMounted(() => {
+
+const fetchUmurData = async () => {
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/v1/statistik/umur"
+        );
+        const result = await response.json();
+
+        if (result.success) {
+            const umurLabels = result.data.map((item) => item.umur);
+            const lakiLakiData = result.data.map((item) => item.L);
+            const perempuanData = result.data.map((item) => item.P);
+
+            return { umurLabels, lakiLakiData, perempuanData };
+        } else {
+            console.error("Gagal mendapatkan data:", result.message);
+            return { umurLabels: [], lakiLakiData: [], perempuanData: [] };
+        }
+    } catch (error) {
+        console.error("Error saat fetch data:", error);
+        return { umurLabels: [], lakiLakiData: [], perempuanData: [] };
+    }
+};
+
+onMounted(async () => {
     const ctxUmur = document.getElementById("umurChart")?.getContext("2d");
     if (!ctxUmur) return;
+
+    const { umurLabels, lakiLakiData, perempuanData } = await fetchUmurData();
 
     new Chart(ctxUmur, {
         type: "bar",
         data: {
-            labels: [
-                "0-5",
-                "6-10",
-                "11-15",
-                "16-20",
-                "21-25",
-                "26-30",
-                "31-35",
-                "36-40",
-                "41-45",
-                "46-50",
-                "51-55",
-                "56-60",
-                "61-65",
-                "66-70",
-                "71-75",
-                "76-80",
-                "81-85",
-                "86+",
-            ],
+            labels: umurLabels,
             datasets: [
                 {
                     label: "Laki-Laki",
-                    data: [
-                        11, 15, 12, 60, 51, 98, 99, 80, 34, 53, 93, 35, 72, 39,
-                        42, 97, 58, 75,
-                    ],
+                    data: lakiLakiData,
                     backgroundColor: "#3CB371",
                     stack: "Stack 0",
                 },
                 {
                     label: "Perempuan",
-                    data: [
-                        17, 27, 72, 24, 54, 54, 93, 63, 58, 65, 28, 93, 35, 15,
-                        39, 78, 80, 52,
-                    ],
+                    data: perempuanData,
                     backgroundColor: "#FBC02D",
                     stack: "Stack 0",
                 },

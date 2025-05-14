@@ -84,4 +84,11 @@ class PendidikanController extends Controller
             'data'    => null
         ]);
     }
+
+    public function exportPdf()
+    {
+        $pendidikan = Pendidikan::get();
+        $pdf = \PDF::loadView('exports.pendidikan', compact('pendidikan'));
+        return $pdf->download('pendidikan.pdf');
+    }
 }

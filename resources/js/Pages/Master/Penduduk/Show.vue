@@ -1,7 +1,7 @@
 <script setup>
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { Button } from "@/components/ui/button";
-import { SquarePen, SquarePlus, Trash, Trash2 } from "lucide-vue-next";
+import { SquarePen, Trash2 } from "lucide-vue-next";
 import { rowsShow } from "./utils/table";
 import { onMounted, ref, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
@@ -9,14 +9,36 @@ import { route } from "ziggy-js";
 import FormDialogDomisili from "./components/FormDialogDomisili.vue";
 import { usePenduduk } from "@/composables/usePenduduk";
 import Domisilisection from "./components/Domisilisection.vue";
+import AlertDialog from "@/components/master/AlertDialog.vue";
 
 const { uuid } = usePage().props;
+const selectedUuid = ref(null);
 const isFormDialogDomisiliOpen = ref(false);
+const isAlertDeleteOpen = ref(false);
 const dialogMode = ref("create");
 
-const { items, imageUrl, fetchPenduduk, deleteDomisili } = usePenduduk(uuid);
+const { items, imageUrl, fetchDetailPenduduk, deletePenduduk, deleteDomisili } =
+    usePenduduk(uuid);
 
 const currentPendudukData = computed(() => items.value);
+
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+
+const onCancleDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deletePenduduk(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
 
 const editDomisiliPenduduk = (user) => {
     isFormDialogDomisiliOpen.value = true;
@@ -29,7 +51,7 @@ const createDomisiliPenduduk = () => {
     dialogMode.value = "create";
 };
 
-onMounted(fetchPenduduk);
+onMounted(fetchDetailPenduduk);
 </script>
 
 <template>
@@ -51,7 +73,9 @@ onMounted(fetchPenduduk);
                     <SquarePen /> Ubah
                 </Link>
             </Button>
-            <Button> <Trash /> Hapus </Button>
+            <Button @click="onClickDeleteButton(uuid)">
+                <Trash2 /> Hapus
+            </Button>
         </div>
     </div>
     <div
@@ -103,6 +127,14 @@ onMounted(fetchPenduduk);
         v-model:isOpen="isFormDialogDomisiliOpen"
         :mode="dialogMode"
         :initialData="currentPendudukData"
-        @success="fetchPenduduk"
+        @success="fetchDetailPenduduk"
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        :title="'Hapus Data Penduduk'"
+        :description="'Apakah anda yakin ingin menghapus data penduduk ini?'"
+        :onConfirm="onConfirmDelete"
+        :onCancle="onCancleDelete"
     />
 </template>

@@ -95,13 +95,15 @@ export const items = [
             },
             {
                 title: "Kurang Mampu",
-                icon: Boxes,
                 to: "/kurang-mampu",
             },
             {
                 title: "Penerima Bantuan",
-                icon: Boxes,
                 to: "/penerima-bantuan",
+            },
+            {
+                title: "Kategori Bantuan",
+                to: "/kategori-bantuan",
             },
         ],
         roles: ["admin", "superadmin", "rt", "rw"],

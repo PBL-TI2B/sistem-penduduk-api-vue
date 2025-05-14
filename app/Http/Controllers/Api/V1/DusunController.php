@@ -98,4 +98,11 @@ class DusunController extends Controller
             'message' => 'Dusun Deleted',
         ]);
     }
+
+    public function exportPdf()
+    {
+        $dusun = Dusun::get();
+        $pdf = \PDF::loadView('exports.dusun', compact('dusun'));
+        return $pdf->download('dusun.pdf');
+    }
 }

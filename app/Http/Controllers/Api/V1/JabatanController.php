@@ -14,11 +14,11 @@ class JabatanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $jabatan = Jabatan::paginate(10);
+        $perPage = $request->input('per_page', 10);
+        $jabatan = Jabatan::paginate($perPage);
         return new ApiResource(true, 'Daftar Data Jabatan', $jabatan);
-
     }
 
     /**

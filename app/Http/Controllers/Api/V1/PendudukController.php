@@ -166,9 +166,36 @@ class PendudukController extends Controller
     {
         $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->get();
         $pdf = \PDF::loadView('exports.penduduk', compact('penduduk'));
-        // return $response->stream('penduduk.pdf', function () use ($pdf) {
-        //     return $pdf->download('penduduk.pdf');
-        // });
         return $pdf->download('penduduk.pdf');
     }
+
+    public function exportExcel()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="penduduk.csv"',
+        ];
+    
+        $callback = function () {
+            $handle = fopen('php://output', 'w');
+    
+            // Tambah BOM UTF-8
+            fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+    
+            // Pakai delimiter ;
+            fputcsv($handle, ['Nama', 'NIK', 'Tanggal Lahir'], ';');
+    
+            foreach (Penduduk::all() as $data) {
+                fputcsv($handle, [
+                    $data->nama_lengkap,
+                    $data->nik,
+                    $data->tanggal_lahir,
+                ], ';');
+            }
+    
+            fclose($handle);
+        };
+    
+        return response()->stream($callback, 200, $headers);
+    }    
 }
