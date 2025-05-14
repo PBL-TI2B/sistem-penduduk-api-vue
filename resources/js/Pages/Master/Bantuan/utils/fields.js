@@ -14,7 +14,7 @@ export function getFields(kategoriBantuanOptions = []) {
         },
         {
             name: "nominal",
-            label: "Nominal",
+            label: "Nominal (Rp.)",
             placeholder: "Masukkan nominal",
             type: "text",
             optional: true,

@@ -44,7 +44,7 @@ const rowsShow = [
 //         key: "anggota_keluarga",
 //         format: (val, row) => row.anggota_keluarga?.kategori || "-",
 //     },
-//     { label: "Nominal", key: "nominal" },
+//     { label: "Nominal (Rp.)", key: "nominal" },
 //     { label: "Periode", key: "periode" },
 //     { label: "Lama Periode", key: "lama_periode" },
 //     { label: "Instansi", key: "instansi" },

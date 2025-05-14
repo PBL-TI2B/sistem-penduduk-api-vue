@@ -8,12 +8,12 @@ const columnsIndex = [
         key: "anggota_keluarga",
         format: (val, row) => row.anggota_keluarga?.penduduk_id?.nama_lengkap || "-",
     },
-    { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari",
+    { label: "Pendapatan Per-Hari (Rp.)", key: "pendapatan_per_hari",
         format: (value) => {
             return value?? '-';
         },
     },
-    { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan",
+    { label: "Pendapatan Per-Bulan (Rp.)", key: "pendapatan_per_bulan",
         format: (value) => {
             return value?? '-';
         },
@@ -48,7 +48,7 @@ const rowsShow = [
 //         key: "anggota_keluarga",
 //         format: (val, row) => row.anggota_keluarga?.kategori || "-",
 //     },
-//     { label: "Nominal", key: "nominal" },
+//     { label: "Nominal (Rp.)", key: "nominal" },
 //     { label: "Periode", key: "periode" },
 //     { label: "Lama Periode", key: "lama_periode" },
 //     { label: "Instansi", key: "instansi" },
