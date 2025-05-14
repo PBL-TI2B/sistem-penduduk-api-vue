@@ -90,7 +90,7 @@ watch([page2, search2], fetchData2);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link> + Dusun</Link>
+                <Link :href="route('dusun.create')"> + Dusun</Link>
             </Button>
             <Button asChild>
                 <Link :href="route('desa.create')"> + Desa</Link>
@@ -141,4 +141,19 @@ watch([page2, search2], fetchData2);
             @update:page="page2 = $event"
         />
     </div>
+
+    <Dusunsection
+        :items="items"
+        :createDusunPenduduk="createDusunPenduduk"
+        :editDusunPenduduk="editDusunPenduduk"
+        :deleteDusun="deleteDusun"
+    />
+
+    <FormDialogDusun
+        v-model:isOpen="isFormDialogDusunOpen"
+        :mode="dialogMode"
+        :initialData="currentPendudukData"
+        @success="fetchPenduduk"
+    />
+
 </template>
