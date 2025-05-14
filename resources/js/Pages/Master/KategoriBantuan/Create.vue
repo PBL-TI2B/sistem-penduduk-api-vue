@@ -32,7 +32,7 @@ const { handleSubmit, resetForm } = useForm({ validationSchema: formSchema });
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        const res = await apiPost("/kategori-bantuan", values); // API call to create new pekerjaan
+        await apiPost("/kategori-bantuan", values); // API call to create new pekerjaan
 
         resetForm(); // Reset form fields after submission
         toast.success("Berhasil Tambah Data Kategori Bantuan");
@@ -47,9 +47,13 @@ const onSubmit = handleSubmit(async (values) => {
     <Head title="Tambah Kategori Bantuan" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Tambah Data Pekerjaan</h1>
+        <h1 class="text-3xl font-bold">Tambah Data Kategori Bantuan</h1>
         <BreadcrumbComponent
-            :items="[ { label: 'Dashboard', href: '/' }, { label: 'Data Bantuan', href: '/kategori-bantuan' }, { label: 'Tambah Data Kategori Bantuan' } ]"
+            :items="[
+                { label: 'Dashboard', href: '/' },
+                { label: 'Data Bantuan', href: '/kategori-bantuan' },
+                { label: 'Tambah Data Kategori Bantuan' },
+            ]"
         />
     </div>
 
@@ -82,4 +86,3 @@ const onSubmit = handleSubmit(async (values) => {
         </form>
     </div>
 </template>
-

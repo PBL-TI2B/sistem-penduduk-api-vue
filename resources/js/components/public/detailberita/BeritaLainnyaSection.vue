@@ -1,12 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { router } from "@inertiajs/vue3";
 import { apiGet } from "@/utils/api";
 
 const newsList = ref([]);
 const isLoading = ref(true);
 const hasData = ref(true);
-const router = useRouter();
 
 const fetchBerita = async () => {
     try {
@@ -36,7 +35,7 @@ const fetchBerita = async () => {
 };
 
 const goToDetail = (id) => {
-    router.push(`/berita/${id}`);
+    router.visit(`/berita/${id}`);
 };
 
 onMounted(fetchBerita);

@@ -1,17 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
 import { apiGet } from "@/utils/api";
 
-const route = useRoute();
 const berita = ref(null);
 const isLoading = ref(true);
 const notFound = ref(false);
+const { uuid } = usePage().props;
 
 const fetchDetailBerita = async () => {
     try {
-        const id = route.params.id;
-        const res = await apiGet(`/berita/${id}`);
+        const res = await apiGet(`/berita/${uuid}`);
         if (res.data && res.data.data) {
             berita.value = res.data.data;
         } else {

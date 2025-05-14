@@ -24,7 +24,7 @@ class RolePermissionSeeder extends Seeder
             'bantuan', 'kematian', 'penduduk', 'domisili', 'pindahan', 'pekerjaan',
             'kelahiran', 'pendidikan', 'notifikasi', 'kurang-mampu', 'kartu-keluarga',
             'perangkat-desa', 'status-keluarga', 'riwayat-bantuan', 'periode-jabatan',
-            'penerima-bantuan', 'anggota-keluarga', 'katergori-bantuan', 'notifikasi-penerima'
+            'penerima-bantuan', 'anggota-keluarga', 'kategori-bantuan', 'notifikasi-penerima'
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];

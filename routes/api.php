@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaControl
     PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
     AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
     DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
-    // PenerimaBantuanController, 
+    PenerimaBantuanController, 
     PendidikanController, RtController, RwController
 };
 
@@ -68,6 +68,6 @@ Route::prefix('v1')->group(function () {
         RoutePermission('domisili', DomisiliController::class, 'domisili');
         RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
         RoutePermission('notifikasi', NotifikasiController::class, 'notifikasi');
-        // RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
+        RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
     });
 });
