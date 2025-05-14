@@ -11,6 +11,7 @@ export function usePenduduk(uuid) {
     const imageUrl = ref(null);
     const fotoFile = ref(null);
 
+
     const fetchDetailPenduduk = async () => {
         try {
             const res = await apiGet(`penduduk/${uuid}`);

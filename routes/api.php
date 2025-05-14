@@ -15,7 +15,6 @@ Route::prefix('v1')->group(function () {
     // PUBLIC ROUTES
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
-
     
     RoutePermission('galeri', GaleriController::class, 'galeri', true);
     RoutePermission('berita', BeritaController::class, 'berita', true);
