@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Master\PendudukController;
+use App\Http\Controllers\Web\Master\PerangkatDesaController;
 use App\Http\Controllers\Web\Master\PekerjaanController;
 use App\Http\Controllers\Web\Master\DesaController;
 use App\Http\Controllers\Web\Master\BantuanController;
@@ -15,6 +16,7 @@ Route::inertia('/login', 'Auth/Login');
 
 Route::inertia('/dashboard', 'Master/Dashboard');
 Route::resource('/penduduk', PendudukController::class);
+Route::resource('/perangkat-desa', PerangkatDesaController::class);
 Route::resource('/pekerjaan', PekerjaanController::class);
 Route::resource('/desa', DesaController::class);
 Route::resource('/bantuan', BantuanController::class);

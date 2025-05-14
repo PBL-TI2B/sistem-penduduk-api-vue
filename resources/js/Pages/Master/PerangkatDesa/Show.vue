@@ -3,24 +3,19 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { Button } from "@/components/ui/button";
 import { SquarePen, Trash2 } from "lucide-vue-next";
 import { rowsShow } from "./utils/table";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
-import FormDialogDomisili from "./components/FormDialogDomisili.vue";
-import { usePenduduk } from "@/composables/usePenduduk";
-import Domisilisection from "./components/Domisilisection.vue";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import { apiGet } from "@/utils/api";
 import AlertDialog from "@/components/master/AlertDialog.vue";
+import Cookies from "js-cookie";
 
 const { uuid } = usePage().props;
-const selectedUuid = ref(null);
-const isFormDialogDomisiliOpen = ref(false);
+const item = ref({});
+const imageUrl = ref(null);
 const isAlertDeleteOpen = ref(false);
-const dialogMode = ref("create");
-
-const { items, imageUrl, fetchDetailPenduduk, deletePenduduk, deleteDomisili } =
-    usePenduduk(uuid);
-
-const currentPendudukData = computed(() => items.value);
+const selectedUuid = ref(null);
 
 const onClickDeleteButton = (uuid) => {
     selectedUuid.value = uuid;
@@ -40,36 +35,47 @@ const onConfirmDelete = async () => {
     }
 };
 
-const editDomisiliPenduduk = (user) => {
-    isFormDialogDomisiliOpen.value = true;
-    dialogMode.value = "edit";
-    items.value = user;
+const fetchDetailPerangkatDesa = async () => {
+    try {
+        const res = await apiGet(`/perangkat-desa/${uuid}`);
+        item.value = res.data;
+
+        if (item.value.foto) {
+            const resImage = await axios.get(
+                `/api/v1/penduduk/foto/${item.value.foto}`,
+                {
+                    responseType: "blob",
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("token")}`,
+                    },
+                }
+            );
+            imageUrl.value = URL.createObjectURL(resImage.data);
+        }
+    } catch (error) {
+        useErrorHandler(error, "Gagal mendapatkan data perangkat desa");
+    }
 };
 
-const createDomisiliPenduduk = () => {
-    isFormDialogDomisiliOpen.value = true;
-    dialogMode.value = "create";
-};
-
-onMounted(fetchDetailPenduduk);
+onMounted(fetchDetailPerangkatDesa);
 </script>
 
 <template>
-    <Head title=" | Detail Penduduk" />
+    <Head title=" | Detail Perangkat Desa" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
-            <h1 class="text-3xl font-bold">Data Penduduk</h1>
+            <h1 class="text-3xl font-bold">Data Perangkat Desa</h1>
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data Penduduk', href: '/penduduk' },
-                    { label: 'Detail Penduduk' },
+                    { label: 'Data Perangkat Desa', href: '/perangkat-desa' },
+                    { label: 'Detail Perangkat Desa' },
                 ]"
             />
         </div>
         <div class="flex gap-2 items-center">
             <Button asChild>
-                <Link :href="route('penduduk.edit', uuid)">
+                <Link :href="route('perangkat-desa.edit', uuid)">
                     <SquarePen /> Ubah
                 </Link>
             </Button>
@@ -83,11 +89,11 @@ onMounted(fetchDetailPenduduk);
     >
         <div class="w-full">
             <h2 class="text-lg font-bold p-2">
-                Detail Data {{ items.nama_lengkap }}
+                Detail Data {{ item.penduduk?.nama_lengkap }}
             </h2>
             <table class="w-full gap-2 table">
                 <tr
-                    v-for="row in rowsShow.slice(0, -3)"
+                    v-for="row in rowsShow"
                     :key="row.key"
                     class="even:bg-card/30 p-2"
                 >
@@ -97,8 +103,8 @@ onMounted(fetchDetailPenduduk);
                     <td>
                         {{
                             row.format
-                                ? row.format(items[row.key], items)
-                                : items[row.key]
+                                ? row.format(item[row.key], item)
+                                : item[row.key]
                         }}
                     </td>
                 </tr>
@@ -110,30 +116,16 @@ onMounted(fetchDetailPenduduk);
                     ? imageUrl
                     : 'https://placehold.co/300x400?text=No+Photo'
             "
-            alt="Foto Penduduk"
+            alt="Foto Perangkat Desa"
             loading="lazy"
             class="rounded-md w-[450px] h-[600px] object-cover"
         />
     </div>
 
-    <Domisilisection
-        :items="items"
-        :createDomisiliPenduduk="createDomisiliPenduduk"
-        :editDomisiliPenduduk="editDomisiliPenduduk"
-        :deleteDomisili="deleteDomisili"
-    />
-
-    <FormDialogDomisili
-        v-model:isOpen="isFormDialogDomisiliOpen"
-        :mode="dialogMode"
-        :initialData="currentPendudukData"
-        @success="fetchDetailPenduduk"
-    />
-
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
-        :title="'Hapus Data Penduduk'"
-        :description="'Apakah anda yakin ingin menghapus data penduduk ini?'"
+        title="Hapus Perangkat Desa"
+        description="Apakah anda yakin ingin menghapus perangkat desa ini?"
         :onConfirm="onConfirmDelete"
         :onCancle="onCancleDelete"
     />

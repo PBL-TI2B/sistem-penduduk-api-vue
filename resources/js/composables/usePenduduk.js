@@ -11,7 +11,8 @@ export function usePenduduk(uuid) {
     const imageUrl = ref(null);
     const fotoFile = ref(null);
 
-    const fetchPenduduk = async () => {
+
+    const fetchDetailPenduduk = async () => {
         try {
             const res = await apiGet(`penduduk/${uuid}`);
             items.value = res.data;
@@ -81,7 +82,7 @@ export function usePenduduk(uuid) {
         try {
             await apiDelete(`penduduk/${uuid}`);
             toast.success("Data penduduk berhasil dihapus");
-            await fetchPenduduk();
+            router.visit("/penduduk");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus data penduduk.");
         }
@@ -91,7 +92,7 @@ export function usePenduduk(uuid) {
         try {
             await apiDelete(`/domisili/${items.value.domisili?.uuid}`);
             toast.success("Data domisili berhasil dihapus");
-            await fetchPenduduk();
+            router.visit("/domisili");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus data domisili.");
         }
@@ -106,7 +107,7 @@ export function usePenduduk(uuid) {
     return {
         items,
         imageUrl,
-        fetchPenduduk,
+        fetchDetailPenduduk,
         createPenduduk,
         editPenduduk,
         deletePenduduk,

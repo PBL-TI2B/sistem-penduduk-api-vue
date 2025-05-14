@@ -17,38 +17,6 @@ defineOptions({
     layout: PublicLayout,
 });
 
-// Optional: Scroll Effect Navbar
-const isScrolled = ref(false);
-
-const handleScroll = () => {
-    isScrolled.value = window.scrollY > 0;
-    const nav = document.querySelector("nav");
-    if (!nav) return;
-    if (isScrolled.value) {
-        nav.classList.add(
-            "bg-primary-foreground",
-            "text-gray-600",
-            "drop-shadow-md"
-        );
-        nav.classList.remove("text-white");
-    } else {
-        nav.classList.remove(
-            "bg-primary-foreground",
-            "text-gray-600",
-            "drop-shadow-md"
-        );
-        nav.classList.add("text-white");
-    }
-};
-
-onMounted(() => {
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-});
-
-onUnmounted(() => {
-    window.removeEventListener("scroll", handleScroll);
-});
 const activeTab = ref("penduduk"); // nilai default tab
 </script>
 

@@ -90,4 +90,11 @@ class KurangMampuController extends Controller
         $kurangMampu->delete();
         return new ApiResource(true, 'Data Kurang Mampu Berhasil Dihapus', null);
     }
+
+    public function exportPdf()
+    {
+        $kurangMampu = KurangMampu::get();
+        $pdf = \PDF::loadView('exports.kurang-mampu', compact('kurangMampu'));
+        return $pdf->download('kurang-mampu.pdf');
+    }
 }
