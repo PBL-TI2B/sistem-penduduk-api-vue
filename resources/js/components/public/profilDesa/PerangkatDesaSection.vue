@@ -1,14 +1,29 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { apiGet } from "@/utils/api";
+import { computed } from "vue";
 
+const hasData = computed(() => perangkatDesa.value.length > 0);
 const perangkatDesa = ref([]);
 const isLoading = ref(true);
 
 const fetchPerangkatDesa = async () => {
     try {
         const res = await apiGet("/perangkat-desa");
-        perangkatDesa.value = res.data.data; // <-- ambil array data di dalam pagination
+        perangkatDesa.value = res.data.data;
+
+        if (item.value.foto) {
+            const resImage = await axios.get(
+                `/api/v1/penduduk/foto/${item.value.foto}`,
+                {
+                    responseType: "blob",
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("token")}`,
+                    },
+                }
+            );
+            imageUrl.value = URL.createObjectURL(resImage.data);
+        }
     } catch (error) {
         console.error("Gagal mengambil data perangkat desa:", error);
     } finally {
@@ -42,19 +57,28 @@ onMounted(fetchPerangkatDesa);
                 class="bg-green-800 w-64 h-84 rounded-xl shadow-xl hover:drop-shadow-xl text-center overflow-hidden"
             >
                 <img
-                    :src="`/api/penduduk/foto/${
-                        perangkat.foto || 'default.jpg'
-                    }`"
-                    class="w-64 h-64 object-cover"
+                    :src="
+                        imageUrl
+                            ? imageUrl
+                            : 'https://placehold.co/300x400?text=No+Photo'
+                    "
                     alt="Foto Perangkat Desa"
+                    loading="lazy"
+                    class="rounded-md w-[450px] h-[270px] object-cover"
                 />
 
-                <div class="py-4 px-2">
+                <div class="py-2 px-2">
                     <div class="font-semibold text-white text-lg">
-                        {{ perangkat.nama_lengkap || "Nama tidak tersedia." }}
+                        {{
+                            perangkat.penduduk?.nama_lengkap ||
+                            "Nama tidak tersedia."
+                        }}
                     </div>
                     <div class="text-sm text-white">
-                        {{ perangkat.jabatan }}
+                        {{
+                            perangkat.jabatan?.jabatan ||
+                            "Jabatan tidak tersedia."
+                        }}
                     </div>
                 </div>
             </div>
