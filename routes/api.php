@@ -1,14 +1,35 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaController,
-    DusunController, JabatanController, PeriodeJabatanController, GaleriController,
-    BeritaController, UserController, PerangkatDesaController, KematianController,
-    PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
-    AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
-    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
+use App\Http\Controllers\Api\V1\{
+    AuthController,
+    PendudukController,
+    DesaController,
+    DusunController,
+    JabatanController,
+    PeriodeJabatanController,
+    GaleriController,
+    BeritaController,
+    UserController,
+    PerangkatDesaController,
+    KematianController,
+    PindahanController,
+    KartuKeluargaController,
+    KurangMampuController,
+    NotifikasiPenerimaController,
+    AnggotaKeluargaController,
+    StatusKeluargaController,
+    KategoriBantuanController,
+    BantuanController,
+    DomisiliController,
+    KelahiranController,
+    NotifikasiController,
+    PekerjaanController,
+    InfografisController,
     PenerimaBantuanController,
-    PendidikanController, RtController, RwController
+    PendidikanController,
+    RtController,
+    RwController
 };
 
 Route::prefix('v1')->group(function () {
