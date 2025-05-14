@@ -1,18 +1,64 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import axios from "axios";
 import { animate } from "motion-v";
 import { Mars, ShieldUser, UsersRound, Venus } from "lucide-vue-next";
 
-const statistics = [
-    { id: 1, name: "Penduduk", value: 1152, icon: UsersRound },
-    { id: 2, name: "Kepala Keluarga", value: 304, icon: ShieldUser },
-    { id: 3, name: "Laki-laki", value: 607, icon: Mars },
-    { id: 4, name: "Perempuan", value: 547, icon: Venus },
-];
+// Gunakan ref agar bisa diubah ketika data dari API masuk
+const statistics = ref([
+    { id: 1, name: "Penduduk", value: 0, icon: UsersRound },
+    { id: 2, name: "Kepala Keluarga", value: 0, icon: ShieldUser },
+    { id: 3, name: "Laki-laki", value: 0, icon: Mars },
+    { id: 4, name: "Perempuan", value: 0, icon: Venus },
+]);
 
-const displayValues = ref(Array(statistics.length).fill(0));
+const displayValues = ref(Array(statistics.value.length).fill(0));
 
-onMounted(() => {
+onMounted(async () => {
+    // Ambil data dari API
+    try {
+        const response = await axios.get(
+            "http://127.0.0.1:8000/api/v1/statistik/demografi"
+        );
+        if (response.data.success) {
+            const data = response.data.data;
+
+            // Perbarui data statistik
+            statistics.value = [
+                {
+                    id: 1,
+                    name: "Penduduk",
+                    value: data.total_penduduk,
+                    icon: UsersRound,
+                },
+                {
+                    id: 2,
+                    name: "Kepala Keluarga",
+                    value: data.jumlah_kepala_keluarga,
+                    icon: ShieldUser,
+                },
+                {
+                    id: 3,
+                    name: "Laki-laki",
+                    value: data.jumlah_laki_laki,
+                    icon: Mars,
+                },
+                {
+                    id: 4,
+                    name: "Perempuan",
+                    value: data.jumlah_perempuan,
+                    icon: Venus,
+                },
+            ];
+
+            // Reset tampilan angka animasi
+            displayValues.value = Array(statistics.value.length).fill(0);
+        }
+    } catch (error) {
+        console.error("Gagal mengambil data statistik:", error);
+    }
+
+    // Animasi scroll
     let hasAnimated = false;
     const isScrolled = window.scrollY > 0;
 
@@ -28,7 +74,7 @@ onMounted(() => {
 
         if (rect.top <= windowHeight && rect.bottom >= 0) {
             hasAnimated = true;
-            statistics.forEach((stat, index) => {
+            statistics.value.forEach((stat, index) => {
                 animate(0, stat.value, {
                     duration: 2,
                     easing: "ease-out",
@@ -41,8 +87,7 @@ onMounted(() => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    if (isScrolled) handleScroll();
+    if (isScrolled) handleScroll(); // langsung animasi kalau sudah di scroll
 });
 </script>
 
