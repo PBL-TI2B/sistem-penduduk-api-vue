@@ -15,7 +15,7 @@ class PenerimaBantuan extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid(); 
+                $model->uuid = Str::uuid();
             }
         });
     }
@@ -25,7 +25,7 @@ class PenerimaBantuan extends Model
         return 'uuid';
     }
 
-    public function kurang_mampu()
+    public function kurangMampu()
     {
         return $this->belongsTo(KurangMampu::class, 'kurang_mampu_id', 'id');
     }
