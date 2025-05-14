@@ -68,4 +68,11 @@ class AnggotaKeluargaController extends Controller
         $anggotaKeluarga->delete();
         return new ApiResource(true, 'Data Anggota Keluarga Berhasil Dihapus', null);
     }
+
+    public function exportPdf()
+    {
+        $anggotaKeluarga = AnggotaKeluarga::get();
+        $pdf = \PDF::loadView('exports.anggota-keluarga', compact('anggotaKeluarga'));
+        return $pdf->download('anggota-keluarga.pdf');
+    }
 }

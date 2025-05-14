@@ -58,4 +58,11 @@ class PekerjaanController extends Controller
         $pekerjaan->delete();
         return new ApiResource(true, 'Daftar Pekerjaan Berhasil Dihapus', null);
     }
+
+    public function exportPdf()
+    {
+        $pekerjaan = Pekerjaan::get();
+        $pdf = \PDF::loadView('exports.pekerjaan', compact('pekerjaan'));
+        return $pdf->download('pekerjaan.pdf');
+    }
 }
