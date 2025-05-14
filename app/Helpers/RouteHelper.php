@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Route;
 
 function RoutePermission($path, $controller, $model, $publicGet = false) {
     Route::prefix($path)->group(function () use ($path, $controller, $model, $publicGet) {
@@ -20,4 +21,3 @@ function RoutePermission($path, $controller, $model, $publicGet = false) {
             ->middleware(["auth:sanctum", "permission:{$path}.delete"]);
     });
 }
-

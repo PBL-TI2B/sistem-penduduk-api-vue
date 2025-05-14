@@ -39,7 +39,7 @@ class RolePermissionSeeder extends Seeder
         $admin = Role::findByName('admin');
         $rt = Role::findByName('rt');
         $rw = Role::findByName('rw');
-        
+      
         $superAdmin->givePermissionTo(Permission::all());
         $admin->givePermissionTo([
             'penerima-bantuan.read', 'penerima-bantuan.create', 'penerima-bantuan.update',

@@ -98,6 +98,7 @@ const onSubmit = handleSubmit(async (formValues) => {
                 : "Berhasil menambahkan data domisili"
         );
     } catch (error) {
+
         useErrorHandler(error, "Gagal menyimpan data domisili");
     }
 });
@@ -124,6 +125,7 @@ watch(
     },
     { immediate: true }
 );
+
 
 onMounted(() => {
     loadRtData();
