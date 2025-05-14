@@ -30,6 +30,13 @@ Route::prefix('v1')->group(function () {
     // AUTHENTICATED ROUTES
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/penduduk/export/pdf', [PendudukController::class, 'exportPdf']);
+        Route::get('/penduduk/export/excel', [PendudukController::class, 'exportExcel']);
+        Route::get('/dusun/export/pdf', [DusunController::class, 'exportPdf']);
+        Route::get('/kurang-mampu/export/pdf', [KurangMampuController::class, 'exportPdf']);
+        Route::get('/pekerjaan/export/pdf', [PekerjaanController::class, 'exportPdf']);
+        Route::get('/pendidikan/export/pdf', [PendidikanController::class, 'exportPdf']);
+        Route::get('/perangkat-desa/export/pdf', [PerangkatDesaController::class, 'exportPdf']);
+        Route::get('/pindahan/export/pdf', [PindahanController::class, 'exportPdf']);
 
         
         Route::get('/auth/me', [AuthController::class, 'me']);
