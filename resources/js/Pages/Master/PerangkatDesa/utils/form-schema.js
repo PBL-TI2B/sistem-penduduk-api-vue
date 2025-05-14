@@ -8,10 +8,7 @@ export const formSchemaPerangkatDesa = toTypedSchema(
         periode_jabatan_id: z.string(),
         dusun_id: z.string(),
         desa_id: z.string(),
-        status_keaktifan: z
-            .string()
-            .oneOf(["aktif", "nonaktif"], "Status keaktifan tidak valid")
-            .required("Status keaktifan harus diisi"),
+        status_keaktifan: z.string(),
         rt_id: z.string(),
         rw_id: z.string(),
     })
