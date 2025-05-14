@@ -14,8 +14,15 @@ defineOptions({
         <div
             class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 max-w-7xl mx-auto mt-4"
         >
-            <BeritaUtamaSection />
-            <BeritaLainnyaSection />
+            <!-- Konten utama mengambil 2 kolom di layar besar -->
+            <div class="lg:col-span-2">
+                <BeritaUtamaSection />
+            </div>
+
+            <!-- Sidebar berita lainnya di pojok kanan atas -->
+            <div class="lg:col-span-1">
+                <BeritaLainnyaSection />
+            </div>
         </div>
     </div>
 </template>
