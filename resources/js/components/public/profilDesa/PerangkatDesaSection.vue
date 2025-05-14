@@ -28,6 +28,9 @@ onMounted(fetchPerangkatDesa);
         <div v-if="isLoading" class="text-gray-500">
             Memuat data perangkat...
         </div>
+        <div v-else-if="!hasData" class="text-gray-500">
+            Belum ada data perangkat desa.
+        </div>
 
         <div
             v-else
