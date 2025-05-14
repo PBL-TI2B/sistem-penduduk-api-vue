@@ -62,7 +62,6 @@ const selectedStatus = computed({
     set: (val) => setValues({ status_tempat_tinggal: val }),
 });
 
-// Load RT Data
 const loadRtData = async () => {
     try {
         const res = await apiGet("/rt");
@@ -72,7 +71,6 @@ const loadRtData = async () => {
     }
 };
 
-// Submit Handler
 const onSubmit = handleSubmit(async (formValues) => {
     try {
         const formData = new FormData();
@@ -100,12 +98,10 @@ const onSubmit = handleSubmit(async (formValues) => {
                 : "Berhasil menambahkan data domisili"
         );
     } catch (error) {
-        console.error("Error submitting:", error);
         useErrorHandler(error, "Gagal menyimpan data domisili");
     }
 });
 
-// Watch untuk initial data dan dialog state
 watch(
     () => props.isOpen,
     (isOpen) => {
@@ -129,7 +125,6 @@ watch(
     { immediate: true }
 );
 
-// Initialize
 onMounted(() => {
     loadRtData();
 });
