@@ -22,7 +22,7 @@ class BantuanController extends Controller
             'uuid' => 'nullable|uuid',
             'nama_bantuan' => 'required|string|max:50',
             'kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
-            'jenis_bantuan' => 'required|in:tunai,pangan,pendidikan,kesehatan,perumahan,lainnya',
+            // 'kategori_bantuan' => 'required|in:tunai,pangan,pendidikan,kesehatan,perumahan,lainnya',
             'nominal' => 'nullable|string|max:50',
             'periode' => 'required|string|max:50',
             'lama_periode' => 'required|string|max:50',
@@ -50,7 +50,7 @@ class BantuanController extends Controller
         $validator = Validator::make($request->all(), [
             'nama_bantuan' => 'required|string|max:50',
             'kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
-            'jenis_bantuan' => 'required|in:tunai,pangan,pendidikan,kesehatan,perumahan,lainnya',
+            // 'kategori_bantuan' => 'required|in:tunai,pangan,pendidikan,kesehatan,perumahan,lainnya',
             'nominal' => 'nullable|string|max:50',
             'periode' => 'required|string|max:50',
             'lama_periode' => 'required|string|max:50',

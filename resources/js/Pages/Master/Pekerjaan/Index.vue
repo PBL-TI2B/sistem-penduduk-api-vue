@@ -2,16 +2,6 @@
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
-
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 
@@ -84,6 +74,7 @@ watch(page, fetchData);
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
+            :export-route="'penduduk'"
             @update:page="page = $event"
         />
     </div>

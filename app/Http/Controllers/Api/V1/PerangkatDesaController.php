@@ -109,4 +109,11 @@ class PerangkatDesaController extends Controller
             'data' => null,
         ]);
     }
+
+    public function exportPdf()
+    {
+        $perangkatDesa = PerangkatDesa::get();
+        $pdf = \PDF::loadView('exports.perangkat-desa', compact('perangkatDesa'));
+        return $pdf->download('perangkat-desa.pdf');
+    }
 }

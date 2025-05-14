@@ -1,0 +1,110 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import Chart from "chart.js/auto";
+import axios from "axios";
+
+const tahun = 2021;
+const chartInstance = ref(null);
+
+const getDataPerBulan = (data) => {
+    const perBulan = Array(12).fill(0);
+    data.forEach((item) => {
+        const bulanIndex = item.bulan - 1; // 0-indexed
+        perBulan[bulanIndex] = item.jumlah;
+    });
+    return perBulan;
+};
+
+onMounted(async () => {
+    const ctx = document
+        .getElementById("kelahiranKematianChart")
+        ?.getContext("2d");
+    if (!ctx) return;
+
+    try {
+        const [kematianRes, kelahiranRes] = await Promise.all([
+            axios.get(
+                "http://127.0.0.1:8000/api/v1/statistik/kematian?tahun=2021"
+            ),
+            axios.get(
+                "http://127.0.0.1:8000/api/v1/statistik/kelahiran?tahun=2021"
+            ),
+        ]);
+
+        const kematianData = getDataPerBulan(kematianRes.data.data);
+        const kelahiranData = getDataPerBulan(kelahiranRes.data.data);
+
+        if (chartInstance.value) {
+            chartInstance.value.destroy(); // Hapus chart lama
+        }
+
+        chartInstance.value = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [
+                    "Januari",
+                    "Februari",
+                    "Maret",
+                    "April",
+                    "Mei",
+                    "Juni",
+                    "Juli",
+                    "Agustus",
+                    "September",
+                    "Oktober",
+                    "November",
+                    "Desember",
+                ],
+                datasets: [
+                    {
+                        label: "Kelahiran",
+                        data: kelahiranData,
+                        borderColor: "#F59E0B",
+                        backgroundColor: "#F59E0B",
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: "Kematian",
+                        data: kematianData,
+                        borderColor: "#14532D",
+                        backgroundColor: "#14532D",
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: "bottom" },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0,
+                    },
+                },
+            },
+        });
+    } catch (error) {
+        console.error("Gagal mengambil data:", error);
+    }
+});
+</script>
+<template>
+    <section>
+        <div class="flex items-center justify-between mb-4 mt-10">
+            <h2 class="text-xl font-bold text-[#233D34]">
+                Angka Kelahiran dan Kematian
+            </h2>
+            <span class="text-sm md:text-lg text-gray-500">{{ tahun }}</span>
+        </div>
+        <canvas id="kelahiranKematianChart" height="100"></canvas>
+    </section>
+</template>

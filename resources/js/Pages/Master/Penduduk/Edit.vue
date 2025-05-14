@@ -26,6 +26,7 @@ import { toast } from "vue-sonner";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { formSchemaPenduduk } from "./utils/form-schema";
+import { usePenduduk } from "@/composables/usePenduduk";
 
 // Routing ID
 const { uuid } = usePage().props;
@@ -48,28 +49,11 @@ const { handleSubmit, setValues, resetForm } = useForm({
     validationSchema: formSchemaPenduduk,
 });
 
+const { editPenduduk } = usePenduduk();
+
 // Submit edit
 const onSubmit = handleSubmit(async (values) => {
-    try {
-        const formData = new FormData();
-        formData.append("_method", "PUT");
-
-        for (const [key, value] of Object.entries(values)) {
-            formData.append(key, value ?? "");
-        }
-
-        if (fotoFile.value) {
-            formData.append("foto", fotoFile.value);
-        }
-
-        await apiPost(`/penduduk/${uuid}`, formData);
-        resetForm();
-
-        toast.success("Berhasil memperbarui data");
-        router.visit("/penduduk");
-    } catch (error) {
-        useErrorHandler(error);
-    }
+    editPenduduk(values, resetForm);
 });
 
 // Load saat mount
@@ -206,8 +190,19 @@ onMounted(async () => {
                 </div>
             </div>
 
-            <div class="col-span-2">
-                <Button type="submit" class="w-full">Simpan Perubahan</Button>
+            <div class="flex col-span-2 justify-between items-center">
+                <div>
+                    <p>Peringatan</p>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <Button
+                        @click="router.visit('/penduduk')"
+                        type="button"
+                        variant="secondary"
+                        >Batal</Button
+                    >
+                    <Button type="submit">Simpan</Button>
+                </div>
             </div>
         </form>
     </div>

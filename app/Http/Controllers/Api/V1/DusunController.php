@@ -8,6 +8,7 @@ use App\Http\Resources\DusunResource;
 use App\Http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DusunController extends Controller
 {
@@ -96,5 +97,12 @@ class DusunController extends Controller
             'success' => true,
             'message' => 'Dusun Deleted',
         ]);
+    }
+
+    public function exportPdf()
+    {
+        $dusun = Dusun::get();
+        $pdf = \PDF::loadView('exports.dusun', compact('dusun'));
+        return $pdf->download('dusun.pdf');
     }
 }

@@ -18,7 +18,10 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import { ChevronLeft, ChevronRight } from "lucide-vue-next";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import axios from "axios";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import Cookies from "js-cookie";
 
 const props = defineProps({
     items: Array,
@@ -42,6 +45,18 @@ const props = defineProps({
     isLoading: {
         type: Boolean,
         default: false,
+    },
+    exportRoute: {
+        type: String,
+        default: "",
+    },
+    isExportable: {
+        type: Boolean,
+        default: false,
+    },
+    label: {
+        type: String,
+        default: "",
     },
 });
 
@@ -82,26 +97,71 @@ const visiblePages = computed(() => {
 
     return range;
 });
+
+const exportFormat = ref("");
+
+const handleExport = async (format) => {
+    try {
+        const response = await axios.get(
+            `/api/v1/${props.exportRoute}/export/${format}`,
+            {
+                responseType: "blob",
+                headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+            }
+        );
+
+        const fileExtension = format === "pdf" ? "pdf" : "xlsx";
+        const filename = `data-${props.exportRoute}.${fileExtension}`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        useErrorHandler(error, "Gagal mengunduh file, silakan coba lagi");
+    }
+};
 </script>
 
 <template>
     <div class="bg-primary-foreground p-4 rounded-lg overflow-x-auto">
         <div class="flex justify-between items-center">
-            <Select>
-                <SelectTrigger class="bg-primary-foreground">
-                    <SelectValue placeholder="Export" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Export Ke</SelectLabel>
-                        <SelectItem value="pdf">
-                            <FileText />
-                            Pdf
-                        </SelectItem>
-                        <SelectItem value="excel"> <Sheet /> Excel </SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            <div class="flex gap-4">
+                <div class="grid">
+                    <h1 class="text-lg font-bold">
+                        {{ props.label }}
+                    </h1>
+                    <p class="text-sm text-gray-600">
+                        Total {{ props.items.length }} data
+                    </p>
+                </div>
+                <Select
+                    v-if="isExportable"
+                    v-model="exportFormat"
+                    @update:modelValue="handleExport"
+                >
+                    <SelectTrigger class="bg-primary-foreground">
+                        <SelectValue placeholder="Export" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Export Ke</SelectLabel>
+                            <SelectItem value="pdf">
+                                <FileText />
+                                Pdf
+                            </SelectItem>
+                            <SelectItem value="excel">
+                                <Sheet /> Excel
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
             <div class="flex gap-2 justify-end items-center">
                 <Button
                     :disabled="page <= 1"
@@ -148,7 +208,7 @@ const visiblePages = computed(() => {
             <TableBody>
                 <TableRow
                     v-if="isLoading"
-                    v-for="i in 10"
+                    v-for="i in perPage"
                     :key="'skeleton-' + i"
                 >
                     <TableCell v-for="n in columns.length + 1" :key="n">
@@ -177,7 +237,7 @@ const visiblePages = computed(() => {
                         <Button
                             v-for="(action, index) in actions"
                             :key="index"
-                            variant="ghost"
+                            variant="secondary"
                             @click="() => action.handler(item)"
                             class="mr-2 cursor-pointer"
                         >
