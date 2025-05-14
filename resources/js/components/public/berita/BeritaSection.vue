@@ -1,29 +1,37 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { apiGet } from "@/utils/api"; // pastikan ini helper axios-mu
+import { apiGet } from "@/utils/api";
 
 import { CalendarDays, Eye, User } from "lucide-vue-next";
 
 const newsList = ref([]);
 const isLoading = ref(true);
 const isLarge = ref(true);
+const hasData = ref(true);
 
 const fetchBerita = async () => {
     try {
         const res = await apiGet("/berita");
-        newsList.value = res.data.data.data.map((item) => ({
-            id: item.id,
-            title: item.judul,
-            image: item.thumbnail
-                ? `/storage/${item.thumbnail}`
-                : "/images/berita-lain.png",
-            date: item.tanggal_post,
-            views: item.jumlah_dilihat,
-            excerpt: item.konten.slice(0, 60) + "...",
-            author: item.author ?? "Admin",
-        }));
+        const apiData = res.data.data.data;
+
+        if (apiData.length === 0) {
+            hasData.value = false;
+        } else {
+            newsList.value = apiData.map((item) => ({
+                id: item.id,
+                title: item.judul,
+                image: item.thumbnail
+                    ? `/storage/${item.thumbnail}`
+                    : "/images/berita-lain.png",
+                date: item.tanggal_post,
+                views: item.jumlah_dilihat,
+                excerpt: item.konten.slice(0, 60) + "...",
+                author: item.author ?? "Admin",
+            }));
+        }
     } catch (error) {
         console.error("Gagal mengambil data berita:", error);
+        hasData.value = false;
     } finally {
         isLoading.value = false;
     }
@@ -34,8 +42,13 @@ onMounted(fetchBerita);
 
 <template>
     <section>
+        <!-- Loading -->
         <div v-if="isLoading" class="text-gray-500">Memuat berita...</div>
 
+        <!-- Jika data kosong -->
+        <div v-else-if="!hasData" class="text-gray-500">Belum ada berita.</div>
+
+        <!-- Jika data tersedia -->
         <div
             v-else
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
