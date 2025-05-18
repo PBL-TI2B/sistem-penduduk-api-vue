@@ -37,7 +37,7 @@ const columnsIndex = [
         key: "kurang_mampu_id",
         format: (val, row) => row.kurang_mampu_id?.jumlah_tanggungan || "-",
     },
-    { label: "Status Valiasi", key: "status" },
+    { label: "Status Bantuan", key: "status" },
 ];
 
 const actionsIndex = [
