@@ -19,7 +19,7 @@ class KartuKeluarga extends Model
         // Menghasilkan UUID ketika membuat record baru
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = (string) Str::uuid(); 
+                $model->uuid = (string) Str::uuid();
             }
         });
     }
@@ -34,5 +34,10 @@ class KartuKeluarga extends Model
     public function anggotaKeluarga()
     {
         return $this->hasMany(AnggotaKeluarga::class, 'kk_id', 'uuid');
+    }
+
+    public function rt()
+    {
+        return $this->belongsTo(Rt::class, 'rt_id', 'id');
     }
 }

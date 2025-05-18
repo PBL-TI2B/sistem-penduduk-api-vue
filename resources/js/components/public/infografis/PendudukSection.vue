@@ -39,7 +39,7 @@ onMounted(async () => {
                 alt="Total Penduduk"
                 class="w-12 h-12"
             />
-            <div>
+            <div class="text-start">
                 <p class="text-sm md:text-lg">TOTAL PENDUDUK</p>
                 <p class="text-xl font-bold">
                     {{ statistik.total_penduduk }} Jiwa
@@ -54,7 +54,7 @@ onMounted(async () => {
                 alt="Kepala Keluarga"
                 class="w-12 h-12"
             />
-            <div>
+            <div class="text-start">
                 <p class="text-sm md:text-lg">KEPALA KELUARGA</p>
                 <p class="text-xl font-bold">
                     {{ statistik.jumlah_kepala_keluarga }} Jiwa
@@ -65,7 +65,7 @@ onMounted(async () => {
             class="bg-[#CD8B76] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
         >
             <img src="@/images/laki.png" alt="Laki-Laki" class="w-12 h-12" />
-            <div>
+            <div class="text-start">
                 <p class="text-sm md:text-lg">LAKI-LAKI</p>
                 <p class="text-xl font-bold">
                     {{ statistik.jumlah_laki_laki }} Jiwa
@@ -80,7 +80,7 @@ onMounted(async () => {
                 alt="Perempuan"
                 class="w-12 h-12"
             />
-            <div>
+            <div class="text-start">
                 <p class="text-sm md:text-lg">PEREMPUAN</p>
                 <p class="text-xl font-bold">
                     {{ statistik.jumlah_perempuan }} Jiwa

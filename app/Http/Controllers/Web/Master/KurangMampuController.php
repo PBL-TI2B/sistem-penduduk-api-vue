@@ -22,7 +22,8 @@ class KurangMampuController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Master/KurangMampu/Create');
+        abort(404);
+        // return Inertia::render('Master/KurangMampu/Create');
     }
 
     /**
@@ -38,9 +39,10 @@ class KurangMampuController extends Controller
      */
     public function show(KurangMampu $kurangMampu)
     {
-        return Inertia::render('Master/KurangMampu/Show', [
-            'uuid' => $kurangMampu->uuid
-        ]);
+        abort(404);
+        // return Inertia::render('Master/KurangMampu/Show', [
+        //     'uuid' => $kurangMampu->uuid
+        // ]);
     }
 
     /**
@@ -48,9 +50,10 @@ class KurangMampuController extends Controller
      */
     public function edit(KurangMampu $kurangMampu)
     {
-        return Inertia::render('Master/KurangMampu/Edit', [
-            'uuid' => $kurangMampu->uuid
-        ]);
+        abort(404);
+        // return Inertia::render('Master/KurangMampu/Edit', [
+        //     'uuid' => $kurangMampu->uuid
+        // ]);
     }
 
     /**

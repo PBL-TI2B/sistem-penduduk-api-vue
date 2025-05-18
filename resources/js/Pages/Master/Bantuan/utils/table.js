@@ -8,7 +8,7 @@ const columnsIndex = [
         key: "kategori_bantuan",
         format: (val, row) => row.kategori_bantuan?.kategori || "-",
     },
-    { label: "Nominal", key: "nominal",
+    { label: "Nominal (Rp.)", key: "nominal",
         format: (value) => {
             return value?? '-';
         },
@@ -40,7 +40,7 @@ const rowsShow = [
         key: "kategori_bantuan",
         format: (val, row) => row.kategori_bantuan?.kategori || "-",
     },
-    { label: "Nominal", key: "nominal" },
+    { label: "Nominal (Rp.)", key: "nominal" },
     { label: "Periode", key: "periode" },
     { label: "Lama Periode", key: "lama_periode" },
     { label: "Instansi", key: "instansi" },

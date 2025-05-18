@@ -2,33 +2,42 @@ import { Eye } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
 const columnsIndex = [
-    // { label: "Nama Penduduk", key: "anggota_keluarga_id" },
     {
         label: "Nama Penduduk",
-        key: "anggota_keluarga",
-        format: (val, row) => row.anggota_keluarga?.penduduk_id?.nama_lengkap || "-",
+        key: "kurang_mampu_id",
+        format: (val, row) => row.kurang_mampu_id?.nama_penerima || "-",
     },
-    { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari",
-        format: (value) => {
-            return value?? '-';
+    {
+        label: "Nama Bantuan",
+        key: "bantuan_id",
+        format: (val, row) => row.bantuan_id?.nama_bantuan || "-",
+    },
+    {
+        label: "Pendapatan Per-Hari (Rp.)",
+        key: "kurang_mampu_id",
+        format: (val, row) => {
+            const value = row.kurang_mampu_id?.pendapatan_per_hari;
+            return value != null
+                ? Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 })
+                : "-";
         },
     },
-    { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan",
-        format: (value) => {
-            return value?? '-';
+    {
+        label: "Pendapatan Per-Bulan (Rp.)",
+        key: "kurang_mampu_id",
+        format: (val, row) => {
+            const value = row.kurang_mampu_id?.pendapatan_per_hari;
+            return value != null
+                ? Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 })
+                : "-";
         },
     },
-    { label: "Tanggungan", key: "jumlah_tanggungan" ,
-        format: (value) => {
-            return value?? '0';
-        },
+    {
+        label: "Tanggungan",
+        key: "kurang_mampu_id",
+        format: (val, row) => row.kurang_mampu_id?.jumlah_tanggungan || "-",
     },
-    { label: "Status Valiasi", key: "status_validasi" },
-    { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value?? '-';
-        },
-    },
+    { label: "Status Bantuan", key: "status" },
 ];
 
 const actionsIndex = [
@@ -48,7 +57,7 @@ const rowsShow = [
 //         key: "anggota_keluarga",
 //         format: (val, row) => row.anggota_keluarga?.kategori || "-",
 //     },
-//     { label: "Nominal", key: "nominal" },
+//     { label: "Nominal (Rp.)", key: "nominal" },
 //     { label: "Periode", key: "periode" },
 //     { label: "Lama Periode", key: "lama_periode" },
 //     { label: "Instansi", key: "instansi" },
