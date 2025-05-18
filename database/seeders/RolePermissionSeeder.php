@@ -20,33 +20,11 @@ class RolePermissionSeeder extends Seeder
         $rw = Role::firstOrCreate(['name' => 'rw']);
 
         $resources = [
-            'rt',
-            'rw',
-            'desa',
-            'user',
-            'dusun',
-            'berita',
-            'galeri',
-            'jabatan',
-            'bantuan',
-            'kematian',
-            'penduduk',
-            'domisili',
-            'pindahan',
-            'pekerjaan',
-            'kelahiran',
-            'pendidikan',
-            'notifikasi',
-            'kurang-mampu',
-            'kartu-keluarga',
-            'perangkat-desa',
-            'status-keluarga',
-            'riwayat-bantuan',
-            'periode-jabatan',
-            'penerima-bantuan',
-            'anggota-keluarga',
-            'kategori-bantuan',
-            'notifikasi-penerima'
+            'rt', 'rw', 'desa', 'user', 'dusun', 'berita', 'galeri', 'jabatan',
+            'bantuan', 'kematian', 'penduduk', 'domisili', 'pindahan', 'pekerjaan',
+            'kelahiran', 'pendidikan', 'notifikasi', 'kurang-mampu', 'kartu-keluarga',
+            'perangkat-desa', 'status-keluarga', 'riwayat-bantuan', 'periode-jabatan',
+            'penerima-bantuan', 'anggota-keluarga', 'kategori-bantuan', 'notifikasi-penerima'
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];
