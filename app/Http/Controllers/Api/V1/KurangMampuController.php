@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\KurangMampu;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
+use App\Http\Resources\KurangMampuResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,8 +16,14 @@ class KurangMampuController extends Controller
      */
     public function index()
     {
-        $kurangMampu = KurangMampu::with(['anggotaKeluarga'])->paginate(10);
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
+        $kurangMampu = KurangMampu::with([
+            'anggotaKeluarga'
+        ])->paginate(10);
+
+        $collection = KurangMampuResource::collection($kurangMampu->getCollection());
+        $kurangMampu->setCollection(collect($collection));
+
+        return new ApiResource(true,'Daftar Data Kurang Mampu', $kurangMampu,);
     }
 
     /**
@@ -46,7 +53,7 @@ class KurangMampuController extends Controller
             'anggota_keluarga_id' => $request->anggota_keluarga_id,
         ]);
 
-        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', $kurangMampu);
+        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', new KurangMampuResource($kurangMampu));
     }
 
     /**
@@ -54,7 +61,7 @@ class KurangMampuController extends Controller
      */
     public function show(KurangMampu $kurangMampu)
     {
-        return new ApiResource(true, 'Detail Data Kurang Mampu', $kurangMampu);
+        return new ApiResource(true, 'Detail Data Kurang Mampu', new KurangMampuResource($kurangMampu));
     }
 
     /**

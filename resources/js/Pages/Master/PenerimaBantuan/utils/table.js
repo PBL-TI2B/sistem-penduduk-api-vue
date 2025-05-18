@@ -2,29 +2,42 @@ import { Eye } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
 const columnsIndex = [
-    // { label: "Nama Penduduk", key: "anggota_keluarga_id" },
     {
         label: "Nama Penduduk",
         key: "kurang_mampu_id",
         format: (val, row) => row.kurang_mampu_id?.nama_penerima || "-",
     },
-    { label: "Nama Bantuan", key: "bantuan_id",
+    {
+        label: "Nama Bantuan",
+        key: "bantuan_id",
         format: (val, row) => row.bantuan_id?.nama_bantuan || "-",
-
     },
-    { label: "Pendapatan Per-Hari (Rp.)", key: "kurang_mampu_id",
-        format: (val, row) => row.kurang_mampu_id?.pendapatan_per_hari || "-",
-
+    {
+        label: "Pendapatan Per-Hari (Rp.)",
+        key: "kurang_mampu_id",
+        format: (val, row) => {
+            const value = row.kurang_mampu_id?.pendapatan_per_hari;
+            return value != null
+                ? Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 })
+                : "-";
+        },
     },
-    { label: "Pendapatan Per-Bulan (Rp.)", key: "kurang_mampu_id",
-        format: (val, row) => row.kurang_mampu_id?.pendapatan_per_hari || "-",
+    {
+        label: "Pendapatan Per-Bulan (Rp.)",
+        key: "kurang_mampu_id",
+        format: (val, row) => {
+            const value = row.kurang_mampu_id?.pendapatan_per_hari;
+            return value != null
+                ? Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 })
+                : "-";
+        },
     },
-    { label: "Tanggungan", key: "kurang_mampu_id" ,
+    {
+        label: "Tanggungan",
+        key: "kurang_mampu_id",
         format: (val, row) => row.kurang_mampu_id?.jumlah_tanggungan || "-",
-
     },
     { label: "Status Valiasi", key: "status" },
-
 ];
 
 const actionsIndex = [
