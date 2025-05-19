@@ -89,6 +89,7 @@ class PerangkatDesaController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        
         $data = $request->all();
         $perangkatDesa->update($data);
 
