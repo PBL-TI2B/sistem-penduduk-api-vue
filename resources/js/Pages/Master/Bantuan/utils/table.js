@@ -5,12 +5,13 @@ const columnsIndex = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
     {
         label: "Kategori",
-        key: "kategori_bantuan",
-        format: (val, row) => row.kategori_bantuan?.kategori || "-",
+        key: "kategori",
+        format: (val, row) => row.kategori || "-",
     },
-    { label: "Nominal (Rp.)", key: "nominal",
+    { label: "Nominal", key: "nominal",
         format: (value) => {
-            return value?? '-';
+            if (value == null || value === "") return '-';
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 }).format(value);
         },
     },
     { label: "Periode", key: "periode" },
