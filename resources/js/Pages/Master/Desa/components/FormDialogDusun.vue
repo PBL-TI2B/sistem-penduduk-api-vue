@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { useForm } from "vee-validate";
+import { useForm, useField } from "vee-validate";
 import Button from "@/components/ui/button/Button.vue";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import Label from "@/components/ui/label/Label.vue";
 import Select from "@/components/ui/select/Select.vue";
@@ -21,106 +21,106 @@ import { apiGet, apiPost } from "@/utils/api";
 import { toast } from "vue-sonner";
 import Input from "@/components/ui/input/Input.vue";
 
-// Data
-const desaOptions = ref([]);
-
-// Props
+// Props dan Emits
 const props = defineProps({
-    isOpen: Boolean,
-    mode: {
-        type: String,
-        default: "create",
-    },
-    initialData: {
-        type: Object,
-        default: () => ({}),
-    },
+  isOpen: Boolean,
+  mode: {
+    type: String,
+    default: "create",
+  },
+  initialData: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-// Emits
 const emit = defineEmits(["update:isOpen", "success"]);
 
-// Form Setup
-const { handleSubmit, resetForm, setValues, values } = useForm({
-    initialValues: {
-        nama: "",
-        deskripsi: "",
-        lokasi: "",
-        desa_id: "",
-    },
-});
-
-const selectedDesa = computed({
-    get: () => values.desa_id,
-    set: (val) => setValues({ desa_id: val }),
-});
+// Load data desa
+const desaOptions = ref([]);
 
 const loadDesaOptions = async () => {
-    try {
-        const res = await apiGet("/desa");
-        desaOptions.value = res.data.data;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data desa");
-    }
+  try {
+    const res = await apiGet("/desa");
+    desaOptions.value = res.data.data;
+  } catch (error) {
+    useErrorHandler(error, "Gagal memuat data desa");
+  }
 };
 
+// Setup form vee-validate tanpa initialValues karena nanti kita set manual via setValues
+const { handleSubmit, resetForm, setValues } = useForm();
+
+// Setup fields
+const { value: nama } = useField("nama");
+const { value: deskripsi } = useField("deskripsi");
+const { value: lokasi } = useField("lokasi");
+const { value: desa_id } = useField("desa_id");
+
+// Submit handler
 const onSubmit = handleSubmit(async (formValues) => {
-    try {
-        const formData = new FormData();
-        for (const [key, value] of Object.entries(formValues)) {
-            formData.append(key, value ?? "");
-        }
+  try {
+    const formData = new FormData();
 
-        if (props.mode === "edit") {
-            formData.append("_method", "PUT");
-            await apiPost(`/dusun/${props.initialData?.uuid}`, formData);
-        } else {
-            await apiPost("/dusun", formData);
-        }
+    // Jika kamu mau mengirim penduduk_id dari initialData atau dari mana
+    formData.append("penduduk_id", props.initialData?.penduduk_id ?? "");
 
-        emit("success");
-        emit("update:isOpen", false);
-        toast.success(
-            props.mode === "edit"
-                ? "Berhasil memperbarui data dusun"
-                : "Berhasil menambahkan data dusun"
-        );
-    } catch (error) {
-        console.error("Error submitting:", error);
-        useErrorHandler(error, "Gagal menyimpan data dusun");
+    for (const [key, value] of Object.entries(formValues)) {
+      formData.append(key, value ?? "");
     }
+
+    if (props.mode === "edit") {
+      formData.append("_method", "PUT");
+      await apiPost(`/dusun/${props.initialData?.domisili?.uuid}`, formData);
+    } else {
+      await apiPost("/dusun", formData);
+    }
+
+    toast.success(
+      props.mode === "edit"
+        ? "Berhasil memperbarui data domisili"
+        : "Berhasil menambahkan data domisili"
+    );
+
+    emit("success");
+    emit("update:isOpen", false);
+  } catch (error) {
+    console.error("Error submitting:", error);
+    console.log("Form values:", formValues);
+    useErrorHandler(error, "Gagal menyimpan data domisili");
+  }
 });
 
+// Watch props.isOpen untuk reset atau setValues sesuai mode
 watch(
-    () => props.isOpen,
-    (isOpen) => {
-        if (isOpen && props.mode === "edit") {
-            setValues({
-                nama: props.initialData.nama || "",
-                deskripsi: props.initialData.deskripsi || "",
-                lokasi: props.initialData.lokasi || "",
-                desa_id: props.initialData.desa_id || "",
-            });
-        } else if (isOpen && props.mode === "create") {
-            setValues({
-                nama: "",
-                deskripsi: "",
-                lokasi: "",
-                desa_id: "",
-            });
-        } else if (!isOpen) {
-            resetForm();
-        }
-    },
-    { immediate: true }
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen) {
+      if (props.mode === "edit") {
+        // Set nilai field dari initialData
+        setValues({
+          nama: props.initialData.nama || "",
+          deskripsi: props.initialData.deskripsi || "",
+          lokasi: props.initialData.lokasi || "",
+          desa_id: props.initialData.desa_id || "",
+        });
+      } else {
+        resetForm();
+      }
+    } else {
+      resetForm();
+    }
+  },
+  { immediate: true }
 );
 
+// Load desa options saat mounted
 onMounted(() => {
-    loadDesaOptions();
+  loadDesaOptions();
 });
 
 const dialogTitle = computed(() =>
-    props.mode === "create" ? "Tambah Dusun" : "Edit Dusun"
+  props.mode === "create" ? "Tambah Dusun" : "Edit Dusun"
 );
 </script>
 
@@ -137,22 +137,22 @@ const dialogTitle = computed(() =>
       <form @submit.prevent="onSubmit" class="space-y-4">
         <div>
           <Label for="nama">Nama Dusun</Label>
-          <Input id="nama" v-model="values.nama" />
+          <Input id="nama" v-model="nama" />
         </div>
 
         <div>
           <Label for="deskripsi">Deskripsi</Label>
-          <Input id="deskripsi" v-model="values.deskripsi" />
+          <Input id="deskripsi" v-model="deskripsi" />
         </div>
 
         <div>
           <Label for="lokasi">Lokasi</Label>
-          <Input id="lokasi" v-model="values.lokasi" />
+          <Input id="lokasi" v-model="lokasi" />
         </div>
 
         <div>
           <Label for="desa">Desa</Label>
-          <Select v-model="selectedDesa">
+          <Select v-model="desa_id">
             <SelectTrigger>
               <SelectValue placeholder="Pilih desa" />
             </SelectTrigger>

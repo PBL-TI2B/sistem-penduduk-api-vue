@@ -28,7 +28,7 @@ class DusunController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_dusun' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'desa_id' => 'required|exists:desa,id',
@@ -39,7 +39,7 @@ class DusunController extends Controller
         }
 
         $dusun = Dusun::create([
-            'nama_dusun' => $request->nama_dusun,
+            'nama' => $request->nama,
             'deskripsi' => $request->deskripsi,
             'lokasi' => $request->lokasi,
             'desa_id' => $request->desa_id,
@@ -65,7 +65,7 @@ class DusunController extends Controller
     public function update(Request $request, Dusun $dusun)
     {
         $validator = Validator::make($request->all(), [
-            'nama_dusun' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string|max:255',
             'lokasi' => 'nullable|string|max:255',
             'desa_id' => 'required|exists:desa,id',
@@ -76,7 +76,7 @@ class DusunController extends Controller
         }
 
         $dusun->update([
-            'nama_dusun' => $request->nama_dusun,
+            'nama' => $request->nama,
             'deskripsi' => $request->deskripsi,
             'lokasi' => $request->lokasi,
             'desa_id' => $request->desa_id,

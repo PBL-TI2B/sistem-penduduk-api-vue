@@ -1,33 +1,31 @@
 import { Pencil, Trash } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
-const columnsIndex2 = [
+export const columnsIndex2 = [
     { label: "Nama Dusun", key: "nama" },
     { label: "Deskripsi", key: "deskripsi" },
     { label: "Lokasi", key: "lokasi" },
 ];
 
-const actionsIndex2 = [
+export function getActionsDusun({ onEdit, onDelete }) {
+  return [
     {
-        label: "Edit",
-        icon: Pencil,
-        handler: (item) => {
-            router.visit(route("dusun.edit", item.uuid));
-        },
+      label: "Edit",
+      icon: Pencil,
+      handler: (item) => onEdit(item),
     },
     {
-        label: "Hapus",
-        icon: Trash,
-        handler: (item) => {
-            router.visit(route("dusun.edit", item.uuid));
-        },
+      label: "Hapus",
+      icon: Trash,
+      handler: (item) => onDelete(item),
     },
-];
+  ];
+}
 
-const rowsShow = [
+export const rowsShow = [
     {
         label: "Nama Dusun",
-        key: "nama_dusun",
+        key: "nama",
     },
     {
         label: "Deskripsi",
@@ -39,4 +37,4 @@ const rowsShow = [
     },
 ];
 
-export { columnsIndex2, actionsIndex2, rowsShow };
+
