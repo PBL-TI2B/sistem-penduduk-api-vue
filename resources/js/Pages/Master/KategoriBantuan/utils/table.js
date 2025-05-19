@@ -3,11 +3,11 @@ import { router } from "@inertiajs/vue3";
 
 const columnsIndex = [
     { label: "Kategori Bantuan", key: "kategori" },
-    // { label: "Keterangan", key: "keterangan",
-    //     format: (value) => {
-    //         return value? '' || null : '-';
-    //     },
-    // },
+    { label: "Keterangan", key: "keterangan",
+        format: (value) => {
+            return value? '' || null : '-';
+        },
+    },
 ];
 
 const actionsIndex = [
