@@ -25,23 +25,13 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
 import { getFields } from "./utils/fields"; // Import getFields
+import { formSchemaBantuan } from "./utils/form-schema";
+
 
 // Initialize fields from getFields
 const fields = ref([]);
 
-const formSchema = toTypedSchema(
-    z.object({
-        nama_bantuan: z.string(),
-        kategori_bantuan_id: z.string(),
-        nominal: z.string().optional().nullable(),
-        periode: z.string(),
-        lama_periode: z.string(),
-        instansi: z.string(),
-        keterangan: z.string().optional().nullable(),
-    })
-);
-
-const { handleSubmit, resetForm } = useForm({ validationSchema: formSchema });
+const { handleSubmit, resetForm } = useForm({ validationSchema: formSchemaBantuan });
 
 const onSubmit = handleSubmit(async (values) => {
     try {
