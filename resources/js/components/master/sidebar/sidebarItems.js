@@ -101,10 +101,10 @@ export const items = [
                 title: "Penerima Bantuan",
                 to: "/penerima-bantuan",
             },
-            {
-                title: "Kategori Bantuan",
-                to: "/kategori-bantuan",
-            },
+            // {
+            //     title: "Kategori Bantuan",
+            //     to: "/kategori-bantuan",
+            // },
         ],
         roles: ["admin", "superadmin", "rt", "rw"],
     },

@@ -12,13 +12,12 @@ class KategoriBantuanController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 10);
         $query = KategoriBantuan::query();
-
         if ($request->has('search') && !empty($request->search)) {
             $query->where('kategori', 'like', '%' . $request->search . '%');
         }
-
-        $data = $query->paginate(10);
+        $data = $query->paginate($perPage);
         return new ApiResource(true, 'Daftar Kategori Bantuan', $data);
     }
 

@@ -34,6 +34,10 @@ const props = defineProps({
         type: Number,
         default: 1,
     },
+    totalData: {
+        type: Number,
+        default: 0,
+    },
     perPage: {
         type: Number,
         default: 10,
@@ -137,7 +141,7 @@ const handleExport = async (format) => {
                         {{ props.label }}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        Total {{ props.items.length }} data
+                        Total {{ props.totalData }} data
                     </p>
                 </div>
                 <Select

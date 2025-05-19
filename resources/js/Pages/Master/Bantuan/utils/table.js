@@ -1,7 +1,7 @@
-import { Eye } from "lucide-vue-next";
+import { Eye, Trash2, PackageSearch } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
-const columnsIndex = [
+const columnsIndexBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
     {
         label: "Kategori",
@@ -24,29 +24,48 @@ const columnsIndex = [
     },
 ];
 
-const actionsIndex = [
-    {
-        label: "Manage",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("pekerjaan.show", item.uuid));
+const columnsIndexKategori = [
+    { label: "Kategori Bantuan", key: "kategori" },
+    { label: "Keterangan", key: "keterangan",
+        format: (value) => {
+            return value? '' || null : '-';
         },
     },
 ];
 
-const rowsShow = [
-    { label: "Nama Bantuan", key: "nama_bantuan" },
+const actionsIndexBantuan = [
+
     {
-        label: "Kategori",
-        key: "kategori_bantuan",
-        format: (val, row) => row.kategori_bantuan?.kategori || "-",
+        label: "Manage",
+        icon: Eye,
+        handler: (item) => {
+            router.visit(route("bantuan.show", item.uuid));
+        },
     },
-    { label: "Nominal (Rp.)", key: "nominal" },
-    { label: "Periode", key: "periode" },
-    { label: "Lama Periode", key: "lama_periode" },
-    { label: "Instansi", key: "instansi" },
-    { label: "Keterangan", key: "keterangan" },
 ];
 
+const actionsIndexKategori = [
+    {
+        label: "Saring",
+        icon: PackageSearch,
+        handler: (item) => {
+            // router.visit(`/bantuan?kategori=${item.uuid}`);
+        },
+    },
+    {
+        label: "Ubah",
+        icon: Eye,
+        handler: (item) => {
+            editKategori(item);
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        handler: (item) => {
+            onClickDeleteButton(item.uuid);
+        },
+    },
+];
 
-export { columnsIndex, actionsIndex, rowsShow };
+export { columnsIndexBantuan, actionsIndexBantuan, columnsIndexKategori, actionsIndexKategori};

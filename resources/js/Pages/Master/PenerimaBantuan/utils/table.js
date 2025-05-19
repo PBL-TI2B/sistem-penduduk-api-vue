@@ -67,7 +67,7 @@ const columnsIndex = [
 
 const actionsIndex = [
     {
-        label: "Lihat",
+        label: "Kelola",
         icon: Eye,
         class: "bg-blue-500 hover:bg-blue-600 text-white", // warna biru untuk lihat
         handler: (item) => {
@@ -75,7 +75,7 @@ const actionsIndex = [
         },
     },
     {
-        label: "Edit",
+        label: "Ubah",
         icon: PencilIcon,
         class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
         handler: (item) => {
