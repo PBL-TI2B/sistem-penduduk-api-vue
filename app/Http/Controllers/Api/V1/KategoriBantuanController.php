@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\Validator;
 
 class KategoriBantuanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = KategoriBantuan::paginate(10);
+        $query = KategoriBantuan::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('kategori', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->paginate(10);
         return new ApiResource(true, 'Daftar Kategori Bantuan', $data);
     }
 
