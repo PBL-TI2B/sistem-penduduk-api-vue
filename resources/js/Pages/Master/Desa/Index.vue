@@ -3,15 +3,17 @@ import { Head, router } from "@inertiajs/vue3";
 import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
+import { SquarePlus } from "lucide-vue-next";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import FormDialogDusun from "./components/FormDialogDusun.vue";
+import FormDialogDesa from "./components/FormDialogDesa.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
-import { actionsIndex, columnsIndex } from "./utils/tableDesa";
+import { columnsIndex, getActionsDesa } from "./utils/tableDesa";
 import { columnsIndex2, getActionsDusun } from "./utils/tableDusun";
 
 // ======================= DESA ========================
@@ -20,6 +22,14 @@ const totalPages = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
+
+// Dialog dan state hapus desa
+const isFormDialogDesaOpen = ref(false);
+const dialogModeDesa = ref("create");
+const currentDesaData = ref(null);
+
+const isAlertDeleteDesaOpen = ref(false);
+const selectedDesaUuid = ref(null);
 
 const fetchData = async () => {
     try {
@@ -37,10 +47,49 @@ const fetchData = async () => {
 };
 
 const createDesa = () => {
-    dialogMode.value = "create";
+    dialogModeDesa.value = "create";
     currentDesaData.value = null;
-    isFormDialogDusunOpen.value = true;
+    isFormDialogDesaOpen.value = true;
 };
+
+const editDesa = (data) => {
+    dialogModeDesa.value = "edit";
+    currentDesaData.value = data;
+    isFormDialogDesaOpen.value = true;
+};
+
+// Fungsi buka dialog konfirmasi hapus dusun
+const onClickDeleteDesa = (uuid) => {
+    selectedDesaUuid.value = uuid;
+    isAlertDeleteDesaOpen.value = true;
+};
+
+// Konfirmasi hapus dusun
+const onConfirmDeleteDesa = async () => {
+    if (selectedDesaUuid.value) {
+        try {
+            await apiDelete(`/desa/${selectedDesaUuid.value}`);
+            await fetchData();
+        } catch (error) {
+            useErrorHandler(error, "Gagal menghapus desa");
+        } finally {
+            isAlertDeleteDesaOpen.value = false;
+            selectedDesaUuid.value = null;
+        }
+    }
+};
+
+// Batal hapus dusun
+const onCancelDeleteDesa = () => {
+    isAlertDeleteDesaOpen.value = false;
+    selectedDesaUuid.value = null;
+};
+
+// Update actions dengan fungsi hapus baru
+const actionsIndex = getActionsDesa({
+    onEdit: editDesa,
+    onDelete: (item) => onClickDeleteDesa(item.uuid),
+});
 
 onMounted(fetchData);
 watch(page, fetchData);
@@ -55,7 +104,7 @@ const search2 = ref("");
 
 // Dialog dan state hapus dusun
 const isFormDialogDusunOpen = ref(false);
-const dialogMode = ref("create");
+const dialogModeDusun = ref("create");
 const currentDusunData = ref(null);
 
 const isAlertDeleteDusunOpen = ref(false);
@@ -83,13 +132,13 @@ onMounted(fetchData2);
 watch([page2, search2], fetchData2);
 
 const createDusun = () => {
-    dialogMode.value = "create";
+    dialogModeDusun.value = "create";
     currentDusunData.value = null;
     isFormDialogDusunOpen.value = true;
 };
 
 const editDusun = (data) => {
-    dialogMode.value = "edit";
+    dialogModeDusun.value = "edit";
     currentDusunData.value = data;
     isFormDialogDusunOpen.value = true;
 };
@@ -141,11 +190,27 @@ const actionsIndex2 = getActionsDusun({
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
-            <Button @click="createDusun">+ Tambah Dusun</Button>
+            <Button @click="createDusun"><SquarePlus />Dusun </Button>
+            <Button @click="createDesa"><SquarePlus />Desa </Button>
         </div>
     </div>
 
     <div class="drop-shadow-md w-full grid gap-2">
+        <h2 class="text-2xl font-semibold mt-8">Data Desa</h2>
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+        >
+            <Input
+                v-model="search2"
+                placeholder="Cari desa berdasarkan nama"
+                class="md:w-1/3"
+            />
+            <div class="flex gap-4">
+                <Button class="cursor-pointer" @click="fetchData"
+                    >Terapkan</Button
+                >
+            </div>
+        </div>
         <!-- TABEL DESA -->
         <DataTable
             :items="items"
@@ -156,6 +221,13 @@ const actionsIndex2 = getActionsDusun({
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
+        />
+
+        <FormDialogDesa
+            v-model:isOpen="isFormDialogDesaOpen"
+            :mode="dialogModeDesa"
+            :initialData="currentDesaData"
+            @success="fetchData"
         />
 
         <!-- TABEL DUSUN -->
@@ -188,7 +260,7 @@ const actionsIndex2 = getActionsDusun({
 
         <FormDialogDusun
             v-model:isOpen="isFormDialogDusunOpen"
-            :mode="dialogMode"
+            :mode="dialogModeDusun"
             :initialData="currentDusunData"
             @success="fetchData2"
         />
@@ -200,5 +272,13 @@ const actionsIndex2 = getActionsDusun({
         description="Apakah Anda yakin ingin menghapus dusun ini?"
         :onConfirm="onConfirmDeleteDusun"
         :onCancle="onCancelDeleteDusun"
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteDesaOpen"
+        title="Hapus Desa"
+        description="Apakah Anda yakin ingin menghapus desa ini?"
+        :onConfirm="onConfirmDeleteDesa"
+        :onCancle="onCancelDeleteDesa"
     />
 </template>

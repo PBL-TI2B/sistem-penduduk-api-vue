@@ -36,18 +36,6 @@ const props = defineProps({
 
 const emit = defineEmits(["update:isOpen", "success"]);
 
-// Load data desa
-const desaOptions = ref([]);
-
-const loadDesaOptions = async () => {
-    try {
-        const res = await apiGet("/desa");
-        desaOptions.value = res.data.data;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data desa");
-    }
-};
-
 // Setup form vee-validate tanpa initialValues karena nanti kita set manual via setValues
 const { handleSubmit, resetForm, setValues } = useForm();
 
@@ -55,9 +43,6 @@ const { handleSubmit, resetForm, setValues } = useForm();
 const { value: nama } = useField("nama");
 const { value: deskripsi } = useField("deskripsi");
 const { value: lokasi } = useField("lokasi");
-const { value: desa_id } = useField("desa_id", (value) =>
-    value ? Number(value) : null
-);
 
 // Submit handler
 const onSubmit = handleSubmit(async (formValues) => {
@@ -70,15 +55,15 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         if (props.mode === "edit") {
             formData.append("_method", "PUT");
-            await apiPost(`/dusun/${props.initialData?.uuid}`, formData);
+            await apiPost(`/desa/${props.initialData?.uuid}`, formData);
         } else {
-            await apiPost("/dusun", formData);
+            await apiPost("/desa", formData);
         }
 
         toast.success(
             props.mode === "edit"
-                ? "Berhasil memperbarui data dusun"
-                : "Berhasil menambahkan data dusun"
+                ? "Berhasil memperbarui data desa"
+                : "Berhasil menambahkan data desa"
         );
 
         emit("success");
@@ -86,7 +71,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     } catch (error) {
         console.error("Error submitting:", error);
         console.log("Form values:", formValues);
-        useErrorHandler(error, "Gagal menyimpan data dusun");
+        useErrorHandler(error, "Gagal menyimpan data desa");
     }
 });
 
@@ -95,16 +80,12 @@ watch(
     () => props.isOpen,
     async (isOpen) => {
         if (isOpen) {
-            await loadDesaOptions(); // Pastikan opsi desa sudah siap sebelum set nilai
             if (props.mode === "edit") {
                 // Set nilai field dari initialData
                 setValues({
                     nama: props.initialData.nama || "",
                     deskripsi: props.initialData.deskripsi || "",
                     lokasi: props.initialData.lokasi || "",
-                    desa_id: props.initialData.desa
-                        ? Number(props.initialData.desa.id)
-                        : null,
                 });
             } else {
                 resetForm();
@@ -117,7 +98,7 @@ watch(
 );
 
 const dialogTitle = computed(() =>
-    props.mode === "create" ? "Tambah Dusun" : "Edit Dusun"
+    props.mode === "create" ? "Tambah desa" : "Edit desa"
 );
 </script>
 
@@ -127,13 +108,13 @@ const dialogTitle = computed(() =>
             <DialogHeader>
                 <DialogTitle>{{ dialogTitle }}</DialogTitle>
                 <DialogDescription>
-                    Lengkapi form berikut untuk menyimpan data dusun.
+                    Lengkapi form berikut untuk menyimpan data desa.
                 </DialogDescription>
             </DialogHeader>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
                 <div>
-                    <Label for="nama">Nama Dusun</Label>
+                    <Label for="nama">Nama desa</Label>
                     <Input id="nama" v-model="nama" />
                 </div>
 
@@ -145,24 +126,6 @@ const dialogTitle = computed(() =>
                 <div>
                     <Label for="lokasi">Lokasi</Label>
                     <Input id="lokasi" v-model="lokasi" />
-                </div>
-
-                <div>
-                    <Label for="desa">Desa</Label>
-                    <Select v-model="desa_id">
-                        <SelectTrigger>
-                            <SelectValue placeholder="Pilih desa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="desa in desaOptions"
-                                :key="desa.id"
-                                :value="desa.id"
-                            >
-                                {{ desa.nama }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
 
                 <DialogFooter>

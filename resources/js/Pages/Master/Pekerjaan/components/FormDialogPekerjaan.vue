@@ -36,28 +36,11 @@ const props = defineProps({
 
 const emit = defineEmits(["update:isOpen", "success"]);
 
-// Load data desa
-const desaOptions = ref([]);
-
-const loadDesaOptions = async () => {
-    try {
-        const res = await apiGet("/desa");
-        desaOptions.value = res.data.data;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data desa");
-    }
-};
-
 // Setup form vee-validate tanpa initialValues karena nanti kita set manual via setValues
 const { handleSubmit, resetForm, setValues } = useForm();
 
 // Setup fields
-const { value: nama } = useField("nama");
-const { value: deskripsi } = useField("deskripsi");
-const { value: lokasi } = useField("lokasi");
-const { value: desa_id } = useField("desa_id", (value) =>
-    value ? Number(value) : null
-);
+const { value: nama_pekerjaan } = useField("nama_pekerjaan");
 
 // Submit handler
 const onSubmit = handleSubmit(async (formValues) => {
@@ -70,15 +53,15 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         if (props.mode === "edit") {
             formData.append("_method", "PUT");
-            await apiPost(`/dusun/${props.initialData?.uuid}`, formData);
+            await apiPost(`/pekerjaan/${props.initialData?.uuid}`, formData);
         } else {
-            await apiPost("/dusun", formData);
+            await apiPost("/pekerjaan", formData);
         }
 
         toast.success(
             props.mode === "edit"
-                ? "Berhasil memperbarui data dusun"
-                : "Berhasil menambahkan data dusun"
+                ? "Berhasil memperbarui data pekerjaan"
+                : "Berhasil menambahkan data pekerjaan"
         );
 
         emit("success");
@@ -86,7 +69,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     } catch (error) {
         console.error("Error submitting:", error);
         console.log("Form values:", formValues);
-        useErrorHandler(error, "Gagal menyimpan data dusun");
+        useErrorHandler(error, "Gagal menyimpan data pekerjaan");
     }
 });
 
@@ -95,16 +78,10 @@ watch(
     () => props.isOpen,
     async (isOpen) => {
         if (isOpen) {
-            await loadDesaOptions(); // Pastikan opsi desa sudah siap sebelum set nilai
             if (props.mode === "edit") {
                 // Set nilai field dari initialData
                 setValues({
-                    nama: props.initialData.nama || "",
-                    deskripsi: props.initialData.deskripsi || "",
-                    lokasi: props.initialData.lokasi || "",
-                    desa_id: props.initialData.desa
-                        ? Number(props.initialData.desa.id)
-                        : null,
+                    nama_pekerjaan: props.initialData.nama_pekerjaan || "",
                 });
             } else {
                 resetForm();
@@ -133,36 +110,8 @@ const dialogTitle = computed(() =>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
                 <div>
-                    <Label for="nama">Nama Dusun</Label>
-                    <Input id="nama" v-model="nama" />
-                </div>
-
-                <div>
-                    <Label for="deskripsi">Deskripsi</Label>
-                    <Input id="deskripsi" v-model="deskripsi" />
-                </div>
-
-                <div>
-                    <Label for="lokasi">Lokasi</Label>
-                    <Input id="lokasi" v-model="lokasi" />
-                </div>
-
-                <div>
-                    <Label for="desa">Desa</Label>
-                    <Select v-model="desa_id">
-                        <SelectTrigger>
-                            <SelectValue placeholder="Pilih desa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="desa in desaOptions"
-                                :key="desa.id"
-                                :value="desa.id"
-                            >
-                                {{ desa.nama }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Label for="nama_pekerjaan">Nama Pekerjaan</Label>
+                    <Input id="nama_pekerjaan" v-model="nama_pekerjaan" />
                 </div>
 
                 <DialogFooter>
