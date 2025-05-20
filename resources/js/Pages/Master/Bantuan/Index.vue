@@ -180,7 +180,7 @@ const applyFilter = () => {
 };
 const resetFilter = () => {
     search.value = "";
-    // selectedKategori.value = "";
+    selectedKategori.value = "-";
     applyFilter();
 };
 const clearSearchBantuan = () => {
