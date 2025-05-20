@@ -1,4 +1,4 @@
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { apiGet, apiPost, apiDelete } from "@/utils/api";
 // import Cookies from "js-cookie";
 import { useErrorHandler } from "@/composables/useErrorHandler";
@@ -6,7 +6,7 @@ import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 // import axios from "axios";
 
-export function useKategoriBantuan(uuid) {
+export function useKategoriBantuan() {
     const itemsKategori = ref([]);
     const isLoadingKategori = ref(false);
     const pageKategori = ref(1);
@@ -15,22 +15,27 @@ export function useKategoriBantuan(uuid) {
     const totalDataKategori = ref(0);
     const itemKategori = ref({});
     const itemsFilterKategori = ref([]);
+    const searchKategori = ref("");
 
     const fetchKategori = async () => {
         try {
-            itemsKategori.value = [];
             isLoadingKategori.value = true;
+            itemsKategori.value = [];
+            itemsFilterKategori.value = [];
 
-            // Fetch main kategori data with current pagination
-            const res = await apiGet("/kategori-bantuan", {
+            const params = {
                 page: pageKategori.value,
                 per_page: perPageKategori.value,
-            });
+                search: searchKategori.value,
+            };
 
-                        // Fetch main kategori data with current pagination
+            // Fetch main kategori data with current pagination
+            const res = await apiGet("/kategori-bantuan", params);
+
+            // Fetch all kategori data for filter dropdown
             const resForFilter = await apiGet("/kategori-bantuan", {
                 page: 1,
-                per_page: 111,
+                per_page: 1000,
             });
 
             itemsKategori.value = res.data.data;
@@ -44,7 +49,6 @@ export function useKategoriBantuan(uuid) {
                     label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
                 }))
             ];
-            console.log(itemsKategori.value);
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data kategori");
         } finally {
@@ -95,6 +99,7 @@ export function useKategoriBantuan(uuid) {
         isLoadingKategori,
         pageKategori,
         perPageKategori,
+        searchKategori,
         totalPagesKategori,
         itemKategori,
         totalDataKategori,

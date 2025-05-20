@@ -8,6 +8,7 @@ use App\Http\Resources\ApiResource;
 use App\Http\Resources\BantuanResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BantuanController extends Controller
 {
@@ -100,5 +101,46 @@ class BantuanController extends Controller
     {
         $bantuan->delete();
         return new ApiResource(true, 'Data Bantuan Berhasil Dihapus', null);
+    }
+
+    public function exportPdf()
+    {
+        $bantuan = Bantuan::with(['kategoriBantuan'])->get();
+        $pdf = Pdf::loadView('exports.bantuan', compact('bantuan'));
+        return $pdf->download('bantuan.pdf');
+    }
+
+    public function exportExcel()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="bantuan.csv"',
+        ];
+
+        $callback = function () {
+            $handle = fopen('php://output', 'w');
+
+            // Tambah BOM UTF-8
+            fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Pakai delimiter ;
+            fputcsv($handle, ['Nama Bantuan', 'Kategori', 'Nominal', 'Periode', 'Lama Periode', 'Instansi', 'Keterangan'], ';');
+
+            foreach (Bantuan::all() as $data) {
+                fputcsv($handle, [
+                    $data->nama_bantuan,
+                    $data->kategoriBantuan->kategori,
+                    $data->nominal,
+                    $data->periode,
+                    $data->lama_periode,
+                    $data->instansi,
+                    $data->keterangan,
+                ], ';');
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

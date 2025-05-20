@@ -1,5 +1,8 @@
-import { Eye, Trash2, PackageSearch } from "lucide-vue-next";
+import { Eye, Trash2, PackageSearch, SquarePen } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
+import { useBantuan } from "@/composables/useBantuan";
+import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+
 
 const columnsIndexBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
@@ -33,39 +36,7 @@ const columnsIndexKategori = [
     },
 ];
 
-const actionsIndexBantuan = [
-
-    {
-        label: "Manage",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("bantuan.show", item.uuid));
-        },
-    },
-];
-
-const actionsIndexKategori = [
-    {
-        label: "Saring",
-        icon: PackageSearch,
-        handler: (item) => {
-            // router.visit(`/bantuan?kategori=${item.uuid}`);
-        },
-    },
-    {
-        label: "Ubah",
-        icon: Eye,
-        handler: (item) => {
-            editKategori(item);
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash2,
-        handler: (item) => {
-            onClickDeleteButton(item.uuid);
-        },
-    },
-];
-
-export { columnsIndexBantuan, actionsIndexBantuan, columnsIndexKategori, actionsIndexKategori};
+export {
+    columnsIndexBantuan,
+    columnsIndexKategori,
+};

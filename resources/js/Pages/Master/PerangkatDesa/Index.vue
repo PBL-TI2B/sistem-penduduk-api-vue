@@ -76,7 +76,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -204,6 +204,6 @@ watch(pageJabatan, () => {
         title="Hapus Jabatan"
         description="Apakah anda yakin ingin menghapus jabatan ini?"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

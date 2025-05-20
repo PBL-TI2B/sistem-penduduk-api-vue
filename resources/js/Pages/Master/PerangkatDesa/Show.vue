@@ -127,6 +127,6 @@ onMounted(fetchDetailPerangkatDesa);
         title="Hapus Perangkat Desa"
         description="Apakah anda yakin ingin menghapus perangkat desa ini?"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancleDelete"
     />
 </template>
