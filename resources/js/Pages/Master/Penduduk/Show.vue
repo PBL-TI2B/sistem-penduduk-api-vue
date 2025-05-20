@@ -135,6 +135,6 @@ onMounted(fetchDetailPenduduk);
         :title="'Hapus Data Penduduk'"
         :description="'Apakah anda yakin ingin menghapus data penduduk ini?'"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancleDelete"
     />
 </template>

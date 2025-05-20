@@ -348,13 +348,13 @@ const clearSearchKategori = () => {
         title="Hapus Kategori Bantuan"
         description="Apakah anda yakin ingin menghapus kategori bantuan ini?"
         :onConfirm="onConfirmDeleteKategori"
-        :onCancle="onCancleDeleteKategori"
+        :onCancel="onCancleDeleteKategori"
     />
     <AlertDialog
         v-model:isOpen="isAlertDeleteBantuanOpen"
         title="Hapus Bantuan"
         description="Apakah anda yakin ingin menghapus bantuan ini?"
         :onConfirm="onConfirmDeleteBantuan"
-        :onCancle="onCancleDeleteBantuan"
+        :onCancel="onCancleDeleteBantuan"
     />
 </template>
