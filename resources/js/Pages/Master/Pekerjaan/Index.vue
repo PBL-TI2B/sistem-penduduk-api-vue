@@ -144,6 +144,6 @@ watch(page, fetchData);
         title="Hapus Pekerjaan"
         description="Apakah Anda yakin ingin menghapus pekerjaan ini?"
         :onConfirm="onConfirmDeletePekerjaan"
-        :onCancel="onCancelDeletePekerjaan"
+        :onCancle="onCancelDeletePekerjaan"
     />
 </template>
