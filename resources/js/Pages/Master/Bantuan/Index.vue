@@ -1,8 +1,7 @@
 <script setup>
 import { route } from "ziggy-js";
-import { PackagePlus, SearchIcon, Eye, Trash2, PackageSearch, X } from 'lucide-vue-next';
 import { ref, onMounted, watch } from "vue";
-import { apiGet } from "@/utils/api";
+import { router, Link } from '@inertiajs/vue3';
 
 import {
     Select,
@@ -16,22 +15,22 @@ import {
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import { Label } from "@/components/ui/label";
-
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import {
-    actionsIndexBantuan,
     columnsIndexBantuan,
-    // actionsIndexKategori,
-    columnsIndexKategori
+    columnsIndexKategori,
 } from "./utils/table";
 
 import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
-import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
-import { useErrorHandler } from "@/composables/useErrorHandler";
+import { PackagePlus, SearchIcon, Eye, Trash2, PackageSearch, X, FunnelX, SquarePen } from 'lucide-vue-next';
 
+import { useBantuan } from "@/composables/useBantuan";
+import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+
+// --- GUNAKAN useKategoriBantuan ---
 const {
     fetchKategori,
     deleteKategori,
@@ -39,84 +38,72 @@ const {
     itemsFilterKategori,
     perPageKategori,
     pageKategori,
+    searchKategori,
     totalPagesKategori,
     totalDataKategori,
     isLoadingKategori,
 } = useKategoriBantuan();
 
-const items = ref([]);
-const totalPages = ref(1);
-const page = ref(1);
-const totalData = ref(0);
-const perPage = ref(10);
-const isLoading = ref(false);
+// --- GUNAKAN useBantuan ---
+const {
+    items,
+    totalPages,
+    page,
+    totalData,
+    perPage,
+    search,
+    selectedKategori,
+    isLoading,
+    fetchBantuan,
+    deleteBantuan,
+    fetchDetailBantuan,
+} = useBantuan();
 
-const search = ref(null);
-const searchKategori = ref(null);
-
-const selectedKategori = ref('-');
 
 // kategori dialog
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
-const isAlertDeleteOpen = ref(false);
+const isAlertDeleteKategoriOpen = ref(false);
+
+// bantuan dialog
+const isAlertDeleteBantuanOpen = ref(false);
 
 // for delete
-const selectedUuid = ref(null);
+const selectedKategoriUuid = ref(null);
+const selectedBantuanUuid = ref(null);
 
-// Ambil data bantuan dengan filter search & kategori
-const fetchBantuan = async () => {
-    try {
-        items.value = [];
-        isLoading.value = true;
-        const params = {
-            page: page.value,
-            search: search.value,
-        };
-        if (selectedKategori.value && selectedKategori.value !== "-") {
-            params.kategori_bantuan_id = selectedKategori.value;
-        }
-        const res = await apiGet("/bantuan", params);
-        items.value = res.data.data;
-        perPage.value = res.data.per_page;
-        totalPages.value = res.data.last_page;
-        totalData.value = res.data.total;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data bantuan");
-    } finally {
-        isLoading.value = false;
-    }
-};
+onMounted(() => {
+    fetchKategori();
+    fetchBantuan();
+});
 
+watch(page, fetchBantuan);
+watch(pageKategori, fetchKategori);
 
-const createKategoriBantuan = () => {
-    isFormDialogOpen.value = true;
-    dialogMode.value = "create";
-};
-
-const editKategoriBantuan = (kategori) => {
-    isFormDialogOpen.value = true;
-    dialogMode.value = "edit";
-    selectedKategori.value = kategori;
-};
-
-const onClickDeleteButton = (uuid) => {
-    selectedUuid.value = uuid;
-    isAlertDeleteOpen.value = true;
-};
-
-const onCancleDelete = () => {
-    isAlertDeleteOpen.value = false;
-    selectedUuid.value = null;
-};
-
-const onConfirmDelete = async () => {
-    if (selectedUuid.value) {
-        await deleteKategori(selectedUuid.value);
-        isAlertDeleteOpen.value = false;
-        selectedUuid.value = null;
-    }
-};
+const actionsIndexBantuan = [
+    {
+        label: "Kelola",
+        icon: Eye,
+        handler: (item) => {
+            router.visit(route("bantuan.show", item.uuid));
+        },
+    },
+    {
+        label: "Ubah",
+        icon: SquarePen,
+        handler: (item) => {
+            router.visit(route("bantuan.edit", item.uuid));
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        handler: (item) => {
+            // Implement your delete logic here, e.g.:
+            onClickDeleteBantuanButton(item.uuid);
+        },
+    },
+];
 
 const actionsIndexKategori = [
     {
@@ -138,35 +125,77 @@ const actionsIndexKategori = [
         label: "Hapus",
         icon: Trash2,
         handler: (itemsKategori) => {
-            onClickDeleteButton(itemsKategori.uuid);
+            onClickDeleteKategoriButton(itemsKategori.uuid);
         },
     },
 ];
 
-onMounted(() => {
-    fetchKategori();
-    fetchBantuan();
-});
-watch(page, () => {fetchBantuan();});
-watch(pageKategori => {fetchKategori();});
+//  -- Events Bantuan --
+const onClickDeleteBantuanButton = (uuid) => {
+    selectedBantuanUuid.value = uuid;
+    isAlertDeleteBantuanOpen.value = true;
+};
+const onCancleDeleteBantuan = () => {
+    isAlertDeleteBantuanOpen.value = false;
+    selectedBantuanUuid.value = null;
+};
+const onConfirmDeleteBantuan = async () => {
+    if (selectedBantuanUuid.value) {
+        await deleteBantuan(selectedBantuanUuid.value);
+        isAlertDeleteBantuanOpen.value = false;
+        selectedBantuanUuid.value = null;
+    }
+};
 
+//  -- Events Kategori Bantuan --
+const createKategoriBantuan = () => {
+    isFormDialogOpen.value = true;
+    dialogMode.value = "create";
+};
+const editKategoriBantuan = (kategori) => {
+    isFormDialogOpen.value = true;
+    dialogMode.value = "edit";
+    selectedKategori.value = kategori;
+};
+const onClickDeleteKategoriButton = (uuid) => {
+    selectedKategoriUuid.value = uuid;
+    isAlertDeleteKategoriOpen.value = true;
+};
+const onCancleDeleteKategori = () => {
+    isAlertDeleteKategoriOpen.value = false;
+    selectedKategoriUuid.value = null;
+};
+const onConfirmDeleteKategori = async () => {
+    if (selectedKategoriUuid.value) {
+        await deleteKategori(selectedKategoriUuid.value);
+        isAlertDeleteKategoriOpen.value = false;
+        selectedKategoriUuid.value = null;
+    }
+};
+
+//  -- Filter Bantuan --
 const applyFilter = () => {
     page.value = 1;
     fetchBantuan();
 };
-
-const applyFilterKategori = () => {
-    page.value = 1;
-    fetchKategori(searchKategori.value);
-};
-
-const clearSearchKategori = () => {
-    searchKategori.value = "";
-    applyFilterKategori();
+const resetFilter = () => {
+    search.value = "";
+    // selectedKategori.value = "";
+    applyFilter();
 };
 const clearSearchBantuan = () => {
     search.value = "";
     applyFilter();
+};
+
+//  -- Filter Kategori Bantuan --
+const applyFilterKategori = () => {
+    pageKategori.value = 1;
+    fetchKategori();
+};
+const clearSearchKategori = () => {
+    searchKategori.value = "";
+    applyFilterKategori();
 };
 
 </script>
@@ -186,12 +215,11 @@ const clearSearchBantuan = () => {
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
 
-
-                <!-- Search Kategori -->
+        <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full">
                 <Input
-                    id="search"
+                    id="searchKategori"
                     v-model="searchKategori"
                     type="text"
                     placeholder="Cari kategori bantuan"
@@ -273,6 +301,14 @@ const clearSearchBantuan = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+                    <Button asChild
+                        @click="resetFilter"
+                    >
+                        <div>
+                            <FunnelX/>
+                            Reset
+                        </div>
+                    </Button>
                 </div>
             </div>
             <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between">
@@ -308,10 +344,17 @@ const clearSearchBantuan = () => {
         @success="fetchKategori"
     />
     <AlertDialog
-        v-model:isOpen="isAlertDeleteOpen"
+        v-model:isOpen="isAlertDeleteKategoriOpen"
         title="Hapus Kategori Bantuan"
         description="Apakah anda yakin ingin menghapus kategori bantuan ini?"
-        :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onConfirm="onConfirmDeleteKategori"
+        :onCancle="onCancleDeleteKategori"
+    />
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteBantuanOpen"
+        title="Hapus Bantuan"
+        description="Apakah anda yakin ingin menghapus bantuan ini?"
+        :onConfirm="onConfirmDeleteBantuan"
+        :onCancle="onCancleDeleteBantuan"
     />
 </template>

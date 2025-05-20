@@ -15,20 +15,18 @@ export function useKategoriBantuan() {
     const totalDataKategori = ref(0);
     const itemKategori = ref({});
     const itemsFilterKategori = ref([]);
+    const searchKategori = ref("");
 
-    const fetchKategori = async (search = "") => {
+    const fetchKategori = async () => {
         try {
-            const searchKategori = ref([]);
             isLoadingKategori.value = true;
             itemsKategori.value = [];
-
-            // Gunakan search dari parameter atau dari state
-            const searchValue = search !== "" ? search : searchKategori.value;
+            itemsFilterKategori.value = [];
 
             const params = {
                 page: pageKategori.value,
                 per_page: perPageKategori.value,
-                search: searchValue,
+                search: searchKategori.value,
             };
 
             // Fetch main kategori data with current pagination
@@ -101,6 +99,7 @@ export function useKategoriBantuan() {
         isLoadingKategori,
         pageKategori,
         perPageKategori,
+        searchKategori,
         totalPagesKategori,
         itemKategori,
         totalDataKategori,
