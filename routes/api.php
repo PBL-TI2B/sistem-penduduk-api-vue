@@ -1,14 +1,35 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaController,
-    DusunController, JabatanController, PeriodeJabatanController, GaleriController,
-    BeritaController, UserController, PerangkatDesaController, KematianController,
-    PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
-    AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
-    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
-    PenerimaBantuanController, 
-    PendidikanController, RtController, RwController
+use App\Http\Controllers\Api\V1\{
+    AuthController,
+    PendudukController,
+    DesaController,
+    DusunController,
+    JabatanController,
+    PeriodeJabatanController,
+    GaleriController,
+    BeritaController,
+    UserController,
+    PerangkatDesaController,
+    KematianController,
+    PindahanController,
+    KartuKeluargaController,
+    KurangMampuController,
+    NotifikasiPenerimaController,
+    AnggotaKeluargaController,
+    StatusKeluargaController,
+    KategoriBantuanController,
+    BantuanController,
+    DomisiliController,
+    KelahiranController,
+    NotifikasiController,
+    PekerjaanController,
+    InfografisController,
+    PenerimaBantuanController,
+    PendidikanController,
+    RtController,
+    RwController
 };
 
 Route::prefix('v1')->group(function () {
@@ -46,6 +67,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/pendidikan/export/pdf', [PendidikanController::class, 'exportPdf']);
         Route::get('/perangkat-desa/export/pdf', [PerangkatDesaController::class, 'exportPdf']);
         Route::get('/pindahan/export/pdf', [PindahanController::class, 'exportPdf']);
+        Route::get('/bantuan/export/pdf', [BantuanController::class, 'exportPdf']);
+        Route::get('/bantuan/export/excel', [BantuanController::class, 'exportExcel']);
 
 
         Route::get('/auth/me', [AuthController::class, 'me']);
