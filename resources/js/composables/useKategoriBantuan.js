@@ -1,4 +1,4 @@
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { apiGet, apiPost, apiDelete } from "@/utils/api";
 // import Cookies from "js-cookie";
 import { useErrorHandler } from "@/composables/useErrorHandler";
@@ -6,7 +6,7 @@ import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 // import axios from "axios";
 
-export function useKategoriBantuan(uuid) {
+export function useKategoriBantuan() {
     const itemsKategori = ref([]);
     const isLoadingKategori = ref(false);
     const pageKategori = ref(1);
@@ -16,21 +16,28 @@ export function useKategoriBantuan(uuid) {
     const itemKategori = ref({});
     const itemsFilterKategori = ref([]);
 
-    const fetchKategori = async () => {
+    const fetchKategori = async (search = "") => {
         try {
-            itemsKategori.value = [];
+            const searchKategori = ref([]);
             isLoadingKategori.value = true;
+            itemsKategori.value = [];
 
-            // Fetch main kategori data with current pagination
-            const res = await apiGet("/kategori-bantuan", {
+            // Gunakan search dari parameter atau dari state
+            const searchValue = search !== "" ? search : searchKategori.value;
+
+            const params = {
                 page: pageKategori.value,
                 per_page: perPageKategori.value,
-            });
+                search: searchValue,
+            };
 
-                        // Fetch main kategori data with current pagination
+            // Fetch main kategori data with current pagination
+            const res = await apiGet("/kategori-bantuan", params);
+
+            // Fetch all kategori data for filter dropdown
             const resForFilter = await apiGet("/kategori-bantuan", {
                 page: 1,
-                per_page: 111,
+                per_page: 1000,
             });
 
             itemsKategori.value = res.data.data;
@@ -44,7 +51,6 @@ export function useKategoriBantuan(uuid) {
                     label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
                 }))
             ];
-            console.log(itemsKategori.value);
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data kategori");
         } finally {

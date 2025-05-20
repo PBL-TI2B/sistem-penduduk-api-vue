@@ -1,6 +1,6 @@
 <script setup>
 import { route } from "ziggy-js";
-import { PackagePlus, Eye, Trash2, PackageSearch } from 'lucide-vue-next';
+import { PackagePlus, SearchIcon, Eye, Trash2, PackageSearch, X } from 'lucide-vue-next';
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
 
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
+import { Label } from "@/components/ui/label";
 
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
@@ -51,11 +52,16 @@ const perPage = ref(10);
 const isLoading = ref(false);
 
 const search = ref(null);
-const selectedKategori = ref(null);
+const searchKategori = ref(null);
 
+const selectedKategori = ref('-');
+
+// kategori dialog
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
 const isAlertDeleteOpen = ref(false);
+
+// for delete
 const selectedUuid = ref(null);
 
 // Ambil data bantuan dengan filter search & kategori
@@ -141,13 +147,28 @@ onMounted(() => {
     fetchKategori();
     fetchBantuan();
 });
- watch(page, () => {fetchBantuan();});
- watch(pageKategori => {fetchKategori();});
+watch(page, () => {fetchBantuan();});
+watch(pageKategori => {fetchKategori();});
 
 const applyFilter = () => {
     page.value = 1;
     fetchBantuan();
 };
+
+const applyFilterKategori = () => {
+    page.value = 1;
+    fetchKategori(searchKategori.value);
+};
+
+const clearSearchKategori = () => {
+    searchKategori.value = "";
+    applyFilterKategori();
+};
+const clearSearchBantuan = () => {
+    search.value = "";
+    applyFilter();
+};
+
 </script>
 
 <template>
@@ -166,6 +187,35 @@ const applyFilter = () => {
     <div class="drop-shadow-md w-full grid gap-2">
 
 
+                <!-- Search Kategori -->
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full">
+                <Input
+                    id="search"
+                    v-model="searchKategori"
+                    type="text"
+                    placeholder="Cari kategori bantuan"
+                    class="pl-10 pr-8"
+                    @change="applyFilterKategori"
+                />
+                <span class="absolute start-2 inset-y-0 flex items-center justify-center px-2">
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchKategori"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchKategori"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+            </div>
+            <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between">
+                <Button @click="createKategoriBantuan"> <PackagePlus/>  Tambah Kategori Bantuan </Button>
+            </div>
+        </div>
+
         <DataTable
             label="Kategori Bantuan"
             :items="itemsKategori"
@@ -179,17 +229,34 @@ const applyFilter = () => {
             @update:page="pageKategori = $event"
         />
 
+        <!-- Search Bantuan -->
         <div class="flex xl:flex-row flex-col gap-4 mt-4 items-center">
-            <div
-                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full"
-            >
-                <Input
-                    v-model="search"
-                    placeholder="Cari bantuan"
-                    @keyup.enter="applyFilter"
-                />
+            <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full">
+                <div class="flex w-full relative items-center">
+                    <Input
+                        id="search"
+                        v-model="search"
+                        type="text"
+                        placeholder="Cari bantuan"
+                        class="pl-10 pr-8"
+                        @change="applyFilter"
+                    />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <SearchIcon class="size-6 text-muted-foreground" />
+                    </span>
+                    <button
+                        v-if="search"
+                        class="absolute end-0 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                        @click="clearSearchBantuan"
+                        tabindex="-1"
+                        type="button"
+                    >
+                        <X class="size-5" />
+                    </button>
+                </div>
                 <div class="flex gap-2 items-center">
-                    <Select v-model="selectedKategori">
+                    <Label for="kategori">Kategori:</Label>
+                    <Select v-model="selectedKategori" @update:modelValue="applyFilter" id="kategori">
                         <SelectTrigger>
                             <SelectValue placeholder="Kategori" />
                         </SelectTrigger>
@@ -206,21 +273,13 @@ const applyFilter = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Button class="cursor-pointer" @click="applyFilter">Terapkan</Button>
                 </div>
             </div>
             <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between">
-                <Button @click="createKategoriBantuan"> <PackagePlus />  Tambah Kategori Bantuan </Button>
-                <!-- <Button asChild >
-                    <Link :href="route('kategori-bantuan.create')">
-                        <PackagePlus/>
-                            Tambah Kategori Bantuan
-                    </Link>
-                </Button> -->
                 <Button asChild >
                     <Link :href="route('bantuan.create')">
                         <PackagePlus/>
-                            Tambah Bantuan
+                        Tambah Bantuan
                     </Link>
                 </Button>
             </div>
