@@ -1,22 +1,23 @@
-import { Eye } from "lucide-vue-next";
+import { Pencil, Trash } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
-const columnsIndex = [
+export const columnsIndex = [
     { label: "Nama Pekerjaan", key: "nama_pekerjaan" },
 ];
 
-const actionsIndex = [
-    {
-        label: "Manage",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("pekerjaan.show", item.uuid));
+export function getActionsPekerjaan({ onEdit, onDelete }) {
+    return [
+        {
+            label: "Edit",
+            icon: Pencil,
+            handler: (item) => onEdit(item),
         },
-    },
-];
+        {
+            label: "Hapus",
+            icon: Trash,
+            handler: (item) => onDelete(item),
+        },
+    ];
+}
 
-const rowsShow = [
-    { label: "Nama Pekerjaan", key: "nama_pekerjaan" },
-];
-
-export { columnsIndex, actionsIndex, rowsShow };
+export const rowsShow = [{ label: "Nama Pekerjaan", key: "nama_pekerjaan" }];

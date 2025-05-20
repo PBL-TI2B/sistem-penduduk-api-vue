@@ -1,7 +1,7 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 
-export const formSchemaPekerjaan = toTypedSchema(
+export const formSchemaDusun = toTypedSchema(
     z.object({
         nama: z.string(),
         deskripsi: z.string(),
