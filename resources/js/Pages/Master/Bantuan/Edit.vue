@@ -22,36 +22,72 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
 import { apiPost, apiGet} from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaBantuan } from "./utils/form-schema";
+import { useBantuan } from "@/composables/useBantuan";
 
+// Routing ID
+const { uuid } = usePage().props;
+
+const { editBantuan } = useBantuan();
 
 // Initialize fields from getFields
 const fields = ref([]);
 
-const { handleSubmit, resetForm } = useForm({ validationSchema: formSchemaBantuan });
+const { handleSubmit,
+    setValues,
+    resetForm
+} = useForm({ validationSchema: formSchemaBantuan });
 
-const onSubmit = handleSubmit(async (values) => {
+// Submit Edit
+const onSubmit = handleSubmit(async (values, { resetForm }) => {
     try {
-        const res = await apiPost("/bantuan", values); // API call to create new pekerjaan
-
-        resetForm(); // Reset form fields after submission
-        toast.success("Berhasil Tambah Data Bantuan");
-        router.visit("/bantuan"); // Redirect to pekerjaan list
+        await editBantuan(uuid, values, resetForm);
     } catch (error) {
-        useErrorHandler(error); // Handle any errors
+        // Ini hanya opsional, karena error sudah ditangani di editBantuan
+        console.error("Error in onSubmit:", error);
     }
 });
+// const onSubmit = handleSubmit(async (values) => {
+//     try {
+//         const res = await apiPost(`/bantuan/${uuid}`, values); // API call to create new pekerjaan
+
+//         resetForm(); // Reset form fields after submission
+//         toast.success("Berhasil Memperbarui Datas Bantuan");
+//         router.visit("/bantuan"); // Redirect to pekerjaan list
+//     } catch (error) {
+//         useErrorHandler(error); // Handle any errors
+//     }
+// });
 
 onMounted(async () => {
-    const kategoriBantuanRes = await apiGet("/kategori-bantuan");
+    const [bantuanRes, kategoriBantuanRes] = await Promise.all([
+            apiGet(`/bantuan/${uuid}`),
+            apiGet("/kategori-bantuan"),
+        ]);
     const kategoriBantuanOptions = kategoriBantuanRes.data.data.map((item) => ({
         value: item.id.toString(),
         label: item.kategori,
     }));
-    fields.value = getFields(kategoriBantuanOptions);
+
+
+    const data = bantuanRes.data;
+
+    setValues({
+            nama_bantuan: data.nama_bantuan ?? null,
+            kategori_bantuan_id: data.kategori_id.toString(),
+            nominal: data.nominal ?? null,
+            periode: data.periode,
+            lama_periode: data.lama_periode,
+            instansi: data.instansi,
+            keterangan: data.keterangan,
+        });
+
+    fields.value = getFields(
+        kategoriBantuanOptions
+    );
 });
 </script>
 
@@ -113,7 +149,7 @@ onMounted(async () => {
                         variant="secondary"
                         >Batal</Button
                     >
-                <Button type="submit" >Simpan</Button>
+                <Button type="submit" >Ubah</Button>
             </div>
         </form>
     </div>
