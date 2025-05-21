@@ -72,13 +72,22 @@ const isAlertDeleteBantuanOpen = ref(false);
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-onMounted(() => {
-    fetchKategori();
-    fetchBantuan();
+onMounted( async () => {
+   await fetchKategori();
+   await fetchBantuan();
 });
 
-watch(page, fetchBantuan);
-watch(pageKategori, fetchKategori);
+watch(page, async () => { await fetchBantuan() });
+watch(pageKategori, async () => { await fetchKategori() });
+
+// -- bila ingin kirim data ketika search diinputkan atau bisa ubah input method dari @change ke @input
+// watch([page, search], async () => {
+//   await fetchBantuan();
+// });
+
+// watch([pageKategori, searchKategori], async () => {
+//   await fetchKategori();
+// });
 
 const actionsIndexBantuan = [
     {
