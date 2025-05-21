@@ -135,7 +135,7 @@ const onClickDeleteBantuanButton = (uuid) => {
     selectedBantuanUuid.value = uuid;
     isAlertDeleteBantuanOpen.value = true;
 };
-const onCancleDeleteBantuan = () => {
+const onCancelDeleteBantuan = () => {
     isAlertDeleteBantuanOpen.value = false;
     selectedBantuanUuid.value = null;
 };
@@ -161,7 +161,7 @@ const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
     isAlertDeleteKategoriOpen.value = true;
 };
-const onCancleDeleteKategori = () => {
+const onCancelDeleteKategori = () => {
     isAlertDeleteKategoriOpen.value = false;
     selectedKategoriUuid.value = null;
 };
@@ -348,13 +348,13 @@ const clearSearchKategori = () => {
         title="Hapus Kategori Bantuan"
         description="Apakah anda yakin ingin menghapus kategori bantuan ini?"
         :onConfirm="onConfirmDeleteKategori"
-        :onCancel="onCancleDeleteKategori"
+        :onCancel="onCancelDeleteKategori"
     />
     <AlertDialog
         v-model:isOpen="isAlertDeleteBantuanOpen"
         title="Hapus Bantuan"
         description="Apakah anda yakin ingin menghapus bantuan ini?"
         :onConfirm="onConfirmDeleteBantuan"
-        :onCancel="onCancleDeleteBantuan"
+        :onCancel="onCancelDeleteBantuan"
     />
 </template>

@@ -27,7 +27,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -135,6 +135,6 @@ onMounted(fetchDetailPenduduk);
         :title="'Hapus Data Penduduk'"
         :description="'Apakah anda yakin ingin menghapus data penduduk ini?'"
         :onConfirm="onConfirmDelete"
-        :onCancel="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>
