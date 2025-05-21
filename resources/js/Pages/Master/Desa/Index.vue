@@ -271,7 +271,7 @@ const actionsIndex2 = getActionsDusun({
         title="Hapus Dusun"
         description="Apakah Anda yakin ingin menghapus dusun ini?"
         :onConfirm="onConfirmDeleteDusun"
-        :onCancle="onCancelDeleteDusun"
+        :onCancel="onCancelDeleteDusun"
     />
 
     <AlertDialog
@@ -279,6 +279,6 @@ const actionsIndex2 = getActionsDusun({
         title="Hapus Desa"
         description="Apakah Anda yakin ingin menghapus desa ini?"
         :onConfirm="onConfirmDeleteDesa"
-        :onCancle="onCancelDeleteDesa"
+        :onCancel="onCancelDeleteDesa"
     />
 </template>
