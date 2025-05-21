@@ -12,6 +12,7 @@ export function useJabatan(uuid) {
     const pageJabatan = ref(1);
     const perPageJabatan = ref(2);
     const totalPagesJabatan = ref(0);
+    const totalItemsJabatan = ref(0);
     const itemJabatan = ref({});
 
     const fetchJabatan = async () => {
@@ -24,7 +25,8 @@ export function useJabatan(uuid) {
                 per_page: perPageJabatan.value,
             });
             itemsJabatan.value = res.data.data;
-            // perPageJabatan.value = res.data.per_page;
+            totalItemsJabatan.value = res.data.total;
+            perPageJabatan.value = res.data.per_page;
             totalPagesJabatan.value = res.data.last_page;
             console.log(itemsJabatan.value);
         } catch (error) {
@@ -76,6 +78,7 @@ export function useJabatan(uuid) {
         isLoadingJabatan,
         pageJabatan,
         perPageJabatan,
+        totalItemsJabatan,
         totalPagesJabatan,
         itemJabatan,
         fetchJabatan,

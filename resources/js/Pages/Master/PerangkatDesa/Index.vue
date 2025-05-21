@@ -39,6 +39,7 @@ const {
     itemsJabatan,
     perPageJabatan,
     pageJabatan,
+    totalItemsJabatan,
     totalPagesJabatan,
     isLoadingJabatan,
 } = useJabatan();
@@ -173,12 +174,14 @@ watch(pageJabatan, () => {
             :columns="columnsJabatan"
             :actions="actionsJabatan"
             :totalPages="totalPagesJabatan"
+            :totalData="totalItemsJabatan"
             :page="pageJabatan"
             :per-page="perPageJabatan"
             :is-loading="isLoadingJabatan"
             @update:page="pageJabatan = $event"
         />
 
+        //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :}
         <DataTable
             label="Perangkat Desa"
             :items="items"
