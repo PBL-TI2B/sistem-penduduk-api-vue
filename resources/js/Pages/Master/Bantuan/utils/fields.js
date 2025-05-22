@@ -14,7 +14,7 @@ export function getFields(kategoriBantuanOptions = []) {
         },
         {
             name: "nominal",
-            label: "Nominal (Rp.)",
+            label: "Nominal Bantuan",
             placeholder: "Masukkan nominal",
             type: "currency",
             // type: "text",

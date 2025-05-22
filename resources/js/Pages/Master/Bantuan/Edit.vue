@@ -14,7 +14,8 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Textarea } from '@/components/ui/textarea'
+import { Textarea } from "@/components/ui/textarea"
+import { CurrencyInput } from "@/components/ui/currency-input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -119,6 +120,11 @@ onMounted(async () => {
                             v-if="field.type === 'text'"
                             :placeholder="field.placeholder"
                             v-bind="componentField"
+                        />
+                        <CurrencyInput
+                            v-else-if="field.type === 'currency'"
+                            v-bind="componentField"
+                            :placeholder="field.placeholder"
                         />
                         <Textarea
                             v-if="field.type === 'textarea'"

@@ -30,12 +30,12 @@ const props = defineProps({
     default: () => ({
         locale: 'id-ID',
         currency: 'IDR',
-        currencyDisplay: 'hidden',
+        // currencyDisplay: 'hidden',
         precision: {
           min: 2,
           max: 5
         },
-        hideCurrencySymbolOnFocus: true,
+        hideCurrencySymbolOnFocus: false,
         hideGroupingSeparatorOnFocus: false,
         hideNegligibleDecimalDigitsOnFocus: false,
         autoDecimalDigits: false,
