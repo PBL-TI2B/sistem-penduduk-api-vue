@@ -14,9 +14,10 @@ export function getFields(kategoriBantuanOptions = []) {
         },
         {
             name: "nominal",
-            label: "Nominal (Rp.)",
+            label: "Nominal Bantuan",
             placeholder: "Masukkan nominal",
-            type: "text",
+            type: "currency",
+            // type: "text",
             optional: true,
         },
         {
@@ -41,7 +42,7 @@ export function getFields(kategoriBantuanOptions = []) {
             name: "keterangan",
             label: "Keterangan",
             placeholder: "Masukkan keterangan",
-            type: "text",
+            type: "textarea",
             optional: true,
 
         },

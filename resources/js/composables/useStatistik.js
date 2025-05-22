@@ -21,11 +21,11 @@ export function useStatistik() {
 
             const res = await apiGet(`/statistik/${type}`);
             console.log(res.data);
-            if (type == "demografi") {
-                statistikItems.value = res.data
-                console.log(`Demografi load`);
-                return
-            }
+            // if (type == "demografi") {
+            //     statistikItems.value = res.data
+            //     console.log(`Demografi load`);
+            //     return
+            // }
             statistikItems.value = res.data;
             console.log(`Statistik ${type} loaded `);
 
