@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\Master\BantuanController;
 use App\Http\Controllers\Web\Master\KurangMampuController;
 use App\Http\Controllers\Web\Master\PenerimaBantuanController;
 use App\Http\Controllers\Web\Master\GaleriController;
+use App\Http\Controllers\Web\Master\KematianController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 
 Route::inertia('/', 'Beranda');
@@ -27,6 +28,7 @@ Route::resource('/kurang-mampu', KurangMampuController::class);
 Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
 Route::resource('/pendidikan', PendidikanController::class);
 Route::resource('/galeri', GaleriController::class);
+Route::resource('/kematian', KematianController::class);
 
 Route::inertia('/berita', 'Berita');
 Route::inertia('/infografis', 'Infografis');
