@@ -41,7 +41,7 @@ export function getFields(kategoriBantuanOptions = []) {
             name: "keterangan",
             label: "Keterangan",
             placeholder: "Masukkan keterangan",
-            type: "text",
+            type: "textarea",
             optional: true,
 
         },

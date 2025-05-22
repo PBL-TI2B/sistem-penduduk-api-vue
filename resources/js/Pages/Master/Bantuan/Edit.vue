@@ -14,6 +14,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Textarea } from '@/components/ui/textarea'
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -116,6 +117,11 @@ onMounted(async () => {
                     <FormControl>
                         <Input
                             v-if="field.type === 'text'"
+                            :placeholder="field.placeholder"
+                            v-bind="componentField"
+                        />
+                        <Textarea
+                            v-if="field.type === 'textarea'"
                             :placeholder="field.placeholder"
                             v-bind="componentField"
                         />
