@@ -44,7 +44,7 @@ class GaleriController extends Controller
         $url_media->storeAs('galeri', $url_media->hashName());
         $galeri = Galeri::create([
             'judul' => $request->judul,
-            'url_media' => $request->url_media,
+            'url_media' => $request->url_media->hashName(),
             'user_id' => $request->user_id,
         ]);
         return response()->json([
@@ -82,6 +82,13 @@ class GaleriController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $data = $request->except('url_media');
+
+        if ($request->hasFile('url_media')) {
+            Storage::delete('galeri/' . basename($galeri->url_media));
+            $url_media = $request->file('url_media');
+            $url_media->storeAs('galeri', $url_media->hashName());
+            $data['url_media'] = $url_media->hashName();
+        }
         $galeri->update($data);
         return response()->json([
             'success' => true,

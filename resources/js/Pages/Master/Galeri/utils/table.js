@@ -23,23 +23,23 @@ export const actionsIndex = [
                 return;
             }
 
-            const url = route("galeri-admin.show", item.uuid);
+            const url = route("galeri-admin.show", { galeri_admin: item.uuid }); 
             console.log("Navigating to:", url);
             router.visit(url);
         }
-    },
-    {
-        label: "Edit",
-        icon: Edit,
-        handler: (item) => {
-            router.visit(route("galeri-admin.edit", item.uuid));
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash,
-        handler: (item) => {
-            console.log("Hapus item:", item);
-        },
-    },
+    }
+    // {
+    //     label: "Edit",
+    //     icon: Edit,
+    //     handler: (item) => {
+    //         router.visit(route("galeri-admin.edit", item.uuid));
+    //     },
+    // },
+    // {
+    //     label: "Hapus",
+    //     icon: Trash,
+    //     handler: (item) => {
+    //         console.log("Hapus item:", item);
+    //     },
+    // },
 ];

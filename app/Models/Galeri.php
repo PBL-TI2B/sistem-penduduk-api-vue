@@ -35,7 +35,7 @@ class Galeri extends Model
     public function urlMedia()
     {
         return Attribute::make(
-            get: fn ($url_media) => url('/storage/galeri/' . $url_media)
+            get: fn ($url_media) => url('/storage/private/galeri/' . $url_media)
         );
     }
 }
