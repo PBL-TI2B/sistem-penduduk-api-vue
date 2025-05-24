@@ -32,11 +32,10 @@ class Galeri extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function getThumbnailAttribute($thumbnail)
-    
+    public function urlMedia()
     {
-        return new Attribute(
-            get: fn ($thumbnail) => url('/storage/galeri/' . $thumbnail)
+        return Attribute::make(
+            get: fn ($url_media) => url('/storage/galeri/' . $url_media)
         );
     }
 }

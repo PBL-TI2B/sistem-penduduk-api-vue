@@ -22,7 +22,8 @@ Route::resource('/bantuan', BantuanController::class);
 Route::resource('/kurang-mampu', KurangMampuController::class);
 Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
 Route::resource('/pendidikan', PendidikanController::class);
-Route::resource('/galeri', GaleriController::class);
+// Route::resource('/galeri', GaleriController::class);
+Route::resource('/galeri-admin', GaleriController::class);
 
 Route::inertia('/berita', 'Berita');
 Route::inertia('/infografis/bansos', 'InfografisBansos');

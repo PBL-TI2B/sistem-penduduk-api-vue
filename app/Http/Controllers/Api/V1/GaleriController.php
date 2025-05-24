@@ -34,24 +34,16 @@ class GaleriController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'judul' => 'required',
-            'slug' => 'required|unique:galeri',
-            'thumbnail' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'deskripsi' => 'nullable',
-            'tanggal_post' => 'required|date',
-            'url_media' => 'required|url',
+            'url_media' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'user_id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $thumbnail = $request->file('thumbnail');
-        $thumbnail->storeAs('galeri', $thumbnail->hashName());
+        $url_media = $request->file('url_media');
+        $url_media->storeAs('galeri', $url_media->hashName());
         $galeri = Galeri::create([
             'judul' => $request->judul,
-            'slug' => $request->slug,
-            'thumbnail' => $thumbnail->hashName(),
-            'deskripsi' => $request->deskripsi,
-            'tanggal_post' => $request->tanggal_post,
             'url_media' => $request->url_media,
             'user_id' => $request->user_id,
         ]);
@@ -83,25 +75,13 @@ class GaleriController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'judul' => 'required',
-            'slug' => 'required|unique:galeri,slug,' . $galeri->id,
-            'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'deskripsi' => 'nullable',
-            'tanggal_post' => 'required|date',
-            'url_media' => 'required|url',
+            'url_media' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'user_id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $data = $request->except('thumbnail');
-        if ($request->hasfile('thumbnail')) {
-            Storage::delete('galeri/' . basename($galeri->thumbnail));
-            $thumbnail = $request->file('thumbnail');
-            $thumbnail->storeAs('galeri', $thumbnail->hashName());
-            $data['thumbnail'] = $thumbnail->hashName();
-        }else {
-            $data['thumbnail'] = $galeri->thumbnail;
-        }
+        $data = $request->except('url_media');
         $galeri->update($data);
         return response()->json([
             'success' => true,
@@ -115,7 +95,7 @@ class GaleriController extends Controller
      */
     public function destroy(Galeri $galeri)
     {
-        Storage::delete('galeri/' . basename($galeri->thumbnail));
+        Storage::delete('galeri/' . basename($galeri->url_media));
         $galeri->delete();
         return response()->json([
             'success' => true,

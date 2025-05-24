@@ -55,11 +55,13 @@ export const items = [
         children: [
             {
                 title: "Berita",
-                to: "/berita",
+                to: "/berita-admin",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Galeri",
-                to: "/galeri",
+                to: "/galeri-admin",
+                roles: ["admin", "superadmin"],
             },
         ],
     },

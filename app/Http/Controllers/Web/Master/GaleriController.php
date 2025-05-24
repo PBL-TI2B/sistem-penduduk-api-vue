@@ -49,7 +49,7 @@ class GaleriController extends Controller
     public function edit(Galeri $galeri)
     {
         return Inertia::render('Master/Galeri/Edit', [
-            'uuid'=>$galeri->uuid
+            'uuid' => $galeri->uuid
         ]);
     }
 
