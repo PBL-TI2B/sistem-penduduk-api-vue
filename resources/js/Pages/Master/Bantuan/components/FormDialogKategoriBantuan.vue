@@ -11,7 +11,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import Label from "@/components/ui/label/Label.vue";
-import { formSchmemaKategori } from "../utils/form-schema";
+import { formSchemaKategori } from "../utils/form-schema";
 import Input from "@/components/ui/input/Input.vue";
 import Textarea from "@/components/ui/textarea/Textarea.vue";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
@@ -31,10 +31,10 @@ const props = defineProps({
 const emit = defineEmits(["update:isOpen", "success"]);
 
 const { handleSubmit, resetForm, setValues, values } = useForm({
-    validationSchema: formSchmemaKategori,
+    validationSchema: formSchemaKategori,
     initialValues: {
         kategori: "",
-        keterengan: "",
+        keterangan: "",
     },
 });
 
@@ -97,7 +97,9 @@ const dialogTitle = computed(() =>
                 <div class="grid gap-4 py-4">
                     <!-- RT Selection -->
                     <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="kategori" class="text-right">Kategori</Label>
+                        <Label for="kategori" class="text-right"
+                            >Kategori</Label
+                        >
                         <div class="col-span-3">
                             <Input
                                 v-model="kategori"

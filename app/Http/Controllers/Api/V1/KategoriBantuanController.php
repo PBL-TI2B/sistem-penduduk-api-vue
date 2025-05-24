@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriBantuan;
 use App\Http\Resources\ApiResource;
+use App\Http\Resources\KategoriBantuanResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,10 +15,19 @@ class KategoriBantuanController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = KategoriBantuan::query();
-        if ($request->has('search') && !empty($request->search)) {
-            $query->where('kategori', 'like', '%' . $request->search . '%');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('kategori', 'like', '%' . $search . '%');
         }
-        $data = $query->paginate($perPage);
+
+        // Cek parameter 'all' untuk mengambil semua data tanpa pagination
+        if ($request->boolean('all')) {
+            $data = $query->get(); // Ambil semua data
+        } else {
+            $data = $query->withCount('bantuan')->paginate($perPage); // Pagination
+        }
+
         return new ApiResource(true, 'Daftar Kategori Bantuan', $data);
     }
 
@@ -92,12 +102,12 @@ class KategoriBantuanController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengupdate kategori bantuan: ' . $e->getMessage(),
+                'message' => 'Gagal memperbarui kategori bantuan: ' . $e->getMessage(),
                 'data' => null
             ], 500);
         }
 
-        return new ApiResource(true, 'Kategori Bantuan Berhasil Diupdate', $kategoriBantuan);
+        return new ApiResource(true, 'Kategori Bantuan Berhasil Diperbarui', $kategoriBantuan);
     }
 
     public function destroy($uuid)

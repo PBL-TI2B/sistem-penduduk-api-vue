@@ -69,7 +69,8 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
 
         toast.success("Berhasil memperbarui data");
-        router.visit("/penduduk");
+        // router.visit("/penduduk");
+        router.visit("../");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -215,7 +216,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <Button
-                        @click="router.visit('/penduduk')"
+                        @click="router.visit('../')"
                         type="button"
                         variant="secondary"
                         >Batal</Button
