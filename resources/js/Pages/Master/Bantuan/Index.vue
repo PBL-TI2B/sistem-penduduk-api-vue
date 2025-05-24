@@ -41,7 +41,7 @@ const {
     fetchKategori,
     deleteKategori,
     itemsKategori,
-    // itemsKategoriAll,
+    itemsKategoriAll,
     perPageKategori,
     pageKategori,
     searchKategori,
@@ -79,24 +79,20 @@ const isAlertDeleteBantuanOpen = ref(false);
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-onMounted(async () => {
-    allKategori.value = await fetchKategori(true);
-    // await fetchKategori(true);
-    // allKategori.value = itemsKategoriAll.value;
+// onMounted());
 
-    await fetchKategori();
-    await fetchBantuan();
+onMounted(() => {
+    fetchKategori(true);
+    fetchKategori();
+    fetchBantuan();
 });
 
-watch(page, async () => {
-    await fetchBantuan();
+watch(page, () => {
+    fetchBantuan();
 });
-watch(totalDataKategori, async () => {
-    allKategori.value = await fetchKategori(true);
-    await fetchKategori();
-});
-watch(pageKategori, async () => {
-    await fetchKategori();
+
+watch(pageKategori, () => {
+    fetchKategori();
 });
 
 // -- bila ingin kirim data ketika search diInputKan atau bisa ubah input method dari @change ke @input
@@ -338,20 +334,20 @@ const clearSearchKategori = () => {
                                 <SelectItem key="-" value="-">
                                     Semua
                                 </SelectItem>
-                                <SelectItem
+                                <!-- <SelectItem
                                     v-for="kat in allKategori"
                                     :key="kat.value"
                                     :value="kat.value"
                                 >
                                     {{ kat.label }}
-                                </SelectItem>
-                                <!-- <SelectItem
+                                </SelectItem> -->
+                                <SelectItem
                                     v-for="kat in itemsKategoriAll"
                                     :key="kat.value"
                                     :value="kat.value"
                                 >
                                     {{ kat.label }}
-                                </SelectItem> -->
+                                </SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -394,7 +390,12 @@ const clearSearchKategori = () => {
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
         :initial-data="selectedKategori"
-        @success="fetchKategori"
+        @success="
+            () => {
+                fetchKategori();
+                fetchKategori(true);
+            }
+        "
     />
     <AlertDialog
         v-model:isOpen="isAlertDeleteKategoriOpen"

@@ -20,19 +20,14 @@ export function useKategoriBantuan() {
     const fetchKategori = async (all = false) => {
         try {
             isLoadingKategori.value = true;
-            itemsKategori.value = [];
-            itemsKategoriAll.value = [];
-
-            const params = {
-                page: pageKategori.value,
-                per_page: perPageKategori.value,
-                search: searchKategori.value,
-                all: all
-            };
-
-            const res = await apiGet("/kategori-bantuan", params);
 
             if (all) {
+                itemsKategoriAll.value = [];
+
+                const res = await apiGet("/kategori-bantuan", {
+                    all: all
+                });
+
                 // return itemsKategoriAll = res.data;
                 return itemsKategoriAll.value = [
                     ...res.data.map(kat => ({
@@ -42,6 +37,17 @@ export function useKategoriBantuan() {
                 ];
                 // return
             }
+
+            itemsKategori.value = [];
+
+            const params = {
+                page: pageKategori.value,
+                per_page: perPageKategori.value,
+                search: searchKategori.value,
+            };
+
+            const res = await apiGet("/kategori-bantuan", params);
+
             itemsKategori.value = res.data.data;
             perPageKategori.value = res.data.per_page;
             totalPagesKategori.value = res.data.last_page;
