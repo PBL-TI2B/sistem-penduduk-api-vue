@@ -18,14 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { onMounted, ref, watch } from "vue";
-import { apiPost, apiGet } from "@/utils/api";
-import { useErrorHandler } from "@/composables/useErrorHandler";
+import { onMounted, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
-import { toast } from "vue-sonner";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaBantuan } from "./utils/form-schema";
 import { useBantuan } from "@/composables/useBantuan";
@@ -45,8 +40,8 @@ const { handleSubmit, setValues, resetForm } = useForm({
 });
 
 // Submit Edit
-const onSubmit = handleSubmit(async (values, { resetForm }) => {
-    await editBantuan(uuid, values, resetForm);
+const onSubmit = handleSubmit(async (values) => {
+    await editBantuan(uuid, values);
     resetForm();
 });
 
@@ -152,12 +147,12 @@ onMounted(async () => {
             </div>
             <!-- Submit Button -->
             <div class="flex justify-end gap-4">
-                <Button
+                <!-- <Button
                     @click="router.visit('/bantuan')"
                     type="button"
                     variant="secondary"
                     >Batal</Button
-                >
+                > -->
                 <Button type="submit">Ubah</Button>
             </div>
         </form>

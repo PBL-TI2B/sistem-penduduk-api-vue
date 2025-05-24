@@ -18,7 +18,7 @@ import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
 import SelectValue from "@/components/ui/select/SelectValue.vue";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { apiGet, apiPost } from "@/utils/api";
-import { formSchmemaDomisili } from "../utils/form-schema";
+import { formSchemaDomisili } from "../utils/form-schema";
 import { toast } from "vue-sonner";
 import Input from "@/components/ui/input/Input.vue";
 
@@ -43,7 +43,7 @@ const emit = defineEmits(["update:isOpen", "success"]);
 
 // Form Setup
 const { handleSubmit, resetForm, setValues, values } = useForm({
-    validationSchema: formSchmemaDomisili,
+    validationSchema: formSchemaDomisili,
     initialValues: {
         penduduk_id: "",
         rt_id: "",
@@ -98,7 +98,6 @@ const onSubmit = handleSubmit(async (formValues) => {
                 : "Berhasil menambahkan data domisili"
         );
     } catch (error) {
-
         useErrorHandler(error, "Gagal menyimpan data domisili");
     }
 });
@@ -125,7 +124,6 @@ watch(
     },
     { immediate: true }
 );
-
 
 onMounted(() => {
     loadRtData();

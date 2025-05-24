@@ -237,7 +237,7 @@ const clearSearchKategori = () => {
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data bantuan' },
+                    { label: 'Data Bantuan' },
                 ]"
             />
         </div>
