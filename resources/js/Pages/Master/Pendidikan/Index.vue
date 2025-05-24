@@ -11,6 +11,7 @@ import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import FormDialogPendidikan from "./FormDialogPendidikan.vue";
+import AlertDialog from "@/components/master/AlertDialog.vue";
 import { toast } from "vue-sonner";
 
 // State
@@ -23,6 +24,8 @@ const isDialogOpen = ref(false);
 const dialogMode = ref("create");
 const selectedData = ref({});
 const search = ref("");
+const isAlertDeleteOpen = ref(false);
+const selectedUuid = ref(null);
 
 // Fetch Data
 const fetchData = async () => {
@@ -47,16 +50,31 @@ const openDialog = (mode, data = {}) => {
 };
 
 // Hapus Data
-const handleDelete = async (item) => {
-  if (confirm("Yakin ingin menghapus data ini?")) {
+// const handleDelete = async (item) => {
+
+const onConfirmDelete = async () => {
+  if (selectedUuid.value) {
     try {
-      await apiDelete(`/pendidikan/${item.uuid}`); 
+      await apiDelete(`/pendidikan/${selectedUuid.value}`);
       toast.success("Data berhasil dihapus");
-      fetchData(); 
+      fetchData();
     } catch (error) {
-      console.error("Error saat menghapus data:", error); 
+      useErrorHandler(error, "Gagal menghapus data pendidikan");
+    } finally {
+      isAlertDeleteOpen.value = false;
+      selectedUuid.value = null;
     }
   }
+};
+
+const onClickDeleteButton = (uuid) => {
+  selectedUuid.value = uuid;
+  isAlertDeleteOpen.value = true;
+};
+
+const onCancleDelete = () => {
+  isAlertDeleteOpen.value = false;
+  selectedUuid.value = null;
 };
 
 // Saat simpan data dari dialog
@@ -81,7 +99,7 @@ const actionsIndex = [
   {
     label: "Hapus",
     icon: Trash2,
-    handler: (item) => handleDelete(item),
+    handler: (item) => onClickDeleteButton(item.uuid),
   },
 ];
 
@@ -149,4 +167,12 @@ watch(isDialogOpen, (newVal, oldVal) => {
     @save="handleSave"
     @success="fetchData"
   />
+
+  <AlertDialog
+  v-model:isOpen="isAlertDeleteOpen"
+  :title="'Hapus Data Pendidikan'"
+  :description="'Apakah anda yakin ingin menghapus data pendidikan ini?'"
+  :onConfirm="onConfirmDelete"
+  :onCancle="onCancleDelete"
+/>
 </template>

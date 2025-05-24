@@ -15,10 +15,6 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('judul');
-            $table->string('slug')->unique();
-            $table->string('thumbnail')->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->datetime('tanggal_post');
             $table->string('url_media');
             
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
