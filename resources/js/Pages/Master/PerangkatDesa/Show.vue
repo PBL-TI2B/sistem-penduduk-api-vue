@@ -22,7 +22,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -127,6 +127,6 @@ onMounted(fetchDetailPerangkatDesa);
         title="Hapus Perangkat Desa"
         description="Apakah anda yakin ingin menghapus perangkat desa ini?"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

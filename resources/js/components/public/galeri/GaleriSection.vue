@@ -1,42 +1,62 @@
 <script setup>
-const images = [
-    {
-        src: "/images/kepala-desa.png",
-        alt: "Galeri 1",
-    },
-    {
-        src: "/images/kantor-desa.png",
-        alt: "Galeri 2",
-    },
-    {
-        src: "/images/berita-utama.png",
-        alt: "Galeri 3",
-    },
-    {
-        src: "/images/kepala-desa.png",
-        alt: "Galeri 4",
-    },
-    {
-        src: "/images/berita-lain.png",
-        alt: "Galeri 5",
-    },
-    {
-        src: "/images/kantor-desa.png",
-        alt: "Galeri 6",
-    },
-];
+import { ref, onMounted } from "vue";
+import { apiGet } from "@/utils/api";
+
+const galleryList = ref([]);
+const isLoading = ref(true);
+const hasData = ref(true);
+
+const fetchGaleri = async () => {
+    try {
+        const res = await apiGet("/galeri");
+        const apiData = res.data.data.data;
+
+        if (apiData.length === 0) {
+            hasData.value = false;
+        } else {
+            galleryList.value = apiData.map((item) => ({
+                id: item.id,
+                image: item.foto
+                    ? `/storage/${item.foto}`
+                    : "/images/fallback.png",
+                alt: item.nama ?? "Foto Galeri",
+            }));
+        }
+    } catch (error) {
+        console.error("Gagal mengambil data galeri:", error);
+        hasData.value = false;
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(fetchGaleri);
 </script>
 
 <template>
-    <div
-        class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
-    >
-        <div v-for="(image, index) in images" :key="index" class="mb-4">
-            <img
-                :src="image.src"
-                :alt="image.alt"
-                class="w-full rounded-xl object-cover"
-            />
+    <section>
+        <!-- Loading -->
+        <div v-if="isLoading" class="text-gray-500">Memuat galeri...</div>
+
+        <!-- Jika tidak ada data -->
+        <div v-else-if="!hasData" class="text-gray-500">Belum ada foto.</div>
+
+        <!-- Galeri tersedia -->
+        <div
+            v-else
+            class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
+        >
+            <div
+                v-for="(image, index) in galleryList"
+                :key="index"
+                class="mb-4"
+            >
+                <img
+                    :src="image.image"
+                    :alt="image.alt"
+                    class="w-full rounded-xl object-cover"
+                />
+            </div>
         </div>
-    </div>
+    </section>
 </template>

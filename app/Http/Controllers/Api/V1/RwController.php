@@ -8,6 +8,7 @@ use App\Http\Resources\RwResource;
 use App\http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RwController extends Controller
 {
@@ -17,7 +18,7 @@ class RwController extends Controller
         $rw = Rw::with(['dusun'])->paginate(10);
         $collection = RwResource::collection($rw->getCollection());
         $rw->setCollection(collect($collection));
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data RW',
@@ -84,7 +85,7 @@ class RwController extends Controller
             'data' => new RwResource($rw),
         ]);
     }
-    
+
     public function destroy(Rw $rw)
     {
         // Delete the RW

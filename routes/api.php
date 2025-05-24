@@ -1,21 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\{AuthController, PendudukController, DesaController,
-    DusunController, JabatanController, PeriodeJabatanController, GaleriController,
-    BeritaController, UserController, PerangkatDesaController, KematianController,
-    PindahanController, KartuKeluargaController, KurangMampuController, NotifikasiPenerimaController,
-    AnggotaKeluargaController, StatusKeluargaController, KategoriBantuanController, BantuanController,
-    DomisiliController, KelahiranController, NotifikasiController, PekerjaanController, InfografisController,
-    // PenerimaBantuanController, 
-    PendidikanController, RtController, RwController
+use App\Http\Controllers\Api\V1\{
+    AuthController,
+    PendudukController,
+    DesaController,
+    DusunController,
+    JabatanController,
+    PeriodeJabatanController,
+    GaleriController,
+    BeritaController,
+    UserController,
+    PerangkatDesaController,
+    KematianController,
+    PindahanController,
+    KartuKeluargaController,
+    KurangMampuController,
+    NotifikasiPenerimaController,
+    AnggotaKeluargaController,
+    StatusKeluargaController,
+    KategoriBantuanController,
+    BantuanController,
+    DomisiliController,
+    KelahiranController,
+    NotifikasiController,
+    PekerjaanController,
+    InfografisController,
+    PenerimaBantuanController,
+    PendidikanController,
+    RtController,
+    RwController
 };
 
 Route::prefix('v1')->group(function () {
     // PUBLIC ROUTES
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
-    
+
     RoutePermission('galeri', GaleriController::class, 'galeri', true);
     RoutePermission('berita', BeritaController::class, 'berita', true);
     RoutePermission('penduduk', PendudukController::class, 'penduduk', true);
@@ -46,8 +67,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/pendidikan/export/pdf', [PendidikanController::class, 'exportPdf']);
         Route::get('/perangkat-desa/export/pdf', [PerangkatDesaController::class, 'exportPdf']);
         Route::get('/pindahan/export/pdf', [PindahanController::class, 'exportPdf']);
+        Route::get('/bantuan/export/pdf', [BantuanController::class, 'exportPdf']);
+        Route::get('/bantuan/export/excel', [BantuanController::class, 'exportExcel']);
 
-        
+
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
@@ -70,6 +93,6 @@ Route::prefix('v1')->group(function () {
         RoutePermission('domisili', DomisiliController::class, 'domisili');
         RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
         RoutePermission('notifikasi', NotifikasiController::class, 'notifikasi');
-        // RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
+        RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
     });
 });

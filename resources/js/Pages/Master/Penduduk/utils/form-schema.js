@@ -19,7 +19,7 @@ export const formSchemaPenduduk = toTypedSchema(
     })
 );
 
-export const formSchmemaDomisili = toTypedSchema(
+export const formSchemaDomisili = toTypedSchema(
     z.object({
         status_tempat_tinggal: z.string(),
         rt_id: z.number(),

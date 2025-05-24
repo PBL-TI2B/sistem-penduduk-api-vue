@@ -19,10 +19,12 @@ import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
-import { apiGet } from "@/utils/api";
+import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import { formSchemaPenduduk } from "./utils/form-schema";
 import { usePenduduk } from "@/composables/usePenduduk";
+import { useErrorHandler } from "@/composables/useErrorHandler";
+import { toast } from "vue-sonner";
 
 const fotoFile = ref(null);
 const fields = ref([]);
@@ -38,9 +40,26 @@ const { handleSubmit, resetForm } = useForm({
 
 const { createPenduduk } = usePenduduk();
 
-const onSubmit = handleSubmit(async (values) =>
-    createPenduduk(values, resetForm)
-);
+const onSubmit = handleSubmit(async (values) => {
+    try {
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(values)) {
+            formData.append(key, value ?? "");
+        }
+
+        if (fotoFile.value) {
+            formData.append("foto", fotoFile.value);
+        }
+
+        await apiPost("/penduduk", formData);
+
+        resetForm();
+        toast.success("Berhasil Tambah Data Penduduk");
+        router.visit("/penduduk");
+    } catch (error) {
+        useErrorHandler(error);
+    }
+});
 
 onMounted(async () => {
     const pekerjaanRes = await apiGet("/pekerjaan");
