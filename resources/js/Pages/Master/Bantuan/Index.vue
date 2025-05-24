@@ -1,7 +1,7 @@
 <script setup>
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
-import { router, Link } from '@inertiajs/vue3';
+import { router, Link } from "@inertiajs/vue3";
 
 import {
     Select,
@@ -17,15 +17,21 @@ import Input from "@/components/ui/input/Input.vue";
 import { Label } from "@/components/ui/label";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import {
-    columnsIndexBantuan,
-    columnsIndexKategori,
-} from "./utils/table";
+import { columnsIndexBantuan, columnsIndexKategori } from "./utils/table";
 
 import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
-import { PackagePlus, SearchIcon, Eye, Trash2, PackageSearch, X, FunnelX, SquarePen } from 'lucide-vue-next';
+import {
+    PackagePlus,
+    SearchIcon,
+    Eye,
+    Trash2,
+    PackageSearch,
+    X,
+    FunnelX,
+    SquarePen,
+} from "lucide-vue-next";
 
 import { useBantuan } from "@/composables/useBantuan";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
@@ -35,7 +41,7 @@ const {
     fetchKategori,
     deleteKategori,
     itemsKategori,
-    itemsFilterKategori,
+    itemsKategoriAll,
     perPageKategori,
     pageKategori,
     searchKategori,
@@ -59,6 +65,8 @@ const {
     fetchDetailBantuan,
 } = useBantuan();
 
+// Data semua kategori
+const allKategori = ref([]);
 
 // kategori dialog
 const isFormDialogOpen = ref(false);
@@ -72,15 +80,21 @@ const isAlertDeleteBantuanOpen = ref(false);
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-onMounted( async () => {
-   await fetchKategori();
-   await fetchBantuan();
+onMounted(async () => {
+    allKategori.value = await fetchKategori(true);
+
+    await fetchKategori();
+    await fetchBantuan();
 });
 
-watch(page, async () => { await fetchBantuan() });
-watch(pageKategori, async () => { await fetchKategori() });
+watch(page, async () => {
+    await fetchBantuan();
+});
+watch(pageKategori, async () => {
+    await fetchKategori();
+});
 
-// -- bila ingin kirim data ketika search diinputkan atau bisa ubah input method dari @change ke @input
+// -- bila ingin kirim data ketika search diInputKan atau bisa ubah input method dari @change ke @input
 // watch([page, search], async () => {
 //   await fetchBantuan();
 // });
@@ -133,9 +147,11 @@ const actionsIndexKategori = [
     {
         label: "Hapus",
         icon: Trash2,
+        // variant: "danger",
         handler: (itemsKategori) => {
             onClickDeleteKategoriButton(itemsKategori.uuid);
         },
+        disabled: (itemsKategori) => itemsKategori.bantuan_count > 0,
     },
 ];
 
@@ -206,7 +222,6 @@ const clearSearchKategori = () => {
     searchKategori.value = "";
     applyFilterKategori();
 };
-
 </script>
 
 <template>
@@ -223,10 +238,11 @@ const clearSearchKategori = () => {
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-
         <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
-            <div class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
                 <Input
                     id="searchKategori"
                     v-model="searchKategori"
@@ -235,7 +251,9 @@ const clearSearchKategori = () => {
                     class="pl-10 pr-8"
                     @change="applyFilterKategori"
                 />
-                <span class="absolute start-2 inset-y-0 flex items-center justify-center px-2">
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
                     <SearchIcon class="size-6 text-muted-foreground" />
                 </span>
                 <button
@@ -248,8 +266,12 @@ const clearSearchKategori = () => {
                     <X class="size-5" />
                 </button>
             </div>
-            <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between">
-                <Button @click="createKategoriBantuan"> <PackagePlus/>  Tambah Kategori Bantuan </Button>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createKategoriBantuan">
+                    <PackagePlus /> Tambah Kategori Bantuan
+                </Button>
             </div>
         </div>
 
@@ -268,7 +290,9 @@ const clearSearchKategori = () => {
 
         <!-- Search Bantuan -->
         <div class="flex xl:flex-row flex-col gap-4 mt-4 items-center">
-            <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full">
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full"
+            >
                 <div class="flex w-full relative items-center">
                     <Input
                         id="search"
@@ -278,7 +302,9 @@ const clearSearchKategori = () => {
                         class="pl-10 pr-8"
                         @change="applyFilter"
                     />
-                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                    <span
+                        class="absolute start-0 inset-y-0 flex items-center justify-center px-2"
+                    >
                         <SearchIcon class="size-6 text-muted-foreground" />
                     </span>
                     <button
@@ -293,15 +319,22 @@ const clearSearchKategori = () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <Label for="kategori">Kategori:</Label>
-                    <Select v-model="selectedKategori" @update:modelValue="applyFilter" id="kategori">
+                    <Select
+                        v-model="selectedKategori"
+                        @update:modelValue="applyFilter"
+                        id="kategori"
+                    >
                         <SelectTrigger>
                             <SelectValue placeholder="Kategori" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Kategori</SelectLabel>
+                                <SelectItem key="-" value="-">
+                                    Semua
+                                </SelectItem>
                                 <SelectItem
-                                    v-for="kat in itemsFilterKategori"
+                                    v-for="kat in allKategori"
                                     :key="kat.value"
                                     :value="kat.value"
                                 >
@@ -310,20 +343,20 @@ const clearSearchKategori = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Button asChild
-                        @click="resetFilter"
-                    >
+                    <Button asChild @click="resetFilter">
                         <div>
-                            <FunnelX/>
+                            <FunnelX />
                             Reset
                         </div>
                     </Button>
                 </div>
             </div>
-            <div class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between">
-                <Button asChild >
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button asChild>
                     <Link :href="route('bantuan.create')">
-                        <PackagePlus/>
+                        <PackagePlus />
                         Tambah Bantuan
                     </Link>
                 </Button>
@@ -344,7 +377,6 @@ const clearSearchKategori = () => {
             :export-route="'bantuan'"
             @update:page="page = $event"
         />
-
     </div>
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"

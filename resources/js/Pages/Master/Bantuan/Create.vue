@@ -18,42 +18,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
-import { apiPost, apiGet} from "@/utils/api";
-import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router } from "@inertiajs/vue3";
-import { toast } from "vue-sonner";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaBantuan } from "./utils/form-schema";
+import { useBantuan } from "@/composables/useBantuan";
+import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
 
+const { createBantuan } = useBantuan();
+const { itemsKategoriAll, fetchKategori } = useKategoriBantuan();
 
 // Initialize fields from getFields
 const fields = ref([]);
 
-const { handleSubmit, resetForm } = useForm({ validationSchema: formSchemaBantuan });
+const { handleSubmit, resetForm } = useForm({
+    validationSchema: formSchemaBantuan,
+});
 
 const onSubmit = handleSubmit(async (values) => {
-    try {
-        const res = await apiPost("/bantuan", values); // API call to create new pekerjaan
-
-        resetForm(); // Reset form fields after submission
-        toast.success("Berhasil Tambah Data Bantuan");
-        router.visit("/bantuan"); // Redirect to pekerjaan list
-    } catch (error) {
-        useErrorHandler(error); // Handle any errors
-    }
+    await createBantuan(values);
+    resetForm(); // Reset form fields after submission
 });
 
 onMounted(async () => {
-    const kategoriBantuanRes = await apiGet("/kategori-bantuan");
-    const kategoriBantuanOptions = kategoriBantuanRes.data.data.map((item) => ({
-        value: item.id.toString(),
-        label: item.kategori,
-    }));
-    fields.value = getFields(kategoriBantuanOptions);
+    await fetchKategori(true);
+    fields.value = getFields(itemsKategoriAll);
 });
 </script>
 
@@ -61,9 +51,13 @@ onMounted(async () => {
     <Head title="Tambah Bantuan" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Tambah Data Pekerjaan</h1>
+        <h1 class="text-3xl font-bold">Tambah Data Bantuan</h1>
         <BreadcrumbComponent
-            :items="[ { label: 'Dashboard', href: '/' }, { label: 'Data Bantuan', href: '/bantuan' }, { label: 'Tambah Data Bantuan' } ]"
+            :items="[
+                { label: 'Dashboard', href: '/' },
+                { label: 'Data Bantuan', href: '/bantuan' },
+                { label: 'Tambah Data Bantuan' },
+            ]"
         />
     </div>
 
@@ -78,56 +72,55 @@ onMounted(async () => {
                     v-slot="{ componentField }"
                 >
                     <FormItem>
-                    <FormLabel>{{ field.label }}</FormLabel>
-                    <FormControl>
-                        <Input
-                            v-if="field.type === 'text'"
-                            :placeholder="field.placeholder"
-                            v-bind="componentField"
-                        />
-                        <CurrencyInput
-                            v-else-if="field.type === 'currency'"
-                            v-bind="componentField"
-                            :placeholder="field.placeholder"
-                        />
-                        <Textarea
-                            v-else-if="field.type === 'textarea'"
-                            v-bind="componentField"
-                            :placeholder="field.placeholder"
-                        />
-                        <Select
-                            v-else-if="field.type === 'select'"
-                            v-bind="componentField"
-                        >
-                            <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Pilih..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="option in field.options"
-                                    :key="option.value || option"
-                                    :value="option.value || option"
-                                >
-                                    {{ option.label || option }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </FormControl>
-                    <FormMessage />
+                        <FormLabel>{{ field.label }}</FormLabel>
+                        <FormControl>
+                            <Input
+                                v-if="field.type === 'text'"
+                                :placeholder="field.placeholder"
+                                v-bind="componentField"
+                            />
+                            <CurrencyInput
+                                v-else-if="field.type === 'currency'"
+                                v-bind="componentField"
+                                :placeholder="field.placeholder"
+                            />
+                            <Textarea
+                                v-else-if="field.type === 'textarea'"
+                                v-bind="componentField"
+                                :placeholder="field.placeholder"
+                            />
+                            <Select
+                                v-else-if="field.type === 'select'"
+                                v-bind="componentField"
+                            >
+                                <SelectTrigger class="w-full">
+                                    <SelectValue placeholder="Pilih..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="option in field.options"
+                                        :key="option.value || option"
+                                        :value="option.value || option"
+                                    >
+                                        {{ option.label || option }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
                 </FormField>
             </div>
             <!-- Submit Button -->
             <div class="flex justify-end gap-4">
                 <Button
-                        @click="router.visit('/bantuan')"
-                        type="button"
-                        variant="secondary"
-                        >Batal</Button
-                    >
-                <Button type="submit" >Simpan</Button>
+                    @click="router.visit('/bantuan')"
+                    type="button"
+                    variant="secondary"
+                    >Batal</Button
+                >
+                <Button type="submit">Simpan</Button>
             </div>
         </form>
     </div>
 </template>
-

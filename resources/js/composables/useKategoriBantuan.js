@@ -14,41 +14,38 @@ export function useKategoriBantuan() {
     const totalPagesKategori = ref(0);
     const totalDataKategori = ref(0);
     const itemKategori = ref({});
-    const itemsFilterKategori = ref([]);
+    const itemsKategoriAll = ref([]);
     const searchKategori = ref("");
 
-    const fetchKategori = async () => {
+    const fetchKategori = async (all = false) => {
         try {
             isLoadingKategori.value = true;
             itemsKategori.value = [];
-            itemsFilterKategori.value = [];
+            itemsKategoriAll.value = [];
 
             const params = {
                 page: pageKategori.value,
                 per_page: perPageKategori.value,
                 search: searchKategori.value,
+                all: all
             };
 
-            // Fetch main kategori data with current pagination
             const res = await apiGet("/kategori-bantuan", params);
 
-            // Fetch all kategori data for filter dropdown
-            const resForFilter = await apiGet("/kategori-bantuan", {
-                page: 1,
-                per_page: 1000,
-            });
-
+            if (all) {
+                // return itemsKategoriAll = res.data;
+                return itemsKategoriAll.value = [
+                    ...res.data.map(kat => ({
+                        value: kat.id,
+                        label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
+                    }))
+                ];
+            }
             itemsKategori.value = res.data.data;
             perPageKategori.value = res.data.per_page;
             totalPagesKategori.value = res.data.last_page;
             totalDataKategori.value = res.data.total;
-            itemsFilterKategori.value = [
-                { value: "-", label: "Semua" },
-                ...resForFilter.data.data.map(kat => ({
-                    value: kat.id,
-                    label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
-                }))
-            ];
+
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data kategori");
         } finally {
@@ -95,7 +92,7 @@ export function useKategoriBantuan() {
 
     return {
         itemsKategori,
-        itemsFilterKategori,
+        itemsKategoriAll,
         isLoadingKategori,
         pageKategori,
         perPageKategori,

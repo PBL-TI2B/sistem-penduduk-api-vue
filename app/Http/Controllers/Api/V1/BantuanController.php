@@ -34,10 +34,11 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
-        $bantuan = $query->paginate($request->get('per_page', 10));
-        $bantuan->setCollection(collect(BantuanResource::collection($bantuan->getCollection())));
+        $data = $query->paginate($request->get('per_page', 10));
+        $collection = BantuanResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
 
-        return new ApiResource(true, 'Daftar Bantuan', $bantuan);
+        return new ApiResource(true, 'Daftar Bantuan', $data);
     }
 
     public function store(Request $request)
