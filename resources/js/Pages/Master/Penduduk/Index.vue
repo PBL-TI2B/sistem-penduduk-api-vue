@@ -19,6 +19,7 @@ import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
+import { SquarePlus } from "lucide-vue-next";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -59,7 +60,9 @@ watch(page, fetchData);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('penduduk.create')"> + Penduduk</Link>
+                <Link :href="route('penduduk.create')">
+                    <SquarePlus /> Penduduk</Link
+                >
             </Button>
         </div>
     </div>
@@ -105,6 +108,7 @@ watch(page, fetchData);
             </div>
         </div>
         <DataTable
+            label="Penduduk"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"
@@ -112,6 +116,8 @@ watch(page, fetchData);
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
+            :is-exportable="true"
+            :export-route="'penduduk'"
             @update:page="page = $event"
         />
     </div>

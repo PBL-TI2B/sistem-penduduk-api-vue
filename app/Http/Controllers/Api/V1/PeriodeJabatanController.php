@@ -6,6 +6,7 @@ use App\Models\PeriodeJabatan;
 use App\Http\Resources\ApiResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PeriodeJabatanController extends Controller
 {
@@ -61,7 +62,7 @@ class PeriodeJabatanController extends Controller
 
         return new ApiResource(true, 'Data Periode Jabatan Berhasil Diperbarui', $periodeJabatan);
     }
-    
+
     public function destroy(PeriodeJabatan $periodeJabatan)
     {
         $periodeJabatan->delete();

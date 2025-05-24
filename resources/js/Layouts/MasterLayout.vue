@@ -4,7 +4,7 @@ import AppSidebar from "@/components/master/sidebar/AppSidebar.vue";
 import { Toaster } from "vue-sonner";
 import { useAuthGuard } from "@/composables/useAuthGuard";
 
-useAuthGuard("admin");
+useAuthGuard(["admin", "superadmin", "rt", "rw"]);
 </script>
 
 <template>

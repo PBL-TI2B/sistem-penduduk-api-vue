@@ -71,7 +71,14 @@ class AuthController extends Controller
 
     public function me()
     {
-        return new ApiResource(true, 'Berhasil mendapatkan data user', Auth::user());
+        $user = [
+            'id' => Auth::user()->id,
+            'username' => Auth::user()->username,
+            'role' => Auth::user()->getRoleNames()->first(),
+            'status' => Auth::user()->status,
+            'perangkat_id' => Auth::user()->perangkat_id,
+        ];
+        return new ApiResource(true, 'Berhasil mendapatkan data user', $user);
     }
 
     public function logout() 

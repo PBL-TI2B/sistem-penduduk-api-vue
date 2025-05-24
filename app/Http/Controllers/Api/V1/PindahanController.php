@@ -110,4 +110,11 @@ class PindahanController extends Controller
             'data'    => null
         ]);
     }
+
+    public function exportPdf()
+    {
+        $pindahan = Pindahan::get();
+        $pdf = \PDF::loadView('exports.pindahan', compact('pindahan'));
+        return $pdf->download('pindahan.pdf');
+    }
 }

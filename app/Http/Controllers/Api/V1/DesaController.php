@@ -6,6 +6,7 @@ use App\Models\Desa;
 use App\Http\Resources\ApiResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DesaController extends Controller
 {

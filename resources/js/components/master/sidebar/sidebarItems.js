@@ -15,22 +15,27 @@ export const items = [
         title: "Dashboard",
         icon: LayoutDashboard,
         to: "/dashboard",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Master Penduduk",
         icon: UsersRound,
+        roles: ["admin", "superadmin"],
         children: [
             {
                 title: "Penduduk",
                 to: "/penduduk",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Kematian",
                 to: "/kematian",
+                roles: ["admin", "superadmin"],
             },
             {
                 title: "Kelahiran",
                 to: "/kelahiran",
+                roles: ["admin", "superadmin"],
             },
         ],
     },
@@ -38,16 +43,19 @@ export const items = [
         title: "Perangkat Desa",
         icon: Network,
         to: "/perangkat-desa",
+        roles: ["superadmin"],
     },
     {
         title: "Keluarga",
         icon: IdCard,
         to: "/keluarga",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Data Desa",
         icon: MapPinHouse,
         to: "/desa",
+        roles: ["admin", "superadmin"],
     },
     {
         title: "Konten Web",
@@ -69,15 +77,35 @@ export const items = [
         title: "Pendidikan",
         icon: GraduationCap,
         to: "/pendidikan",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Pekerjaan",
         icon: BriefcaseBusiness,
         to: "/pekerjaan",
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
-        title: "Bantuan",
+        title: "Master Bantuan",
         icon: Boxes,
-        to: "/bantuan",
+        children: [
+            {
+                title: "Bantuan",
+                to: "/bantuan",
+            },
+            {
+                title: "Kurang Mampu",
+                to: "/kurang-mampu",
+            },
+            {
+                title: "Penerima Bantuan",
+                to: "/penerima-bantuan",
+            },
+            {
+                title: "Kategori Bantuan",
+                to: "/kategori-bantuan",
+            },
+        ],
+        roles: ["admin", "superadmin", "rt", "rw"],
     },
 ];

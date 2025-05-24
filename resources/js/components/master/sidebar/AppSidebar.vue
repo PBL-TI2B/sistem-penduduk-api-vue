@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { ChevronDown, ChevronRight, LogOut } from "lucide-vue-next";
 import {
@@ -15,18 +15,55 @@ import {
 import Button from "../../ui/button/Button.vue";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import Cookies from "js-cookie";
-import { apiPost } from "@/utils/api";
+import { apiGet, apiPost } from "@/utils/api";
 import { items } from "./sidebarItems";
+import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
 
 const page = usePage();
-
 const isActive = (path) => page.url === path;
 
 const openDropdowns = ref({});
+const isLoading = ref(true);
 
 const toggleDropdown = (title) => {
     openDropdowns.value[title] = !openDropdowns.value[title];
 };
+
+const userRoles = ref([]);
+
+onBeforeMount(async () => {
+    try {
+        const res = await apiGet("/auth/me");
+        userRoles.value = Array.isArray(res.data.role)
+            ? res.data.role
+            : [res.data.role];
+    } catch (error) {
+        useErrorHandler(error, "Gagal mendapatkan data user");
+    } finally {
+        isLoading.value = false;
+    }
+});
+
+const filteredItems = computed(() => {
+    return items.filter((item) => {
+        const allowed =
+            !item.roles ||
+            item.roles.some((role) => userRoles.value.includes(role));
+
+        if (!allowed) return false;
+
+        if (item.children) {
+            item.children = item.children.filter(
+                (child) =>
+                    !child.roles ||
+                    child.roles.some((role) => userRoles.value.includes(role))
+            );
+            return item.children.length > 0;
+        }
+
+        return true;
+    });
+});
 
 const logout = async () => {
     try {
@@ -52,9 +89,9 @@ const logout = async () => {
                     </div>
                 </SidebarHeader>
                 <SidebarGroupContent>
-                    <SidebarMenu>
+                    <SidebarMenu v-if="!isLoading">
                         <SidebarMenuItem
-                            v-for="item in items"
+                            v-for="item in filteredItems"
                             :key="item.title"
                         >
                             <!-- If item has children (dropdown) -->
@@ -129,6 +166,13 @@ const logout = async () => {
                                 </SidebarMenuButton>
                             </template>
                         </SidebarMenuItem>
+                    </SidebarMenu>
+                    <SidebarMenu v-else>
+                        <div v-for="n in 10" :key="n" class="animate-pulse">
+                            <Skeleton
+                                class="h-4 p-3 bg-secondary rounded w-11/12 mb-2"
+                            ></Skeleton>
+                        </div>
                     </SidebarMenu>
                     <Button
                         class="absolute bottom-2 w-[93%]"
