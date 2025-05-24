@@ -41,7 +41,7 @@ const {
     fetchKategori,
     deleteKategori,
     itemsKategori,
-    itemsKategoriAll,
+    // itemsKategoriAll,
     perPageKategori,
     pageKategori,
     searchKategori,
@@ -62,7 +62,6 @@ const {
     isLoading,
     fetchBantuan,
     deleteBantuan,
-    fetchDetailBantuan,
 } = useBantuan();
 
 // Data semua kategori
@@ -82,6 +81,8 @@ const selectedBantuanUuid = ref(null);
 
 onMounted(async () => {
     allKategori.value = await fetchKategori(true);
+    // await fetchKategori(true);
+    // allKategori.value = itemsKategoriAll.value;
 
     await fetchKategori();
     await fetchBantuan();
@@ -89,6 +90,10 @@ onMounted(async () => {
 
 watch(page, async () => {
     await fetchBantuan();
+});
+watch(totalDataKategori, async () => {
+    allKategori.value = await fetchKategori(true);
+    await fetchKategori();
 });
 watch(pageKategori, async () => {
     await fetchKategori();
@@ -340,6 +345,13 @@ const clearSearchKategori = () => {
                                 >
                                     {{ kat.label }}
                                 </SelectItem>
+                                <!-- <SelectItem
+                                    v-for="kat in itemsKategoriAll"
+                                    :key="kat.value"
+                                    :value="kat.value"
+                                >
+                                    {{ kat.label }}
+                                </SelectItem> -->
                             </SelectGroup>
                         </SelectContent>
                     </Select>

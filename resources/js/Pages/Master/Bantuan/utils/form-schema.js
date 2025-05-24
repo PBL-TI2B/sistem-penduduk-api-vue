@@ -13,7 +13,7 @@ export const formSchemaBantuan = toTypedSchema(
     })
 );
 
-export const formSchmemaKategori = toTypedSchema(
+export const formSchemaKategori = toTypedSchema(
     z.object({
         kategori: z.string(),
         keterangan: z.string().optional(),

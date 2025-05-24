@@ -40,6 +40,7 @@ export function useKategoriBantuan() {
                         label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
                     }))
                 ];
+                // return
             }
             itemsKategori.value = res.data.data;
             perPageKategori.value = res.data.per_page;
