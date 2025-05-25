@@ -6,11 +6,7 @@
 
 const columnsIndexBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
-    {
-        label: "Kategori",
-        key: "kategori",
-        format: (val, row) => row.kategori || "-",
-    },
+    { label: "Kategori",key: "kategori", },
     { label: "Nominal", key: "nominal",
         format: (value) => {
             if (value == null || value === "") return '-';
@@ -41,7 +37,7 @@ const rowsIndexBantuan = [
     {
         label: "Kategori Bantuan",
         key: "kategori",
-        format: (val, row) => row.kategori || "-",
+        // format: (val, row) => val?.kategori || "-",
     },
     { label: "Nominal", key: "nominal",
         format: (value) => {

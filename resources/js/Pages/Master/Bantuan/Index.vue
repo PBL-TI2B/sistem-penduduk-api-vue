@@ -76,7 +76,8 @@ const isAlertDeleteBantuanOpen = ref(false);
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-// onMounted());
+// for edit
+const selectedKategoriEdit = ref(null);
 
 onMounted(() => {
     fetchKategori(true);
@@ -123,34 +124,35 @@ const actionsIndexBantuan = [
             // Implement your delete logic here, e.g.:
             onClickDeleteBantuanButton(item.uuid);
         },
-        disabled: (items) => items.penerima_bantuan_count > 0,
+        disabled: (item) => item.penerima_bantuan_count > 0,
     },
 ];
 
 const actionsIndexKategori = [
     {
-        label: "Saring",
+        label: "Cari",
         icon: PackageSearch,
-        handler: (items) => {
-            selectedKategori.value = items.id;
+        handler: (item) => {
+            selectedKategori.value = item.id;
             applyFilter();
         },
+        disabled: (item) => item.bantuan_count == 0,
     },
     {
         label: "Ubah",
         icon: Eye,
-        handler: (items) => {
-            editKategoriBantuan(items);
+        handler: (item) => {
+            editKategoriBantuan(item);
         },
     },
     {
         label: "Hapus",
         icon: Trash2,
         // variant: "danger",
-        handler: (items) => {
-            onClickDeleteKategoriButton(itemsKategori.uuid);
+        handler: (item) => {
+            onClickDeleteKategoriButton(item.uuid);
         },
-        disabled: (itemsKategori) => itemsKategori.bantuan_count > 0,
+        disabled: (item) => item.bantuan_count > 0,
     },
 ];
 
@@ -179,7 +181,7 @@ const createKategoriBantuan = () => {
 const editKategoriBantuan = (kategori) => {
     isFormDialogOpen.value = true;
     dialogMode.value = "edit";
-    selectedKategori.value = kategori;
+    selectedKategoriEdit.value = kategori;
 };
 const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
@@ -389,11 +391,12 @@ const clearSearchKategori = () => {
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
-        :initial-data="selectedKategori"
+        :initial-data="selectedKategoriEdit"
         @success="
             () => {
                 fetchKategori();
                 fetchKategori(true);
+                fetchBantuan();
             }
         "
     />

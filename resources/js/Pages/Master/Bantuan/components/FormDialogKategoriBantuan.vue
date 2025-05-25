@@ -48,10 +48,10 @@ const keterangan = computed({
     set: (val) => setValues({ keterangan: val }),
 });
 
-const { createAndEditKategori } = useKategoriBantuan();
+const { createAndEditKategori, isLoadingKategori } = useKategoriBantuan();
 
 const onSubmit = handleSubmit(async (formValues) => {
-    createAndEditKategori(formValues, props, emit);
+    await createAndEditKategori(formValues, props, emit);
 });
 
 watch(
@@ -71,11 +71,11 @@ watch(
             resetForm();
         }
     },
-    { immediate: true }
+    { immediate: true },
 );
 
 const dialogTitle = computed(() =>
-    props.mode === "create" ? "Tambah Kategori" : "Edit Kategori"
+    props.mode === "create" ? "Tambah Kategori" : "Edit Kategori",
 );
 </script>
 
@@ -128,7 +128,7 @@ const dialogTitle = computed(() =>
                 </div>
 
                 <DialogFooter>
-                    <Button type="submit">
+                    <Button type="submit" :disabled="isLoadingKategori">
                         {{
                             mode === "edit" ? "Simpan Perubahan" : "Tambah Data"
                         }}
