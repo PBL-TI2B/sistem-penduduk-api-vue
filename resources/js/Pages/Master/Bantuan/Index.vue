@@ -64,9 +64,6 @@ const {
     deleteBantuan,
 } = useBantuan();
 
-// Data semua kategori
-const allKategori = ref([]);
-
 // kategori dialog
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
@@ -232,13 +229,13 @@ const clearSearchKategori = () => {
             <h1 class="text-3xl font-bold">Data Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/dashboard' },
                     { label: 'Data Bantuan' },
                 ]"
             />
         </div>
     </div>
-    <div class="drop-shadow-md w-full grid gap-2">
+    <div class="drop-shadow-md w-full grid gap-2 mb-3">
         <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
@@ -288,9 +285,11 @@ const clearSearchKategori = () => {
             :is-loading="isLoadingKategori"
             @update:page="pageKategori = $event"
         />
-
+    </div>
+    <div class="drop-shadow-md w-full grid gap-2">
+        <div class="drop-shadow-md w-full grid gap-2"></div>
         <!-- Search Bantuan -->
-        <div class="flex xl:flex-row flex-col gap-4 mt-4 items-center">
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full"
             >
