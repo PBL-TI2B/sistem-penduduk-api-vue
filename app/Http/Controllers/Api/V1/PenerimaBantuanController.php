@@ -60,7 +60,7 @@ class PenerimaBantuanController extends Controller
      */
     public function show(PenerimaBantuan $penerimaBantuan)
     {
-        $penerimaBantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']);
+        $penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu']);
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Penerima Bantuan',
