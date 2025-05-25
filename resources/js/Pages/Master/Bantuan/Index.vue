@@ -64,9 +64,6 @@ const {
     deleteBantuan,
 } = useBantuan();
 
-// Data semua kategori
-const allKategori = ref([]);
-
 // kategori dialog
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
@@ -79,7 +76,8 @@ const isAlertDeleteBantuanOpen = ref(false);
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-// onMounted());
+// for edit
+const selectedKategoriEdit = ref(null);
 
 onMounted(() => {
     fetchKategori(true);
@@ -126,33 +124,35 @@ const actionsIndexBantuan = [
             // Implement your delete logic here, e.g.:
             onClickDeleteBantuanButton(item.uuid);
         },
+        disabled: (item) => item.penerima_bantuan_count > 0,
     },
 ];
 
 const actionsIndexKategori = [
     {
-        label: "Saring",
+        label: "Cari",
         icon: PackageSearch,
-        handler: (itemsKategori) => {
-            selectedKategori.value = itemsKategori.id;
+        handler: (item) => {
+            selectedKategori.value = item.id;
             applyFilter();
         },
+        disabled: (item) => item.bantuan_count == 0,
     },
     {
         label: "Ubah",
         icon: Eye,
-        handler: (itemsKategori) => {
-            editKategoriBantuan(itemsKategori);
+        handler: (item) => {
+            editKategoriBantuan(item);
         },
     },
     {
         label: "Hapus",
         icon: Trash2,
         // variant: "danger",
-        handler: (itemsKategori) => {
-            onClickDeleteKategoriButton(itemsKategori.uuid);
+        handler: (item) => {
+            onClickDeleteKategoriButton(item.uuid);
         },
-        disabled: (itemsKategori) => itemsKategori.bantuan_count > 0,
+        disabled: (item) => item.bantuan_count > 0,
     },
 ];
 
@@ -181,7 +181,7 @@ const createKategoriBantuan = () => {
 const editKategoriBantuan = (kategori) => {
     isFormDialogOpen.value = true;
     dialogMode.value = "edit";
-    selectedKategori.value = kategori;
+    selectedKategoriEdit.value = kategori;
 };
 const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
@@ -232,13 +232,13 @@ const clearSearchKategori = () => {
             <h1 class="text-3xl font-bold">Data Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/dashboard' },
                     { label: 'Data Bantuan' },
                 ]"
             />
         </div>
     </div>
-    <div class="drop-shadow-md w-full grid gap-2">
+    <div class="drop-shadow-md w-full grid gap-2 mb-3">
         <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
@@ -288,9 +288,11 @@ const clearSearchKategori = () => {
             :is-loading="isLoadingKategori"
             @update:page="pageKategori = $event"
         />
-
+    </div>
+    <div class="drop-shadow-md w-full grid gap-2">
+        <div class="drop-shadow-md w-full grid gap-2"></div>
         <!-- Search Bantuan -->
-        <div class="flex xl:flex-row flex-col gap-4 mt-4 items-center">
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full"
             >
@@ -389,11 +391,12 @@ const clearSearchKategori = () => {
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
-        :initial-data="selectedKategori"
+        :initial-data="selectedKategoriEdit"
         @success="
             () => {
                 fetchKategori();
                 fetchKategori(true);
+                fetchBantuan();
             }
         "
     />
