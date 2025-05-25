@@ -11,11 +11,17 @@ use Illuminate\Support\Str;
 
 class KartuKeluargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil daftar Kartu Keluarga dengan paginasi
-        $data = KartuKeluarga::paginate(5);
-        return new ApiResource(true, 'Daftar Kartu Keluarga', $data);
+        $query = KartuKeluarga::query();
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('nomor_kk', 'like', "%$search%");
+        }
+        
+        $kartukeluarga = $query->paginate($request->get('per_page', 10));
+        return new ApiResource(true, 'Daftar Kartu Keluarga', $kartukeluarga);
     }
 
     public function store(Request $request)

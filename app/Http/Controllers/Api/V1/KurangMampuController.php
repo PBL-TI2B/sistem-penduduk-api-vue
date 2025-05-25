@@ -6,9 +6,9 @@ use App\Models\KurangMampu;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
 use App\Http\Resources\KurangMampuResource;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class KurangMampuController extends Controller
@@ -18,20 +18,29 @@ class KurangMampuController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $query = KurangMampu::query();
+        $query = KurangMampu::with(['anggotaKeluarga.penduduk']);
 
+        // Pencarian berdasarkan nama penduduk
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%");
+            });
+        }
 
-        // Filtering
+        // Filter berdasarkan status_validasi
         if ($request->filled('status_validasi')) {
             $query->where('status_validasi', $request->status_validasi);
         }
 
-        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
-        $collection = KurangMampuResource::collection($data->getCollection());
-        $data->setCollection(collect($collection));
+        $kurangMampu = $query->paginate($request->get('per_page', 10))
+            ->appends($request->only(['search', 'status_validasi', 'per_page']));
 
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data,);
+        $kurangMampu->setCollection(
+            collect(KurangMampuResource::collection($kurangMampu->getCollection()))
+        );
+
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
     }
 
     /**
@@ -112,4 +121,5 @@ class KurangMampuController extends Controller
         $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
+
 }
