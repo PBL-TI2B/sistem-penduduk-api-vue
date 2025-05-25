@@ -12,19 +12,46 @@ use Illuminate\Http\Request;
 
 class PerangkatDesaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all perangkat desa
-        $perangkatDesa = PerangkatDesa::with(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt'])->paginate(10);
+        // Mulai query dengan relasi yang diperlukan
+        $query = PerangkatDesa::with(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt']);
+
+        // Filter berdasarkan periode_jabatan_id
+        if ($request->filled('periode_jabatan')) {
+            $query->whereHas('periode_jabatan', function ($q) use ($request) {
+                $q->where('id', $request->periode_jabatan);
+            });
+        }
+
+        // Filter berdasarkan jabatan_id
+        if ($request->filled('jabatan')) {
+            $query->whereHas('jabatan', function ($q) use ($request) {
+                $q->where('id', $request->jabatan);
+            });
+        }
+
+        // Filter berdasarkan rw_id
+        if ($request->filled('rw')) {
+            $query->whereHas('rw', function ($q) use ($request) {
+                $q->where('id', $request->rw);
+            });
+        }
+
+        // Pagination (default 10)
+        $perangkatDesa = $query->paginate($request->get('per_page', 10));
+
+        // Gunakan resource untuk data
         $collection = PerangkatDesaResource::collection($perangkatDesa->getCollection());
         $perangkatDesa->setCollection(collect($collection));
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data perangkat desa',
             'data' => $perangkatDesa,
         ]);
     }
+
 
     public function store(Request $request)
     {

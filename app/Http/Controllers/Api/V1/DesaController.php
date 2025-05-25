@@ -10,11 +10,27 @@ use Illuminate\Support\Facades\Validator;
 
 class DesaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $desa = Desa::paginate(10);
+        $query = Desa::query();
+
+        // Fitur pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%$search%")
+                ->orWhere('deskripsi', 'like', "%$search%")
+                ->orWhere('lokasi', 'like', "%$search%");
+            });
+        }
+
+        // Paginasi
+        $desa = $query->paginate($request->get('per_page', 10));
+
+        // Respon API
         return new ApiResource(true, 'Daftar Data Desa', $desa);
     }
+
 
     public function store(Request $request)
     {

@@ -22,6 +22,7 @@ const totalPages = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
+const searchDesa = ref("");
 
 // Dialog dan state hapus desa
 const isFormDialogDesaOpen = ref(false);
@@ -35,7 +36,10 @@ const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/desa", { page: page.value });
+        const res = await apiGet("/desa", {
+            page: page.value,
+            search: searchDesa.value, // pakai searchDesa
+        });
         items.value = res.data.data;
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
@@ -92,7 +96,7 @@ const actionsIndex = getActionsDesa({
 });
 
 onMounted(fetchData);
-watch(page, fetchData);
+watch([page, searchDesa], fetchData);
 
 // ======================= DUSUN ========================
 const items2 = ref([]);
@@ -100,7 +104,7 @@ const totalPages2 = ref(1);
 const page2 = ref(1);
 const perPage2 = ref(10);
 const isLoading2 = ref(false);
-const search2 = ref("");
+const searchDusun = ref("");
 
 // Dialog dan state hapus dusun
 const isFormDialogDusunOpen = ref(false);
@@ -116,7 +120,7 @@ const fetchData2 = async () => {
         isLoading2.value = true;
         const res = await apiGet("/dusun", {
             page: page2.value,
-            search: search2.value,
+            search: searchDusun.value, // pakai searchDusun
         });
         items2.value = res.data.data;
         perPage2.value = res.data.per_page;
@@ -129,7 +133,7 @@ const fetchData2 = async () => {
 };
 
 onMounted(fetchData2);
-watch([page2, search2], fetchData2);
+watch([page2, searchDusun], fetchData2);
 
 const createDusun = () => {
     dialogModeDusun.value = "create";
@@ -201,7 +205,7 @@ const actionsIndex2 = getActionsDusun({
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
             <Input
-                v-model="search2"
+                v-model="searchDesa"
                 placeholder="Cari desa berdasarkan nama"
                 class="md:w-1/3"
             />
@@ -236,7 +240,7 @@ const actionsIndex2 = getActionsDusun({
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
             <Input
-                v-model="search2"
+                v-model="searchDusun"
                 placeholder="Cari dusun berdasarkan nama"
                 class="md:w-1/3"
             />
