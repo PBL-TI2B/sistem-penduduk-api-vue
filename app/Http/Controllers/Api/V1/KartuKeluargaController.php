@@ -58,7 +58,7 @@ class KartuKeluargaController extends Controller
 
     public function update(Request $request, KartuKeluarga $kartuKeluarga)
     {
-        // Validasi data yang diupdate
+        // Validasi data yang diperbarui
         $validator = Validator::make($request->all(), [
             'nomor_kk' => 'required|max:50|unique:kartu_keluarga,nomor_kk,' . $kartuKeluarga->uuid,
             'rt_id' => 'required',
@@ -84,7 +84,7 @@ class KartuKeluargaController extends Controller
             'provinsi'
         ]));
 
-        return new ApiResource(true, 'Kartu Keluarga Berhasil Diupdate', $kartuKeluarga);
+        return new ApiResource(true, 'Kartu Keluarga Berhasil Diperbarui', $kartuKeluarga);
     }
 
     public function destroy(KartuKeluarga $kartuKeluarga)

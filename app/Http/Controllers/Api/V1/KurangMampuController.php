@@ -8,6 +8,8 @@ use App\Http\Resources\ApiResource;
 use App\Http\Resources\KurangMampuResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class KurangMampuController extends Controller
 {
@@ -23,7 +25,7 @@ class KurangMampuController extends Controller
         $collection = KurangMampuResource::collection($kurangMampu->getCollection());
         $kurangMampu->setCollection(collect($collection));
 
-        return new ApiResource(true,'Daftar Data Kurang Mampu', $kurangMampu,);
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu,);
     }
 
     /**
@@ -31,7 +33,7 @@ class KurangMampuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',
@@ -69,7 +71,7 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',
@@ -101,7 +103,7 @@ class KurangMampuController extends Controller
     public function exportPdf()
     {
         $kurangMampu = KurangMampu::get();
-        $pdf = \PDF::loadView('exports.kurang-mampu', compact('kurangMampu'));
+        $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
 }

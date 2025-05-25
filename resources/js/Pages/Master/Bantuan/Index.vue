@@ -123,6 +123,7 @@ const actionsIndexBantuan = [
             // Implement your delete logic here, e.g.:
             onClickDeleteBantuanButton(item.uuid);
         },
+        disabled: (items) => items.penerima_bantuan_count > 0,
     },
 ];
 
@@ -130,23 +131,23 @@ const actionsIndexKategori = [
     {
         label: "Saring",
         icon: PackageSearch,
-        handler: (itemsKategori) => {
-            selectedKategori.value = itemsKategori.id;
+        handler: (items) => {
+            selectedKategori.value = items.id;
             applyFilter();
         },
     },
     {
         label: "Ubah",
         icon: Eye,
-        handler: (itemsKategori) => {
-            editKategoriBantuan(itemsKategori);
+        handler: (items) => {
+            editKategoriBantuan(items);
         },
     },
     {
         label: "Hapus",
         icon: Trash2,
         // variant: "danger",
-        handler: (itemsKategori) => {
+        handler: (items) => {
             onClickDeleteKategoriButton(itemsKategori.uuid);
         },
         disabled: (itemsKategori) => itemsKategori.bantuan_count > 0,
