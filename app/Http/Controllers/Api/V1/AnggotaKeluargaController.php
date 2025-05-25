@@ -10,11 +10,22 @@ use Illuminate\Support\Facades\Validator;
 
 class AnggotaKeluargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $anggota = AnggotaKeluarga::with(['kk', 'penduduk', 'statusKeluarga'])->paginate(10);
+        $query = AnggotaKeluarga::with(['kk', 'penduduk', 'statusKeluarga']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('penduduk', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%");
+            });
+        }
+
+        $anggota = $query->paginate($request->get('per_page', 10));
+
         return new ApiResource(true, 'Daftar Data Anggota Keluarga', $anggota);
     }
+
 
     public function store(Request $request)
     {

@@ -13,17 +13,32 @@ class DomisiliController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $domisili = Domisili::with('penduduk', 'rt','rt.rw')->paginate(10);
-        $collection = DomisiliResource::collection($domisili->getCollection());
-        $domisili->setCollection(collect($collection));
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar Data Domisili',
-            'data'    => $domisili,
-        ]);
+   public function index(Request $request)
+{
+    $query = Domisili::with('penduduk', 'rt', 'rt.rw');
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('status_tempat_tinggal', 'like', "%$search%")
+              ->orWhereHas('penduduk', function ($q2) use ($search) {
+                  $q2->where('nama_lengkap', 'like', "%$search%");
+              });
+        });
     }
+
+    $domisili = $query->paginate($request->get('per_page', 10));
+    $collection = DomisiliResource::collection($domisili->getCollection());
+    $domisili->setCollection(collect($collection));
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Daftar Data Domisili',
+        'data'    => $domisili,
+    ]);
+}
+
     
 
     /**
