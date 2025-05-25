@@ -85,10 +85,10 @@ onMounted(async () => {
     <Head title="Tambah Bantuan" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Tambah Data Pekerjaan</h1>
+        <h1 class="text-3xl font-bold">Tambah Data Bantuan</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
+                { label: 'Dashboard', href: '/dashboard' },
                 { label: 'Data Bantuan', href: '/bantuan' },
                 { label: 'Tambah Data Bantuan' },
             ]"
@@ -153,7 +153,7 @@ onMounted(async () => {
                     variant="secondary"
                     >Batal</Button
                 > -->
-                <Button type="submit">Ubah</Button>
+                <Button type="submit">Simpan Perubahan</Button>
             </div>
         </form>
     </div>
