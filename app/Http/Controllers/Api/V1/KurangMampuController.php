@@ -16,16 +16,22 @@ class KurangMampuController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kurangMampu = KurangMampu::with([
-            'anggotaKeluarga'
-        ])->paginate(10);
+        $perPage = $request->input('per_page', 10);
+        $query = KurangMampu::query();
 
-        $collection = KurangMampuResource::collection($kurangMampu->getCollection());
-        $kurangMampu->setCollection(collect($collection));
 
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu,);
+        // Filtering
+        if ($request->filled('status_validasi')) {
+            $query->where('status_validasi', $request->status_validasi);
+        }
+
+        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $collection = KurangMampuResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
+
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data,);
     }
 
     /**

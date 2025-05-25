@@ -1,11 +1,25 @@
-import { Eye } from "lucide-vue-next";
+
 import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+import {
+//     PackagePlus,
+//     SearchIcon,
+    Eye,
+    Trash2,
+    // PackageSearch,
+//     X,
+//     FunnelX,
+    SquarePen,
+} from "lucide-vue-next";
 
 const columnsIndex = [
     // { label: "Nama Penduduk", key: "anggota_keluarga_id" },
     {
         label: "Nama Penduduk",
-        key: "nama_lengkap",
+        key: "penduduk",
+        format: (value) => {
+            return value?.nama_lengkap ?? '-';
+        },
     },
     {
         label: "Pendapatan Per-Hari",
@@ -30,22 +44,51 @@ const columnsIndex = [
             return value?? '0';
         },
     },
-    { label: "Pekerjaan", key: "pekerjaan" },
-    { label: "Status Valiasi", key: "status_validasi" },
-    { label: "Keterangan", key: "keterangan",
+    {
+        label: "Pekerjaan",
+        key: "penduduk",
         format: (value) => {
-            return value?? '-';
+            return value?.pekerjaan ?? '-';
         },
     },
+    {
+        label: "Pendidikan Terakhir",
+        key: "penduduk",
+        format: (value) => {
+            return value?.pendidikan ?? '-';
+        },
+    },
+    { label: "Status Validasi", key: "status_validasi" },
+    // { label: "Keterangan", key: "keterangan",
+    //     format: (value) => {
+    //         return value?? '-';
+    //     },
+    // },
 ];
 
 const actionsIndex = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
-            router.visit(route("pekerjaan.show", item.uuid));
+            router.visit(route("kurang-mampu.show", item.uuid));
         },
+    },
+    {
+        label: "Ubah",
+        icon: SquarePen,
+        handler: (item) => {
+            router.visit(route("kurang-mampu.edit", item.uuid));
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        // handler: (item) => {
+            // Implement your delete logic here, e.g.:
+            // onClickDeleteBantuanButton(item.uuid);
+        // },
+        disabled: (item) => item.penerima_bantuan_count > 0,
     },
 ];
 
