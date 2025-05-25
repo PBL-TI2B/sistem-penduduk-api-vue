@@ -30,8 +30,15 @@ const selectedJabatan = ref(null);
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 
-const { fetchPerangkatDesa, items, page, perPage, totalPages, isLoading } =
-    usePerangkatDesa();
+const {
+    fetchPerangkatDesa,
+    items,
+    page,
+    perPage,
+    totalPages,
+    totalItems,
+    isLoading,
+} = usePerangkatDesa();
 
 const {
     fetchJabatan,
@@ -188,6 +195,7 @@ watch(pageJabatan, () => {
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
+            :totalData="totalItems"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
