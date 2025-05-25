@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
 class KurangMampuController extends Controller
 {
     /**
@@ -40,6 +41,7 @@ class KurangMampuController extends Controller
         );
 
         return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
+
     }
 
     /**
@@ -47,7 +49,7 @@ class KurangMampuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',
@@ -85,7 +87,7 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',

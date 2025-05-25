@@ -18,13 +18,9 @@ class GaleriResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'judul' => $this->judul,
-            'slug' => $this->slug,
-            'thumbnail' => $this->thumbnail,
-            'deskripsi' => $this->deskripsi,
-            'tanggal_post' => $this->tanggal_post,
             'url_media' => $this->url_media,
             'user'=> [
-                'name' => $this->user?->username
+                'username' => $this->user?->username
             ],
         ];
     }

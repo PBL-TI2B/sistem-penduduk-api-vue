@@ -14,7 +14,9 @@ class BantuanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Bantuan::with('kategoriBantuan');
+        $perPage = $request->input('per_page', 10);
+        // $query = Bantuan::withCount(['kategoriBantuan', 'penerimaBantuan']);
+        $query = Bantuan::query();
 
         // General search across main columns
         if ($request->filled('search')) {
@@ -34,10 +36,11 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
-        $bantuan = $query->paginate($request->get('per_page', 10));
-        $bantuan->setCollection(collect(BantuanResource::collection($bantuan->getCollection())));
+        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $collection = BantuanResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
 
-        return new ApiResource(true, 'Daftar Bantuan', $bantuan);
+        return new ApiResource(true, 'Daftar Bantuan', $data);
     }
 
     public function store(Request $request)

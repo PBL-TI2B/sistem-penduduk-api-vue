@@ -43,10 +43,12 @@ export function useBantuan() {
     // Fetch detail bantuan (untuk halaman edit/detail)
     const fetchDetailBantuan = async (uuid) => {
         if (!uuid) return;
+        // item = ref({});
         try {
             isLoading.value = true;
             const res = await apiGet(`/bantuan/${uuid}`);
             item.value = res.data;
+            // console.log(res.data);
         } catch (error) {
             useErrorHandler(error, "Gagal memuat detail bantuan");
         } finally {
@@ -55,46 +57,55 @@ export function useBantuan() {
     };
 
     // Create bantuan
-    const createBantuan = async (values, resetForm) => {
+    const createBantuan = async (values) => {
         try {
+            isLoading.value = true;
+
             const formData = new FormData();
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost("/bantuan", formData);
-            if (resetForm) resetForm();
-            toast.success("Berhasil menambahkan data bantuan");
+            await apiPost("/bantuan", values);
+            toast.success("Berhasil Tambah Data Bantuan");
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data bantuan");
+        } finally {
+            isLoading.value = false;
         }
     };
 
     // Edit bantuan
-    const editBantuan = async (uuid, values, resetForm) => {
+    const editBantuan = async (uuid, values) => {
         try {
+            isLoading.value = true;
+
             const formData = new FormData();
             formData.append("_method", "PUT");
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
             await apiPost(`/bantuan/${uuid}`, formData);
-            if (resetForm) resetForm();
             toast.success("Berhasil memperbarui data bantuan");
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data bantuan");
+        } finally {
+            isLoading.value = false;
         }
     };
 
     // Delete bantuan
     const deleteBantuan = async (uuid) => {
         try {
+            // isLoading.value = true;
             await apiDelete(`/bantuan/${uuid}`);
             toast.success("Berhasil menghapus bantuan");
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus bantuan");
+        } finally {
+            // isLoading.value = false;
         }
     };
 

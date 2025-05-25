@@ -5,7 +5,7 @@ export const formSchemaBantuan = toTypedSchema(
     z.object({
         nama_bantuan: z.string(),
         kategori_bantuan_id: z.string(),
-        nominal: z.string().optional().nullable(),
+        nominal: z.number().optional().nullable(),
         periode: z.string(),
         lama_periode: z.string(),
         instansi: z.string(),
@@ -13,7 +13,7 @@ export const formSchemaBantuan = toTypedSchema(
     })
 );
 
-export const formSchmemaKategori = toTypedSchema(
+export const formSchemaKategori = toTypedSchema(
     z.object({
         kategori: z.string(),
         keterangan: z.string().optional(),

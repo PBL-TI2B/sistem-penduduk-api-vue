@@ -13,9 +13,31 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PendudukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->paginate(10);
+        $query = Penduduk::with(['pekerjaan', 'pendidikan']);
+
+        // Filter status hidup/mati
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        // Filter status perkawinan
+        if ($request->filled('status_perkawinan')) {
+            $query->where('status_perkawinan', $request->status_perkawinan);
+        }
+
+        // Filter pendidikan (jika nama ada di tabel relasi `pendidikan`)
+        if ($request->filled('pendidikan')) {
+            $query->whereHas('pendidikan', function ($q) use ($request) {
+                $q->where('nama', $request->pendidikan); // sesuaikan nama kolom jika perlu
+            });
+        }
+        // Filter agama
+        if ($request->filled('agama')) {
+            $query->where('agama', $request->agama);
+        }
+
+        $penduduk = $query->paginate($request->get('per_page', 10));
         $collection = PendudukResource::collection($penduduk->getCollection());
         $penduduk->setCollection(collect($collection));
 
@@ -25,6 +47,7 @@ class PendudukController extends Controller
             'data' => $penduduk,
         ]);
     }
+
 
     public function store(Request $request)
     {
@@ -165,6 +188,7 @@ class PendudukController extends Controller
     public function exportPdf()
     {
         $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->get();
+
         $pdf = Pdf::loadView('exports.penduduk', compact('penduduk'));
         return $pdf->download('penduduk.pdf');
     }

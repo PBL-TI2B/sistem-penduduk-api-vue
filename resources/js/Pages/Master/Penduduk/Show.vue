@@ -8,7 +8,7 @@ import { usePage } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import FormDialogDomisili from "./components/FormDialogDomisili.vue";
 import { usePenduduk } from "@/composables/usePenduduk";
-import Domisilisection from "./components/Domisilisection.vue";
+import DomisiliSection from "./components/TableDomisiliSection.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
 const { uuid } = usePage().props;
@@ -62,7 +62,7 @@ onMounted(fetchDetailPenduduk);
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data Penduduk', href: '/penduduk' },
+                    { label: 'Data Penduduk', href: '../' },
                     { label: 'Detail Penduduk' },
                 ]"
             />
@@ -116,7 +116,7 @@ onMounted(fetchDetailPenduduk);
         />
     </div>
 
-    <Domisilisection
+    <DomisiliSection
         :items="items"
         :createDomisiliPenduduk="createDomisiliPenduduk"
         :editDomisiliPenduduk="editDomisiliPenduduk"
