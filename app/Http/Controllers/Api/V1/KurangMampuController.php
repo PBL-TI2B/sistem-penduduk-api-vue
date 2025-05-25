@@ -41,7 +41,6 @@ class KurangMampuController extends Controller
         );
 
         return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
-
     }
 
     /**

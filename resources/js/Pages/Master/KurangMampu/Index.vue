@@ -22,6 +22,7 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const items = ref([]);
 const totalPages = ref(1);
+const totalItems = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
@@ -55,6 +56,7 @@ const fetchData = async () => {
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalItems.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data kurang mampu");
     } finally {
@@ -169,6 +171,7 @@ watch(page, fetchData);
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
+            :totalData="totalItems"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"

@@ -22,6 +22,7 @@ class PenerimaBantuanResource extends JsonResource
             'keterangan' => $this->keterangan,
 
             'kurang_mampu' => new KurangMampuResource($this->whenLoaded('kurangMampu')),
+            // 'kurang_mampu' => new KurangMampuResource($this->kurangMampu),
             // 'uuid_kurang_mampu' => $this->kurangMampu?->uuid,
             // 'status_validasi' => $this->kurangMampu?->status_validasi,
             // 'pendapatan_per_hari' => $this->kurangMampu?->pendapatan_per_hari,
