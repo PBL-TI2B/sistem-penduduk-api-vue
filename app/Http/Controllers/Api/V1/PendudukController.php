@@ -165,6 +165,7 @@ class PendudukController extends Controller
     public function exportPdf()
     {
         $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->get();
+
         $pdf = Pdf::loadView('exports.penduduk', compact('penduduk'));
         return $pdf->download('penduduk.pdf');
     }

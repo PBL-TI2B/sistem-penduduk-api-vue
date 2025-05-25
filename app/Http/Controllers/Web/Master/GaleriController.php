@@ -36,10 +36,10 @@ class GaleriController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Galeri $galeri)
+    public function show(Galeri $galeri_admin)
     {
         return Inertia::render('Master/Galeri/Show', [
-            'uuid'=>$galeri->uuid
+            'uuid' => $galeri_admin->uuid
         ]);
     }
 
@@ -49,7 +49,7 @@ class GaleriController extends Controller
     public function edit(Galeri $galeri)
     {
         return Inertia::render('Master/Galeri/Edit', [
-            'uuid'=>$galeri->uuid
+            'uuid' => $galeri->uuid
         ]);
     }
 
