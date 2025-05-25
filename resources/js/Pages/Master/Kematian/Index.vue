@@ -16,11 +16,16 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 
+const search = ref("");
+
 const fetchData = async () => {
     try {
         isLoading.value = true;
-        const res = await apiGet("/kematian", { page: page.value });
-        items.value = res.data.data.map(item => ({
+        const res = await apiGet("/kematian", {
+            page: page.value,
+            search: search.value,
+        });
+        items.value = res.data.data.map((item) => ({
             ...item,
             nama_penduduk: item.penduduk?.nama_lengkap || "-",
         }));
@@ -33,6 +38,12 @@ const fetchData = async () => {
     }
 };
 
+const clearSearch = () => {
+    search.value = "";
+    page.value = 1;
+    fetchData();
+};
+
 onMounted(fetchData);
 watch(page, fetchData);
 </script>
@@ -40,7 +51,7 @@ watch(page, fetchData);
 <template>
     <Head title=" | Data Kematian" />
     <div class="flex items-center justify-between py-3">
-        <div>
+        <div class="grid gap-1">
             <h1 class="text-3xl font-bold">Data Kematian</h1>
             <BreadcrumbComponent
                 :items="[
@@ -49,23 +60,54 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <Button asChild>
-            <Link :href="route('kematian.create')">+ Kematian</Link>
-        </Button>
+        <div class="flex flex-wrap gap-4 items-center">
+            <Button asChild>
+                <Link :href="route('kematian.create')">+ Kematian</Link>
+            </Button>
+        </div>
     </div>
-    <div class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between mb-2">
-        <Input placeholder="Cari berdasarkan penduduk atau sebab" class="md:w-1/3" />
-        <Button class="cursor-pointer">Terapkan</Button>
+
+    <!-- Search & Action Area -->
+    <div class="drop-shadow-md w-full grid gap-2">
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
+        >
+            <!-- Input + X button dalam satu wrapper -->
+            <div class="relative md:w-1/3">
+                <Input
+                    v-model="search"
+                    placeholder="Cari data kematian berdasarkan nama atau sebab"
+                    class="w-full pr-8"
+                />
+                <button
+                    v-if="search"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                    @click="clearSearch"
+                    tabindex="-1"
+                    type="button"
+                >
+                    ✕
+                </button>
+            </div>
+
+            <div class="flex gap-4">
+                <Button class="cursor-pointer" @click="fetchData"
+                    >Terapkan</Button
+                >
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <DataTable
+            :items="items"
+            :columns="columnsIndex"
+            :actions="actionsIndex"
+            :totalPages="totalPages"
+            :page="page"
+            :per-page="perPage"
+            :is-loading="isLoading"
+            :export-route="'kematian'"
+            @update:page="page = $event"
+        />
     </div>
-    <DataTable
-        :items="items"
-        :columns="columnsIndex"
-        :actions="actionsIndex"
-        :totalPages="totalPages"
-        :page="page"
-        :per-page="perPage"
-        :is-loading="isLoading"
-        :export-route="'kematian'"
-        @update:page="page = $event"
-    />
 </template>

@@ -6,6 +6,7 @@ use App\Models\KurangMampu;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
 use App\Http\Resources\KurangMampuResource;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,16 +15,31 @@ class KurangMampuController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kurangMampu = KurangMampu::with([
-            'anggotaKeluarga'
-        ])->paginate(10);
+        $query = KurangMampu::with(['anggotaKeluarga.penduduk']);
 
-        $collection = KurangMampuResource::collection($kurangMampu->getCollection());
-        $kurangMampu->setCollection(collect($collection));
+        // Pencarian berdasarkan nama penduduk
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%");
+            });
+        }
 
-        return new ApiResource(true,'Daftar Data Kurang Mampu', $kurangMampu,);
+        // Filter berdasarkan status_validasi
+        if ($request->filled('status_validasi')) {
+            $query->where('status_validasi', $request->status_validasi);
+        }
+
+        $kurangMampu = $query->paginate($request->get('per_page', 10))
+            ->appends($request->only(['search', 'status_validasi', 'per_page']));
+
+        $kurangMampu->setCollection(
+            collect(KurangMampuResource::collection($kurangMampu->getCollection()))
+        );
+
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
     }
 
     /**
@@ -101,7 +117,8 @@ class KurangMampuController extends Controller
     public function exportPdf()
     {
         $kurangMampu = KurangMampu::get();
-        $pdf = \PDF::loadView('exports.kurang-mampu', compact('kurangMampu'));
+        $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
+
 }
