@@ -26,7 +26,7 @@ const currentPekerjaanData = ref(null);
 const isAlertDeletePekerjaanOpen = ref(false);
 const selectedPekerjaanUuid = ref(null);
 
-const search = ref("");
+const searchPekerjaan = ref("");
 
 const fetchData = async () => {
     try {
@@ -34,7 +34,7 @@ const fetchData = async () => {
         isLoading.value = true;
         const res = await apiGet("/pekerjaan", {
             page: page.value,
-            search: search.value,
+            search: searchPekerjaan.value,
         });
         items.value = res.data.data.map((item) => ({
             ...item,
@@ -47,12 +47,6 @@ const fetchData = async () => {
     } finally {
         isLoading.value = false;
     }
-};
-
-const clearSearch = () => {
-    search.value = "";
-    page.value = 1;
-    fetchData();
 };
 
 const createPekerjaan = () => {
@@ -102,6 +96,10 @@ const actionsIndex = getActionsPekerjaan({
 
 onMounted(fetchData);
 watch(page, fetchData);
+watch(searchPekerjaan, () => {
+    page.value = 1;
+    fetchData();
+});
 </script>
 
 <template>
@@ -120,33 +118,16 @@ watch(page, fetchData);
             <Button @click="createPekerjaan"><SquarePlus />Pekerjaan </Button>
         </div>
     </div>
+    <!-- Search -->
     <div class="drop-shadow-md w-full grid gap-2">
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
         >
-            <!-- Input + X button dalam satu wrapper -->
-            <div class="relative md:w-1/3">
-                <Input
-                    v-model="search"
-                    placeholder="Cari pekerjaan berdasarkan nama"
-                    class="w-full pr-8"
-                />
-                <button
-                    v-if="search"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
-                    @click="clearSearch"
-                    tabindex="-1"
-                    type="button"
-                >
-                    ✕
-                </button>
-            </div>
-
-            <div class="flex gap-4">
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
-                >
-            </div>
+            <Input
+                v-model="searchPekerjaan"
+                placeholder="Cari data pekerjaan"
+                class="md:w-1/3"
+            />
         </div>
         <DataTable
             :items="items"

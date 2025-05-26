@@ -58,7 +58,7 @@ class KurangMampuController extends Controller
             collect(KurangMampuResource::collection($kurangMampu->getCollection()))
         );
 
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
     }
 
     /**
