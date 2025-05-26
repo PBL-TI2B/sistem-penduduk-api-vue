@@ -13,6 +13,13 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from "@/components/ui/number-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/currency-input";
@@ -20,61 +27,41 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import { getFields } from "./utils/fields"; // Import getFields
-import { formSchemaBantuan } from "./utils/form-schema";
-import { useBantuan } from "@/composables/useBantuan";
-import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+import { formSchemaKurangMampu } from "./utils/form-schema";
+import { useKurangMampu } from "@/composables/useKurangMampu";
 
-// Routing ID
-const { uuid } = usePage().props;
-
-const { item, editBantuan, fetchDetailBantuan } = useBantuan();
-const { itemsKategoriAll, fetchKategori } = useKategoriBantuan();
+const { createKurangMampu, isLoading, selectedStatusValidasi } =
+    useKurangMampu();
 
 // Initialize fields from getFields
 const fields = ref([]);
 
-const { handleSubmit, setValues, resetForm } = useForm({
-    validationSchema: formSchemaBantuan,
+const { handleSubmit, resetForm } = useForm({
+    validationSchema: formSchemaKurangMampu,
 });
 
-// Submit Edit
-const onSubmit = handleSubmit(async (values) => {
-    await editBantuan(uuid, values);
-    resetForm();
+const onSubmit = handleSubmit((values) => {
+    createKurangMampu(values);
+    resetForm(); // Reset form fields after submission
 });
 
-onMounted(async () => {
-    await fetchDetailBantuan(uuid);
-    await fetchKategori(true);
-
-    const data = item.value;
-
-    setValues({
-        nama_bantuan: data.nama_bantuan ?? null,
-        kategori_bantuan_id: data.kategori_id.toString(),
-        nominal: data.nominal ?? null,
-        periode: data.periode,
-        lama_periode: data.lama_periode,
-        instansi: data.instansi,
-        keterangan: data.keterangan,
-    });
-
-    fields.value = getFields(itemsKategoriAll);
+onMounted(() => {
+    fields.value = getFields();
 });
 </script>
 
 <template>
-    <Head title="Tambah Bantuan" />
+    <Head title="Tambah KurangMampu" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Ubah Data Bantuan</h1>
+        <h1 class="text-3xl font-bold">Tambah Data Kurang Mampu</h1>
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/dashboard' },
-                { label: 'Data Bantuan', href: '/bantuan' },
-                { label: 'Ubah Data Bantuan' },
+                { label: 'Data Kurang Mampu', href: '/kurang-mampu' },
+                { label: 'Tambah Data Kurang Mampu' },
             ]"
         />
     </div>
@@ -103,10 +90,22 @@ onMounted(async () => {
                                 :placeholder="field.placeholder"
                             />
                             <Textarea
-                                v-if="field.type === 'textarea'"
-                                :placeholder="field.placeholder"
+                                v-else-if="field.type === 'textarea'"
                                 v-bind="componentField"
+                                :placeholder="field.placeholder"
                             />
+                            <NumberField
+                                v-else-if="field.type === 'number'"
+                                v-bind="componentField"
+                                :default-value="0"
+                                :min="0"
+                            >
+                                <NumberFieldContent>
+                                    <NumberFieldDecrement />
+                                    <NumberFieldInput />
+                                    <NumberFieldIncrement />
+                                </NumberFieldContent>
+                            </NumberField>
                             <Select
                                 v-else-if="field.type === 'select'"
                                 v-bind="componentField"
@@ -137,7 +136,7 @@ onMounted(async () => {
                     variant="secondary"
                     >Batal</Button
                 > -->
-                <Button type="submit">Simpan Perubahan</Button>
+                <Button type="submit" :disabled="isLoading">Simpan</Button>
             </div>
         </form>
     </div>

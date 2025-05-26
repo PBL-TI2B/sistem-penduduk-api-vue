@@ -18,17 +18,35 @@ class KurangMampuController extends Controller
      */
     public function index(Request $request)
     {
-        $query = KurangMampu::with(['anggotaKeluarga.penduduk']);
+        $perPage = $request->input('per_page', 10);
+        $query = KurangMampu::query();
 
-        // Pencarian berdasarkan nama penduduk
+        //! Filter Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%$search%");
+
+            $query->where(function ($query) use ($search) {
+                // Cari di penduduk (nama_lengkap, nik)
+                $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', "%$search%")
+                        ->orWhere('nik', 'like', "%$search%");
+                })
+
+                    // Cari di relasi pekerjaan
+                    ->orWhereHas('anggotaKeluarga.penduduk.pekerjaan', function ($q) use ($search) {
+                        $q->where('nama_pekerjaan', 'like', "%$search%");
+                    })
+
+                    // Cari di relasi pendidikan
+                    ->orWhereHas('anggotaKeluarga.penduduk.pendidikan', function ($q) use ($search) {
+                        $q->where('jenjang', 'like', "%$search%");
+                    });
             });
         }
 
-        // Filter berdasarkan status_validasi
+        //! RENCANA - Tambahkan filter berdasarkan PENDAPATAN PER-HARI & PER-BULAN
+
+        //! Filter berdasarkan status_validasi
         if ($request->filled('status_validasi')) {
             $query->where('status_validasi', $request->status_validasi);
         }
@@ -40,7 +58,7 @@ class KurangMampuController extends Controller
             collect(KurangMampuResource::collection($kurangMampu->getCollection()))
         );
 
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);
     }
 
     /**

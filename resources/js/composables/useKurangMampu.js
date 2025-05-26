@@ -11,53 +11,71 @@ export function useKurangMampu() {
     const page = ref(1);
     const perPage = ref(10);
     const totalPages = ref(1);
-    const totalData = ref(0);
-    const search = ref("");
-    const selectedKategori = ref("-");
+    const totalItems = ref(1);
 
-    // Fetch list bantuan
-    const fetchKurangMampu = async () => {
+    const search = ref("");
+    const selectedStatusValidasi = ref("");
+    const statusValidasiOptions = [
+        {
+            value: null,
+            label: "Semua",
+        },
+        {
+            value: "pending",
+            label: "Pending",
+        },
+        {
+            value: "terverifikasi",
+            label: "Terverifikasi",
+        },
+        {
+            value: "ditolak",
+            label: "Ditolak",
+        },
+    ];
+
+    //! Fetch Data Kurang Mampu
+    const fetchData = async () => {
         try {
             items.value = [];
             isLoading.value = true;
-            const params = {
+            const res = await apiGet("/kurang-mampu", {
                 page: page.value,
-                per_page: perPage.value,
                 search: search.value,
-            };
-            if (selectedKategori.value && selectedKategori.value !== "-") {
-                params.kategori_bantuan_id = selectedKategori.value;
-            }
-            const res = await apiGet("/bantuan", params);
-            items.value = res.data.data;
+                status_validasi: selectedStatusValidasi.value,
+            });
+            items.value = res.data.data.map((item) => ({
+                ...item,
+                nama_penduduk: item.penduduk?.nama_lengkap || "-",
+            }));
             perPage.value = res.data.per_page;
             totalPages.value = res.data.last_page;
-            totalData.value = res.data.total;
+            totalItems.value = res.data.total;
         } catch (error) {
-            useErrorHandler(error, "Gagal memuat data bantuan");
+            useErrorHandler(error, "Gagal memuat data kurang mampu");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Fetch detail bantuan (untuk halaman edit/detail)
-    const fetchDetailKurangMampu = async (uuid) => {
-        if (!uuid) return;
-        // item = ref({});
-        try {
-            isLoading.value = true;
-            const res = await apiGet(`/bantuan/${uuid}`);
-            item.value = res.data;
-            // console.log(res.data);
-        } catch (error) {
-            useErrorHandler(error, "Gagal memuat detail bantuan");
-        } finally {
-            isLoading.value = false;
-        }
-    };
+    // Fetch Detail Kurang Mampu (untuk halaman edit/detail)
+    // const fetchDetailData = async (uuid) => {
+    //     if (!uuid) return;
+    //     // item = ref({});
+    //     try {
+    //         isLoading.value = true;
+    //         const res = await apiGet(`/bantuan/${uuid}`);
+    //         item.value = res.data;
+    //         // console.log(res.data);
+    //     } catch (error) {
+    //         useErrorHandler(error, "Gagal memuat detail bantuan");
+    //     } finally {
+    //         isLoading.value = false;
+    //     }
+    // };
 
-    // Create bantuan
-    const createKurangMampu = async (values) => {
+    //! Create Kurang Mampu
+    const createData  = async (values) => {
         try {
             isLoading.value = true;
 
@@ -65,45 +83,45 @@ export function useKurangMampu() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost("/bantuan", values);
+            await apiPost("/kurang-mampu", values);
             toast.success("Berhasil Tambah Data KurangMampu");
-            router.visit("/bantuan");
+            router.visit("/kurang-mampu");
         } catch (error) {
-            useErrorHandler(error, "Gagal menyimpan data bantuan");
+            useErrorHandler(error, "Gagal menyimpan data kurang mampu");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Edit bantuan
-    const editKurangMampu = async (uuid, values) => {
-        try {
-            isLoading.value = true;
+    // // Edit Kurang Mampu
+    // const editData  = async (uuid, values) => {
+    //     try {
+    //         isLoading.value = true;
 
-            const formData = new FormData();
-            formData.append("_method", "PUT");
-            for (const [key, value] of Object.entries(values)) {
-                formData.append(key, value ?? "");
-            }
-            await apiPost(`/bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui data bantuan");
-            router.visit("/bantuan");
-        } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui data bantuan");
-        } finally {
-            isLoading.value = false;
-        }
-    };
+    //         const formData = new FormData();
+    //         formData.append("_method", "PUT");
+    //         for (const [key, value] of Object.entries(values)) {
+    //             formData.append(key, value ?? "");
+    //         }
+    //         await apiPost(`/bantuan/${uuid}`, formData);
+    //         toast.success("Berhasil memperbarui data bantuan");
+    //         router.visit("/bantuan");
+    //     } catch (error) {
+    //         useErrorHandler(error, "Gagal memperbarui data bantuan");
+    //     } finally {
+    //         isLoading.value = false;
+    //     }
+    // };
 
-    // Delete bantuan
-    const deleteKurangMampu = async (uuid) => {
+    //! Delete Kurang Mampu
+    const deleteData  = async (uuid) => {
         try {
             // isLoading.value = true;
-            await apiDelete(`/bantuan/${uuid}`);
-            toast.success("Berhasil menghapus bantuan");
-            router.visit("/bantuan");
+            await apiDelete(`/kurang-mampu/${uuid}`);
+            toast.success("Berhasil menghapus kurang-mampu");
+            router.visit("/kurang-mampu");
         } catch (error) {
-            useErrorHandler(error, "Gagal menghapus bantuan");
+            useErrorHandler(error, "Gagal menghapus kurang mampu");
         } finally {
             // isLoading.value = false;
         }
@@ -116,13 +134,14 @@ export function useKurangMampu() {
         page,
         perPage,
         totalPages,
-        totalData,
+        totalItems,
         search,
-        selectedKategori,
-        fetchKurangMampu,
-        fetchDetailKurangMampu,
-        createKurangMampu,
-        editKurangMampu,
-        deleteKurangMampu,
+        selectedStatusValidasi,
+        statusValidasiOptions,
+        fetchData,
+        // fetchDetailData,
+        // createData,
+        // editData,
+        deleteData,
     };
 }
