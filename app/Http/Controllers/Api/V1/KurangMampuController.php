@@ -32,12 +32,12 @@ class KurangMampuController extends Controller
                         ->orWhere('nik', 'like', "%$search%");
                 })
 
-                    // Cari di relasi pekerjaan (misal kolom 'nama')
+                    // Cari di relasi pekerjaan
                     ->orWhereHas('anggotaKeluarga.penduduk.pekerjaan', function ($q) use ($search) {
                         $q->where('nama_pekerjaan', 'like', "%$search%");
                     })
 
-                    // Cari di relasi pendidikan (misal kolom 'nama')
+                    // Cari di relasi pendidikan
                     ->orWhereHas('anggotaKeluarga.penduduk.pendidikan', function ($q) use ($search) {
                         $q->where('jenjang', 'like', "%$search%");
                     });

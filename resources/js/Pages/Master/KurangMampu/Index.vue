@@ -180,8 +180,10 @@ watch(page, fetchData());
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Button @click="createKategoriBantuan">
-                    <PackagePlus /> Tambah Kurang Mampu
+                <Button asChild>
+                    <Link :href="route('kurang-mampu.create')">
+                        <PackagePlus /> Tambah Kurang Mampu
+                    </Link>
                 </Button>
             </div>
         </div>

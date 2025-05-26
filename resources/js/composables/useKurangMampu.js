@@ -34,7 +34,7 @@ export function useKurangMampu() {
         },
     ];
 
-    // Fetch Data Kurang Mampu
+    //! Fetch Data Kurang Mampu
     const fetchData = async () => {
         try {
             items.value = [];
@@ -74,24 +74,24 @@ export function useKurangMampu() {
     //     }
     // };
 
-    // Create Kurang Mampu
-    // const createData  = async (values) => {
-    //     try {
-    //         isLoading.value = true;
+    //! Create Kurang Mampu
+    const createData  = async (values) => {
+        try {
+            isLoading.value = true;
 
-    //         const formData = new FormData();
-    //         for (const [key, value] of Object.entries(values)) {
-    //             formData.append(key, value ?? "");
-    //         }
-    //         await apiPost("/bantuan", values);
-    //         toast.success("Berhasil Tambah Data KurangMampu");
-    //         router.visit("/bantuan");
-    //     } catch (error) {
-    //         useErrorHandler(error, "Gagal menyimpan data bantuan");
-    //     } finally {
-    //         isLoading.value = false;
-    //     }
-    // };
+            const formData = new FormData();
+            for (const [key, value] of Object.entries(values)) {
+                formData.append(key, value ?? "");
+            }
+            await apiPost("/kurang-mampu", values);
+            toast.success("Berhasil Tambah Data KurangMampu");
+            router.visit("/kurang-mampu");
+        } catch (error) {
+            useErrorHandler(error, "Gagal menyimpan data kurang mampu");
+        } finally {
+            isLoading.value = false;
+        }
+    };
 
     // // Edit Kurang Mampu
     // const editData  = async (uuid, values) => {
