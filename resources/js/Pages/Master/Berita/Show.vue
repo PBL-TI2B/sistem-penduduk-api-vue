@@ -9,33 +9,34 @@ import AlertDialog from "@/components/master/AlertDialog.vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { toast } from "vue-sonner";
 import { useErrorHandler } from "@/composables/useErrorHandler";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const { uuid } = usePage().props;
-const galeri = ref({});
+const berita = ref({});
 const imageUrl = ref(null);
 const isAlertDeleteOpen = ref(false);
 
-const fetchGaleri = async () => {
-    try {
-        const res = await apiGet(`/galeri/${uuid}`);
-        galeri.value = res.data;
+const fetchBerita = async () => {
+  try {
+    const res = await apiGet(`/berita/${uuid}`);
+    berita.value = res.data;
 
-        if (galeri.value.url_media) {
-            const resImage = await axios.get(
-                `/api/v1/galeri/url_media/${galeri.value.url_media}`,
-                {
-                    responseType: "blob",
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("token")}`,
-                    },
-                }
-            );
-            imageUrl.value = URL.createObjectURL(resImage.data);
+    if (berita.value.thumbnail) {
+      const resImage = await axios.get(
+        `/api/v1/berita/thumbnail/${berita.value.thumbnail}`,
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
         }
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data galeri");
+      );
+      imageUrl.value = URL.createObjectURL(resImage.data);
     }
+  } catch (error) {
+    useErrorHandler(error, "Gagal memuat data berita");
+  }
 };
 
 const onClickDeleteButton = () => {
@@ -48,34 +49,33 @@ const onCancelDelete = () => {
 
 const onConfirmDelete = async () => {
     try {
-        await apiDelete(`/galeri/${uuid}`);
-        toast.success("Data galeri berhasil dihapus");
-        router.visit("/galeri-admin");
+        await apiDelete(`/berita/${uuid}`);
+        toast.success("Data berita berhasil dihapus");
+        router.visit("/berita-admin");
     } catch (error) {
-        useErrorHandler(error, "Gagal menghapus data galeri");
+        useErrorHandler(error, "Gagal menghapus data berita");
     } finally {
         isAlertDeleteOpen.value = false;
     }
 };
 
-onMounted(fetchGaleri);
+onMounted(fetchBerita);
 </script>
 
 <template>
-
-    <Head title=" | Detail Galeri" />
+    <Head title=" | Detail Berita" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
-            <h1 class="text-3xl font-bold">Detail Galeri</h1>
+            <h1 class="text-3xl font-bold">Detail Berita</h1>
             <BreadcrumbComponent :items="[
                 { label: 'Dashboard', href: '/' },
-                { label: 'Galeri', href: '/galeri-admin' },
-                { label: 'Detail Galeri' },
+                { label: 'Berita', href: '/berita-admin' },
+                { label: 'Detail Berita' },
             ]" />
         </div>
         <div class="flex gap-2 items-center">
-            <Button asChild v-if="galeri.uuid">
-                <Link :href="route('galeri-admin.edit', galeri.uuid)">
+            <Button asChild v-if="berita.value?.uuid">
+                <Link :href="route('berita-admin.edit', berita.value.uuid)">
                 <SquarePen /> Ubah
                 </Link>
             </Button>
@@ -87,26 +87,26 @@ onMounted(fetchGaleri);
     <div class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-8 justify-between">
         <div class="w-full">
             <h2 class="text-lg font-bold mb-4">
-                {{ galeri.judul }}
+                {{ berita.judul }}
             </h2>
             <table class="w-full gap-2 table">
                 <tbody>
                     <tr>
                         <td class="font-medium p-2">Judul</td>
-                        <td>{{ galeri.judul }}</td>
+                        <td>{{ berita.judul }}</td>
                     </tr>
                     <tr>
-                        <td class="font-medium p-2">Username</td>
-                        <td>{{ galeri.user?.username ?? '-' }}</td>
+                        <td class="font-medium p-2">Penulis</td>
+                        <td>{{ berita.user?.username ?? '-' }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <img :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'" alt="Foto Galeri" loading="lazy"
-            class="rounded-md w-[400px] h-[300px] object-cover border" />
+        <img :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'"
+            alt="Thumbnail Berita" loading="lazy" class="rounded-md w-[400px] h-[300px] object-cover border" />
     </div>
 
-    <AlertDialog v-model:isOpen="isAlertDeleteOpen" :title="'Hapus Data Galeri'"
-        :description="'Apakah anda yakin ingin menghapus data galeri ini?'" :onConfirm="onConfirmDelete"
+    <AlertDialog v-model:isOpen="isAlertDeleteOpen" :title="'Hapus Data Berita'"
+        :description="'Apakah anda yakin ingin menghapus data berita ini?'" :onConfirm="onConfirmDelete"
         :onCancel="onCancelDelete" />
 </template>

@@ -20,26 +20,25 @@ import { toast } from "vue-sonner";
 const fields = ref(getFields());
 const { handleSubmit, resetForm, setFieldValue } = useForm();
 
-const fotoFile = ref(null);
-const previewFoto = ref(null);
+const thumbnailFile = ref(null);
+const previewThumbnail = ref(null);
 const user_id = ref(null);
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
-    fotoFile.value = file;
-    setFieldValue("url_media", file);
+    thumbnailFile.value = file;
+    setFieldValue("thumbnail", file);
     if (file) {
-        previewFoto.value = URL.createObjectURL(file);
+        previewThumbnail.value = URL.createObjectURL(file);
     } else {
-        previewFoto.value = null;
+        previewThumbnail.value = null;
     }
 };
 
-// Ambil user_id dari endpoint /me
+// Ambil user_id dari endpoint /auth/me
 onMounted(async () => {
     try {
         const res = await apiGet("/auth/me");
-        console.log("RESPON /auth/me:", res);
         user_id.value = res.data?.id;
         if (!user_id.value) {
             throw new Error("user_id tidak ditemukan di response /auth/me");
@@ -52,32 +51,35 @@ const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
         formData.append("judul", values.judul);
-        if (fotoFile.value) {
-            formData.append("url_media", fotoFile.value);
+        formData.append("konten", values.konten);
+        formData.append("tanggal_post", values.tanggal_post);
+        formData.append("status", values.status);
+        if (thumbnailFile.value) {
+            formData.append("thumbnail", thumbnailFile.value);
         }
         if (user_id.value) {
             formData.append("user_id", user_id.value);
         }
-        await apiPost("/galeri", formData);
+        await apiPost("/berita", formData);
         resetForm();
-        previewFoto.value = null;
-        toast.success("Berhasil tambah data galeri");
-        router.visit("/galeri-admin");
+        previewThumbnail.value = null;
+        toast.success("Berhasil tambah data berita");
+        router.visit("/berita-admin");
     } catch (error) {
         useErrorHandler(error);
     }
 });
 </script>
-<template>
 
-    <Head title="Tambah Galeri" />
+<template>
+    <Head title="Tambah Berita" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Tambah Data Galeri</h1>
+        <h1 class="text-3xl font-bold">Tambah Data Berita</h1>
         <BreadcrumbComponent :items="[
             { label: 'Dashboard', href: '/' },
-            { label: 'Galeri', href: '/galeri-admin' },
-            { label: 'Tambah Data Galeri' },
+            { label: 'Berita', href: '/berita-admin' },
+            { label: 'Tambah Data Berita' },
         ]" />
     </div>
 
@@ -86,27 +88,48 @@ const onSubmit = handleSubmit(async (values) => {
             <!-- Form Section -->
             <form @submit="onSubmit" class="space-y-6 w-full">
                 <FormField v-for="field in fields" :key="field.name" :name="field.name" v-slot="{ componentField }">
-                    <FormItem v-if="field.name === 'judul'">
+                    <FormItem v-if="field.name !== 'thumbnail'">
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
-                            <Input :type="field.type" :placeholder="field.placeholder" v-bind="componentField" />
+                            <Input
+                                v-if="field.type !== 'textarea' && field.type !== 'select'"
+                                :type="field.type"
+                                :placeholder="field.placeholder"
+                                v-bind="componentField"
+                            />
+                            <textarea
+                                v-else-if="field.type === 'textarea'"
+                                :placeholder="field.placeholder"
+                                class="w-full border rounded p-2"
+                                v-bind="componentField"
+                            />
+                            <select
+                                v-else-if="field.type === 'select'"
+                                class="w-full border rounded p-2"
+                                v-bind="componentField"
+                            >
+                                <option value="" disabled>Pilih status</option>
+                                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
+                                    {{ opt.label }}
+                                </option>
+                            </select>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 </FormField>
 
-                <!-- Upload Foto Galeri -->
+                <!-- Upload Thumbnail Berita -->
                 <div>
-                    <label class="block mb-2 font-medium">Foto Galeri</label>
+                    <label class="block mb-2 font-medium">Thumbnail Berita</label>
                     <input type="file" accept="image/*"
                         class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
                         @change="onFileChange" />
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">Peringatan: Pastikan data galeri sudah benar sebelum disimpan.</p>
+                    <p class="text-xs text-gray-500">Peringatan: Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
-                        <Button @click="router.visit('/galeri-admin')" type="button" variant="secondary">Batal</Button>
+                        <Button @click="router.visit('/berita-admin')" type="button" variant="secondary">Batal</Button>
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>
@@ -114,7 +137,7 @@ const onSubmit = handleSubmit(async (values) => {
 
             <!-- Preview Section -->
             <div class="flex items-center justify-center">
-                <img v-if="previewFoto" :src="previewFoto" alt="Preview"
+                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview"
                     class="rounded-md w-[400px] h-[300px] object-cover border" />
                 <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview"
                     class="rounded-md w-[400px] h-[300px] object-cover border" />

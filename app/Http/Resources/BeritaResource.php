@@ -26,7 +26,7 @@ class BeritaResource extends JsonResource
             'status' => $this->status,
             'user_id' => [
                 'id' => $this->user?->id,
-                'name' => $this->user?->username,
+                'username' => $this->user?->username,
             ],
         ];
     }
