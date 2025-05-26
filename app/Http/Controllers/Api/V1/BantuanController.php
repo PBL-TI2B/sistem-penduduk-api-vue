@@ -37,7 +37,9 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
-        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        //! Tambahkan eager loading untuk kategoriBantuan, menghindari N+1 query
+        // $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $data = $query->with(['kategoriBantuan'])->withCount('penerimaBantuan')->paginate($perPage);
         $collection = BantuanResource::collection($data->getCollection());
         $data->setCollection(collect($collection));
 
