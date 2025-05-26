@@ -16,9 +16,10 @@ import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 
 import DataTable from "@/components/master/DataTable.vue";
+import AlertDialog from "@/components/master/AlertDialog.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { actionsIndex, columnsIndex } from "./utils/table";
 import { useKurangMampu } from "@/composables/useKurangMampu";
+import { actionsIndex, columnsIndex } from "./utils/table";
 
 import {
     PackagePlus,
@@ -30,6 +31,9 @@ import {
     FunnelX,
     SquarePen,
 } from "lucide-vue-next";
+
+const isAlertDeleteOpen = ref(false);
+const selectedUuid = ref(null);
 
 const {
     items,
@@ -46,7 +50,7 @@ const {
     // fetchDetailData,
     // createData,
     // editData,
-    // deleteData,
+    deleteData,
 } = useKurangMampu();
 
 const clearSearch = () => {
@@ -66,6 +70,25 @@ const resetFilter = () => {
     applyFilter();
 };
 
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
+
+// Setting Action Buttons
+const actionsIndexKurangMampu = actionsIndex(onClickDeleteButton);
+
 onMounted(() => {
     fetchData();
 });
@@ -80,7 +103,7 @@ watch(page, fetchData());
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data kurang mampu' },
+                    { label: 'Data Kurang Mampu' },
                 ]"
             />
         </div>
@@ -108,7 +131,7 @@ watch(page, fetchData());
                         @change="applyFilter"
                     />
                     <span
-                        class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                        class="absolute start-2 inset-y-0 flex items-center justify-center"
                     >
                         <SearchIcon class="size-6 text-muted-foreground" />
                     </span>
@@ -167,7 +190,7 @@ watch(page, fetchData());
         <DataTable
             :items="items"
             :columns="columnsIndex"
-            :actions="actionsIndex"
+            :actions="actionsIndexKurangMampu"
             :totalPages="totalPages"
             :totalData="totalItems"
             :page="page"
@@ -176,4 +199,11 @@ watch(page, fetchData());
             @update:page="page = $event"
         />
     </div>
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        title="Hapus Kurang Mampu"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>

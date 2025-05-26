@@ -113,19 +113,19 @@ export function useKurangMampu() {
     //     }
     // };
 
-    // // Delete Kurang Mampu
-    // const deleteData  = async (uuid) => {
-    //     try {
-    //         // isLoading.value = true;
-    //         await apiDelete(`/bantuan/${uuid}`);
-    //         toast.success("Berhasil menghapus bantuan");
-    //         router.visit("/bantuan");
-    //     } catch (error) {
-    //         useErrorHandler(error, "Gagal menghapus bantuan");
-    //     } finally {
-    //         // isLoading.value = false;
-    //     }
-    // };
+    //! Delete Kurang Mampu
+    const deleteData  = async (uuid) => {
+        try {
+            // isLoading.value = true;
+            await apiDelete(`/kurang-mampu/${uuid}`);
+            toast.success("Berhasil menghapus kurang-mampu");
+            router.visit("/kurang-mampu");
+        } catch (error) {
+            useErrorHandler(error, "Gagal menghapus kurang mampu");
+        } finally {
+            // isLoading.value = false;
+        }
+    };
 
     return {
         items,
@@ -142,6 +142,6 @@ export function useKurangMampu() {
         // fetchDetailData,
         // createData,
         // editData,
-        // deleteData,
+        deleteData,
     };
 }

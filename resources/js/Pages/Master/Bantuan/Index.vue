@@ -16,8 +16,8 @@ import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 // import { Label } from "@/components/ui/label";
 import DataTable from "@/components/master/DataTable.vue";
-import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
+import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
 
 import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
@@ -66,12 +66,12 @@ const isAlertDeleteKategoriOpen = ref(false);
 // bantuan dialog
 const isAlertDeleteBantuanOpen = ref(false);
 
-// for delete
+// for delete & edit
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
 // for edit
-const selectedKategoriEdit = ref(null);
+// const selectedKategoriUuid = ref(null);
 
 onMounted(() => {
     fetchKategori(true);
@@ -79,8 +79,12 @@ onMounted(() => {
     fetchBantuan();
 });
 
-watch(page, fetchBantuan());
-watch(pageKategori, fetchKategori());
+watch(page, () => {
+    fetchBantuan();
+});
+watch(pageKategori, () => {
+    fetchKategori();
+});
 
 // -- bila ingin kirim data ketika search diInputKan atau bisa ubah input method dari @change ke @input
 // watch([page, search], () => {
@@ -116,7 +120,7 @@ const createKategoriBantuan = () => {
 const editKategoriBantuan = (kategori) => {
     isFormDialogOpen.value = true;
     dialogMode.value = "edit";
-    selectedKategoriEdit.value = kategori;
+    selectedKategoriUuid.value = kategori;
 };
 const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
@@ -337,7 +341,7 @@ const actionsKategori = actionsIndexKategori({
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
-        :initial-data="selectedKategoriEdit"
+        :initial-data="selectedKategoriUuid"
         @success="
             () => {
                 fetchKategori();

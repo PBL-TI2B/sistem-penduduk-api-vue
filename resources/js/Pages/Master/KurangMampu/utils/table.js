@@ -1,25 +1,7 @@
-
+import { Eye, Trash2, PackageSearch, SquarePen } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
-import {
-//     PackagePlus,
-//     SearchIcon,
-    Eye,
-    Trash2,
-    // PackageSearch,
-//     X,
-//     FunnelX,
-    SquarePen,
-} from "lucide-vue-next";
-
-const formatCurrency = (value) => {
-    if (value == null || value === '') return '-';
-    return Number(value).toLocaleString('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 2
-    });
-};
+import { formatCurrency, formatDate } from "@/composables/formatData";
 
 const columnsIndex = [
     {
@@ -65,7 +47,7 @@ const columnsIndex = [
 
 // export default columnsIndex;
 
-const actionsIndex = (router, route) => [
+const actionsIndex = (onClickDeleteButton) => [
     {
         label: "Kelola",
         icon: Eye,
@@ -85,6 +67,9 @@ const actionsIndex = (router, route) => [
         icon: Trash2,
         disabled: (item) => item.penerima_bantuan_count > 0,
         // handler bisa diisi di tempat penggunaan
+        handler: (item) => {
+            onClickDeleteButton(item.uuid);
+        },
     },
 ];
 
