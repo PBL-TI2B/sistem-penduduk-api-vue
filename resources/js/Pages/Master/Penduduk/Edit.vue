@@ -53,7 +53,27 @@ const { editPenduduk } = usePenduduk();
 
 // Submit edit
 const onSubmit = handleSubmit(async (values) => {
-    editPenduduk(values, resetForm);
+    try {
+        const formData = new FormData();
+        formData.append("_method", "PUT");
+
+        for (const [key, value] of Object.entries(values)) {
+            formData.append(key, value ?? "");
+        }
+
+        if (fotoFile.value) {
+            formData.append("foto", fotoFile.value);
+        }
+
+        await apiPost(`/penduduk/${uuid}`, formData);
+        resetForm();
+
+        toast.success("Berhasil memperbarui data");
+        // router.visit("/penduduk");
+        router.visit("../");
+    } catch (error) {
+        useErrorHandler(error);
+    }
 });
 
 // Load saat mount
@@ -196,7 +216,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <Button
-                        @click="router.visit('/penduduk')"
+                        @click="router.visit('../')"
                         type="button"
                         variant="secondary"
                         >Batal</Button

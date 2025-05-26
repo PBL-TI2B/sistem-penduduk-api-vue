@@ -91,7 +91,7 @@ class PendudukController extends Controller
     }
 
 
-    public function update(Request $request, Penduduk $penduduk) 
+    public function update(Request $request, Penduduk $penduduk)
     {
         $validator = Validator::make($request->all(), [
             'nik' => 'required|unique:penduduk,nik,' . $penduduk->id,
@@ -147,25 +147,26 @@ class PendudukController extends Controller
         ]);
     }
 
-    public function getFoto($filename, Request $request) 
+    public function getFoto($filename, Request $request)
     {
         if (!$request->user()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-    
+
         $path = storage_path('app/private/penduduk/' . $filename);
-    
+
         if (!file_exists($path)) {
             return response()->json(['message' => 'File not found'], 404);
         }
-    
+
         return response()->file($path);
     }
 
     public function exportPdf()
     {
         $penduduk = Penduduk::with(['pekerjaan', 'pendidikan'])->get();
-        $pdf = PDF::loadView('exports.penduduk', compact('penduduk'));
+
+        $pdf = Pdf::loadView('exports.penduduk', compact('penduduk'));
         return $pdf->download('penduduk.pdf');
     }
 
@@ -175,16 +176,16 @@ class PendudukController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="penduduk.csv"',
         ];
-    
+
         $callback = function () {
             $handle = fopen('php://output', 'w');
-    
+
             // Tambah BOM UTF-8
             fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
-    
+
             // Pakai delimiter ;
             fputcsv($handle, ['Nama', 'NIK', 'Tanggal Lahir'], ';');
-    
+
             foreach (Penduduk::all() as $data) {
                 fputcsv($handle, [
                     $data->nama_lengkap,
@@ -192,10 +193,10 @@ class PendudukController extends Controller
                     $data->tanggal_lahir,
                 ], ';');
             }
-    
+
             fclose($handle);
         };
-    
+
         return response()->stream($callback, 200, $headers);
-    }    
+    }
 }

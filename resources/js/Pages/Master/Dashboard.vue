@@ -1,10 +1,11 @@
 <script setup>
-// defineProps({ layout: Object });
+import PendudukSection from "@/components/public/infografis/PendudukSection.vue";
+import UmurSection from "@/components/public/infografis/UmurSection.vue";
 </script>
 
 <template>
-    <Head title=" | Dashboard" />
     <div class="container mx-auto">
-        <h1 class="text-bold">Welcome to Dashboard</h1>
+        <PendudukSection />
+        <UmurSection />
     </div>
 </template>

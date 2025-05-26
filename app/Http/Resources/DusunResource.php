@@ -20,7 +20,11 @@ class DusunResource extends JsonResource
             'nama' => $this->nama,
             'deskripsi' => $this->deskripsi,
             'lokasi' => $this->lokasi,
-            'desa' => $this->desa->nama,
+            'desa' => [
+                'id' => $this->desa?->id,
+                'uuid' => $this->desa?->uuid,
+                'nama' => $this->desa?->nama,
+            ],
         ];
     }
 }

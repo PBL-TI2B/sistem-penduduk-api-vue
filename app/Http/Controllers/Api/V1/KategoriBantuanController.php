@@ -5,14 +5,29 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriBantuan;
 use App\Http\Resources\ApiResource;
+use App\Http\Resources\KategoriBantuanResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class KategoriBantuanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = KategoriBantuan::with('bantuan')->paginate(10);
+        $perPage = $request->input('per_page', 10);
+        $query = KategoriBantuan::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('kategori', 'like', '%' . $search . '%');
+        }
+
+        // Cek parameter 'all' untuk mengambil semua data tanpa pagination
+        if ($request->boolean('all')) {
+            $data = $query->get(); // Ambil semua data
+        } else {
+            $data = $query->withCount('bantuan')->paginate($perPage); // Pagination
+        }
+
         return new ApiResource(true, 'Daftar Kategori Bantuan', $data);
     }
 
@@ -27,20 +42,38 @@ class KategoriBantuanController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $kategori = KategoriBantuan::create([
-            'kategori' => $request->kategori,
-            'keterangan' => $request->keterangan,
-        ]);
+        try {
+            $kategori = KategoriBantuan::create([
+                'kategori' => $request->kategori,
+                'keterangan' => $request->keterangan,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan kategori bantuan: ' . $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
 
         return new ApiResource(true, 'Kategori Bantuan Berhasil Ditambahkan', $kategori);
     }
 
-    public function show(KategoriBantuan $kategoriBantuan)
+    public function show($uuid)
     {
-        return new ApiResource(true, 'Detail Kategori Bantuan', $kategoriBantuan->load('bantuan'));
+        $data = KategoriBantuan::with('bantuan')->where('uuid', $uuid)->first();
+
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori Bantuan tidak ditemukan',
+                'data' => null
+            ], 404);
+        }
+
+        return new ApiResource(true, 'Detail Kategori Bantuan', $data);
     }
 
-    public function update(Request $request, KategoriBantuan $kategoriBantuan)
+    public function update(Request $request, $uuid)
     {
         $validator = Validator::make($request->all(), [
             'kategori' => 'required|string|max:255',
@@ -51,14 +84,46 @@ class KategoriBantuanController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $kategoriBantuan->update($request->all());
+        $kategoriBantuan = KategoriBantuan::where('uuid', $uuid)->first();
 
-        return new ApiResource(true, 'Kategori Bantuan Berhasil Diupdate', $kategoriBantuan);
+        if (!$kategoriBantuan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori Bantuan tidak ditemukan',
+                'data' => null
+            ], 404);
+        }
+
+        try {
+            $kategoriBantuan->update([
+                'kategori' => $request->kategori,
+                'keterangan' => $request->keterangan,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui kategori bantuan: ' . $e->getMessage(),
+                'data' => null
+            ], 500);
+        }
+
+        return new ApiResource(true, 'Kategori Bantuan Berhasil Diperbarui', $kategoriBantuan);
     }
 
-    public function destroy(KategoriBantuan $kategoriBantuan)
+    public function destroy($uuid)
     {
-        $kategoriBantuan->delete();
-        return new ApiResource(true, 'Kategori Bantuan Berhasil Dihapus', null);
+        $data = KategoriBantuan::where('uuid', $uuid)->first();
+
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori Bantuan tidak ditemukan',
+                'data' => null
+            ], 404);
+        }
+
+        $data->delete();
+
+        return new ApiResource(true, "Kategori Bantuan '" . $data->kategori . "' Berhasil Dihapus", null);
     }
 }

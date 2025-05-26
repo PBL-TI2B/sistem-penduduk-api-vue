@@ -477,7 +477,9 @@ class DatabaseSeeder extends Seeder
             'id'=>1,
             'uuid'=>Str::uuid(),
             'kategori'=>'tunai',
-            'keterangan'=>''
+            'keterangan'=>'',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
         DB::table('bantuan')->insert([

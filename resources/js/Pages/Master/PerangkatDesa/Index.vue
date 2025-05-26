@@ -39,6 +39,7 @@ const {
     itemsJabatan,
     perPageJabatan,
     pageJabatan,
+    totalItemsJabatan,
     totalPagesJabatan,
     isLoadingJabatan,
 } = useJabatan();
@@ -76,7 +77,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -173,12 +174,14 @@ watch(pageJabatan, () => {
             :columns="columnsJabatan"
             :actions="actionsJabatan"
             :totalPages="totalPagesJabatan"
+            :totalData="totalItemsJabatan"
             :page="pageJabatan"
             :per-page="perPageJabatan"
             :is-loading="isLoadingJabatan"
             @update:page="pageJabatan = $event"
         />
 
+        //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :}
         <DataTable
             label="Perangkat Desa"
             :items="items"
@@ -204,6 +207,6 @@ watch(pageJabatan, () => {
         title="Hapus Jabatan"
         description="Apakah anda yakin ingin menghapus jabatan ini?"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

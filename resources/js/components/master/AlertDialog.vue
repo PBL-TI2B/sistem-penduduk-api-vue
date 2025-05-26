@@ -15,7 +15,7 @@ const props = defineProps({
     title: String,
     description: String,
     onConfirm: Function,
-    onCancle: Function,
+    onCancel: Function,
 });
 
 const emit = defineEmits(["update:isOpen"]);
@@ -34,7 +34,7 @@ const emit = defineEmits(["update:isOpen"]);
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="props.onCancle"
+                <AlertDialogCancel @click="props.onCancel"
                     >Batal</AlertDialogCancel
                 >
                 <AlertDialogAction @click="props.onConfirm"

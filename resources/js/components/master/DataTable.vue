@@ -34,6 +34,10 @@ const props = defineProps({
         type: Number,
         default: 1,
     },
+    totalData: {
+        type: Number,
+        default: 0,
+    },
     perPage: {
         type: Number,
         default: 10,
@@ -137,7 +141,7 @@ const handleExport = async (format) => {
                         {{ props.label }}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        Total {{ props.items.length }} data
+                        Total {{ props.totalData }} data
                     </p>
                 </div>
                 <Select
@@ -206,11 +210,20 @@ const handleExport = async (format) => {
             </TableHeader>
 
             <TableBody>
-                <TableRow
+                <!-- ===== Tak komen sek ===== -->
+                <!-- <TableRow
                     v-if="isLoading"
                     v-for="i in perPage"
                     :key="'skeleton-' + i"
                 >
+                    <TableCell v-for="n in columns.length + 1" :key="n">
+                        <div
+                            class="h-9 bg-card/20 rounded animate-pulse w-full"
+                        ></div>
+                    </TableCell>
+                </TableRow> -->
+
+                <TableRow v-if="isLoading" :key="'skeleton-' + i">
                     <TableCell v-for="n in columns.length + 1" :key="n">
                         <div
                             class="h-9 bg-card/20 rounded animate-pulse w-full"
@@ -233,13 +246,32 @@ const handleExport = async (format) => {
                                 : item[col.key]
                         }}
                     </TableCell>
-                    <TableCell v-if="actions.length">
+
+                    <!-- Terapkan Disabled Button -->
+                    <!-- <TableCell v-if="actions.length">
                         <Button
                             v-for="(action, index) in actions"
                             :key="index"
                             variant="secondary"
                             @click="() => action.handler(item)"
                             class="mr-2 cursor-pointer"
+                        >
+                            <component :is="action.icon" class="w-4 h-4" />
+                            {{ action.label }}
+                        </Button>
+                    </TableCell> -->
+                    <TableCell v-if="actions.length">
+                        <Button
+                            v-for="(action, index) in actions"
+                            :key="index"
+                            :variant="action.variant || 'secondary'"
+                            @click="() => action.handler(item)"
+                            class="mr-2 cursor-pointer"
+                            :disabled="
+                                typeof action.disabled === 'function'
+                                    ? action.disabled(item)
+                                    : action.disabled
+                            "
                         >
                             <component :is="action.icon" class="w-4 h-4" />
                             {{ action.label }}

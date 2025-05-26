@@ -4,21 +4,50 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        h2 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 0;
+        .logo {
+            position: absolute;
+            top: 0px;
+            left: 20px;
         }
 
-        .title {
+        .logo img {
+            height: 90px;
+        }
+
+        .header-text {
             text-align: center;
+            margin-left: 130px; /* pastikan tidak tertimpa logo */
+            padding: 0px 0px 0 20px;
+        }
+
+        .header-text h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .header-text h1 {
+            margin: 4px 0 0 0;
             font-size: 20px;
-            margin: 30px 0;
+            font-weight: bold;
         }
 
-        table {
+        .header-text p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+        }
+
+        .kop-line {
+            border-top: 3px solid black;
+            border-bottom: 1px solid black;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+                table {
             border-collapse: collapse;
             width: 100%;
             background-color: #fff;
@@ -48,15 +77,23 @@
 </head>
 <body>
 
-    <div style="text-align: center;">
-        <img src="{{ public_path('/images/LOGO_KABUPATEN_KLATEN.png') }}" alt="Logo" style="position: absolute; left: 60px; top: 20px;" height="80">
-        <h2 style="margin: 0;">PEMERINTAH KABUPATEN KLATEN</h2>
-        <h2 style="margin: 0;">KECAMATAN GANTIWARNO</h2>
-        <h1 style="margin: 0;">DESA JABUNG</h1>
-        <p style="margin: 0; font-size: 12px;">Alamat: Jl. Ganti Warno, Gedongan, Gesikan, Kec. Gantiwarno, Kab. Klaten, Jawa Tengah Kode Pos : 57455</p>
-        <hr style="border: 2px solid #000; margin-top: 10px;">
-    </div>    
-    
+    <!-- Logo di kiri atas -->
+    <div class="logo">
+        <img src="{{ public_path('/images/LOGO_KABUPATEN_KLATEN.png') }}" alt="Logo">
+    </div>
+
+    <!-- Teks kop surat -->
+    <div class="header-text">
+        <h2>PEMERINTAH KABUPATEN KLATEN</h2>
+        <h2>KECAMATAN GANTIWARNO</h2>
+        <h1>DESA JABUNG</h1>
+        <p>Alamat: Jl. Ganti Warno, Gedongan, Gesikan, Kec. Gantiwarno, Kab. Klaten, Jawa Tengah Kode Pos : 57455</p>
+    </div>
+
+    <!-- Garis pemisah -->
+    <div class="kop-line"></div>
+
+    <!-- Isi surat -->
     {{ $slot }}
 
 </body>

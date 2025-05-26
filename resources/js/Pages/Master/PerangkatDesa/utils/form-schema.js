@@ -8,9 +8,7 @@ export const formSchemaPerangkatDesa = toTypedSchema(
         periode_jabatan_id: z.string(),
         dusun_id: z.string(),
         desa_id: z.string(),
-        status_keaktifan: z.enum(["aktif", "nonaktif"], {
-            errorMap: () => ({ message: "Status keaktifan tidak valid" }),
-        }),
+        status_keaktifan: z.string(),
         rt_id: z.string(),
         rw_id: z.string(),
     })
