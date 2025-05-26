@@ -10,11 +10,20 @@ use Illuminate\Support\Facades\Validator;
 
 class PekerjaanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pekerjaan = Pekerjaan::paginate(10);
+        $query = Pekerjaan::query();
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('nama_pekerjaan', 'like', "%$search%");
+        }
+        
+        $pekerjaan = $query->paginate($request->get('per_page', 10));
+        
         return new ApiResource(true, 'Daftar Pekerjaan', $pekerjaan);
     }
+
 
     public function store(Request $request)
     {
