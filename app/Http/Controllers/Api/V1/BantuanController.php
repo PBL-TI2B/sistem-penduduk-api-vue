@@ -27,7 +27,8 @@ class BantuanController extends Controller
                     ->orWhere('periode', 'like', "%$search%")
                     ->orWhere('lama_periode', 'like', "%$search%")
                     ->orWhere('instansi', 'like', "%$search%")
-                    ->orWhere('keterangan', 'like', "%$search%");
+                    // ->orWhere('keterangan', 'like', "%$search%")
+                ;
             });
         }
 

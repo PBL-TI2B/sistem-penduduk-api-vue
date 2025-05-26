@@ -18,29 +18,44 @@ class KurangMampuController extends Controller
      */
     public function index(Request $request)
     {
-        $query = KurangMampu::with(['anggotaKeluarga.penduduk']);
+        $perPage = $request->input('per_page', 10);
+        $query = KurangMampu::query();
 
-        // Pencarian berdasarkan nama penduduk
+        //! Filter Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%$search%");
+
+            $query->where(function ($query) use ($search) {
+                // Cari di penduduk (nama_lengkap, nik)
+                $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', "%$search%")
+                        ->orWhere('nik', 'like', "%$search%");
+                })
+
+                    // Cari di relasi pekerjaan (misal kolom 'nama')
+                    ->orWhereHas('anggotaKeluarga.penduduk.pekerjaan', function ($q) use ($search) {
+                        $q->where('nama_pekerjaan', 'like', "%$search%");
+                    })
+
+                    // Cari di relasi pendidikan (misal kolom 'nama')
+                    ->orWhereHas('anggotaKeluarga.penduduk.pendidikan', function ($q) use ($search) {
+                        $q->where('jenjang', 'like', "%$search%");
+                    });
             });
         }
 
-        // Filter berdasarkan status_validasi
+        //! RENCANA - Tambahkan filter berdasarkan PENDAPATAN PER-HARI & PER-BULAN
+
+        //! Filter berdasarkan status_validasi
         if ($request->filled('status_validasi')) {
             $query->where('status_validasi', $request->status_validasi);
         }
 
-        $kurangMampu = $query->paginate($request->get('per_page', 10))
-            ->appends($request->only(['search', 'status_validasi', 'per_page']));
+        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $collection = KurangMampuResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
 
-        $kurangMampu->setCollection(
-            collect(KurangMampuResource::collection($kurangMampu->getCollection()))
-        );
-
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);
     }
 
     /**
@@ -121,5 +136,4 @@ class KurangMampuController extends Controller
         $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
-
 }

@@ -40,7 +40,7 @@ const onConfirmDelete = async () => {
 
 onMounted(async () => {
     await fetchDetailBantuan(uuid);
-    console.log(item.value);
+    // console.log(item.value);
 });
 </script>
 

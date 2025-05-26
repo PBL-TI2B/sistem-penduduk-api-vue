@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaBantuan } from "./utils/form-schema";
 import { useBantuan } from "@/composables/useBantuan";
@@ -44,22 +44,6 @@ const onSubmit = handleSubmit(async (values) => {
     await editBantuan(uuid, values);
     resetForm();
 });
-
-// const onSubmit = handleSubmit(async (values) => {
-//     try {
-//         const res = await apiPost(`/bantuan/${uuid}`, values); // API call to create new pekerjaan
-
-//         resetForm(); // Reset form fields after submission
-//         toast.success("Berhasil Memperbarui Data Bantuan");
-//         router.visit("/bantuan"); // Redirect to pekerjaan list
-//     } catch (error) {
-//         useErrorHandler(error); // Handle any errors
-//     }
-// });
-
-// watch(item, async () => {
-//     await fetchDetailBantuan(uuid);
-// });
 
 onMounted(async () => {
     await fetchDetailBantuan(uuid);
@@ -85,12 +69,12 @@ onMounted(async () => {
     <Head title="Tambah Bantuan" />
 
     <div class="grid gap-1">
-        <h1 class="text-3xl font-bold">Tambah Data Bantuan</h1>
+        <h1 class="text-3xl font-bold">Ubah Data Bantuan</h1>
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/dashboard' },
                 { label: 'Data Bantuan', href: '/bantuan' },
-                { label: 'Tambah Data Bantuan' },
+                { label: 'Ubah Data Bantuan' },
             ]"
         />
     </div>

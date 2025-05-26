@@ -18,51 +18,36 @@ import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
-import { useErrorHandler } from "@/composables/useErrorHandler";
+import { useKurangMampu } from "@/composables/useKurangMampu";
 
-const items = ref([]);
-const totalPages = ref(1);
-const totalItems = ref(1);
-const page = ref(1);
-const perPage = ref(10);
-const isLoading = ref(false);
+import {
+    PackagePlus,
+    SearchIcon,
+    Eye,
+    Trash2,
+    PackageSearch,
+    X,
+    FunnelX,
+    SquarePen,
+} from "lucide-vue-next";
 
-const search = ref("");
-const selectedKategori = ref("-");
-const selectedStatusValidasi = ref("");
-const statusValidasiOptions = ref([]);
-
-const fetchStatusValidasiOptions = async () => {
-    try {
-        const res = await apiGet("/status-validasi-options");
-        statusValidasiOptions.value = res.data;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat pilihan status validasi");
-    }
-};
-
-const fetchData = async () => {
-    try {
-        items.value = [];
-        isLoading.value = true;
-        const res = await apiGet("/kurang-mampu", {
-            page: page.value,
-            search: search.value,
-            status_validasi: selectedStatusValidasi.value,
-        });
-        items.value = res.data.data.map((item) => ({
-            ...item,
-            nama_penduduk: item.penduduk?.nama_lengkap || "-",
-        }));
-        perPage.value = res.data.per_page;
-        totalPages.value = res.data.last_page;
-        totalItems.value = res.data.total;
-    } catch (error) {
-        useErrorHandler(error, "Gagal memuat data kurang mampu");
-    } finally {
-        isLoading.value = false;
-    }
-};
+const {
+    items,
+    item,
+    isLoading,
+    page,
+    perPage,
+    totalPages,
+    totalItems,
+    search,
+    selectedStatusValidasi,
+    statusValidasiOptions,
+    fetchData,
+    // fetchDetailData,
+    // createData,
+    // editData,
+    // deleteData,
+} = useKurangMampu();
 
 const clearSearch = () => {
     search.value = "";
@@ -77,16 +62,14 @@ const applyFilter = () => {
 
 const resetFilter = () => {
     search.value = "";
-    selectedKategori.value = "-";
     selectedStatusValidasi.value = "";
     applyFilter();
 };
 
 onMounted(() => {
     fetchData();
-    fetchStatusValidasiOptions();
 });
-watch(page, fetchData);
+watch(page, fetchData());
 </script>
 
 <template>
@@ -101,71 +84,86 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <div class="flex flex-wrap gap-4 items-center">
+        <!-- <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
                 <Link :href="route('kurang-mampu.create')">
                     + Kurang Mampu
                 </Link>
             </Button>
-        </div>
+        </div> -->
     </div>
 
-    <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap md:flex-nowrap justify-between items-center gap-2"
-        >
-            <div class="flex items-center gap-2 md:w-1/2 w-full">
-                <div class="relative w-full">
+    <div class="drop-shadow-md w-full grid gap-2 mb-3">
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <div class="flex w-full relative items-center">
                     <Input
+                        id="search"
                         v-model="search"
-                        placeholder="Cari data kurang mampu berdasarkan nama"
-                        class="w-full pr-8"
+                        type="text"
+                        placeholder="Cari kurang mampu"
+                        class="pl-10 pr-8"
+                        @change="applyFilter"
                     />
+                    <span
+                        class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                    >
+                        <SearchIcon class="size-6 text-muted-foreground" />
+                    </span>
+
                     <button
                         v-if="search"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                        class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
                         @click="clearSearch"
                         tabindex="-1"
                         type="button"
                     >
-                        ✕
+                        <X class="size-5" />
                     </button>
                 </div>
-                <Button class="whitespace-nowrap" @click="fetchData">
-                    Cari
-                </Button>
+                <div class="flex gap-2 items-center">
+                    <!-- <Label for="selection">Status Validasi:</Label> -->
+                    <Select
+                        v-model="selectedStatusValidasi"
+                        @update:modelValue="applyFilter"
+                        id="selection"
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Status Validasi" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Status Validasi:</SelectLabel>
+                                <SelectItem
+                                    v-for="option in statusValidasiOptions"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Button asChild @click="resetFilter">
+                        <div>
+                            <FunnelX />
+                            Reset
+                        </div>
+                    </Button>
+                </div>
             </div>
-
-            <div class="flex flex-wrap items-center gap-2 justify-end">
-                <Label for="kategori">Kategori:</Label>
-                <Select
-                    v-model="selectedKategori"
-                    @update:modelValue="applyFilter"
-                    id="kategori"
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Kategori" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Kategori</SelectLabel>
-                            <SelectItem
-                                v-for="kat in itemsFilterKategori"
-                                :key="kat.value"
-                                :value="kat.value"
-                            >
-                                {{ kat.label }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-
-                <Button asChild @click="resetFilter">
-                    <div class="flex items-center gap-1"><FunnelX /> Reset</div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createKategoriBantuan">
+                    <PackagePlus /> Tambah Kurang Mampu
                 </Button>
             </div>
         </div>
-
+    </div>
+    <div class="drop-shadow-md w-full grid gap-2">
         <DataTable
             :items="items"
             :columns="columnsIndex"

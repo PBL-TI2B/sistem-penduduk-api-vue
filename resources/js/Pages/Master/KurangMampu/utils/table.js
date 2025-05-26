@@ -12,61 +12,60 @@ import {
     SquarePen,
 } from "lucide-vue-next";
 
+const formatCurrency = (value) => {
+    if (value == null || value === '') return '-';
+    return Number(value).toLocaleString('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 2
+    });
+};
+
 const columnsIndex = [
-    // { label: "Nama Penduduk", key: "anggota_keluarga_id" },
     {
         label: "Nama Penduduk",
         key: "penduduk",
-        format: (value) => {
-            return value?.nama_lengkap ?? '-';
-        },
+        format: (value) => value?.nama_lengkap ?? '-',
+    },
+    {
+        label: "NIK",
+        key: "penduduk",
+        format: (value) => value?.nik ?? '-',
     },
     {
         label: "Pendapatan Per-Hari",
         key: "pendapatan_per_hari",
-        format: (value) => {
-            if (value == null || value === '') return '-';
-            return Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 });
-        },
+        format: formatCurrency,
     },
     {
         label: "Pendapatan Per-Bulan",
         key: "pendapatan_per_bulan",
-        format: (value) => {
-            if (value == null || value === '') return '-';
-            return Number(value).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 2 });
-        },
+        format: formatCurrency,
     },
     {
         label: "Tanggungan",
         key: "jumlah_tanggungan",
-        format: (value) => {
-            return value?? '0';
-        },
+        format: (value) => value ?? '0',
     },
     {
         label: "Pekerjaan",
         key: "penduduk",
-        format: (value) => {
-            return value?.pekerjaan ?? '-';
-        },
+        format: (value) => value?.pekerjaan ?? '-',
     },
     {
         label: "Pendidikan Terakhir",
         key: "penduduk",
-        format: (value) => {
-            return value?.pendidikan ?? '-';
-        },
+        format: (value) => value?.pendidikan ?? '-',
     },
-    { label: "Status Validasi", key: "status_validasi" },
-    // { label: "Keterangan", key: "keterangan",
-    //     format: (value) => {
-    //         return value?? '-';
-    //     },
-    // },
+    {
+        label: "Status Validasi",
+        key: "status_validasi"
+    },
 ];
 
-const actionsIndex = [
+// export default columnsIndex;
+
+const actionsIndex = (router, route) => [
     {
         label: "Kelola",
         icon: Eye,
@@ -84,11 +83,8 @@ const actionsIndex = [
     {
         label: "Hapus",
         icon: Trash2,
-        // handler: (item) => {
-            // Implement your delete logic here, e.g.:
-            // onClickDeleteBantuanButton(item.uuid);
-        // },
         disabled: (item) => item.penerima_bantuan_count > 0,
+        // handler bisa diisi di tempat penggunaan
     },
 ];
 
@@ -105,6 +101,5 @@ const rowsShow = [
 //     { label: "Instansi", key: "instansi" },
 //     { label: "Keterangan", key: "keterangan" },
 ];
-
 
 export { columnsIndex, actionsIndex, rowsShow };
