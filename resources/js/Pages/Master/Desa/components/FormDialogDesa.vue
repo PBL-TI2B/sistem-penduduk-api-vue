@@ -20,7 +20,6 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { apiGet, apiPost } from "@/utils/api";
 import { toast } from "vue-sonner";
 import Input from "@/components/ui/input/Input.vue";
-import Textarea from "@/components/ui/textarea/Textarea.vue";
 
 // Props dan Emits
 const props = defineProps({
@@ -121,12 +120,12 @@ const dialogTitle = computed(() =>
 
                 <div>
                     <Label for="deskripsi">Deskripsi</Label>
-                    <Textarea id="deskripsi" v-model="deskripsi" />
+                    <Input id="deskripsi" v-model="deskripsi" />
                 </div>
 
                 <div>
                     <Label for="lokasi">Lokasi</Label>
-                    <Textarea id="lokasi" v-model="lokasi" />
+                    <Input id="lokasi" v-model="lokasi" />
                 </div>
 
                 <DialogFooter>

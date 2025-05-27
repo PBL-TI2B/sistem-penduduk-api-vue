@@ -12,25 +12,17 @@ use Illuminate\Support\Facades\Validator;
 
 class DusunController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Dusun::query();
+        $dusun = Dusun::with(['desa'])->paginate(10);
+        $collection = DusunResource::collection($dusun->getCollection());
+        $dusun->setCollection(collect($collection));
 
-        // Fitur pencarian
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', "%$search%")
-                ->orWhere('deskripsi', 'like', "%$search%")
-                ->orWhere('lokasi', 'like', "%$search%");
-            });
-        }
-
-        // Paginasi
-        $dusun = $query->paginate($request->get('per_page', 10));
-
-        // Respon API
-        return new ApiResource(true, 'Daftar Data Dusun', $dusun);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil data dusun',
+            'data' => $dusun,
+        ]);
     }
 
     public function store(Request $request)

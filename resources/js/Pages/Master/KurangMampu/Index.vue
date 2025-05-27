@@ -16,83 +16,33 @@ import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 
 import DataTable from "@/components/master/DataTable.vue";
-import AlertDialog from "@/components/master/AlertDialog.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { useKurangMampu } from "@/composables/useKurangMampu";
 import { actionsIndex, columnsIndex } from "./utils/table";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
-import {
-    PackagePlus,
-    SearchIcon,
-    Eye,
-    Trash2,
-    PackageSearch,
-    X,
-    FunnelX,
-    SquarePen,
-} from "lucide-vue-next";
+const items = ref([]);
+const totalPages = ref(1);
+const page = ref(1);
+const perPage = ref(10);
+const isLoading = ref(false);
 
-const isAlertDeleteOpen = ref(false);
-const selectedUuid = ref(null);
-
-const {
-    items,
-    item,
-    isLoading,
-    page,
-    perPage,
-    totalPages,
-    totalItems,
-    search,
-    selectedStatusValidasi,
-    statusValidasiOptions,
-    fetchData,
-    // fetchDetailData,
-    // createData,
-    // editData,
-    deleteData,
-} = useKurangMampu();
-
-const clearSearch = () => {
-    search.value = "";
-    page.value = 1;
-    fetchData();
-};
-
-const applyFilter = () => {
-    page.value = 1;
-    fetchData();
-};
-
-const resetFilter = () => {
-    search.value = "";
-    selectedStatusValidasi.value = "";
-    applyFilter();
-};
-
-const onClickDeleteButton = (uuid) => {
-    selectedUuid.value = uuid;
-    isAlertDeleteOpen.value = true;
-};
-const onCancelDelete = () => {
-    isAlertDeleteOpen.value = false;
-    selectedUuid.value = null;
-};
-const onConfirmDelete = async () => {
-    if (selectedUuid.value) {
-        await deleteData(selectedUuid.value);
-        isAlertDeleteOpen.value = false;
-        selectedUuid.value = null;
+const fetchData = async () => {
+    try {
+        items.value = [];
+        isLoading.value = true;
+        const res = await apiGet("/kurang-mampu", { page: page.value });
+        items.value = res.data.data;
+        perPage.value = res.data.per_page;
+        totalPages.value = res.data.last_page;
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data kurang mampu");
+    } finally {
+        isLoading.value = false;
     }
 };
 
-// Setting Action Buttons
-const actionsIndexKurangMampu = actionsIndex(onClickDeleteButton);
-
-onMounted(() => {
-    fetchData();
-});
-watch(page, fetchData());
+onMounted(fetchData);
+watch(page, fetchData);
 </script>
 
 <template>
@@ -103,109 +53,38 @@ watch(page, fetchData());
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data Kurang Mampu' },
+                    { label: 'Data kurang mampu' },
                 ]"
             />
         </div>
-        <!-- <div class="flex flex-wrap gap-4 items-center">
+        <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('kurang-mampu.create')">
-                    + Kurang Mampu
-                </Link>
+                <Link :href="route('kurang-mampu.create')"> + Kurang Mampu</Link>
             </Button>
-        </div> -->
-    </div>
-
-    <div class="drop-shadow-md w-full grid gap-2 mb-3">
-        <div class="flex xl:flex-row flex-col gap-4 items-center">
-            <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
-            >
-                <div class="flex w-full relative items-center">
-                    <Input
-                        id="search"
-                        v-model="search"
-                        type="text"
-                        placeholder="Cari kurang mampu"
-                        class="pl-10 pr-8"
-                        @change="applyFilter"
-                    />
-                    <span
-                        class="absolute start-2 inset-y-0 flex items-center justify-center"
-                    >
-                        <SearchIcon class="size-6 text-muted-foreground" />
-                    </span>
-
-                    <button
-                        v-if="search"
-                        class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                        @click="clearSearch"
-                        tabindex="-1"
-                        type="button"
-                    >
-                        <X class="size-5" />
-                    </button>
-                </div>
-                <div class="flex gap-2 items-center">
-                    <!-- <Label for="selection">Status Validasi:</Label> -->
-                    <Select
-                        v-model="selectedStatusValidasi"
-                        @update:modelValue="applyFilter"
-                        id="selection"
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Status Validasi" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Status Validasi:</SelectLabel>
-                                <SelectItem
-                                    v-for="option in statusValidasiOptions"
-                                    :key="option.value"
-                                    :value="option.value"
-                                >
-                                    {{ option.label }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <Button asChild @click="resetFilter">
-                        <div>
-                            <FunnelX />
-                            Reset
-                        </div>
-                    </Button>
-                </div>
-            </div>
-            <div
-                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
-            >
-                <Button asChild>
-                    <Link :href="route('kurang-mampu.create')">
-                        <PackagePlus /> Tambah Kurang Mampu
-                    </Link>
-                </Button>
-            </div>
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+        >
+            <Input
+                v-model="search"
+                placeholder="Cari kurang mampu"
+                class="md:w-1/3"
+            />
+            <div class="flex gap-4">
+                <Button class="cursor-pointer">Terapkan</Button>
+            </div>
+        </div>
         <DataTable
             :items="items"
             :columns="columnsIndex"
-            :actions="actionsIndexKurangMampu"
+            :actions="actionsIndex"
             :totalPages="totalPages"
-            :totalData="totalItems"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
         />
     </div>
-    <AlertDialog
-        v-model:isOpen="isAlertDeleteOpen"
-        title="Hapus Kurang Mampu"
-        description="Apakah anda yakin ingin menghapus?"
-        :onConfirm="onConfirmDelete"
-        :onCancel="onCancelDelete"
-    />
 </template>

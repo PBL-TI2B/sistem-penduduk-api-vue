@@ -30,15 +30,8 @@ const selectedJabatan = ref(null);
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 
-const {
-    fetchPerangkatDesa,
-    items,
-    page,
-    perPage,
-    totalPages,
-    totalItems,
-    isLoading,
-} = usePerangkatDesa();
+const { fetchPerangkatDesa, items, page, perPage, totalPages, isLoading } =
+    usePerangkatDesa();
 
 const {
     fetchJabatan,
@@ -188,14 +181,13 @@ watch(pageJabatan, () => {
             @update:page="pageJabatan = $event"
         />
 
-        <!-- //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :} -->
+        //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :}
         <DataTable
             label="Perangkat Desa"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
-            :totalData="totalItems"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"

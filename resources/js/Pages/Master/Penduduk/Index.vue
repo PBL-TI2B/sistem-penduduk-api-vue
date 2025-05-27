@@ -26,36 +26,12 @@ const totalPages = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
-const filter = ref({
-    status: "",
-    status_perkawinan: "",
-    pendidikan: "",
-    agama: "",
-});
 
 const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-
-        // Kalau nilai filter '-' ubah jadi string kosong ''
-        const status = filter.value.status === "-" ? "" : filter.value.status;
-        const status_perkawinan =
-            filter.value.status_perkawinan === "-"
-                ? ""
-                : filter.value.status_perkawinan;
-        const pendidikan =
-            filter.value.pendidikan === "-" ? "" : filter.value.pendidikan;
-        const agama = filter.value.agama === "-" ? "" : filter.value.agama;
-
-        const res = await apiGet("/penduduk", {
-            page: page.value,
-            status,
-            status_perkawinan,
-            pendidikan,
-            agama,
-        });
-
+        const res = await apiGet("/penduduk", { page: page.value });
         items.value = res.data.data;
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
@@ -100,7 +76,7 @@ watch(page, fetchData);
                 class="md:w-1/3"
             />
             <div class="flex gap-4">
-                <Select v-model="filter.status">
+                <Select>
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
@@ -113,7 +89,7 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.status_perkawinan">
+                <Select>
                     <SelectTrigger>
                         <SelectValue placeholder="Status Perkawinan" />
                     </SelectTrigger>
@@ -128,9 +104,7 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
-                >
+                <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
         <DataTable

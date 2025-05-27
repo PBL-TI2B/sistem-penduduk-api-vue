@@ -16,7 +16,7 @@ class Penduduk extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid();
+                $model->uuid = Str::uuid(); 
             }
         });
     }
@@ -48,13 +48,13 @@ class Penduduk extends Model
 
     public function domisili()
     {
-        return $this->hasOne(Domisili::class, 'penduduk_id', 'id');
+        return $this->hasOne(Domisili::class);
     }
 
-    protected function foto()
+    protected function foto() 
     {
         return Attribute::make(
-            get: fn($foto) => url('/storage/penduduk/' . $foto),
+            get: fn ($foto) => url('/storage/penduduk/' . $foto),
         );
     }
 }

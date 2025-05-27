@@ -15,13 +15,13 @@ class PenerimaBantuanController extends Controller
      */
     public function index()
     {
-        $penerimaBantuan = PenerimaBantuan::with(['bantuan.kategoriBantuan', 'kurangMampu'])->paginate(10);
-        $collection = PenerimaBantuanResource::collection($penerimaBantuan->getCollection());
-        $penerimaBantuan->setCollection(collect($collection));
+        $penerimabantuan = PenerimaBantuan::with(['bantuan.kategoriBantuan', 'kurangMampu'])->paginate(10);
+        $collection = PenerimaBantuanResource::collection($penerimabantuan->getCollection());
+        $penerimabantuan->setCollection(collect($collection));
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Penerima Bantuan',
-            'data'    => $penerimaBantuan,
+            'data'    => $penerimabantuan,
         ]);
     }
 
@@ -41,7 +41,7 @@ class PenerimaBantuanController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $penerimaBantuan = PenerimaBantuan::create([
+        $penerimabantuan = PenerimaBantuan::create([
             'status' => $request->status,
             'tanggal_penerimaan' => $request->tanggal_penerimaan,
             'keterangan' => $request->keterangan,
@@ -51,20 +51,20 @@ class PenerimaBantuanController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Penerima Bantuan Berhasil Ditambahkan',
-            'data'    => new PenerimaBantuanResource($penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu']))
+            'data'    => new PenerimaBantuanResource($penerimabantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']))
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(PenerimaBantuan $penerimaBantuan)
+    public function show(PenerimaBantuan $penerimabantuan)
     {
-        $penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu']);
+        $penerimabantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']);
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Penerima Bantuan',
-            'data'    => new PenerimaBantuanResource($penerimaBantuan)
+            'data'    => new PenerimaBantuanResource($penerimabantuan)
         ]);
     }
 
@@ -72,7 +72,7 @@ class PenerimaBantuanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PenerimaBantuan $penerimaBantuan, Request $request)
+    public function update(PenerimaBantuan $penerimabantuan, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:aktif,selesai,ditolak',
@@ -84,7 +84,7 @@ class PenerimaBantuanController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $penerimaBantuan->update([
+        $penerimabantuan->update([
             'status' => $request->status,
             'tanggal_penerimaan' => $request->tanggal_penerimaan,
             'keterangan' => $request->keterangan,
@@ -94,7 +94,7 @@ class PenerimaBantuanController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Penerima Bantuan Berhasil Diubah',
-            'data'    => new PenerimaBantuanResource($penerimaBantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']))
+            'data'    => new PenerimaBantuanResource($penerimabantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']))
         ]);
     }
 
@@ -102,9 +102,9 @@ class PenerimaBantuanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PenerimaBantuan $penerimaBantuan)
+    public function destroy(PenerimaBantuan $penerimabantuan)
     {
-        $penerimaBantuan->delete();
+        $penerimabantuan->delete();
         return response()->json([
             'success' => true,
             'message' => 'Data Penerima Bantuan Berhasil Dihapus',

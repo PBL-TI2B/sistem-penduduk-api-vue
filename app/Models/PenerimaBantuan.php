@@ -33,9 +33,8 @@ class PenerimaBantuan extends Model
     {
         return $this->belongsTo(Bantuan::class, 'bantuan_id', 'id');
     }
-
-    public function riwayatBantuan()
+    public function penerimaBantuan()
     {
-        return $this->hasMany(RiwayatBantuan::class, 'penerima_bantuan_id', 'id');
+        return $this->hasMany(PenerimaBantuan::class, 'penerima_bantuan_id', 'id');
     }
 }

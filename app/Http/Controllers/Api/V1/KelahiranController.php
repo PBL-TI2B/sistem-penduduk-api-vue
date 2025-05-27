@@ -14,21 +14,9 @@ class KelahiranController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Kelahiran::with('penduduk');
-
-         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('penduduk', function ($subQuery) use ($search) {
-                    $subQuery->where('nama_lengkap', 'like', "%$search%");
-                });
-            });
-        }
-
-        $kelahiran = $query->paginate($request->get('per_page', 10));
-        //$kelahiran->setCollection(collect(KelahiranResource::collection($kelahiran->getCollection())));
+        $kelahiran = Kelahiran::with(['penduduk'])->paginate(10);
         return new ApiResource(true, 'Daftar Data Kelahiran', $kelahiran);
     }
 

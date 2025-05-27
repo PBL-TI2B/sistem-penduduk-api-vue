@@ -20,18 +20,13 @@ class Bantuan extends Model
         });
     }
 
-    public function kategoriBantuan()
-    {
-        return $this->belongsTo(KategoriBantuan::class, 'kategori_bantuan_id', 'id');
-    }
-
-    public function penerimaBantuan()
-    {
-        return $this->hasMany(PenerimaBantuan::class, 'bantuan_id', 'id');
-    }
-
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function kategoriBantuan()
+    {
+        return $this->belongsTo(KategoriBantuan::class, 'kategori_bantuan_id', 'id');
     }
 }

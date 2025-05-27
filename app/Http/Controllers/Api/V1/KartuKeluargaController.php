@@ -11,17 +11,11 @@ use Illuminate\Support\Str;
 
 class KartuKeluargaController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = KartuKeluarga::query();
-        
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('nomor_kk', 'like', "%$search%");
-        }
-        
-        $kartukeluarga = $query->paginate($request->get('per_page', 10));
-        return new ApiResource(true, 'Daftar Kartu Keluarga', $kartukeluarga);
+        // Mengambil daftar Kartu Keluarga dengan paginasi
+        $data = KartuKeluarga::paginate(5);
+        return new ApiResource(true, 'Daftar Kartu Keluarga', $data);
     }
 
     public function store(Request $request)
@@ -64,7 +58,7 @@ class KartuKeluargaController extends Controller
 
     public function update(Request $request, KartuKeluarga $kartuKeluarga)
     {
-        // Validasi data yang diperbarui
+        // Validasi data yang diupdate
         $validator = Validator::make($request->all(), [
             'nomor_kk' => 'required|max:50|unique:kartu_keluarga,nomor_kk,' . $kartuKeluarga->uuid,
             'rt_id' => 'required',
@@ -90,7 +84,7 @@ class KartuKeluargaController extends Controller
             'provinsi'
         ]));
 
-        return new ApiResource(true, 'Kartu Keluarga Berhasil Diperbarui', $kartuKeluarga);
+        return new ApiResource(true, 'Kartu Keluarga Berhasil Diupdate', $kartuKeluarga);
     }
 
     public function destroy(KartuKeluarga $kartuKeluarga)

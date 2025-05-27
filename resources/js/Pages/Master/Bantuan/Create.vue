@@ -26,7 +26,7 @@ import { formSchemaBantuan } from "./utils/form-schema";
 import { useBantuan } from "@/composables/useBantuan";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
 
-const { createBantuan, isLoading } = useBantuan();
+const { createBantuan } = useBantuan();
 const { itemsKategoriAll, fetchKategori } = useKategoriBantuan();
 
 // Initialize fields from getFields
@@ -36,13 +36,13 @@ const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchemaBantuan,
 });
 
-const onSubmit = handleSubmit((values) => {
-    createBantuan(values);
+const onSubmit = handleSubmit(async (values) => {
+    await createBantuan(values);
     resetForm(); // Reset form fields after submission
 });
 
-onMounted(() => {
-    fetchKategori(true);
+onMounted(async () => {
+    await fetchKategori(true);
     fields.value = getFields(itemsKategoriAll);
 });
 </script>
@@ -113,13 +113,13 @@ onMounted(() => {
             </div>
             <!-- Submit Button -->
             <div class="flex justify-end gap-4">
-                <!-- <Button
+                <Button
                     @click="router.visit('/bantuan')"
                     type="button"
                     variant="secondary"
                     >Batal</Button
-                > -->
-                <Button type="submit" :disabled="isLoading">Simpan</Button>
+                >
+                <Button type="submit">Simpan</Button>
             </div>
         </form>
     </div>

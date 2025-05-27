@@ -5,7 +5,7 @@ const columnsIndex = [
     {
         label: "Nama Penduduk",
         key: "kurang_mampu",
-        format: (val, row) => val?.penduduk.nama_lengkap || "-",
+        format: (val, row) => val?.nama_lengkap || "-",
     },
     {
         label: "Nama Bantuan",

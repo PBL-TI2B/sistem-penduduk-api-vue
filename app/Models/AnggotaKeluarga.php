@@ -15,7 +15,7 @@ class AnggotaKeluarga extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid();
+                $model->uuid = Str::uuid(); 
             }
         });
     }
@@ -38,10 +38,5 @@ class AnggotaKeluarga extends Model
     public function statusKeluarga()
     {
         return $this->belongsTo(StatusKeluarga::class, 'status_keluarga_id', 'id');
-    }
-
-    public function penerimaBantuan()
-    {
-        return $this->hasOne(KurangMampu::class, 'anggota_keluarga_id', 'id');
     }
 }

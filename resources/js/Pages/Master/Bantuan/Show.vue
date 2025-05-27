@@ -40,7 +40,7 @@ const onConfirmDelete = async () => {
 
 onMounted(async () => {
     await fetchDetailBantuan(uuid);
-    // console.log(item.value);
+    console.log(item.value);
 });
 </script>
 
@@ -48,7 +48,7 @@ onMounted(async () => {
     <Head title=" | Detail Bantuan" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
-            <h1 class="text-3xl font-bold">Detail Bantuan</h1>
+            <h1 class="text-3xl font-bold">Data Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/dashboard' },
@@ -57,13 +57,23 @@ onMounted(async () => {
                 ]"
             />
         </div>
+        <div class="flex gap-2 items-center">
+            <Button asChild>
+                <Link :href="route('bantuan.edit', uuid)">
+                    <SquarePen /> Ubah
+                </Link>
+            </Button>
+            <Button @click="onClickDeleteButton(uuid)">
+                <Trash2 /> Hapus
+            </Button>
+        </div>
     </div>
     <div
         class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-4 justify-between"
     >
         <div class="w-full">
             <h2 class="text-lg font-bold mb-4">
-                Detail Data - {{ item.nama_bantuan }}
+                Detail Data {{ item.nama_bantuan }}
             </h2>
             <table class="w-full table-auto border-collapse">
                 <tbody>
@@ -79,22 +89,12 @@ onMounted(async () => {
                             {{
                                 row.format
                                     ? row.format(item[row.key], item)
-                                    : (item[row.key] ?? "-")
+                                    : item[row.key] ?? "-"
                             }}
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="flex mt-2 gap-2 items-center justify-end">
-                <Button asChild>
-                    <Link :href="route('bantuan.edit', uuid)">
-                        <SquarePen /> Ubah
-                    </Link>
-                </Button>
-                <Button @click="onClickDeleteButton(uuid)">
-                    <Trash2 /> Hapus
-                </Button>
-            </div>
         </div>
     </div>
 

@@ -62,8 +62,6 @@ export function useKategoriBantuan() {
 
     const createAndEditKategori = async (formValues, props, emit) => {
         try {
-            isLoadingKategori.value = true;
-
             const formData = new FormData();
 
             for (const [key, value] of Object.entries(formValues)) {
@@ -86,22 +84,16 @@ export function useKategoriBantuan() {
             );
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data kategori");
-        } finally {
-            isLoadingKategori.value = false;
         }
     };
 
     const deleteKategori = async (uuid) => {
         try {
-            // isLoadingKategori.value = true;
-
             await apiDelete(`/kategori-bantuan/${uuid}`);
             toast.success("Berhasil menghapus kategori");
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kategori");
-        } finally {
-            // isLoadingKategori.value = false;
         }
     };
 

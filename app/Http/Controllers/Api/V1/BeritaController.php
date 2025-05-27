@@ -14,46 +14,17 @@ class BeritaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Berita::with('users');
-
-        // Fitur pencarian (search)
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('judul', 'like', "%$search%")
-                ->orWhere('konten', 'like', "%$search%")
-                ->orWhere('status', 'like', "%$search%");
-            });
-        }
-
-        // Paginasi
-        $berita = $query->paginate($request->get('per_page', 10));
-
-        // Format resource
+        $berita= Berita::with('users')->paginate(10);
         $collection = BeritaResource::collection($berita->getCollection());
         $berita->setCollection(collect($collection));
-
-        // Respon JSON
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Berita',
             'data'    => $berita,
         ]);
     }
-
-    // public function index()
-    // {
-    //     $berita= Berita::with('users')->paginate(10);
-    //     $collection = BeritaResource::collection($berita->getCollection());
-    //     $berita->setCollection(collect($collection));
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Daftar Data Berita',
-    //         'data'    => $berita,
-    //     ]);
-    // }
 
     public function store(Request $request)
     {

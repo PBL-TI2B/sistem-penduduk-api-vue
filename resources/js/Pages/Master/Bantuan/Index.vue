@@ -1,7 +1,7 @@
 <script setup>
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 
 import {
     Select,
@@ -14,21 +14,27 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-// import { Label } from "@/components/ui/label";
+import { Label } from "@/components/ui/label";
 import DataTable from "@/components/master/DataTable.vue";
-import AlertDialog from "@/components/master/AlertDialog.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
+import { columnsIndexBantuan, columnsIndexKategori } from "./utils/table";
 
-import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
+import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
+import AlertDialog from "@/components/master/AlertDialog.vue";
+
+import {
+    PackagePlus,
+    SearchIcon,
+    Eye,
+    Trash2,
+    PackageSearch,
+    X,
+    FunnelX,
+    SquarePen,
+} from "lucide-vue-next";
+
 import { useBantuan } from "@/composables/useBantuan";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
-import {
-    columnsIndexBantuan,
-    columnsIndexKategori,
-    actionsIndexBantuan,
-    actionsIndexKategori,
-} from "./utils/table";
 
 // --- GUNAKAN useKategoriBantuan ---
 const {
@@ -58,6 +64,9 @@ const {
     deleteBantuan,
 } = useBantuan();
 
+// Data semua kategori
+const allKategori = ref([]);
+
 // kategori dialog
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
@@ -66,12 +75,11 @@ const isAlertDeleteKategoriOpen = ref(false);
 // bantuan dialog
 const isAlertDeleteBantuanOpen = ref(false);
 
-// for delete & edit
+// for delete
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
-// for edit
-// const selectedKategoriUuid = ref(null);
+// onMounted());
 
 onMounted(() => {
     fetchKategori(true);
@@ -82,18 +90,71 @@ onMounted(() => {
 watch(page, () => {
     fetchBantuan();
 });
+
 watch(pageKategori, () => {
     fetchKategori();
 });
 
 // -- bila ingin kirim data ketika search diInputKan atau bisa ubah input method dari @change ke @input
-// watch([page, search], () => {
-//   fetchBantuan();
+// watch([page, search], async () => {
+//   await fetchBantuan();
 // });
 
-// watch([pageKategori, searchKategori], () => {
-//   fetchKategori();
+// watch([pageKategori, searchKategori], async () => {
+//   await fetchKategori();
 // });
+
+const actionsIndexBantuan = [
+    {
+        label: "Kelola",
+        icon: Eye,
+        handler: (item) => {
+            router.visit(route("bantuan.show", item.uuid));
+        },
+    },
+    {
+        label: "Ubah",
+        icon: SquarePen,
+        handler: (item) => {
+            router.visit(route("bantuan.edit", item.uuid));
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        handler: (item) => {
+            // Implement your delete logic here, e.g.:
+            onClickDeleteBantuanButton(item.uuid);
+        },
+    },
+];
+
+const actionsIndexKategori = [
+    {
+        label: "Saring",
+        icon: PackageSearch,
+        handler: (itemsKategori) => {
+            selectedKategori.value = itemsKategori.id;
+            applyFilter();
+        },
+    },
+    {
+        label: "Ubah",
+        icon: Eye,
+        handler: (itemsKategori) => {
+            editKategoriBantuan(itemsKategori);
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        // variant: "danger",
+        handler: (itemsKategori) => {
+            onClickDeleteKategoriButton(itemsKategori.uuid);
+        },
+        disabled: (itemsKategori) => itemsKategori.bantuan_count > 0,
+    },
+];
 
 //  -- Events Bantuan --
 const onClickDeleteBantuanButton = (uuid) => {
@@ -120,7 +181,7 @@ const createKategoriBantuan = () => {
 const editKategoriBantuan = (kategori) => {
     isFormDialogOpen.value = true;
     dialogMode.value = "edit";
-    selectedKategoriUuid.value = kategori;
+    selectedKategori.value = kategori;
 };
 const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
@@ -145,7 +206,7 @@ const applyFilter = () => {
 };
 const resetFilter = () => {
     search.value = "";
-    selectedKategori.value = "";
+    selectedKategori.value = "-";
     applyFilter();
 };
 const clearSearchBantuan = () => {
@@ -162,17 +223,6 @@ const clearSearchKategori = () => {
     searchKategori.value = "";
     applyFilterKategori();
 };
-
-// -- Setting Action Columns Bantuan --
-const actionsBantuan = actionsIndexBantuan(onClickDeleteBantuanButton);
-
-// -- Setting Action Columns Kategori Bantuan --
-const actionsKategori = actionsIndexKategori({
-    selectedKategori,
-    applyFilter,
-    editKategoriBantuan,
-    onClickDeleteKategoriButton,
-});
 </script>
 
 <template>
@@ -182,13 +232,13 @@ const actionsKategori = actionsIndexKategori({
             <h1 class="text-3xl font-bold">Data Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/dashboard' },
+                    { label: 'Dashboard', href: '/' },
                     { label: 'Data Bantuan' },
                 ]"
             />
         </div>
     </div>
-    <div class="drop-shadow-md w-full grid gap-2 mb-3">
+    <div class="drop-shadow-md w-full grid gap-2">
         <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
@@ -230,7 +280,7 @@ const actionsKategori = actionsIndexKategori({
             label="Kategori Bantuan"
             :items="itemsKategori"
             :columns="columnsIndexKategori"
-            :actions="actionsKategori"
+            :actions="actionsIndexKategori"
             :totalPages="totalPagesKategori"
             :totalData="totalDataKategori"
             :page="pageKategori"
@@ -238,11 +288,9 @@ const actionsKategori = actionsIndexKategori({
             :is-loading="isLoadingKategori"
             @update:page="pageKategori = $event"
         />
-    </div>
-    <div class="drop-shadow-md w-full grid gap-2">
-        <div class="drop-shadow-md w-full grid gap-2"></div>
+
         <!-- Search Bantuan -->
-        <div class="flex xl:flex-row flex-col gap-4 items-center">
+        <div class="flex xl:flex-row flex-col gap-4 mt-4 items-center">
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between w-full"
             >
@@ -271,7 +319,7 @@ const actionsKategori = actionsIndexKategori({
                     </button>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <!-- <Label for="kategori">Kategori:</Label> -->
+                    <Label for="kategori">Kategori:</Label>
                     <Select
                         v-model="selectedKategori"
                         @update:modelValue="applyFilter"
@@ -327,7 +375,7 @@ const actionsKategori = actionsIndexKategori({
             label="Bantuan"
             :items="items"
             :columns="columnsIndexBantuan"
-            :actions="actionsBantuan"
+            :actions="actionsIndexBantuan"
             :totalPages="totalPages"
             :totalData="totalData"
             :page="page"
@@ -341,12 +389,11 @@ const actionsKategori = actionsIndexKategori({
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
-        :initial-data="selectedKategoriUuid"
+        :initial-data="selectedKategori"
         @success="
             () => {
                 fetchKategori();
                 fetchKategori(true);
-                fetchBantuan();
             }
         "
     />
