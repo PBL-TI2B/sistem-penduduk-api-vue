@@ -14,7 +14,9 @@ class BantuanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Bantuan::with('kategoriBantuan');
+        $perPage = $request->input('per_page', 10);
+        // $query = Bantuan::withCount(['kategoriBantuan', 'penerimaBantuan']);
+        $query = Bantuan::query();
 
         // General search across main columns
         if ($request->filled('search')) {
@@ -25,7 +27,8 @@ class BantuanController extends Controller
                     ->orWhere('periode', 'like', "%$search%")
                     ->orWhere('lama_periode', 'like', "%$search%")
                     ->orWhere('instansi', 'like', "%$search%")
-                    ->orWhere('keterangan', 'like', "%$search%");
+                    // ->orWhere('keterangan', 'like', "%$search%")
+                ;
             });
         }
 
@@ -34,7 +37,9 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
-        $data = $query->paginate($request->get('per_page', 10));
+        //! Tambahkan eager loading untuk kategoriBantuan, menghindari N+1 query
+        // $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $data = $query->with(['kategoriBantuan'])->withCount('penerimaBantuan')->paginate($perPage);
         $collection = BantuanResource::collection($data->getCollection());
         $data->setCollection(collect($collection));
 

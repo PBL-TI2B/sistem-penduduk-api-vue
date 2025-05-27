@@ -53,13 +53,15 @@ watch(page, fetchData);
             <BreadcrumbComponent
                 :items="[
                     { label: 'Dashboard', href: '/' },
-                    { label: 'Data kurang mampu' },
+                    { label: 'Data Penerima Bantuan' },
                 ]"
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('kurang-mampu.create')"> + Penerima Bantuan</Link>
+                <Link :href="route('kurang-mampu.create')">
+                    + Penerima Bantuan</Link
+                >
             </Button>
         </div>
     </div>

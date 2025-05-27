@@ -18,9 +18,16 @@ return new class extends Migration
             $table->date('tanggal_penerimaan');
             $table->text('keterangan')->nullable();
 
-            $table->foreignId('kurang_mampu_id')->constrained('kurang_mampu')->cascadeOnDelete();
-            $table->foreignId('bantuan_id')->constrained('bantuan')->cascadeOnDelete();
-            
+            $table->foreignId('kurang_mampu_id')
+                ->constrained('kurang_mampu')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignId('bantuan_id')
+                ->constrained('bantuan')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
             $table->timestamps();
         });
     }

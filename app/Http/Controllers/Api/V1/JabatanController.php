@@ -11,14 +11,26 @@ use Illuminate\Support\Facades\Storage;
 
 class JabatanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+  
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $jabatan = Jabatan::paginate($perPage);
+        $query = Jabatan::query();
+
+        // Search by keyword
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('jabatan', 'like', "%$search%")
+                ->orWhere('keterangan', 'like', "%$search%");
+            });
+        }
+
+        $jabatan = $query->paginate($request->get('per_page', 10));
+
         return new ApiResource(true, 'Daftar Data Jabatan', $jabatan);
+        // $perPage = $request->input('per_page', 10);
+        // $jabatan = Jabatan::paginate($perPage);
+        // return new ApiResource(true, 'Daftar Data Jabatan', $jabatan);
     }
 
     /**

@@ -10,9 +10,24 @@ use Illuminate\Support\Facades\Validator;
 
 class KematianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kematian = Kematian::with(['penduduk'])->paginate(10);
+        $query = Kematian::with('penduduk');
+
+         if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('penduduk', function ($subQuery) use ($search) {
+                    $subQuery->where('nama_lengkap', 'like', "%$search%");
+                })
+                ->orWhere('sebab_kematian', 'like', "%$search%");
+            });
+        }
+
+
+        $kematian = $query->paginate($request->get('per_page', 10));
+        //$kematian->setCollection(collect(KematianResource::collection($kematian->getCollection())));
+
         return new ApiResource(true, 'Daftar Data Kematian', $kematian);
     }
     public function store(Request $request)
