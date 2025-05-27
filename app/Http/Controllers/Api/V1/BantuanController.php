@@ -27,7 +27,8 @@ class BantuanController extends Controller
                     ->orWhere('periode', 'like', "%$search%")
                     ->orWhere('lama_periode', 'like', "%$search%")
                     ->orWhere('instansi', 'like', "%$search%")
-                    ->orWhere('keterangan', 'like', "%$search%");
+                    // ->orWhere('keterangan', 'like', "%$search%")
+                ;
             });
         }
 
@@ -36,7 +37,9 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
-        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        //! Tambahkan eager loading untuk kategoriBantuan, menghindari N+1 query
+        // $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $data = $query->with(['kategoriBantuan'])->withCount('penerimaBantuan')->paginate($perPage);
         $collection = BantuanResource::collection($data->getCollection());
         $data->setCollection(collect($collection));
 

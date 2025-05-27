@@ -12,8 +12,8 @@ export function useBantuan() {
     const perPage = ref(10);
     const totalPages = ref(1);
     const totalData = ref(0);
-    const search = ref("");
-    const selectedKategori = ref("-");
+    const search = ref(null);
+    const selectedKategori = ref(null);
 
     // Fetch list bantuan
     const fetchBantuan = async () => {

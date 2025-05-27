@@ -1,7 +1,7 @@
 <script setup>
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
-import { router, Link } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 
 import {
     Select,
@@ -14,27 +14,21 @@ import {
 } from "@/components/ui/select";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import DataTable from "@/components/master/DataTable.vue";
-import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { columnsIndexBantuan, columnsIndexKategori } from "./utils/table";
-
-import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
+import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
+import FormDialogKategoriBantuan from "./components/FormDialogKategoriBantuan.vue";
 
-import {
-    PackagePlus,
-    SearchIcon,
-    Eye,
-    Trash2,
-    PackageSearch,
-    X,
-    FunnelX,
-    SquarePen,
-} from "lucide-vue-next";
-
+import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
 import { useBantuan } from "@/composables/useBantuan";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+import {
+    columnsIndexBantuan,
+    columnsIndexKategori,
+    actionsIndexBantuan,
+    actionsIndexKategori,
+} from "./utils/table";
 
 // --- GUNAKAN useKategoriBantuan ---
 const {
@@ -72,12 +66,12 @@ const isAlertDeleteKategoriOpen = ref(false);
 // bantuan dialog
 const isAlertDeleteBantuanOpen = ref(false);
 
-// for delete
+// for delete & edit
 const selectedKategoriUuid = ref(null);
 const selectedBantuanUuid = ref(null);
 
 // for edit
-const selectedKategoriEdit = ref(null);
+// const selectedKategoriUuid = ref(null);
 
 onMounted(() => {
     fetchKategori(true);
@@ -88,73 +82,18 @@ onMounted(() => {
 watch(page, () => {
     fetchBantuan();
 });
-
 watch(pageKategori, () => {
     fetchKategori();
 });
 
 // -- bila ingin kirim data ketika search diInputKan atau bisa ubah input method dari @change ke @input
-// watch([page, search], async () => {
-//   await fetchBantuan();
+// watch([page, search], () => {
+//   fetchBantuan();
 // });
 
-// watch([pageKategori, searchKategori], async () => {
-//   await fetchKategori();
+// watch([pageKategori, searchKategori], () => {
+//   fetchKategori();
 // });
-
-const actionsIndexBantuan = [
-    {
-        label: "Kelola",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("bantuan.show", item.uuid));
-        },
-    },
-    {
-        label: "Ubah",
-        icon: SquarePen,
-        handler: (item) => {
-            router.visit(route("bantuan.edit", item.uuid));
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash2,
-        handler: (item) => {
-            // Implement your delete logic here, e.g.:
-            onClickDeleteBantuanButton(item.uuid);
-        },
-        disabled: (item) => item.penerima_bantuan_count > 0,
-    },
-];
-
-const actionsIndexKategori = [
-    {
-        label: "Cari",
-        icon: PackageSearch,
-        handler: (item) => {
-            selectedKategori.value = item.id;
-            applyFilter();
-        },
-        disabled: (item) => item.bantuan_count == 0,
-    },
-    {
-        label: "Ubah",
-        icon: Eye,
-        handler: (item) => {
-            editKategoriBantuan(item);
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash2,
-        // variant: "danger",
-        handler: (item) => {
-            onClickDeleteKategoriButton(item.uuid);
-        },
-        disabled: (item) => item.bantuan_count > 0,
-    },
-];
 
 //  -- Events Bantuan --
 const onClickDeleteBantuanButton = (uuid) => {
@@ -181,7 +120,7 @@ const createKategoriBantuan = () => {
 const editKategoriBantuan = (kategori) => {
     isFormDialogOpen.value = true;
     dialogMode.value = "edit";
-    selectedKategoriEdit.value = kategori;
+    selectedKategoriUuid.value = kategori;
 };
 const onClickDeleteKategoriButton = (uuid) => {
     selectedKategoriUuid.value = uuid;
@@ -206,7 +145,7 @@ const applyFilter = () => {
 };
 const resetFilter = () => {
     search.value = "";
-    selectedKategori.value = "-";
+    selectedKategori.value = "";
     applyFilter();
 };
 const clearSearchBantuan = () => {
@@ -223,6 +162,17 @@ const clearSearchKategori = () => {
     searchKategori.value = "";
     applyFilterKategori();
 };
+
+// -- Setting Action Columns Bantuan --
+const actionsBantuan = actionsIndexBantuan(onClickDeleteBantuanButton);
+
+// -- Setting Action Columns Kategori Bantuan --
+const actionsKategori = actionsIndexKategori({
+    selectedKategori,
+    applyFilter,
+    editKategoriBantuan,
+    onClickDeleteKategoriButton,
+});
 </script>
 
 <template>
@@ -280,7 +230,7 @@ const clearSearchKategori = () => {
             label="Kategori Bantuan"
             :items="itemsKategori"
             :columns="columnsIndexKategori"
-            :actions="actionsIndexKategori"
+            :actions="actionsKategori"
             :totalPages="totalPagesKategori"
             :totalData="totalDataKategori"
             :page="pageKategori"
@@ -321,7 +271,7 @@ const clearSearchKategori = () => {
                     </button>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <Label for="kategori">Kategori:</Label>
+                    <!-- <Label for="kategori">Kategori:</Label> -->
                     <Select
                         v-model="selectedKategori"
                         @update:modelValue="applyFilter"
@@ -377,7 +327,7 @@ const clearSearchKategori = () => {
             label="Bantuan"
             :items="items"
             :columns="columnsIndexBantuan"
-            :actions="actionsIndexBantuan"
+            :actions="actionsBantuan"
             :totalPages="totalPages"
             :totalData="totalData"
             :page="page"
@@ -391,7 +341,7 @@ const clearSearchKategori = () => {
     <FormDialogKategoriBantuan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
-        :initial-data="selectedKategoriEdit"
+        :initial-data="selectedKategoriUuid"
         @success="
             () => {
                 fetchKategori();
