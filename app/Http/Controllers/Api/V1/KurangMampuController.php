@@ -47,20 +47,15 @@ class KurangMampuController extends Controller
         //! RENCANA - Tambahkan filter berdasarkan PENDAPATAN PER-HARI & PER-BULAN
 
         //! Filter berdasarkan status_validasi
-
         if ($request->filled('status_validasi')) {
             $query->where('status_validasi', $request->status_validasi);
         }
 
-        $data = $query->paginate($request->get('per_page', 10))
-            ->appends($request->only(['search', 'status_validasi', 'per_page']));
+        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $collection = KurangMampuResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
 
-        $data->setCollection(
-            collect(KurangMampuResource::collection($kurangMampu->getCollection()))
-        );
-
-
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);n
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);
     }
 
     /**
@@ -141,5 +136,4 @@ class KurangMampuController extends Controller
         $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
-
 }
