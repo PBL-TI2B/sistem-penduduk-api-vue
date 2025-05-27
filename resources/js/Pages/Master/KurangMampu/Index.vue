@@ -59,7 +59,6 @@ const clearSearch = () => {
     fetchData();
 };
 
-
 const applyFilter = () => {
     page.value = 1;
     fetchData();
@@ -93,8 +92,9 @@ const actionsIndexKurangMampu = actionsIndex(onClickDeleteButton);
 onMounted(() => {
     fetchData();
 });
-watch(page, ()=>{fetchData();});
-
+watch(page, () => {
+    fetchData();
+});
 </script>
 
 <template>
@@ -117,7 +117,6 @@ watch(page, ()=>{fetchData();});
             </Button>
         </div> -->
     </div>
-
 
     <div class="drop-shadow-md w-full grid gap-2 mb-3">
         <div class="flex xl:flex-row flex-col gap-4 items-center">
@@ -142,12 +141,10 @@ watch(page, ()=>{fetchData();});
                     <button
                         v-if="search"
                         class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-
                         @click="clearSearch"
                         tabindex="-1"
                         type="button"
                     >
-
                         <X class="size-5" />
                     </button>
                 </div>
@@ -194,7 +191,6 @@ watch(page, ()=>{fetchData();});
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-
         <DataTable
             :items="items"
             :columns="columnsIndex"
