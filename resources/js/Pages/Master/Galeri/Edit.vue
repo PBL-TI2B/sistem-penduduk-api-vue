@@ -16,13 +16,15 @@ import { apiGet, apiPost } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router, usePage } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
+import Cookies from "js-cookie";
 
-// Routing ID
 const { uuid } = usePage().props;
 
 const fields = ref(getFields());
 const fotoFile = ref(null);
 const previewFoto = ref(null);
+const isLoading = ref(true);
+const user_id = ref(null);
 
 const { handleSubmit, setValues, resetForm } = useForm();
 
@@ -42,6 +44,9 @@ const onSubmit = handleSubmit(async (values) => {
         if (fotoFile.value) {
             formData.append("url_media", fotoFile.value);
         }
+        if (user_id.value) {
+            formData.append("user_id", user_id.value);
+        }
         await apiPost(`/galeri/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data galeri");
@@ -51,21 +56,35 @@ const onSubmit = handleSubmit(async (values) => {
     }
 });
 
-// Load data saat mount
 onMounted(async () => {
     try {
+        // Ambil user_id
+        const userRes = await apiGet("/auth/me");
+        user_id.value = userRes.data?.id;
+
+        // Ambil data galeri
         const galeriRes = await apiGet(`/galeri/${uuid}`);
         const data = galeriRes.data;
         setValues({
             judul: data.judul,
         });
         if (data.url_media) {
-            previewFoto.value = data.url_media.startsWith("http")
-                ? data.url_media
-                : `/storage/${data.url_media}`;
+            // Ambil gambar pakai axios (dengan token)
+            const resImage = await axios.get(
+                `/api/v1/galeri/url_media/${data.url_media}`,
+                {
+                    responseType: "blob",
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("token")}`,
+                    },
+                }
+            );
+            previewFoto.value = URL.createObjectURL(resImage.data);
         }
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data galeri");
+    } finally {
+        isLoading.value = false;
     }
 });
 </script>
@@ -85,56 +104,68 @@ onMounted(async () => {
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
-        <form @submit="onSubmit" class="space-y-6 grid grid-cols-2 gap-x-8">
-            <!-- Judul -->
-            <FormField
-                v-for="field in fields"
-                :key="field.name"
-                :name="field.name"
-                v-slot="{ componentField }"
-            >
-                <FormItem v-if="field.name === 'judul'">
-                    <FormLabel>{{ field.label }}</FormLabel>
-                    <FormControl>
-                        <Input
-                            :type="field.type"
-                            :placeholder="field.placeholder"
-                            v-bind="componentField"
-                        />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
+        <div v-if="isLoading" class="text-center py-12 text-gray-400">Memuat data...</div>
+        <div v-else class="flex flex-col lg:flex-row gap-8 justify-between">
+            <!-- Form Section -->
+            <form @submit="onSubmit" class="space-y-6 w-full">
+                <FormField
+                    v-for="field in fields"
+                    :key="field.name"
+                    :name="field.name"
+                    v-slot="{ componentField }"
+                >
+                    <FormItem v-if="field.name === 'judul'">
+                        <FormLabel>{{ field.label }}</FormLabel>
+                        <FormControl>
+                            <Input
+                                :type="field.type"
+                                :placeholder="field.placeholder"
+                                v-bind="componentField"
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                </FormField>
 
-            <!-- Upload Foto Galeri -->
-            <div class="col-span-2">
-                <label class="block mb-2 font-medium">Foto Galeri</label>
-                <div class="flex items-start gap-8">
+                <!-- Upload Foto Galeri -->
+                <div>
+                    <label class="block mb-2 font-medium">Foto Galeri</label>
                     <input
                         type="file"
                         accept="image/*"
-                        class="block w-full max-w-xs text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
+                        class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
                         @change="onFileChange"
                     />
-                    <div v-if="previewFoto" class="mt-0">
-                        <img :src="previewFoto" alt="Preview" class="w-80 h-56 object-cover rounded shadow border" />
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <p class="text-xs text-gray-500">Peringatan: Pastikan data galeri sudah benar sebelum disimpan.</p>
+                    <div class="flex gap-2 items-center">
+                        <Button
+                            @click="router.visit('/galeri-admin')"
+                            type="button"
+                            variant="secondary"
+                        >Batal</Button>
+                        <Button type="submit">Simpan</Button>
                     </div>
                 </div>
-            </div>
+            </form>
 
-            <div class="flex col-span-2 justify-between items-center">
-                <div>
-                    <p>Peringatan: Pastikan data galeri sudah benar sebelum disimpan.</p>
-                </div>
-                <div class="flex gap-2 items-center">
-                    <Button
-                        @click="router.visit('/galeri-admin')"
-                        type="button"
-                        variant="secondary"
-                    >Batal</Button>
-                    <Button type="submit">Simpan</Button>
-                </div>
+            <!-- Preview Section -->
+            <div class="flex items-center justify-center">
+                <img
+                    v-if="previewFoto"
+                    :src="previewFoto"
+                    alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
+                <img
+                    v-else
+                    src="https://placehold.co/400x300?text=No+Image"
+                    alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
             </div>
-        </form>
+        </div>
     </div>
 </template>

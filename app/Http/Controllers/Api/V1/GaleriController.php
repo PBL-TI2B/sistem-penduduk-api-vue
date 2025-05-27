@@ -44,7 +44,7 @@ class GaleriController extends Controller
         $url_media->storeAs('galeri', $url_media->hashName());
         $galeri = Galeri::create([
             'judul' => $request->judul,
-            'url_media' => $request->url_media->hashName(),
+            'url_media' => $url_media->hashName(),
             'user_id' => $request->user_id,
         ]);
         return response()->json([
@@ -71,11 +71,11 @@ class GaleriController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Galeri $galeri, )
+    public function update(Request $request, Galeri $galeri)
     {
         $validator = Validator::make($request->all(), [
             'judul' => 'required',
-            'url_media' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'url_media' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'user_id' => 'required|exists:users,id',
         ]);
         if ($validator->fails()) {
