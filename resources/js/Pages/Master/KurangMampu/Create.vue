@@ -32,6 +32,7 @@ import { router } from "@inertiajs/vue3";
 import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaKurangMampu } from "./utils/form-schema";
+import { columnsIndexAnggotaKeluarga } from "./utils/table";
 import { useKurangMampu } from "@/composables/useKurangMampu";
 import { useAnggotaKeluarga } from "@/composables/useAnggotaKeluarga";
 
@@ -48,7 +49,7 @@ const {
     perPage,
     totalPages,
     totalData,
-    search,
+    search: searchPenduduk,
     fetchData: fetchDataAnggotaKeluarga,
     // fetchDetailData,
     // createData,
@@ -63,16 +64,34 @@ const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchemaKurangMampu,
 });
 
+const clearSearchPenduduk = () => {
+    searchPenduduk.value = "";
+    fetchDataAnggotaKeluarga();
+};
+
 const onSubmit = handleSubmit((values) => {
     createKurangMampu(values);
     resetForm(); // Reset form fields after submission
 });
+
+const actionPilihPenduduk =  [
+    {
+        label: "Pilih",
+        // icon: Eye,
+        handler: (item) => {
+            router.visit(route("kurang-mampu.show", item.uuid));
+        },
+    },
+];
+
 
 onMounted(() => {
     fetchDataAnggotaKeluarga();
     fields.value = getFields();
 });
 </script>
+
+
 
 <template>
     <Head title="Tambah KurangMampu" />
@@ -97,7 +116,7 @@ onMounted(() => {
                 type="text"
                 placeholder="Cari penduduk"
                 class="pl-10 pr-8"
-                @change="applyFilterKategori"
+                @change="fetchDataAnggotaKeluarga"
             />
             <span
                 class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
@@ -119,8 +138,8 @@ onMounted(() => {
         <DataTable
             label="Pilih Penduduk"
             :items="items"
-            :columns="columnsIndex"
-            :actions="actions"
+            :columns="columnsIndexAnggotaKeluarga"
+            :actions="actionPilihPenduduk"
             :totalPages="totalPages"
             :totalData="totalData"
             :page="page"
