@@ -29,7 +29,7 @@ class PendudukController extends Controller
         // Filter pendidikan (jika nama ada di tabel relasi `pendidikan`)
         if ($request->filled('pendidikan')) {
             $query->whereHas('pendidikan', function ($q) use ($request) {
-                $q->where('nama', $request->pendidikan); // sesuaikan nama kolom jika perlu
+                $q->where('jenjang', $request->pendidikan); // sesuaikan nama kolom jika perlu
             });
         }
         // Filter agama
