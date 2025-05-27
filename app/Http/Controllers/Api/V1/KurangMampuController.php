@@ -51,14 +51,11 @@ class KurangMampuController extends Controller
             $query->where('status_validasi', $request->status_validasi);
         }
 
-        $kurangMampu = $query->paginate($request->get('per_page', 10))
-            ->appends($request->only(['search', 'status_validasi', 'per_page']));
+        $data = $query->withCount('penerimaBantuan')->paginate($perPage);
+        $collection = KurangMampuResource::collection($data->getCollection());
+        $data->setCollection(collect($collection));
 
-        $kurangMampu->setCollection(
-            collect(KurangMampuResource::collection($kurangMampu->getCollection()))
-        );
-
-        return new ApiResource(true, 'Daftar Data Kurang Mampu', $kurangMampu);
+        return new ApiResource(true, 'Daftar Data Kurang Mampu', $data);
     }
 
     /**
@@ -70,7 +67,7 @@ class KurangMampuController extends Controller
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',
-            'status_validasi' => 'required|in:pending,terverifikasi,ditolak',
+            // 'status_validasi' => 'required|in:pending,terverifikasi,ditolak',
             'keterangan' => 'nullable|string',
             'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
         ]);
@@ -83,7 +80,8 @@ class KurangMampuController extends Controller
             'pendapatan_per_hari' => $request->pendapatan_per_hari,
             'pendapatan_per_bulan' => $request->pendapatan_per_bulan,
             'jumlah_tanggungan' => $request->jumlah_tanggungan,
-            'status_validasi' => $request->status_validasi,
+            // 'status_validasi' => $request->status_validasi,
+            'status_validasi' => 'pending',
             'keterangan' => $request->keterangan,
             'anggota_keluarga_id' => $request->anggota_keluarga_id,
         ]);
@@ -139,5 +137,4 @@ class KurangMampuController extends Controller
         $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
         return $pdf->download('kurang-mampu.pdf');
     }
-
 }

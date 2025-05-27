@@ -8,11 +8,12 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 
 export function useStatistik() {
     const statistikItems = ref([]);
-    const demografiItems = ref({});
+    // const demografiItems = ref({});
 
     const isLoading = ref(false);
 
-     const fetchStatistikByType = async (type) => { // Tambahkan endpoint
+    // tambahkan endpoint statistik
+    const fetchStatistikByType = async (type) => { // Tambahkan endpoint
 
         try {
             // demografiItems = ref({});
@@ -40,7 +41,7 @@ export function useStatistik() {
     return {
         statistikItems,
         isLoading,
-        demografiItems,
+        // demografiItems,
         fetchStatistikByType,
     };
 }

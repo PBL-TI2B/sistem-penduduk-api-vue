@@ -45,7 +45,50 @@ const columnsIndex = [
     },
 ];
 
-// export default columnsIndex;
+const columnsIndexAnggotaKeluarga = [
+    {
+        label: "Nama Lengkap",
+        key: "penduduk",
+        format: (value) => value?.nama_lengkap ?? '-',
+    },
+    {
+        label: "NIK",
+        key: "penduduk",
+        format: (value) => value?.nik ?? '-',
+    },
+    {
+        label: "Jenis Kelamin",
+        key: "penduduk",
+        format: (value) => value?.jenis_kelamin === 'L' ? 'Laki-laki' : (value?.jenis_kelamin === 'P' ? 'Perempuan' : '-'),
+    },
+    // {
+    //     label: "Tempat, Tanggal Lahir",
+    //     key: "penduduk",
+    //     // format: (value) => value ? `${value.tempat_lahir ?? '-'}, ${formatDate(value.tanggal_lahir)}` : '-',
+    //     format: (value) => value ? `${value.tempat_lahir ?? '-'}, ${formatDate(value.tanggal_lahir, false)}` : '-',
+    // },
+    // {
+    //     label: "Agama",
+    //     key: "penduduk",
+    //     format: (value) => value?.agama ?? '-',
+    // },
+    {
+        label: "Status Perkawinan",
+        key: "penduduk",
+        format: (value) => value?.status_perkawinan ?? '-',
+    },
+    {
+        label: "Status Keluarga",
+        key: "status_keluarga",
+        format: (value) => value?.status_keluarga ?? '-',
+    },
+    {
+        label: "Nomor KK",
+        key: "kk",
+        format: (value) => value?.nomor_kk ?? '-',
+    },
+];
+
 
 const actionsIndex = (onClickDeleteButton) => [
     {
@@ -87,4 +130,5 @@ const rowsShow = [
 //     { label: "Keterangan", key: "keterangan" },
 ];
 
-export { columnsIndex, actionsIndex, rowsShow };
+
+export { columnsIndex, columnsIndexAnggotaKeluarga, actionsIndex, rowsShow };

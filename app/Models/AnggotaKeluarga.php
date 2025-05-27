@@ -40,7 +40,7 @@ class AnggotaKeluarga extends Model
         return $this->belongsTo(StatusKeluarga::class, 'status_keluarga_id', 'id');
     }
 
-    public function penerimaBantuan()
+    public function kurangMampu()
     {
         return $this->hasOne(KurangMampu::class, 'anggota_keluarga_id', 'id');
     }

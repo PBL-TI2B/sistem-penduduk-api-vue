@@ -9,7 +9,12 @@ export const formatCurrency = (value) => {
     });
 };
 
-export const formatDate = (value) => {
+
+export const formatDate = (value, withTime = true) => {
     if (value == null || value === '') return '-';
-    return new Date(value).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+    return new Date(value).toLocaleString('id-ID', {
+        dateStyle: 'medium',
+        ...(withTime ? { timeStyle: 'short' } : {})
+    });
+
 };
