@@ -3,60 +3,54 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { animate } from "motion-v";
 import { Mars, ShieldUser, UsersRound, Venus } from "lucide-vue-next";
+import { useStatistik } from "@/composables/useStatistik";
+
+const { statistikItems, fetchStatistikByType } = useStatistik();
 
 // Gunakan ref agar bisa diubah ketika data dari API masuk
-const statistics = ref([
+const statistik = ref([
     { id: 1, name: "Penduduk", value: 0, icon: UsersRound },
     { id: 2, name: "Kepala Keluarga", value: 0, icon: ShieldUser },
     { id: 3, name: "Laki-laki", value: 0, icon: Mars },
     { id: 4, name: "Perempuan", value: 0, icon: Venus },
 ]);
 
-const displayValues = ref(Array(statistics.value.length).fill(0));
+const displayValues = ref(Array(statistik.value.length).fill(0));
 
 onMounted(async () => {
-    // Ambil data dari API
-    try {
-        const response = await axios.get(
-            "http://127.0.0.1:8000/api/v1/statistik/demografi"
-        );
-        if (response.data.success) {
-            const data = response.data.data;
+    await fetchStatistikByType("demografi");
+    const data = statistikItems.value;
 
-            // Perbarui data statistik
-            statistics.value = [
-                {
-                    id: 1,
-                    name: "Penduduk",
-                    value: data.total_penduduk,
-                    icon: UsersRound,
-                },
-                {
-                    id: 2,
-                    name: "Kepala Keluarga",
-                    value: data.jumlah_kepala_keluarga,
-                    icon: ShieldUser,
-                },
-                {
-                    id: 3,
-                    name: "Laki-laki",
-                    value: data.jumlah_laki_laki,
-                    icon: Mars,
-                },
-                {
-                    id: 4,
-                    name: "Perempuan",
-                    value: data.jumlah_perempuan,
-                    icon: Venus,
-                },
-            ];
+    // Perbarui data statistik
+    statistik.value = [
+        {
+            id: 1,
+            name: "Penduduk",
+            value: data.total_penduduk,
+            icon: UsersRound,
+        },
+        {
+            id: 2,
+            name: "Kepala Keluarga",
+            value: data.jumlah_kepala_keluarga,
+            icon: ShieldUser,
+        },
+        {
+            id: 3,
+            name: "Laki-laki",
+            value: data.jumlah_laki_laki,
+            icon: Mars,
+        },
+        {
+            id: 4,
+            name: "Perempuan",
+            value: data.jumlah_perempuan,
+            icon: Venus,
+        },
+    ];
 
-            // Reset tampilan angka animasi
-            displayValues.value = Array(statistics.value.length).fill(0);
-        }
-    } catch (error) {
-        console.error("Gagal mengambil data statistik:", error);
-    }
+    // Reset tampilan angka animasi
+    displayValues.value = Array(statistik.value.length).fill(0);
 
     // Animasi scroll
     let hasAnimated = false;
@@ -74,7 +68,7 @@ onMounted(async () => {
 
         if (rect.top <= windowHeight && rect.bottom >= 0) {
             hasAnimated = true;
-            statistics.value.forEach((stat, index) => {
+            statistik.value.forEach((stat, index) => {
                 animate(0, stat.value, {
                     duration: 2,
                     easing: "ease-out",
@@ -152,7 +146,7 @@ onMounted(async () => {
                 <p class="md:hidden text-gray-600 text-center">
                     Data terbaru mengenai informasi geografis Desa Jabung
                 </p>
-                <template v-for="(stat, index) in statistics" :key="stat.id">
+                <template v-for="(stat, index) in statistik" :key="stat.id">
                     <template v-if="index > 0">
                         <div
                             class="hidden md:block border-l border-gray-100 h-16 sm:h-20 lg:h-40"

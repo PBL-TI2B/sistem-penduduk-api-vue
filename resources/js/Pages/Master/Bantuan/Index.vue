@@ -240,7 +240,6 @@ const actionsKategori = actionsIndexKategori({
         />
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div class="drop-shadow-md w-full grid gap-2"></div>
         <!-- Search Bantuan -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
