@@ -22,8 +22,8 @@ class KurangMampuController extends Controller
      */
     public function create()
     {
-        abort(404);
-        // return Inertia::render('Master/KurangMampu/Create');
+        // abort(404);
+        return Inertia::render('Master/KurangMampu/Create');
     }
 
     /**

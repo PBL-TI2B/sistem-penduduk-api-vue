@@ -15,9 +15,14 @@ class RiwayatBantuan extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid(); 
+                $model->uuid = Str::uuid();
             }
         });
+    }
+
+    public function penerimaBantuan()
+    {
+        return $this->belongsTo(PenerimaBantuan::class, 'penerima_bantuan_id', 'id');
     }
 
     public function getRouteKeyName()

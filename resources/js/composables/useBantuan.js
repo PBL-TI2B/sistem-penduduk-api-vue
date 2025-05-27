@@ -12,8 +12,8 @@ export function useBantuan() {
     const perPage = ref(10);
     const totalPages = ref(1);
     const totalData = ref(0);
-    const search = ref("");
-    const selectedKategori = ref("-");
+    const search = ref(null);
+    const selectedKategori = ref(null);
 
     // Fetch list bantuan
     const fetchBantuan = async () => {
@@ -59,6 +59,8 @@ export function useBantuan() {
     // Create bantuan
     const createBantuan = async (values) => {
         try {
+            isLoading.value = true;
+
             const formData = new FormData();
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
@@ -68,12 +70,16 @@ export function useBantuan() {
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data bantuan");
+        } finally {
+            isLoading.value = false;
         }
     };
 
     // Edit bantuan
     const editBantuan = async (uuid, values) => {
         try {
+            isLoading.value = true;
+
             const formData = new FormData();
             formData.append("_method", "PUT");
             for (const [key, value] of Object.entries(values)) {
@@ -84,17 +90,22 @@ export function useBantuan() {
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data bantuan");
+        } finally {
+            isLoading.value = false;
         }
     };
 
     // Delete bantuan
     const deleteBantuan = async (uuid) => {
         try {
+            // isLoading.value = true;
             await apiDelete(`/bantuan/${uuid}`);
             toast.success("Berhasil menghapus bantuan");
             router.visit("/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus bantuan");
+        } finally {
+            // isLoading.value = false;
         }
     };
 

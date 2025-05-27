@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PeriodeJabatan extends Model
 {
@@ -14,7 +15,7 @@ class PeriodeJabatan extends Model
         parent::boot();
         static::creating(function ($model) {
             if (!$model->uuid) {
-                $model->uuid = Str::uuid(); 
+                $model->uuid = Str::uuid();
             }
         });
     }
