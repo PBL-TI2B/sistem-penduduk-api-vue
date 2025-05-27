@@ -128,6 +128,49 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
+                <Select v-model="filter.pendidikan">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Pendidikan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Pendidikan</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem value="tidak sekolah">
+                                Tidak Sekolah
+                            </SelectItem>
+                            <SelectItem value="SD"> SD </SelectItem>
+                            <SelectItem value="SMP"> SMP </SelectItem>
+                            <SelectItem value="SMA"> SMA </SelectItem>
+                            <SelectItem value="SMK"> SMK </SelectItem>
+                            <SelectItem value="D3"> D3 </SelectItem>
+                            <SelectItem value="D4"> D4 </SelectItem>
+                            <SelectItem value="S1"> S1 </SelectItem>
+                            <SelectItem value="S2"> S2 </SelectItem>
+                            <SelectItem value="S3"> S3 </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Select v-model="filter.agama">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Agama" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Agama</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem value="islam"> Islam </SelectItem>
+                            <SelectItem value="kristen"> Kristen </SelectItem>
+                            <SelectItem value="katolik"> Katolik </SelectItem>
+                            <SelectItem value="hindu"> Hindu </SelectItem>
+                            <SelectItem value="budha"> Budha </SelectItem>
+                            <SelectItem value="khonghucu">
+                                Khonghucu
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+
                 <Button class="cursor-pointer" @click="fetchData"
                     >Terapkan</Button
                 >

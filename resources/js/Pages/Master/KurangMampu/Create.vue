@@ -29,6 +29,7 @@ import { useForm } from "vee-validate";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
 import { router } from "@inertiajs/vue3";
+
 import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaKurangMampu } from "./utils/form-schema";
@@ -57,12 +58,14 @@ const {
     // deleteData,
 } = useAnggotaKeluarga();
 
+
 // Initialize fields from getFields
 const fields = ref([]);
 
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchemaKurangMampu,
 });
+
 
 const clearSearchPenduduk = () => {
     searchPenduduk.value = "";
@@ -73,6 +76,7 @@ const onSubmit = handleSubmit((values) => {
     createKurangMampu(values);
     resetForm(); // Reset form fields after submission
 });
+
 
 const actionPilihPenduduk =  [
     {
@@ -87,11 +91,10 @@ const actionPilihPenduduk =  [
 
 onMounted(() => {
     fetchDataAnggotaKeluarga();
+
     fields.value = getFields();
 });
 </script>
-
-
 
 <template>
     <Head title="Tambah KurangMampu" />
@@ -106,6 +109,7 @@ onMounted(() => {
             ]"
         />
     </div>
+
       <div class="drop-shadow-md w-full grid gap-2 mb-3 mt-3">
         <!-- Search Kategori -->
         <div class="flex xl:flex-row flex-col  bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-ful">
@@ -217,4 +221,5 @@ onMounted(() => {
         </div>
     </form>
 </div>
+
 </template>

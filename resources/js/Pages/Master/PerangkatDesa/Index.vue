@@ -49,6 +49,7 @@ const {
     totalItemsJabatan,
     totalPagesJabatan,
     isLoadingJabatan,
+    searchJabatan,
 } = useJabatan();
 
 const editJabatan = (jabatan) => {
@@ -101,6 +102,10 @@ onMounted(() => {
     fetchPerangkatDesa();
     fetchJabatan();
 });
+watch(searchJabatan, () => {
+    pageJabatan.value = 1;
+    fetchJabatan();
+});
 
 watch(page, () => {
     fetchPerangkatDesa();
@@ -140,6 +145,60 @@ watch(pageJabatan, () => {
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
             <Input
+                v-model="searchJabatan"
+                placeholder="Cari jabatan"
+                class="md:w-1/3"
+            />
+            <!-- filter -->
+            <!-- <div class="flex gap-4">
+                <Select>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Status</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem value="aktif"> Aktif </SelectItem>
+                            <SelectItem value="nonaktif"> Nonaktif </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Select>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Jabatan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Jabatan</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem value="ketua"> Ketua RT </SelectItem>
+                            <SelectItem value="ketua-rw"> Ketua RW </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Button class="cursor-pointer">Terapkan</Button>
+            </div> -->
+        </div>
+
+        <DataTable
+            label="Jabatan"
+            :items="itemsJabatan"
+            :columns="columnsJabatan"
+            :actions="actionsJabatan"
+            :totalPages="totalPagesJabatan"
+            :totalData="totalItemsJabatan"
+            :page="pageJabatan"
+            :per-page="perPageJabatan"
+            :is-loading="isLoadingJabatan"
+            @update:page="pageJabatan = $event"
+        />
+
+        <!-- //- ! - PERANGKAT DESA :} -->
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between mt-8"
+        >
+            <Input
                 v-model="search"
                 placeholder="Cari perangkat desa berdasarkan nama"
                 class="md:w-1/3"
@@ -174,20 +233,6 @@ watch(pageJabatan, () => {
                 <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
-
-        <DataTable
-            label="Jabatan"
-            :items="itemsJabatan"
-            :columns="columnsJabatan"
-            :actions="actionsJabatan"
-            :totalPages="totalPagesJabatan"
-            :totalData="totalItemsJabatan"
-            :page="pageJabatan"
-            :per-page="perPageJabatan"
-            :is-loading="isLoadingJabatan"
-            @update:page="pageJabatan = $event"
-        />
-
         <!-- //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :} -->
         <DataTable
             label="Perangkat Desa"

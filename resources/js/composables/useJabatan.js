@@ -14,6 +14,7 @@ export function useJabatan(uuid) {
     const totalPagesJabatan = ref(0);
     const totalItemsJabatan = ref(0);
     const itemJabatan = ref({});
+    const searchJabatan = ref("");
 
     const fetchJabatan = async () => {
         try {
@@ -23,6 +24,7 @@ export function useJabatan(uuid) {
             const res = await apiGet("/jabatan", {
                 page: pageJabatan.value,
                 per_page: perPageJabatan.value,
+                search: searchJabatan.value,
             });
             itemsJabatan.value = res.data.data;
             totalItemsJabatan.value = res.data.total;
@@ -81,6 +83,7 @@ export function useJabatan(uuid) {
         totalItemsJabatan,
         totalPagesJabatan,
         itemJabatan,
+        searchJabatan,
         fetchJabatan,
         createAndEditJabatan,
         deleteJabatan,

@@ -92,10 +92,11 @@ const actionsIndexKurangMampu = actionsIndex(onClickDeleteButton);
 onMounted(() => {
     fetchData();
 });
+
 watch(page, () => {
     fetchData();
 });
-</script>
+
 
 <template>
     <Head title=" | Data Kurang Mampu" />

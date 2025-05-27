@@ -89,6 +89,7 @@ const columnsIndexAnggotaKeluarga = [
     },
 ];
 
+
 const actionsIndex = (onClickDeleteButton) => [
     {
         label: "Kelola",
@@ -128,5 +129,6 @@ const rowsShow = [
 //     { label: "Instansi", key: "instansi" },
 //     { label: "Keterangan", key: "keterangan" },
 ];
+
 
 export { columnsIndex, columnsIndexAnggotaKeluarga, actionsIndex, rowsShow };
