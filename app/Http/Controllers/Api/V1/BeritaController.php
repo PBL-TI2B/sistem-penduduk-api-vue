@@ -16,7 +16,7 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('users');
+        $query = Berita::with('user');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {
@@ -45,7 +45,7 @@ class BeritaController extends Controller
 
     // public function index()
     // {
-    //     $berita= Berita::with('users')->paginate(10);
+    //     $berita= Berita::with('user')->paginate(10);
     //     $collection = BeritaResource::collection($berita->getCollection());
     //     $berita->setCollection(collect($collection));
     //     return response()->json([
@@ -87,7 +87,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Ditambahkan',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
     public function show(Berita $berita)
@@ -95,7 +95,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Berita',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
 
@@ -108,7 +108,7 @@ class BeritaController extends Controller
             'konten' => 'required',
             'tanggal_post' => 'required|date',
             'jumlah_dilihat' => 'default:0',
-            'status' => 'required|in:draft,publish|default:draft',
+            'status' => 'required|in:draft,publish',
             'user_id' => 'required|exists:users,id',
         ]);
 
@@ -132,7 +132,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Diubah',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
 
