@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router, usePage } from "@inertiajs/vue3";
@@ -19,33 +19,59 @@ import { toast } from "vue-sonner";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const { uuid } = usePage().props;
+// Slug generator
+function generateSlug(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-") // Replace spaces with -
+        .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+        .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+}
 
+const { uuid } = usePage().props;
 const fields = ref(getFields());
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
+const user_id = ref(null);
 
-const { handleSubmit, setValues, resetForm } = useForm();
+const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
     thumbnailFile.value = file;
+    setFieldValue("thumbnail", file);
     if (file) {
         previewThumbnail.value = URL.createObjectURL(file);
     }
 };
+
+// Watch judul, update slug otomatis
+watch(
+    () => values.judul,
+    (newJudul) => {
+        setFieldValue("slug", generateSlug(newJudul || ""));
+    }
+);
 
 const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
         formData.append("_method", "PUT");
         formData.append("judul", values.judul);
+        formData.append("slug", values.slug);
         formData.append("konten", values.konten);
         formData.append("tanggal_post", values.tanggal_post);
         formData.append("status", values.status);
         if (thumbnailFile.value) {
             formData.append("thumbnail", thumbnailFile.value);
         }
+        if (user_id.value) {
+            formData.append("user_id", user_id.value);
+        }
+        // Tambahkan log ini
+        console.log("FormData:", [...formData.entries()]);
         await apiPost(`/berita/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
@@ -59,15 +85,15 @@ const onSubmit = handleSubmit(async (values) => {
 onMounted(async () => {
     try {
         const beritaRes = await apiGet(`/berita/${uuid}`);
-        const data = beritaRes.data;
+        const data = beritaRes.data; // pastikan ambil data yang benar
         setValues({
-            judul: data.judul,
-            konten: data.konten,
-            tanggal_post: data.tanggal_post,
-            status: data.status,
+            judul: data.judul ?? "",
+            slug: data.slug ?? "",
+            konten: data.konten ?? "",
+            tanggal_post: data.tanggal_post ?? "",
+            status: data.status && data.status !== "" ? data.status : "draft", // lebih aman
         });
         if (data.thumbnail) {
-            // Ambil gambar pakai axios (dengan token jika perlu)
             const resImage = await axios.get(
                 `/api/v1/berita/thumbnail/${data.thumbnail}`,
                 {
@@ -78,6 +104,11 @@ onMounted(async () => {
                 }
             );
             previewThumbnail.value = URL.createObjectURL(resImage.data);
+        }
+        const userRes = await apiGet("/auth/me");
+        user_id.value = userRes.data?.id;
+        if (!user_id.value) {
+            throw new Error("user_id tidak ditemukan di response /auth/me");
         }
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data berita");
@@ -100,74 +131,104 @@ onMounted(async () => {
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
-        <form @submit="onSubmit" class="space-y-6 grid grid-cols-2 gap-x-8">
-            <!-- Judul, Konten, Tanggal, Status -->
-            <FormField
-                v-for="field in fields"
-                :key="field.name"
-                :name="field.name"
-                v-slot="{ componentField }"
-            >
-                <FormItem v-if="field.name !== 'thumbnail'">
-                    <FormLabel>{{ field.label }}</FormLabel>
-                    <FormControl>
-                        <Input
-                            v-if="field.type !== 'textarea' && field.type !== 'select'"
-                            :type="field.type"
-                            :placeholder="field.placeholder"
-                            v-bind="componentField"
-                        />
-                        <textarea
-                            v-else-if="field.type === 'textarea'"
-                            :placeholder="field.placeholder"
-                            class="w-full border rounded p-2"
-                            v-bind="componentField"
-                        />
-                        <select
-                            v-else-if="field.type === 'select'"
-                            class="w-full border rounded p-2"
-                            v-bind="componentField"
-                        >
-                            <option value="" disabled>Pilih status</option>
-                            <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
-                                {{ opt.label }}
-                            </option>
-                        </select>
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
+        <div class="flex flex-col lg:flex-row gap-8 justify-between">
+            <form @submit.prevent="onSubmit" class="space-y-6 w-full">
+                <FormField
+                    v-for="field in fields"
+                    :key="field.name"
+                    :name="field.name"
+                    v-slot="{ componentField }"
+                >
+                    <FormItem v-if="field.name !== 'thumbnail'">
+                        <FormLabel>{{ field.label }}</FormLabel>
+                        <FormControl>
+                            <Input
+                                v-if="
+                                    field.type !== 'textarea' &&
+                                    field.type !== 'select'
+                                "
+                                :type="field.type"
+                                :placeholder="field.placeholder"
+                                v-bind="componentField"
+                            />
+                            <textarea
+                                v-else-if="field.type === 'textarea'"
+                                :placeholder="field.placeholder"
+                                class="w-full border rounded p-2"
+                                :value="values[field.name]"
+                                @input="
+                                    (e) =>
+                                        setFieldValue(
+                                            field.name,
+                                            e.target.value
+                                        )
+                                "
+                            ></textarea>
+                            <select
+                                v-else-if="field.type === 'select'"
+                                class="w-full border rounded p-2"
+                                v-bind="componentField"
+                            >
+                                <option value="" disabled>Pilih status</option>
+                                <option
+                                    v-for="opt in field.options"
+                                    :key="opt.value"
+                                    :value="opt.value"
+                                >
+                                    {{ opt.label }}
+                                </option>
+                            </select>
+                        </FormControl>
 
-            <!-- Upload Thumbnail Berita -->
-            <div class="col-span-2">
-                <label class="block mb-2 font-medium">Thumbnail Berita</label>
-                <div class="flex items-start gap-8">
+                        <FormMessage />
+                    </FormItem>
+                </FormField>
+
+                <!-- Upload Thumbnail Berita -->
+                <div>
+                    <label class="block mb-2 font-medium"
+                        >Thumbnail Berita</label
+                    >
                     <input
                         type="file"
                         accept="image/*"
-                        class="block w-full max-w-xs text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
+                        class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
                         @change="onFileChange"
                     />
-                    <div class="mt-0">
-                        <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="w-80 h-56 object-cover rounded shadow border" />
-                        <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="w-80 h-56 object-cover rounded shadow border" />
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <p class="text-xs text-gray-500">
+                        Peringatan: Pastikan data berita sudah benar sebelum
+                        disimpan.
+                    </p>
+                    <div class="flex gap-2 items-center">
+                        <Button
+                            @click="router.visit('/berita-admin')"
+                            type="button"
+                            variant="secondary"
+                            >Batal</Button
+                        >
+                        <Button type="submit">Simpan</Button>
                     </div>
                 </div>
-            </div>
+            </form>
 
-            <div class="flex col-span-2 justify-between items-center">
-                <div>
-                    <p>Peringatan: Pastikan data berita sudah benar sebelum disimpan.</p>
-                </div>
-                <div class="flex gap-2 items-center">
-                    <Button
-                        @click="router.visit('/berita-admin')"
-                        type="button"
-                        variant="secondary"
-                    >Batal</Button>
-                    <Button type="submit">Simpan</Button>
-                </div>
+            <!-- Preview Section -->
+            <div class="flex items-center justify-center">
+                <img
+                    v-if="previewThumbnail"
+                    :src="previewThumbnail"
+                    alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
+                <img
+                    v-else
+                    src="https://placehold.co/400x300?text=No+Image"
+                    alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
             </div>
-        </form>
+        </div>
     </div>
 </template>

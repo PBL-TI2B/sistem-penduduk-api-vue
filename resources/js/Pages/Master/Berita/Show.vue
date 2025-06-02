@@ -18,25 +18,25 @@ const imageUrl = ref(null);
 const isAlertDeleteOpen = ref(false);
 
 const fetchBerita = async () => {
-  try {
-    const res = await apiGet(`/berita/${uuid}`);
-    berita.value = res.data;
+    try {
+        const res = await apiGet(`/berita/${uuid}`);
+        berita.value = res.data;
 
-    if (berita.value.thumbnail) {
-      const resImage = await axios.get(
-        `/api/v1/berita/thumbnail/${berita.value.thumbnail}`,
-        {
-          responseType: "blob",
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
+        if (berita.value.thumbnail) {
+            const resImage = await axios.get(
+                `/api/v1/berita/thumbnail/${berita.value.thumbnail}`,
+                {
+                    responseType: "blob",
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("token")}`,
+                    },
+                }
+            );
+            imageUrl.value = URL.createObjectURL(resImage.data);
         }
-      );
-      imageUrl.value = URL.createObjectURL(resImage.data);
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data berita");
     }
-  } catch (error) {
-    useErrorHandler(error, "Gagal memuat data berita");
-  }
 };
 
 const onClickDeleteButton = () => {
@@ -63,6 +63,7 @@ onMounted(fetchBerita);
 </script>
 
 <template>
+
     <Head title=" | Detail Berita" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
@@ -74,8 +75,8 @@ onMounted(fetchBerita);
             ]" />
         </div>
         <div class="flex gap-2 items-center">
-            <Button asChild v-if="berita.value?.uuid">
-                <Link :href="route('berita-admin.edit', berita.value.uuid)">
+            <Button asChild v-if="berita.uuid">
+                <Link :href="route('berita-admin.edit', berita.uuid)">
                 <SquarePen /> Ubah
                 </Link>
             </Button>
@@ -96,14 +97,30 @@ onMounted(fetchBerita);
                         <td>{{ berita.judul }}</td>
                     </tr>
                     <tr>
+                        <td class="font-medium p-2">Konten</td>
+                        <td>{{ berita.konten }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium p-2">Tanggal Posting</td>
+                        <td>{{ berita.tanggal_post }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium p-2">Status</td>
+                        <td>{{ berita.status }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium p-2">Jumlah Dilihat</td>
+                        <td>{{ berita.jumlah_dilihat }}</td>
+                    </tr>
+                    <tr>
                         <td class="font-medium p-2">Penulis</td>
-                        <td>{{ berita.user?.username ?? '-' }}</td>
+                        <td>{{ berita.user_id?.username ?? '-' }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <img :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'"
-            alt="Thumbnail Berita" loading="lazy" class="rounded-md w-[400px] h-[300px] object-cover border" />
+        <img :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'" alt="Thumbnail Berita" loading="lazy"
+            class="rounded-md w-[400px] h-[300px] object-cover border" />
     </div>
 
     <AlertDialog v-model:isOpen="isAlertDeleteOpen" :title="'Hapus Data Berita'"

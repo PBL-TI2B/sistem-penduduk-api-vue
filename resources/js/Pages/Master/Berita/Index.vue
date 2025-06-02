@@ -25,7 +25,7 @@ const fetchData = async () => {
         items.value = res.data.data.map(item => ({
             ...item,
             uuid: item.uuid ?? null,
-            username: item.user?.username ?? "-"
+            username: item.user_id?.username ?? "-"
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
