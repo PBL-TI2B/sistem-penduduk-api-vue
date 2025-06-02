@@ -14,7 +14,7 @@ class BeritaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Berita::with('user');
 
@@ -34,6 +34,8 @@ class BeritaController extends Controller
         // Format resource
         $collection = BeritaResource::collection($berita->getCollection());
         $berita->setCollection(collect($collection));
+
+        // Respon JSON
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Berita',

@@ -12,6 +12,7 @@ export function usePerangkatDesa(uuid) {
     const page = ref(1);
     const perPage = ref(10);
     const totalPages = ref(0);
+    const totalItems = ref(0);
     const item = ref({});
     const imageUrl = ref(null);
 
@@ -22,6 +23,7 @@ export function usePerangkatDesa(uuid) {
             const res = await apiGet("/perangkat-desa", { page: page.value });
             items.value = res.data.data;
             perPage.value = res.data.per_page;
+            totalItems.value = res.data.total;
             totalPages.value = res.data.last_page;
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data perangkat desa");
@@ -100,7 +102,7 @@ export function usePerangkatDesa(uuid) {
         totalPages,
         page,
         perPage,
-
+        totalItems,
         items,
         isLoading,
         item,

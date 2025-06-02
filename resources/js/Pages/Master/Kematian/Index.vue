@@ -2,7 +2,7 @@
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
-import { actionsIndex, columnsIndex, rowsShow } from "./utils/table";
+import { actionsIndex, columnsIndex } from "./utils/table";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -16,11 +16,16 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 
+const searchKematian = ref("");
+
 const fetchData = async () => {
     try {
         isLoading.value = true;
-        const res = await apiGet("/kematian", { page: page.value });
-        items.value = res.data.data.map(item => ({
+        const res = await apiGet("/kematian", {
+            page: page.value,
+            search: searchKematian.value,
+        });
+        items.value = res.data.data.map((item) => ({
             ...item,
             nama_penduduk: item.penduduk?.nama_lengkap || "-",
         }));
@@ -35,12 +40,17 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 watch(page, fetchData);
+watch(searchKematian, () => {
+    page.value = 1;
+    fetchData();
+});
 </script>
 
 <template>
     <Head title=" | Data Kematian" />
+
     <div class="flex items-center justify-between py-3">
-        <div>
+        <div class="grid gap-1">
             <h1 class="text-3xl font-bold">Data Kematian</h1>
             <BreadcrumbComponent
                 :items="[
@@ -49,23 +59,36 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <Button asChild>
-            <Link :href="route('kematian.create')">+ Kematian</Link>
-        </Button>
+        <div class="flex flex-wrap gap-4 items-center">
+            <Button asChild>
+                <Link :href="route('kematian.create')">+ Kematian</Link>
+            </Button>
+        </div>
     </div>
-    <div class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between mb-2">
-        <Input placeholder="Cari berdasarkan penduduk atau sebab" class="md:w-1/3" />
-        <Button class="cursor-pointer">Terapkan</Button>
+
+    <!-- Search -->
+    <div class="drop-shadow-md w-full grid gap-2">
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
+        >
+            <Input
+                v-model="searchKematian"
+                placeholder="Cari data kematian berdasarkan nama atau sebab"
+                class="md:w-1/3"
+            />
+        </div>
+
+        <!-- Data Table -->
+        <DataTable
+            :items="items"
+            :columns="columnsIndex"
+            :actions="actionsIndex"
+            :totalPages="totalPages"
+            :page="page"
+            :per-page="perPage"
+            :is-loading="isLoading"
+            :export-route="'kematian'"
+            @update:page="page = $event"
+        />
     </div>
-    <DataTable
-        :items="items"
-        :columns="columnsIndex"
-        :actions="actionsIndex"
-        :totalPages="totalPages"
-        :page="page"
-        :per-page="perPage"
-        :is-loading="isLoading"
-        :export-route="'kematian'"
-        @update:page="page = $event"
-    />
 </template>

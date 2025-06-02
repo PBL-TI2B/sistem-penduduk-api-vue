@@ -5,16 +5,57 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\AnggotaKeluarga;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AnggotaKeluargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $anggota = AnggotaKeluarga::with(['kk', 'penduduk', 'statusKeluarga'])->paginate(10);
+        //! Mengambil data anggota keluarga dengan relasi yang diperlukan
+        $query = AnggotaKeluarga::with([
+            'kk',
+            // 'penduduk.domisili.rt.rw.dusun',
+            'penduduk',
+            'statusKeluarga'
+        ])
+            ->withCount('kurangMampu');
+
+        //! Filter Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                // Cari di penduduk (nama_lengkap, nik)
+                $query->whereHas('penduduk', function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', "%$search%")
+                        ->orWhere('nik', 'like', "%$search%");
+                })
+
+                    // Cari di relasi pekerjaan
+                    ->orWhereHas('penduduk.pekerjaan', function ($q) use ($search) {
+                        $q->where('nama_pekerjaan', 'like', "%$search%");
+                    })
+
+                    // Cari di relasi pendidikan
+                    ->orWhereHas('penduduk.pendidikan', function ($q) use ($search) {
+                        $q->where('jenjang', 'like', "%$search%");
+                    })
+
+                    // Cari di relasi status keluarga
+                    ->orWhereHas('statusKeluarga', function ($q) use ($search) {
+                        $q->where('status_keluarga', 'like', "%$search%");
+                    })
+                ;
+            });
+        }
+
+        $anggota = $query->paginate($request->get('per_page', 10));
+
         return new ApiResource(true, 'Daftar Data Anggota Keluarga', $anggota);
     }
+
 
     public function store(Request $request)
     {
@@ -72,7 +113,7 @@ class AnggotaKeluargaController extends Controller
     public function exportPdf()
     {
         $anggotaKeluarga = AnggotaKeluarga::get();
-        $pdf = \PDF::loadView('exports.anggota-keluarga', compact('anggotaKeluarga'));
+        $pdf = Pdf::loadView('exports.anggota-keluarga', compact('anggotaKeluarga'));
         return $pdf->download('anggota-keluarga.pdf');
     }
 }

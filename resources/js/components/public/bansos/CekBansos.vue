@@ -1,56 +1,161 @@
+<script setup>
+import { onMounted, watch, ref } from "vue";
+import { useBantuan } from "@/composables/useBantuan";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import Button from "@/components/ui/button/Button.vue";
+import Input from "@/components/ui/input/Input.vue";
+// import { Label } from "@/components/ui/label";
+import DataTable from "@/components/master/DataTable.vue";
+import { formatCurrency, formatDate } from "@/composables/formatData";
+import { PackagePlus, SearchIcon, X, FunnelX, Eye } from "lucide-vue-next";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+
+const {
+    items,
+    isLoading,
+    page,
+    perPage,
+    totalPages,
+    totalData,
+    search,
+    selectedKategori,
+    fetchBantuan,
+} = useBantuan();
+
+const isHidden = ref(true);
+
+// Table Index
+const columnsIndex = [
+    { label: "Nama Bantuan", key: "nama_bantuan" },
+    { label: "Kategori", key: "kategori" },
+    { label: "Nominal", key: "nominal", format: formatCurrency },
+    { label: "Periode", key: "periode" },
+    { label: "Lama Periode", key: "lama_periode" },
+    { label: "Instansi", key: "instansi" },
+    { label: "Jumlah Penerima", key: "penerima_bantuan_count" },
+    // {
+    //     label: "Keterangan",
+    //     key: "keterangan",
+    //     format: (value) => {
+    //         return value ?? "-";
+    //     },
+    // },
+];
+
+// Actions Index
+const actionsIndex = [
+    {
+        label: "Lihat Bantuan",
+        icon: Eye,
+        // handler: (item) => {
+        // router.visit(route("bantuan.show", item.uuid));
+        // },
+    },
+];
+
+//  -- Filter Bantuan --
+const applyFilter = () => {
+    page.value = 1;
+    fetchBantuan();
+};
+const resetFilter = () => {
+    search.value = "";
+    selectedKategori.value = "";
+    applyFilter();
+};
+
+const clearSearchBantuan = () => {
+    search.value = "";
+    isHidden.value = true;
+    applyFilter();
+};
+
+// onMounted(async () => {
+//     await fetchBantuan();
+// });
+
+watch(page, () => {
+    fetchBantuan();
+});
+</script>
+
 <template>
     <section>
         <!-- Input Cek Bansos-->
         <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
             Cari Informasi Bansos
         </h2>
+        <!-- Search Bantuan -->
         <div
-            class="flex items-center w-full max-w shadow-sm hover:drop-shadow-lg"
+            class="overflow-x-auto shadow-sm hover:drop-shadow-lg flex flex-col xl:flex-row items-center gap-4 w-full"
         >
-            <input
-                type="text"
-                placeholder="Masukkan Nama Bansos"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#E5A025]"
-            />
+            <div
+                class="flex items-center justify-between w-full bg-primary-foreground p-2 rounded-lg gap-2"
+            >
+                <div class="flex items-center relative w-full">
+                    <Input
+                        id="search"
+                        v-model="search"
+                        type="text"
+                        placeholder="Cari bantuan"
+                        class="pl-10 pr-8"
+                        @change="
+                            () => {
+                                if (search == '') {
+                                    isHidden = true;
+                                } else {
+                                    isHidden = false;
+                                }
+                                applyFilter();
+                            }
+                        "
+                    />
+                    <span
+                        class="absolute inset-y-0 start-0 flex items-center justify-center px-2"
+                    >
+                        <SearchIcon class="size-6 text-muted-foreground" />
+                    </span>
+                    <button
+                        v-if="search"
+                        class="absolute inset-y-0 end-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                        @click="clearSearchBantuan"
+                        tabindex="-1"
+                        type="button"
+                    >
+                        <X class="size-5" />
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
     <section>
         <!-- Tabel Informasi Bansos -->
-        <div class="overflow-x-auto mt-10 shadow-sm hover:drop-shadow-lg">
-            <table
-                class="min-w-full divide-y divide-gray-200 bg-white shadow rounded-lg overflow-hidden text-sm border border-gray-500"
-            >
-                <thead
-                    class="bg-gray-100 text-gray-700 uppercase text-sm font-semibold"
-                >
-                    <tr>
-                        <th class="px-6 py-3 text-center" rowspan="2">
-                            Nama Bansos
-                        </th>
-                        <th class="px-6 py-3 text-center" rowspan="2">
-                            Jenis Bantuan
-                        </th>
-                        <th class="px-6 py-3 text-center" colspan="3">
-                            Periode
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="px-6 py-3 text-center">Status</th>
-                        <th class="px-6 py-3 text-center">Periode</th>
-                        <th class="px-6 py-3 text-center">Catatan</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 text-gray-800 text-sm">
-                    <tr>
-                        <td class="px-6 py-4 text-center">PKH</td>
-                        <td class="px-6 py-4 text-center">Uang Rp. 750.000</td>
-                        <td class="px-6 py-4 text-center">Aktif</td>
-                        <td class="px-6 py-4 text-center">Jan - Mar 2025</td>
-                        <td class="px-6 py-4 text-center">3 bulan sekali</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div
+            class="overflow-x-auto mt-4 mb-10 shadow-sm hover:drop-shadow-lg"
+            :hidden="isHidden"
+        >
+            <DataTable
+                label="Bantuan"
+                :items="items"
+                :columns="columnsIndex"
+                :actions="actionsIndex"
+                :totalPages="totalPages"
+                :totalData="totalData"
+                :page="page"
+                :per-page="perPage"
+                :is-loading="isLoading"
+                @update:page="page = $event"
+            />
         </div>
     </section>
 </template>

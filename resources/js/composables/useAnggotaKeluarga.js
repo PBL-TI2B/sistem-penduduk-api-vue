@@ -4,7 +4,7 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 
-export function useBantuan() {
+export function useAnggotaKeluarga() {
     const items = ref([]);
     const item = ref({});
     const isLoading = ref(false);
@@ -13,10 +13,9 @@ export function useBantuan() {
     const totalPages = ref(1);
     const totalData = ref(0);
     const search = ref(null);
-    const selectedKategori = ref(null);
 
     // Fetch list bantuan
-    const fetchBantuan = async () => {
+    const fetchData = async () => {
         try {
             items.value = [];
             isLoading.value = true;
@@ -25,39 +24,39 @@ export function useBantuan() {
                 per_page: perPage.value,
                 search: search.value,
             };
-            if (selectedKategori.value && selectedKategori.value !== "-") {
-                params.kategori_bantuan_id = selectedKategori.value;
-            }
-            const res = await apiGet("/bantuan", params);
+            // if (selectedKategori.value && selectedKategori.value !== "-") {
+            //     params.kategori_bantuan_id = selectedKategori.value;
+            // }
+            const res = await apiGet("/anggota-keluarga", params);
             items.value = res.data.data;
             perPage.value = res.data.per_page;
             totalPages.value = res.data.last_page;
             totalData.value = res.data.total;
         } catch (error) {
-            useErrorHandler(error, "Gagal memuat data bantuan");
+            useErrorHandler(error, "Gagal memuat data anggota keluarga");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Fetch detail bantuan (untuk halaman edit/detail)
-    const fetchDetailBantuan = async (uuid) => {
+    // Fetch detail anggota keluarga (untuk halaman edit/detail)
+    const fetchDetailData = async (uuid) => {
         if (!uuid) return;
         // item = ref({});
         try {
             isLoading.value = true;
-            const res = await apiGet(`/bantuan/${uuid}`);
+            const res = await apiGet(`/anggota-keluarga/${uuid}`);
             item.value = res.data;
             // console.log(res.data);
         } catch (error) {
-            useErrorHandler(error, "Gagal memuat detail bantuan");
+            useErrorHandler(error, "Gagal memuat detail anggota keluarga");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Create bantuan
-    const createBantuan = async (values) => {
+    // Create anggota keluarga
+    const createData = async (values) => {
         try {
             isLoading.value = true;
 
@@ -65,18 +64,18 @@ export function useBantuan() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost("/bantuan", values);
-            toast.success("Berhasil Tambah Data Bantuan");
-            router.visit("/bantuan");
+            await apiPost("/anggota-keluarga", values);
+            toast.success("Berhasil Tambah Data anggota keluarga");
+            router.visit("/anggota-keluarga");
         } catch (error) {
-            useErrorHandler(error, "Gagal menyimpan data bantuan");
+            useErrorHandler(error, "Gagal menyimpan data anggota keluarga");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Edit bantuan
-    const editBantuan = async (uuid, values) => {
+    // Edit anggota keluarga
+    const editData = async (uuid, values) => {
         try {
             isLoading.value = true;
 
@@ -85,25 +84,25 @@ export function useBantuan() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost(`/bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui data bantuan");
-            router.visit("/bantuan");
+            await apiPost(`/anggota-keluarga/${uuid}`, formData);
+            toast.success("Berhasil memperbarui data anggota keluarga");
+            router.visit("/anggota-keluarga");
         } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui data bantuan");
+            useErrorHandler(error, "Gagal memperbarui data anggota keluarga");
         } finally {
             isLoading.value = false;
         }
     };
 
-    // Delete bantuan
-    const deleteBantuan = async (uuid) => {
+    // Delete anggota keluarga
+    const deleteData = async (uuid) => {
         try {
             // isLoading.value = true;
-            await apiDelete(`/bantuan/${uuid}`);
-            toast.success("Berhasil menghapus bantuan");
-            router.visit("/bantuan");
+            await apiDelete(`/anggota-keluarga/${uuid}`);
+            toast.success("Berhasil menghapus anggota keluarga");
+            router.visit("/anggota-keluarga");
         } catch (error) {
-            useErrorHandler(error, "Gagal menghapus bantuan");
+            useErrorHandler(error, "Gagal menghapus anggota keluarga");
         } finally {
             // isLoading.value = false;
         }
@@ -118,11 +117,10 @@ export function useBantuan() {
         totalPages,
         totalData,
         search,
-        selectedKategori,
-        fetchBantuan,
-        fetchDetailBantuan,
-        createBantuan,
-        editBantuan,
-        deleteBantuan,
+        fetchData,
+        fetchDetailData,
+        createData,
+        editData,
+        deleteData,
     };
 }

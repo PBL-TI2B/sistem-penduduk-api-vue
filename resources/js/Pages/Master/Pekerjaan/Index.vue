@@ -26,12 +26,20 @@ const currentPekerjaanData = ref(null);
 const isAlertDeletePekerjaanOpen = ref(false);
 const selectedPekerjaanUuid = ref(null);
 
+const searchPekerjaan = ref("");
+
 const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/pekerjaan", { page: page.value });
-        items.value = res.data.data;
+        const res = await apiGet("/pekerjaan", {
+            page: page.value,
+            search: searchPekerjaan.value,
+        });
+        items.value = res.data.data.map((item) => ({
+            ...item,
+            nama_pekerjaan: item.nama_pekerjaan || "-",
+        }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
     } catch (error) {
@@ -88,6 +96,10 @@ const actionsIndex = getActionsPekerjaan({
 
 onMounted(fetchData);
 watch(page, fetchData);
+watch(searchPekerjaan, () => {
+    page.value = 1;
+    fetchData();
+});
 </script>
 
 <template>
@@ -106,18 +118,16 @@ watch(page, fetchData);
             <Button @click="createPekerjaan"><SquarePlus />Pekerjaan </Button>
         </div>
     </div>
+    <!-- Search -->
     <div class="drop-shadow-md w-full grid gap-2">
         <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
         >
             <Input
-                v-model="search"
-                placeholder="Cari pekerjaan berdasarkan nama"
+                v-model="searchPekerjaan"
+                placeholder="Cari data pekerjaan"
                 class="md:w-1/3"
             />
-            <div class="flex gap-4">
-                <Button class="cursor-pointer">Terapkan</Button>
-            </div>
         </div>
         <DataTable
             :items="items"
@@ -137,13 +147,13 @@ watch(page, fetchData);
             :initialData="currentPekerjaanData"
             @success="fetchData"
         />
-    </div>
 
-    <AlertDialog
-        v-model:isOpen="isAlertDeletePekerjaanOpen"
-        title="Hapus Pekerjaan"
-        description="Apakah Anda yakin ingin menghapus pekerjaan ini?"
-        :onConfirm="onConfirmDeletePekerjaan"
-        :onCancel="onCancelDeletePekerjaan"
-    />
+        <AlertDialog
+            v-model:isOpen="isAlertDeletePekerjaanOpen"
+            title="Hapus Pekerjaan"
+            description="Apakah Anda yakin ingin menghapus pekerjaan ini?"
+            :onConfirm="onConfirmDeletePekerjaan"
+            :onCancel="onCancelDeletePekerjaan"
+        />
+    </div>
 </template>
