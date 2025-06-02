@@ -16,7 +16,22 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        $berita= Berita::with('users')->paginate(10);
+        $query = Berita::with('user');
+
+        // Fitur pencarian (search)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%$search%")
+                ->orWhere('konten', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%");
+            });
+        }
+
+        // Paginasi
+        $berita = $query->paginate($request->get('per_page', 10));
+
+        // Format resource
         $collection = BeritaResource::collection($berita->getCollection());
         $berita->setCollection(collect($collection));
         return response()->json([
@@ -25,6 +40,18 @@ class BeritaController extends Controller
             'data'    => $berita,
         ]);
     }
+
+    // public function index()
+    // {
+    //     $berita= Berita::with('user')->paginate(10);
+    //     $collection = BeritaResource::collection($berita->getCollection());
+    //     $berita->setCollection(collect($collection));
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Daftar Data Berita',
+    //         'data'    => $berita,
+    //     ]);
+    // }
 
     public function store(Request $request)
     {
@@ -58,7 +85,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Ditambahkan',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
     public function show(Berita $berita)
@@ -66,7 +93,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Berita',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
 
@@ -79,7 +106,7 @@ class BeritaController extends Controller
             'konten' => 'required',
             'tanggal_post' => 'required|date',
             'jumlah_dilihat' => 'default:0',
-            'status' => 'required|in:draft,publish|default:draft',
+            'status' => 'required|in:draft,publish',
             'user_id' => 'required|exists:users,id',
         ]);
 
@@ -103,7 +130,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Diubah',
-            'data'    => new BeritaResource($berita->load('users')),
+            'data'    => new BeritaResource($berita->load('user')),
         ]);
     }
 

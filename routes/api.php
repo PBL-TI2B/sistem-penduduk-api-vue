@@ -75,7 +75,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::get('/galeri/url_media/{filename}', [GaleriController::class, 'getGaleri']);
-        Route::get('/berita/url_media/{filename}', [BeritaController::class, 'getBerita']);
+        Route::get('/berita/thumbnail/{filename}', [BeritaController::class, 'getBerita']);
         
         RoutePermission('rt', RtController::class, 'rt');
         RoutePermission('rw', RwController::class, 'rw');

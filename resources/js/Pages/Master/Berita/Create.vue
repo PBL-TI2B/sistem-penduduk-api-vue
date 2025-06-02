@@ -11,18 +11,30 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { apiPost, apiGet } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
 
 const fields = ref(getFields());
-const { handleSubmit, resetForm, setFieldValue } = useForm();
+const { handleSubmit, resetForm, setFieldValue, values } = useForm();
 
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
+const username = ref(""); // Untuk menampilkan nama penulis jika perlu
+
+// Fungsi generate slug dari judul
+function generateSlug(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-');        // Replace multiple - with single -
+}
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
@@ -35,25 +47,38 @@ const onFileChange = (e) => {
     }
 };
 
-// Ambil user_id dari endpoint /auth/me
+// Watch judul, update slug otomatis
+watch(
+    () => values.judul,
+    (newJudul) => {
+        setFieldValue("slug", generateSlug(newJudul || ""));
+    }
+);
+
+// Ambil user_id dan username dari endpoint /auth/me
 onMounted(async () => {
     try {
         const res = await apiGet("/auth/me");
         user_id.value = res.data?.id;
+        username.value = res.data?.username || "";
         if (!user_id.value) {
             throw new Error("user_id tidak ditemukan di response /auth/me");
         }
+        setFieldValue("status", "draft");
     } catch (error) {
         useErrorHandler(error, "Gagal mengambil user_id");
     }
 });
+
 const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
         formData.append("judul", values.judul);
+        formData.append("slug", generateSlug(values.judul));
         formData.append("konten", values.konten);
         formData.append("tanggal_post", values.tanggal_post);
         formData.append("status", values.status);
+        formData.append("jumlah_dilihat", 0);
         if (thumbnailFile.value) {
             formData.append("thumbnail", thumbnailFile.value);
         }
