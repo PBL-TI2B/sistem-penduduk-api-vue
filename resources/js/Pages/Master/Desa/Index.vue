@@ -96,7 +96,14 @@ const actionsIndex = getActionsDesa({
 });
 
 onMounted(fetchData);
-watch([page, searchDesa], fetchData);
+
+// watch([page, fetchData]);
+const onSearchEnterDesa = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
 
 // ======================= DUSUN ========================
 const items2 = ref([]);
@@ -133,7 +140,13 @@ const fetchData2 = async () => {
 };
 
 onMounted(fetchData2);
-watch([page2, searchDusun], fetchData2);
+// watch([page2, searchDusun], fetchData2);
+const onSearchEnterDusun = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData2();
+    }
+};
 
 const createDusun = () => {
     dialogModeDusun.value = "create";
@@ -206,13 +219,12 @@ const actionsIndex2 = getActionsDusun({
         >
             <Input
                 v-model="searchDesa"
+                @keyup.enter="onSearchEnterDesa"
                 placeholder="Cari desa berdasarkan nama"
                 class="md:w-1/3"
             />
             <div class="flex gap-4">
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
-                >
+                <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
         <!-- TABEL DESA -->
@@ -241,13 +253,12 @@ const actionsIndex2 = getActionsDusun({
         >
             <Input
                 v-model="searchDusun"
+                @keyup.enter="onSearchEnterDusun"
                 placeholder="Cari dusun berdasarkan nama"
                 class="md:w-1/3"
             />
             <div class="flex gap-4">
-                <Button class="cursor-pointer" @click="fetchData2"
-                    >Terapkan</Button
-                >
+                <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
 
