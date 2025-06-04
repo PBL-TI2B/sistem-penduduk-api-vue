@@ -140,7 +140,7 @@ export function useKurangMampu() {
         statusValidasiOptions,
         fetchData,
         // fetchDetailData,
-        // createData,
+        createData,
         // editData,
         deleteData,
     };

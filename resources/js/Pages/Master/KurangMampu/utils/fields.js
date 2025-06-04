@@ -1,10 +1,22 @@
-export function getFields(anggotaKeluarga = []) {
+import { items } from "@/components/master/sidebar/sidebarItems";
+
+export function getFields() {
     return [
+
+        {
+            name: "nama_penduduk",
+            label: "Anggota Keluarga",
+            type: "text",
+            // value: anggotaKeluarga.penduduk.nama_lengkap ?? '-',
+            // label: anggotaKeluarga.uuid,
+            disabled: true
+        },
         // {
-        //     name: "kategori_bantuan_id",
-        //     label: "Kategori Bantuan",
-        //     type: "select",
-        //     options: anggotaKeluarga,
+        //     name: "anggota_keluarga_id",
+        //     label: "Anggota Keluarga",
+        //     type: "text",
+        //     // value: anggotaKeluarga.penduduk.nama_lengkap,
+        //     // placeholder: anggotaKeluarga.uuid ?? '-',
         // },
         {
             name: "jumlah_tanggungan",
@@ -36,6 +48,12 @@ export function getFields(anggotaKeluarga = []) {
             // type: "text",
             optional: true,
         },
-
+        {
+            name: "anggota_keluarga_id",
+            type: "hidden",
+            // value: anggotaKeluarga.id,
+            // hidden: true,
+            // disabled: true
+        },
     ];
 }
