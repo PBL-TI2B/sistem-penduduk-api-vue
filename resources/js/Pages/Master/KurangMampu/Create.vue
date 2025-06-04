@@ -91,7 +91,7 @@ const actionPilihPenduduk = [
         label: "Pilih",
         icon: Eye,
         handler: (item) => {
-            fields.value = getFields(); // Masih dipakai untuk label/placeholder dll
+            fields.value = getFields();
             // fields.value = getFields(item); // Masih dipakai untuk label/placeholder dll
 
             // Sinkronkan juga ke form (vee-validate)
@@ -195,6 +195,8 @@ watch(page, () => {
                                 v-if="field.type === 'text'"
                                 v-model="componentField.value"
                                 v-bind="componentField"
+                                :disabled="field.disabled"
+                                :Readonly="field.readonly"
                             />
                             <CurrencyInput
                                 v-else-if="field.type === 'currency'"

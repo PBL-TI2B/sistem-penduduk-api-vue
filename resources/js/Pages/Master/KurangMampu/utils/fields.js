@@ -5,11 +5,12 @@ export function getFields() {
 
         {
             name: "nama_penduduk",
-            label: "Anggota Keluarga",
+            label: "Nama Penduduk",
             type: "text",
             // value: anggotaKeluarga.penduduk.nama_lengkap ?? '-',
             // label: anggotaKeluarga.uuid,
-            disabled: true
+            readonly: true,
+            disabled: false
         },
         // {
         //     name: "anggota_keluarga_id",
