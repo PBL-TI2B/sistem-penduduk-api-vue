@@ -18,7 +18,7 @@ import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { columnsJabatan } from "./utils/table";
-import { PenBoxIcon, SquarePlus, Trash2 } from "lucide-vue-next";
+import { PenBoxIcon, SquarePlus, Trash2, SearchIcon, X } from "lucide-vue-next";
 import FormDialogJabatan from "./components/FormDialogJabatan.vue";
 import { usePerangkatDesa } from "@/composables/usePerangkatDesa";
 import { useJabatan } from "@/composables/useJabatan";
@@ -110,11 +110,15 @@ const onSearchEnter = (e) => {
         fetchJabatan();
     }
 };
+const applyFilter = () => {
+    page.value = 1;
+    fetchJabatan();
+};
 
-// watch(searchJabatan, () => {
-//     pageJabatan.value = 1;
-//     fetchJabatan();
-// });
+const clearSearchJabatan = () => {
+    searchJabatan.value = "";
+    applyFilter();
+};
 
 watch(page, () => {
     fetchPerangkatDesa();
@@ -137,58 +141,40 @@ watch(pageJabatan, () => {
                 ]"
             />
         </div>
-        <div class="flex flex-wrap gap-4 items-center">
-            <Button @click="createJabatan"> <SquarePlus /> Jabatan </Button>
-            <Button asChild>
-                <Link
-                    :href="route('perangkat-desa.create')"
-                    class="flex items-center gap-1"
-                >
-                    <SquarePlus /> Perangkat Desa
-                </Link>
-            </Button>
-        </div>
     </div>
-    <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="searchJabatan"
-                @keyup.enter="onSearchEnter"
-                placeholder="Cari jabatan"
-                class="md:w-1/3"
-            />
-            <!-- filter -->
-            <!-- <div class="flex gap-4">
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Status</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="aktif"> Aktif </SelectItem>
-                            <SelectItem value="nonaktif"> Nonaktif </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Jabatan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Jabatan</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="ketua"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua-rw"> Ketua RW </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
-            </div> -->
+    <!-- JABATAN -->
+    <div class="drop-shadow-md w-full grid gap-2 mb-3">
+        <!-- Search Jabatan -->
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    v-model="searchJabatan"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari jabatan"
+                    class="pl-10 pr8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchJabatan"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchJabatan"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createJabatan"> <SquarePlus /> Jabatan </Button>
+            </div>
         </div>
 
         <DataTable
@@ -203,47 +189,85 @@ watch(pageJabatan, () => {
             :is-loading="isLoadingJabatan"
             @update:page="pageJabatan = $event"
         />
+    </div>
 
-        <!-- //- ! - PERANGKAT DESA :} -->
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between mt-8"
-        >
-            <Input
-                v-model="search"
-                placeholder="Cari perangkat desa berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
-                <Select>
+    <!-- PERANGKAT DESA -->
+    <div class="drop-shadow-md w-full grid gap-2">
+        <!-- Search & Filter -->
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    id="searchPerangkat"
+                    v-model="search"
+                    type="text"
+                    placeholder="Cari perangkat desa berdasarkan nama"
+                    class="pl-10 pr-8"
+                    @change="applySearchPerangkat"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="search"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="search = ''"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-4 justify-between items-center"
+            >
+                <Select v-model="selectedStatus">
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Status</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="aktif"> Aktif </SelectItem>
-                            <SelectItem value="nonaktif"> Nonaktif </SelectItem>
+                            <SelectItem value="-">Semua</SelectItem>
+                            <SelectItem value="aktif">Aktif</SelectItem>
+                            <SelectItem value="nonaktif">Nonaktif</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select>
+
+                <Select v-model="selectedJabatan">
                     <SelectTrigger>
                         <SelectValue placeholder="Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Jabatan</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="ketua"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua-rw"> Ketua RW </SelectItem>
+                            <SelectItem value="-">Semua</SelectItem>
+                            <SelectItem value="ketua">Ketua RT</SelectItem>
+                            <SelectItem value="ketua-rw">Ketua RW</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
+
+                <Button @click="applyFilterPerangkat">Terapkan</Button>
+                <div
+                    class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                >
+                    <Button asChild>
+                        <Link
+                            :href="route('perangkat-desa.create')"
+                            class="flex items-center gap-1"
+                        >
+                            <SquarePlus /> Perangkat Desa
+                        </Link>
+                    </Button>
+                </div>
             </div>
         </div>
-        <!-- //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :} -->
+
         <DataTable
             label="Perangkat Desa"
             :items="items"
@@ -259,6 +283,7 @@ watch(pageJabatan, () => {
             @update:page="page = $event"
         />
     </div>
+
     <FormDialogJabatan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"

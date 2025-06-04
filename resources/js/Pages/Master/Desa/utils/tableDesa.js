@@ -18,6 +18,8 @@ export function getActionsDesa({ onEdit, onDelete }) {
             label: "Hapus",
             icon: Trash,
             handler: (item) => onDelete(item),
+            disabled: (item) =>
+                item.perangkat_desa_count > 0 || item.dusun_count > 0,
         },
     ];
 }

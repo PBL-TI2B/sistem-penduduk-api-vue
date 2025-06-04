@@ -8,18 +8,19 @@ export const columnsIndex2 = [
 ];
 
 export function getActionsDusun({ onEdit, onDelete }) {
-  return [
-    {
-      label: "Edit",
-      icon: Pencil,
-      handler: (item) => onEdit(item),
-    },
-    {
-      label: "Hapus",
-      icon: Trash,
-      handler: (item) => onDelete(item),
-    },
-  ];
+    return [
+        {
+            label: "Edit",
+            icon: Pencil,
+            handler: (item) => onEdit(item),
+        },
+        {
+            label: "Hapus",
+            icon: Trash,
+            handler: (item) => onDelete(item),
+            disabled: (item) => item.perangkat_desa_count > 0,
+        },
+    ];
 }
 
 export const rowsShow = [
@@ -36,5 +37,3 @@ export const rowsShow = [
         key: "lokasi",
     },
 ];
-
-

@@ -23,6 +23,7 @@ class DesaController extends Controller
                 ->orWhere('lokasi', 'like', "%$search%");
             });
         }
+        $query->withCount ('perangkatDesa', 'dusun');
 
         // Paginasi
         $desa = $query->paginate($request->get('per_page', 10));
