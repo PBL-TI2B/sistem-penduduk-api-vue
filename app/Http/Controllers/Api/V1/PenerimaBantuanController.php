@@ -13,9 +13,23 @@ class PenerimaBantuanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $penerimaBantuan = PenerimaBantuan::with(['bantuan.kategoriBantuan', 'kurangMampu'])->paginate(10);
+        $query = PenerimaBantuan::with(['bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga.penduduk']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('kurangMampu.anggota_keluarga.penduduk', function ($subQuery) use ($search) {
+                    $subQuery->where('nama_lengkap', 'like', "%$search%");
+                })->orWhereHas('bantuan', function ($subQuery) use ($search) {
+                    $subQuery->where('nama_bantuan', 'like', "%$search%");
+                });
+            });
+        }
+
+        $penerimaBantuan = $query->paginate($request->get('per_page', 10));
         $collection = PenerimaBantuanResource::collection($penerimaBantuan->getCollection());
         $penerimaBantuan->setCollection(collect($collection));
         return response()->json([
@@ -68,7 +82,6 @@ class PenerimaBantuanController extends Controller
         ]);
     }
 
-
     /**
      * Update the specified resource in storage.
      */
@@ -97,7 +110,6 @@ class PenerimaBantuanController extends Controller
             'data'    => new PenerimaBantuanResource($penerimaBantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']))
         ]);
     }
-
 
     /**
      * Remove the specified resource from storage.

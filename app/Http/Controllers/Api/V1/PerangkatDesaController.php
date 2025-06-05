@@ -38,6 +38,14 @@ class PerangkatDesaController extends Controller
             });
         }
 
+        // Fitur search berdasarkan nama penduduk (relasi penduduk)
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->whereHas('penduduk', function ($q) use ($searchTerm) {
+                $q->where('nama', 'like', "%{$searchTerm}%");
+            });
+        }
+
         // Pagination (default 10)
         $perangkatDesa = $query->paginate($request->get('per_page', 10));
 
@@ -96,7 +104,7 @@ class PerangkatDesaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data perangkat desa',
-            'data' => new PerangkatDesaResource($perangkatDesa->load(['penduduk', 'jabatan', 'periode_jabatan', 'desa', 'dusun', 'rw', 'rt'])),
+            'data' => new PerangkatDesaResource($perangkatDesa),
         ]);
     }
 

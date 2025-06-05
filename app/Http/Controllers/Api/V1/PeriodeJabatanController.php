@@ -12,7 +12,20 @@ class PeriodeJabatanController extends Controller
 {
     public function index(Request $request)
     {
-        $periodeJabatan = PeriodeJabatan::paginate(10);
+        $query = PeriodeJabatan::query();
+
+        // Tambahan fitur search
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('awal_menjabat', 'like', "%$search%")
+                  ->orWhere('akhir_menjabat', 'like', "%$search%")
+                  ->orWhere('keterangan', 'like', "%$search%");
+            });
+        }
+
+        $periodeJabatan = $query->paginate(10);
+
         return new ApiResource(true, 'Daftar Data Periode Jabatan', $periodeJabatan);
     }
 

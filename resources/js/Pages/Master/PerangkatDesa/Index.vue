@@ -38,6 +38,7 @@ const {
     totalPages,
     totalItems,
     isLoading,
+    search: searchPerangkatDesa,  // pastikan di composable ada ini
 } = usePerangkatDesa();
 
 const {
@@ -96,6 +97,7 @@ const onConfirmDelete = async () => {
         await deleteJabatan(selectedUuid.value);
         isAlertDeleteOpen.value = false;
         selectedUuid.value = null;
+        fetchJabatan(); // refresh list setelah delete
     }
 };
 
@@ -111,17 +113,29 @@ const onSearchEnter = (e) => {
     }
 };
 
-// watch(searchJabatan, () => {
-//     pageJabatan.value = 1;
-//     fetchJabatan();
-// });
-
 watch(page, () => {
     fetchPerangkatDesa();
 });
 
 watch(pageJabatan, () => {
     fetchJabatan();
+});
+
+// **Aktifkan watcher searchJabatan supaya otomatis cari saat search berubah**
+watch(searchJabatan, () => {
+    pageJabatan.value = 1;
+    fetchJabatan();
+});
+
+// **Tambah search reactive untuk perangkat desa (sesuaikan dengan composable)**
+const search = ref("");
+watch(search, () => {
+    page.value = 1;
+    // update search perangkat desa pada composable
+    if (searchPerangkatDesa) {
+        searchPerangkatDesa.value = search.value;
+    }
+    fetchPerangkatDesa();
 });
 </script>
 

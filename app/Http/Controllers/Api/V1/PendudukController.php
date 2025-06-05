@@ -21,6 +21,7 @@ class PendudukController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
+
         // Filter status perkawinan
         if ($request->filled('status_perkawinan')) {
             $query->where('status_perkawinan', $request->status_perkawinan);
@@ -32,9 +33,15 @@ class PendudukController extends Controller
                 $q->where('jenjang', $request->pendidikan); // sesuaikan nama kolom jika perlu
             });
         }
+
         // Filter agama
         if ($request->filled('agama')) {
             $query->where('agama', $request->agama);
+        }
+
+        // Tambahkan fitur search berdasarkan nama_lengkap
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
         }
 
         $penduduk = $query->paginate($request->get('per_page', 10));
@@ -47,7 +54,6 @@ class PendudukController extends Controller
             'data' => $penduduk,
         ]);
     }
-
 
     public function store(Request $request)
     {
@@ -103,7 +109,6 @@ class PendudukController extends Controller
 
     public function show(Penduduk $penduduk)
     {
-        // Panggil load untuk memuat semua relasi yang diperlukan
         $penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw']);
 
         return response()->json([
@@ -112,7 +117,6 @@ class PendudukController extends Controller
             'data' => new PendudukResource($penduduk),
         ]);
     }
-
 
     public function update(Request $request, Penduduk $penduduk)
     {
@@ -152,6 +156,7 @@ class PendudukController extends Controller
         }
 
         $penduduk->update($data);
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ubah data penduduk',
@@ -163,6 +168,7 @@ class PendudukController extends Controller
     {
         Storage::delete('penduduk/' . basename($penduduk->foto));
         $penduduk->delete();
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil hapus data penduduk',

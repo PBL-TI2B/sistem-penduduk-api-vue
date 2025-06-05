@@ -26,11 +26,16 @@ const totalPages = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
+
+// search input state
+const search = ref("");
+
+// filter object state
 const filter = ref({
-    status: "",
-    status_perkawinan: "",
-    pendidikan: "",
-    agama: "",
+    status: "-",
+    status_perkawinan: "-",
+    pendidikan: "-",
+    agama: "-",
 });
 
 const fetchData = async () => {
@@ -38,7 +43,7 @@ const fetchData = async () => {
         items.value = [];
         isLoading.value = true;
 
-        // Kalau nilai filter '-' ubah jadi string kosong ''
+        // Jika filter value adalah "-", ganti jadi string kosong agar query API tidak memasukkan filter tersebut
         const status = filter.value.status === "-" ? "" : filter.value.status;
         const status_perkawinan =
             filter.value.status_perkawinan === "-"
@@ -50,6 +55,7 @@ const fetchData = async () => {
 
         const res = await apiGet("/penduduk", {
             page: page.value,
+            search: search.value,
             status,
             status_perkawinan,
             pendidikan,
@@ -66,8 +72,22 @@ const fetchData = async () => {
     }
 };
 
-onMounted(fetchData);
+// Reload data saat page berubah
 watch(page, fetchData);
+
+// Reload data saat search berubah, reset page ke 1
+watch(search, () => {
+    page.value = 1;
+    fetchData();
+});
+
+// Reload data saat filter berubah, reset page ke 1
+watch(filter, () => {
+    page.value = 1;
+    fetchData();
+});
+
+onMounted(fetchData);
 </script>
 
 <template>
@@ -84,12 +104,13 @@ watch(page, fetchData);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('penduduk.create')">
-                    <SquarePlus /> Penduduk</Link
-                >
+                <router-link :to="{ name: 'penduduk.create' }">
+                    <SquarePlus /> Penduduk
+                </router-link>
             </Button>
         </div>
     </div>
+
     <div class="drop-shadow-md w-full grid gap-2">
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
@@ -121,9 +142,7 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Status Perkawinan</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="belum kawin">
-                                Belum Kawin
-                            </SelectItem>
+                            <SelectItem value="belum kawin"> Belum Kawin </SelectItem>
                             <SelectItem value="kawin"> Kawin </SelectItem>
                         </SelectGroup>
                     </SelectContent>
@@ -136,9 +155,7 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Pendidikan</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="tidak sekolah">
-                                Tidak Sekolah
-                            </SelectItem>
+                            <SelectItem value="tidak sekolah"> Tidak Sekolah </SelectItem>
                             <SelectItem value="SD"> SD </SelectItem>
                             <SelectItem value="SMP"> SMP </SelectItem>
                             <SelectItem value="SMA"> SMA </SelectItem>
@@ -164,18 +181,15 @@ watch(page, fetchData);
                             <SelectItem value="katolik"> Katolik </SelectItem>
                             <SelectItem value="hindu"> Hindu </SelectItem>
                             <SelectItem value="budha"> Budha </SelectItem>
-                            <SelectItem value="khonghucu">
-                                Khonghucu
-                            </SelectItem>
+                            <SelectItem value="khonghucu"> Khonghucu </SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
 
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
-                >
+                <Button @click="fetchData">Terapkan</Button>
             </div>
         </div>
+
         <DataTable
             label="Penduduk"
             :items="items"
@@ -186,7 +200,7 @@ watch(page, fetchData);
             :per-page="perPage"
             :is-loading="isLoading"
             :is-exportable="true"
-            :export-route="'penduduk'"
+            export-route="penduduk"
             @update:page="page = $event"
         />
     </div>

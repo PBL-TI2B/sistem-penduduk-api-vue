@@ -26,11 +26,16 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 
+const search = ref(""); // Tambahan: input pencarian
+
 const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/penerima-bantuan", { page: page.value });
+        const res = await apiGet("/penerima-bantuan", {
+            page: page.value,
+            search: search.value,
+        });
         items.value = res.data.data;
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
@@ -43,6 +48,12 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 watch(page, fetchData);
+
+// Saat user mengetik search, reset ke page 1 dan fetch ulang
+watch(search, () => {
+    page.value = 1;
+    fetchData();
+});
 </script>
 
 <template>
@@ -60,24 +71,23 @@ watch(page, fetchData);
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
                 <Link :href="route('kurang-mampu.create')">
-                    + Penerima Bantuan</Link
-                >
+                    + Penerima Bantuan
+                </Link>
             </Button>
         </div>
     </div>
+
     <div class="drop-shadow-md w-full grid gap-2">
         <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
         >
             <Input
                 v-model="search"
-                placeholder="Cari kurang mampu"
+                placeholder="Cari nama penduduk atau bantuan"
                 class="md:w-1/3"
             />
-            <div class="flex gap-4">
-                <Button class="cursor-pointer">Terapkan</Button>
-            </div>
         </div>
+
         <DataTable
             :items="items"
             :columns="columnsIndex"
