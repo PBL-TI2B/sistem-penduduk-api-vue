@@ -91,6 +91,13 @@ const columnsIndexAnggotaKeluarga = [
 
 
 const actionsIndex = (onClickDeleteButton) => [
+    // {
+    //     label: "Status",
+    //     icon: SquarePen,
+    //     handler: (item) => {
+    //         // router.visit(route("kurang-mampu.edit", item.uuid));
+    //     },
+    // },
     {
         label: "Kelola",
         icon: Eye,
@@ -98,13 +105,13 @@ const actionsIndex = (onClickDeleteButton) => [
             router.visit(route("kurang-mampu.show", item.uuid));
         },
     },
-    {
-        label: "Ubah",
-        icon: SquarePen,
-        handler: (item) => {
-            router.visit(route("kurang-mampu.edit", item.uuid));
-        },
-    },
+    // {
+    //     label: "Ubah",
+    //     icon: SquarePen,
+    //     handler: (item) => {
+    //         router.visit(route("kurang-mampu.edit", item.uuid));
+    //     },
+    // },
     {
         label: "Hapus",
         icon: Trash2,
@@ -117,17 +124,26 @@ const actionsIndex = (onClickDeleteButton) => [
 ];
 
 const rowsShow = [
-//     { label: "Nama Bantuan", key: "nama_bantuan" },
-//     {
-//         label: "Kategori",
-//         key: "anggota_keluarga",
-//         format: (val, row) => row.anggota_keluarga?.kategori || "-",
-//     },
-//     { label: "Nominal (Rp.)", key: "nominal" },
-//     { label: "Periode", key: "periode" },
-//     { label: "Lama Periode", key: "lama_periode" },
-//     { label: "Instansi", key: "instansi" },
-//     { label: "Keterangan", key: "keterangan" },
+    { label: "Nama Penduduk", key: "penduduk", format: (value) => value?.nama_lengkap ?? '-' },
+    { label: "NIK", key: "penduduk", format: (value) => value?.nik ?? '-' },
+
+    { label: "Jenis Kelamin", key: "penduduk", format: (value) => value?.jenis_kelamin === 'L' ? 'Laki-laki' : (value?.jenis_kelamin === 'P' ? 'Perempuan' : '-') },
+    { label: "Tempat, Tanggal Lahir", key: "penduduk", format: (value) => value ? `${value.tempat_lahir ?? '-'}, ${formatDate(value.tanggal_lahir, false)}` : '-' },
+    { label: "Agama", key: "penduduk", format: (value) => value?.agama ?? '-' },
+    { label: "Pekerjaan", key: "penduduk", format: (value) => value?.pekerjaan ?? '-' },
+    { label: "Pendidikan Terakhir", key: "penduduk", format: (value) => value?.pendidikan ?? '-' },
+    { label: "Nomor KK", key: "penduduk", format: (value) => value?.no_kk ?? '-' },
+    { label: "Status Keluarga", key: "penduduk", format: (value) => value?.status_keluarga ?? '-' },
+    { label: "Status Perkawinan", key: "penduduk", format: (value) => value?.status_perkawinan ?? '-' },
+    { label: "Nomor RT", key: "penduduk", format: (value) => value?.nomor_rt ?? '-' },
+    { label: "Nomor RW", key: "penduduk", format: (value) => value?.nomor_rw ?? '-' },
+    { label: "Nama Dusun", key: "penduduk", format: (value) => value?.nama_dusun ?? '-' },
+
+    { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari", format: formatCurrency },
+    { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan", format: formatCurrency },
+    { label: "Jumlah Tanggungan", key: "jumlah_tanggungan", format: (value) => value ?? '0' },
+    { label: "Status Validasi", key: "status_validasi" },
+    { label: "Keterangan", key: "keterangan", format: (value) => value ?? '-' },
 ];
 
 

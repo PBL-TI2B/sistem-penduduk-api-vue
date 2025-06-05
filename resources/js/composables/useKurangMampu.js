@@ -12,6 +12,7 @@ export function useKurangMampu() {
     const perPage = ref(10);
     const totalPages = ref(1);
     const totalItems = ref(1);
+    const imageUrl = ref(null);
 
     const search = ref("");
     const selectedStatusValidasi = ref("");
@@ -59,20 +60,32 @@ export function useKurangMampu() {
     };
 
     // Fetch Detail Kurang Mampu (untuk halaman edit/detail)
-    // const fetchDetailData = async (uuid) => {
-    //     if (!uuid) return;
-    //     // item = ref({});
-    //     try {
-    //         isLoading.value = true;
-    //         const res = await apiGet(`/bantuan/${uuid}`);
-    //         item.value = res.data;
-    //         // console.log(res.data);
-    //     } catch (error) {
-    //         useErrorHandler(error, "Gagal memuat detail bantuan");
-    //     } finally {
-    //         isLoading.value = false;
-    //     }
-    // };
+    const fetchDetailData = async (uuid) => {
+        if (!uuid) return;
+
+        try {
+            isLoading.value = true;
+            const res = await apiGet(`/kurang-mampu/${uuid}`);
+            item.value = res.data;
+
+            if (items.value.penduduk.foto) {
+                const resImage = await axios.get(
+                    `/api/v1/penduduk/foto/${items.value.foto}`,
+                    {
+                        responseType: "blob",
+                        headers: {
+                            Authorization: `Bearer ${Cookies.get("token")}`,
+                        },
+                    }
+                );
+                imageUrl.value = URL.createObjectURL(resImage.data);
+            }
+        } catch (error) {
+            useErrorHandler(error, "Gagal memuat detail kurang mampu");
+        } finally {
+            isLoading.value = false;
+        }
+    };
 
     //! Create Kurang Mampu
     const createData  = async (values) => {
@@ -138,9 +151,10 @@ export function useKurangMampu() {
         search,
         selectedStatusValidasi,
         statusValidasiOptions,
+        imageUrl,
         fetchData,
-        // fetchDetailData,
-        // createData,
+        fetchDetailData,
+        createData,
         // editData,
         deleteData,
     };
