@@ -5,6 +5,7 @@ import { route } from "ziggy-js";
 export const columnsIndex = [
     { label: "Judul", key: "judul" },
     { label: "Tanggal Posting", key: "tanggal_post" },
+    { label: "Terakhir Diubah", key: "terakhir_diubah" },
     { label: "Status", key: "status" },
     { label: "Penulis", key: "username" },
     { label: "Dilihat", key: "jumlah_dilihat" },

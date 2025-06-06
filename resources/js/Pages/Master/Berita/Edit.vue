@@ -62,7 +62,6 @@ const onSubmit = handleSubmit(async (values) => {
         formData.append("judul", values.judul);
         formData.append("slug", values.slug);
         formData.append("konten", values.konten);
-        formData.append("tanggal_post", values.tanggal_post);
         formData.append("status", values.status);
         if (thumbnailFile.value) {
             formData.append("thumbnail", thumbnailFile.value);
@@ -90,7 +89,6 @@ onMounted(async () => {
             judul: data.judul ?? "",
             slug: data.slug ?? "",
             konten: data.konten ?? "",
-            tanggal_post: data.tanggal_post ?? "",
             status: data.status && data.status !== "" ? data.status : "draft", // lebih aman
         });
         if (data.thumbnail) {

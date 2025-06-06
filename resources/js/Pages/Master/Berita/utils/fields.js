@@ -19,12 +19,6 @@ export function getFields() {
             type: "textarea",
         },
         {
-            name: "tanggal_post",
-            label: "Tanggal Posting",
-            placeholder: "Pilih tanggal posting",
-            type: "datetime-local",
-        },
-        {
             name: "status",
             label: "Status",
             placeholder: "Pilih status",

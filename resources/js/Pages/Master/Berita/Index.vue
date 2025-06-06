@@ -9,6 +9,7 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { SquarePlus } from "lucide-vue-next";
+import dayjs from "dayjs";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -16,16 +17,27 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const search = ref("");
+const statusFilter = ref("");
 
 const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/berita", { page: page.value, search: search.value });
-        items.value = res.data.data.map(item => ({
+        const res = await apiGet("/berita", {
+            page: page.value,
+            search: search.value,
+            status: statusFilter.value,
+        });
+        items.value = res.data.data.map((item) => ({
             ...item,
             uuid: item.uuid ?? null,
-            username: item.user_id?.username ?? "-"
+            username: item.user_id?.username ?? "-",
+            tanggal_post: item.created_at
+                ? dayjs(item.created_at).format("DD MMM YYYY HH:mm")
+                : "-",
+            terakhir_diubah: item.updated_at
+                ? dayjs(item.updated_at).format("DD MMM YYYY HH:mm")
+                : "-",
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
@@ -66,13 +78,34 @@ watch(page, fetchData);
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between">
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+        >
             <Input
                 v-model="search"
                 placeholder="Cari berita berdasarkan judul"
                 class="md:w-1/3"
             />
-            <Button class="cursor-pointer" @click="applySearch">Terapkan</Button>
+            <Select
+                v-model="statusFilter"
+                @update:modelValue="applySearch"
+                id="statusFilter"
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Status</SelectLabel>
+                        <SelectItem value="">Semua Status</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="publish">Publish</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+            <Button class="cursor-pointer" @click="applySearch"
+                >Terapkan</Button
+            >
         </div>
         <DataTable
             label="Berita"

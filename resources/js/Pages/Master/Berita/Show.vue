@@ -11,6 +11,7 @@ import { toast } from "vue-sonner";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import axios from "axios";
 import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 const { uuid } = usePage().props;
 const berita = ref({});
@@ -102,7 +103,11 @@ onMounted(fetchBerita);
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Tanggal Posting</td>
-                        <td>{{ berita.tanggal_post }}</td>
+                        <td>{{ dayjs(berita.created_at).format('DD MMM YYYY HH:mm') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium p-2">Terakhir Diubah</td>
+                        <td>{{ dayjs(berita.updated_at).format('DD MMM YYYY HH:mm') }}</td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Status</td>
