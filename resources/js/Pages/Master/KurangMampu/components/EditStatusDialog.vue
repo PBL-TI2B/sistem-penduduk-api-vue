@@ -41,10 +41,18 @@ const status_validasi = computed({
     set: (val) => setValues({ status_validasi: val }),
 });
 
-const { updateStatusValidasi, isLoading } = useKurangMampu();
+const isFormValid = computed(() => {
+    return status_validasi.value !== "pending";
+});
+
+const { editStatusValidasi, isLoading } = useKurangMampu();
 
 const onSubmit = handleSubmit(async (formValues) => {
-    await updateStatusValidasi(formValues, props, emit);
+    await editStatusValidasi(
+        props.initialData.uuid,
+        formValues.status_validasi
+    );
+    emit("success");
 });
 
 watch(
@@ -58,7 +66,7 @@ watch(
             resetForm();
         }
     },
-    { immediate: true },
+    { immediate: true }
 );
 </script>
 
@@ -81,30 +89,28 @@ watch(
                         <div class="col-span-3">
                             <Select v-model="status_validasi">
                                 <SelectTrigger>
-                            <SelectValue placeholder="Status Validasi" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-
-
-                                <SelectItem value="tervalidasi">
-                                    Tervalidasi
-                                </SelectItem>
-                                <SelectItem value="pending">
-                                Pending
-                            </SelectItem>
-                            <SelectItem value="ditolak">
-                                Ditolak
-                            </SelectItem>
-                        </SelectGroup>
-                        </SelectContent>
+                                    <SelectValue
+                                        placeholder="Status Validasi"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="tervalidasi">
+                                        Tervalidasi
+                                    </SelectItem>
+                                    <!-- <SelectItem value="pending">
+                                        Pending
+                                    </SelectItem> -->
+                                    <SelectItem value="ditolak">
+                                        Ditolak
+                                    </SelectItem>
+                                </SelectContent>
                             </Select>
                         </div>
                     </div>
                 </div>
 
                 <DialogFooter>
-                    <Button type="submit" :disabled="isLoading">
+                    <Button type="submit" :disabled="isLoading || !isFormValid">
                         Simpan Perubahan
                     </Button>
                 </DialogFooter>

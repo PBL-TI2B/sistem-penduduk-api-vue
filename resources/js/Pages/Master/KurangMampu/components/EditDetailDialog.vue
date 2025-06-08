@@ -10,9 +10,17 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import Label from "@/components/ui/label/Label.vue";
-import Input from "@/components/ui/input/Input.vue";
-import Textarea from "@/components/ui/textarea/Textarea.vue";
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from "@/components/ui/number-field";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { CurrencyInput } from "@/components/ui/currency-input";
 import { useKurangMampu } from "@/composables/useKurangMampu";
 
 const props = defineProps({
@@ -54,10 +62,11 @@ const keterangan = computed({
     set: (val) => setValues({ keterangan: val }),
 });
 
-const { updateDetailData, isLoading } = useKurangMampu();
+const { editDataDetails, isLoading } = useKurangMampu();
 
 const onSubmit = handleSubmit(async (formValues) => {
-    await updateDetailData(formValues, props, emit);
+    await editDataDetails(props.initialData.uuid, formValues);
+    emit("success");
 });
 
 watch(
@@ -95,13 +104,20 @@ watch(
                             Jumlah Tanggungan
                         </Label>
                         <div class="col-span-3">
-                            <Input
+                            <NumberField
+                                :default-value="0"
+                                :min="0"
                                 v-model="jumlah_tanggungan"
-                                type="number"
                                 placeholder="Jumlah Tanggungan"
                                 class="w-full"
                                 name="jumlah_tanggungan"
-                            />
+                            >
+                                <NumberFieldContent>
+                                    <NumberFieldDecrement />
+                                    <NumberFieldInput />
+                                    <NumberFieldIncrement />
+                                </NumberFieldContent>
+                            </NumberField>
                         </div>
                     </div>
 
@@ -110,9 +126,8 @@ watch(
                             Pendapatan per Hari
                         </Label>
                         <div class="col-span-3">
-                            <Input
+                            <CurrencyInput
                                 v-model="pendapatan_per_hari"
-                                type="number"
                                 placeholder="Pendapatan per Hari"
                                 class="w-full"
                                 name="pendapatan_per_hari"
@@ -125,9 +140,8 @@ watch(
                             Pendapatan per Bulan
                         </Label>
                         <div class="col-span-3">
-                            <Input
+                            <CurrencyInput
                                 v-model="pendapatan_per_bulan"
-                                type="number"
                                 placeholder="Pendapatan per Bulan"
                                 class="w-full"
                                 name="pendapatan_per_bulan"

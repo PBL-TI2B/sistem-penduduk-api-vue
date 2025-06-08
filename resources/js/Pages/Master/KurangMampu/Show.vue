@@ -1,6 +1,7 @@
 <script setup>
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import Button from "@/components/ui/button/Button.vue";
+import Badge from "@/components/ui/badge/Badge.vue";
 
 import { rowsShow } from "./utils/table";
 import EditStatusDialog from "./components/EditStatusDialog.vue";
@@ -27,11 +28,11 @@ const {
     item,
     imageUrl,
     fetchDetailData,
-    editStatusValidasi,
+    // editStatusValidasi,
     editDetailData,
 } = useKurangMampu();
 
-const isEditStatusDialogOpen = ref(false);
+const isEditStatusDialogOpen = ref(false, item);
 const isEditDetailDialogOpen = ref(false);
 
 onMounted(() => {
@@ -67,7 +68,9 @@ onMounted(() => {
     <div class="shadow-md p-2 rounded-lg flex gap-2 justify-between my-4">
         <div class="w-full">
             <div class="flex items-center justify-between">
-                 <h2 class="text-lg font-bold p-2">Detail Kurang Mampu - {{item.status_validasi }}</h2>
+                 <h2 class="text-lg font-bold p-2">Detail Kurang Mampu <Badge variant="outline">
+                    {{ item.status_validasi }}
+                 </Badge></h2>
                 <div class="flex gap-2">
                     <Button
                         @click="isEditStatusDialogOpen = true"

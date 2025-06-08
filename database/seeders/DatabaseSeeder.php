@@ -467,7 +467,7 @@ class DatabaseSeeder extends Seeder
                 'pendapatan_per_hari' => 100000,
                 'pendapatan_per_bulan' => 3000000,
                 'jumlah_tanggungan' => 3,
-                'status_validasi' => 'terverifikasi',
+                'status_validasi' => 'tervalidasi',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]

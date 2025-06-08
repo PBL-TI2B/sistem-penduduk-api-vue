@@ -26,8 +26,8 @@ export function useKurangMampu() {
             label: "Pending",
         },
         {
-            value: "terverifikasi",
-            label: "Terverifikasi",
+            value: "tervalidasi",
+            label: "Tervalidasi",
         },
         {
             value: "ditolak",
@@ -126,6 +126,47 @@ export function useKurangMampu() {
     //     }
     // };
 
+    //! Edit status_validasi only
+    const editStatusValidasi = async (uuid, status_validasi) => {
+        try {
+            isLoading.value = true;
+
+            const formData = new FormData();
+            formData.append("_method", "PUT");
+            formData.append("status_validasi", status_validasi ?? "");
+
+            await apiPost(`/kurang-mampu/${uuid}`, formData);
+            toast.success("Berhasil memperbarui status validasi");
+            router.visit(`/kurang-mampu/${uuid}`);
+        } catch (error) {
+            useErrorHandler(error, "Gagal memperbarui status validasi");
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    //! Edit pendapatan_per_hari, pendapatan_per_bulan, jumlah_tanggungan, keterangan
+    const editDataDetails = async (uuid, values) => {
+        try {
+            isLoading.value = true;
+
+            const formData = new FormData();
+            formData.append("_method", "PUT");
+            formData.append("pendapatan_per_hari", values.pendapatan_per_hari ?? "");
+            formData.append("pendapatan_per_bulan", values.pendapatan_per_bulan ?? "");
+            formData.append("jumlah_tanggungan", values.jumlah_tanggungan ?? "");
+            formData.append("keterangan", values.keterangan ?? "");
+
+            await apiPost(`/kurang-mampu/${uuid}`, formData);
+            toast.success("Berhasil memperbarui data kurang mampu");
+            router.visit(`/kurang-mampu/${uuid}`);
+        } catch (error) {
+            useErrorHandler(error, "Gagal memperbarui data kurang mampu");
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
     //! Delete Kurang Mampu
     const deleteData  = async (uuid) => {
         try {
@@ -156,6 +197,8 @@ export function useKurangMampu() {
         fetchDetailData,
         createData,
         // editData,
+        editStatusValidasi,
+        editDataDetails,
         deleteData,
     };
 }
