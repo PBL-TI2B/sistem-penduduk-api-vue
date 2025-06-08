@@ -51,6 +51,11 @@ class Penduduk extends Model
         return $this->hasOne(Domisili::class, 'penduduk_id', 'id');
     }
 
+    public function anggotaKeluarga()
+    {
+        return $this->hasMany(AnggotaKeluarga::class, 'penduduk_id', 'id');
+    }
+
     protected function foto()
     {
         return Attribute::make(
