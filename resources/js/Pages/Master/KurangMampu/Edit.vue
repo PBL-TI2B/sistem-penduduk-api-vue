@@ -22,21 +22,20 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { getFields } from "./utils/fields"; // Import getFields
-import { formSchemaBantuan } from "./utils/form-schema";
-import { useBantuan } from "@/composables/useBantuan";
-import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+import { formSchemaKurangMampu } from "./utils/form-schema";
+import { useKurangMampu } from "@/composables/useKurangMampu";
 
 // Routing ID
 const { uuid } = usePage().props;
 
-const { item, editBantuan, fetchDetailBantuan } = useBantuan();
-const { itemsKategoriAll, fetchKategori } = useKategoriBantuan();
+const { item, createKurangMampu, isLoading, selectedStatusValidasi } =
+    useKurangMampu();
 
 // Initialize fields from getFields
 const fields = ref([]);
 
 const { handleSubmit, setValues, resetForm } = useForm({
-    validationSchema: formSchemaBantuan,
+    validationSchema: formSchemaKurangMampu,
 });
 
 // Submit Edit
@@ -61,7 +60,7 @@ onMounted(async () => {
         keterangan: data.keterangan,
     });
 
-    fields.value = getFields(itemsKategoriAll);
+    fields.value = getFields();
 });
 </script>
 

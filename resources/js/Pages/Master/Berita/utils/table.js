@@ -19,14 +19,14 @@ export const actionsIndex = [
                 alert("UUID tidak ditemukan!");
                 return;
             }
-            if (!route().has('berita-admin.show')) {
-                alert("Route berita-admin.show tidak tersedia!");
+            if (!route().has("berita.show")) {
+                alert("Route berita.show tidak tersedia!");
                 return;
             }
-            const url = route("berita-admin.show", { berita_admin: item.uuid });
+            const url = route("berita.show", { berita_admin: item.uuid });
             router.visit(url);
-        }
-    }
+        },
+    },
     // {
     //     label: "Edit",
     //     icon: Edit,
@@ -35,11 +35,11 @@ export const actionsIndex = [
     //             alert("UUID tidak ditemukan!");
     //             return;
     //         }
-    //         if (!route().has('berita-admin.edit')) {
-    //             alert("Route berita-admin.edit tidak tersedia!");
+    //         if (!route().has('berita.edit')) {
+    //             alert("Route berita.edit tidak tersedia!");
     //             return;
     //         }
-    //         const url = route("berita-admin.edit", { berita_admin: item.uuid });
+    //         const url = route("berita.edit", { berita_admin: item.uuid });
     //         router.visit(url);
     //     }
     // },

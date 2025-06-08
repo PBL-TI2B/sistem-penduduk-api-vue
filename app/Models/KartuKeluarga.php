@@ -9,8 +9,6 @@ class KartuKeluarga extends Model
 {
     protected $table = 'kartu_keluarga'; // Nama tabel di database
     protected $guarded = []; // Agar dapat diisi massal
-    public $incrementing = false; // Menggunakan UUID sebagai primary key
-    protected $keyType = 'string'; // Jenis key adalah string (UUID)
 
     protected static function boot()
     {
@@ -33,7 +31,7 @@ class KartuKeluarga extends Model
     // Relasi dengan model AnggotaKeluarga
     public function anggotaKeluarga()
     {
-        return $this->hasMany(AnggotaKeluarga::class, 'kk_id', 'uuid');
+        return $this->hasMany(AnggotaKeluarga::class, 'kk_id', 'id');
     }
 
     public function rt()

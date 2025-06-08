@@ -15,7 +15,7 @@ class PendudukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Penduduk::with(['pekerjaan', 'pendidikan']);
+        $query = Penduduk::with(['pekerjaan', 'pendidikan'])->orderBy('status', 'asc');
 
         // Filter status hidup/mati
         if ($request->filled('status')) {

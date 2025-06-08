@@ -127,7 +127,7 @@ const menus = [
 
                 <Button v-if="user" asChild variant="frontend">
                     <Link
-                        href="/dashboard"
+                        href="/admin/dashboard"
                         class="py-2 px-12 rounded-full transition"
                         @click="isOpen = false"
                     >

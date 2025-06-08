@@ -36,4 +36,12 @@ class Rt extends Model
     public function domisili() {
         return $this->hasOne(Domisili::class);
     }
+
+    public function penduduk() {
+        return $this->hasMany(Penduduk::class, 'rt_id', 'id');
+    }
+
+    public function kartuKeluarga() {
+        return $this->hasMany(KartuKeluarga::class, 'rt_id', 'id');
+    }
 }
