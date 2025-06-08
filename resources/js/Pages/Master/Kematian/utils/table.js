@@ -1,5 +1,6 @@
 import { Eye } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
 const columnsIndex = [
     { label: "Tanggal Kematian", key: "tanggal_kematian" },
@@ -7,13 +8,19 @@ const columnsIndex = [
     { label: "Nama Penduduk", key: "nama_penduduk" },
 ];
 
-const actionsIndex = [
+const actionsIndex = (onClickDeleteBantuanButton) => [
     {
-        label: "Manage",
-        icon: Eye,
+        label: "Ubah",
+        icon: SquarePen,
+        handler: (item) => {},
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
         handler: (item) => {
-            router.visit(route("kematian.show", item.uuid));
+            onClickDeleteBantuanButton(item.uuid);
         },
+        disabled: (item) => item.penerima_bantuan_count > 0,
     },
 ];
 
