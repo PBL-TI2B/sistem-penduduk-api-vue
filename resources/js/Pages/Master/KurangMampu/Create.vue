@@ -27,22 +27,22 @@ import { Button } from "@/components/ui/button";
 import DataTable from "@/components/master/DataTable.vue";
 import { useForm } from "vee-validate";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 
-import { PackagePlus, SearchIcon, X, FunnelX } from "lucide-vue-next";
+import { PackagePlus, SearchIcon, X, FunnelX, Eye } from "lucide-vue-next";
 import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaKurangMampu } from "./utils/form-schema";
 import { columnsIndexAnggotaKeluarga } from "./utils/table";
 import { useKurangMampu } from "@/composables/useKurangMampu";
 import { useAnggotaKeluarga } from "@/composables/useAnggotaKeluarga";
 
-const { createData, isLoading: isLoadingCreate } = useKurangMampu();
+const { createData, isLoading } = useKurangMampu();
 
 const {
     items,
     // item,
-    isLoading,
+    isLoading: isLoadingAnggotaKeluarga,
     page,
     perPage,
     totalPages,
@@ -58,8 +58,21 @@ const {
 // Initialize fields from getFields
 const fields = ref([]);
 
-const { handleSubmit, resetForm } = useForm({
+const showForm = ref(false);
+
+// const { handleSubmit, resetForm } = useForm({
+//     validationSchema: formSchemaKurangMampu,
+// });
+
+const { handleSubmit, resetForm, setFieldValue } = useForm({
     validationSchema: formSchemaKurangMampu,
+    initialValues: {
+        anggota_keluarga_id: "",
+        jumlah_tanggungan: "",
+        pendapatan_per_hari: null,
+        pendapatan_per_bulan: null,
+        keterangan: "",
+    },
 });
 
 const clearSearchPenduduk = () => {
@@ -68,24 +81,38 @@ const clearSearchPenduduk = () => {
 };
 
 const onSubmit = handleSubmit((values) => {
-    createKurangMampu(values);
-    resetForm(); // Reset form fields after submission
+    console.log("Submit");
+    createData(values);
+    resetForm();
 });
 
 const actionPilihPenduduk = [
     {
         label: "Pilih",
-        // icon: Eye,
+        icon: Eye,
         handler: (item) => {
-            router.visit(route("kurang-mampu.show", item.uuid));
+            fields.value = getFields();
+            // fields.value = getFields(item); // Masih dipakai untuk label/placeholder dll
+
+            // Sinkronkan juga ke form (vee-validate)
+            setFieldValue("nama_penduduk", item.penduduk.nama_lengkap);
+            setFieldValue("anggota_keluarga_id", item.id);
+            // setFieldValue("jumlah_tanggungan", "");
+            // setFieldValue("pendapatan_per_hari", null);
+            // setFieldValue("pendapatan_per_bulan", null);
+            // setFieldValue("keterangan", "");
+
+            showForm.value = true;
         },
     },
 ];
 
 onMounted(() => {
     fetchDataAnggotaKeluarga();
-
-    fields.value = getFields();
+    // fields.value = getFields("-");
+});
+watch(page, () => {
+    fetchDataAnggotaKeluarga();
 });
 </script>
 
@@ -141,12 +168,16 @@ onMounted(() => {
             :totalData="totalData"
             :page="page"
             :per-page="perPage"
-            :is-loading="isLoading"
+            :is-loading="isLoadingAnggotaKeluarga"
             @update:page="page = $event"
         />
     </div>
 
-    <div class="shadow-lg p-8 my-4 rounded-lg">
+    <div
+        v-if="showForm"
+        class="shadow-lg p-8 my-4 rounded-lg"
+        :disabled="showForm === false"
+    >
         <form @submit="onSubmit" class="space-y-6">
             <!-- Loop through fields -->
             <div class="space-y-6 grid grid-cols-2 gap-x-8">
@@ -161,8 +192,10 @@ onMounted(() => {
                         <FormControl>
                             <Input
                                 v-if="field.type === 'text'"
-                                :placeholder="field.placeholder"
+                                v-model="componentField.value"
                                 v-bind="componentField"
+                                :disabled="field.disabled"
+                                :Readonly="field.readonly"
                             />
                             <CurrencyInput
                                 v-else-if="field.type === 'currency'"
@@ -203,6 +236,14 @@ onMounted(() => {
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                            <!-- Hidden input to send value when field is hidden -->
+                            <input
+                                v-if="field.type === 'hidden'"
+                                type="hidden"
+                                :name="field.name"
+                                v-model="componentField.value"
+                                v-bind="componentField"
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
