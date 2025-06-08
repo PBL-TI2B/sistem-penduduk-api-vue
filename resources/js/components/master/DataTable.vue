@@ -211,7 +211,7 @@ const handleExport = async (format) => {
 
             <TableBody>
                 <!-- ===== Tak komen sek ===== -->
-                <!-- <TableRow
+                <TableRow
                     v-if="isLoading"
                     v-for="i in perPage"
                     :key="'skeleton-' + i"
@@ -221,7 +221,7 @@ const handleExport = async (format) => {
                             class="h-9 bg-card/20 rounded animate-pulse w-full"
                         ></div>
                     </TableCell>
-                </TableRow> -->
+                </TableRow>
 
                 <TableRow v-if="isLoading" :key="'skeleton-' + i">
                     <TableCell v-for="n in columns.length + 1" :key="n">

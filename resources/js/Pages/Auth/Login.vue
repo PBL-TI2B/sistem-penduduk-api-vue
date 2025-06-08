@@ -56,7 +56,7 @@ const onSubmit = form.handleSubmit(async () => {
         });
 
         if (response.success === true) {
-            router.visit("/dashboard");
+            router.visit("/admin/dashboard");
         }
     } catch (error) {
         useErrorHandler(error, "Login gagal");
