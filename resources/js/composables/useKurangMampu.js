@@ -45,10 +45,11 @@ export function useKurangMampu() {
                 search: search.value,
                 status_validasi: selectedStatusValidasi.value,
             });
-            items.value = res.data.data.map((item) => ({
-                ...item,
-                nama_penduduk: item.penduduk?.nama_lengkap || "-",
-            }));
+            // items.value = res.data.data.map((item) => ({
+            //     ...item,
+            //     nama_penduduk: item.penduduk?.nama_lengkap || "-",
+            // }));
+            items.value = res.data.data;
             perPage.value = res.data.per_page;
             totalPages.value = res.data.last_page;
             totalItems.value = res.data.total;
