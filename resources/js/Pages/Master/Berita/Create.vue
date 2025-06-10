@@ -76,7 +76,6 @@ const onSubmit = handleSubmit(async (values) => {
         formData.append("judul", values.judul);
         formData.append("slug", generateSlug(values.judul));
         formData.append("konten", values.konten);
-        formData.append("tanggal_post", values.tanggal_post);
         formData.append("status", values.status);
         formData.append("jumlah_dilihat", 0);
         if (thumbnailFile.value) {
