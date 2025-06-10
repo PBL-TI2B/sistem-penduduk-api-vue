@@ -34,7 +34,7 @@ const columnsIndex = [
 
 const actionsIndex = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
             router.visit(route("penduduk.show", item.uuid));

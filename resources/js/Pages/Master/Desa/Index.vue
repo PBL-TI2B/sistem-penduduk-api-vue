@@ -237,7 +237,6 @@ const actionsIndex2 = getActionsDusun({
     </div>
 
     <div class="drop-shadow-md w-full grid gap-2">
-        <h2 class="text-2xl font-semibold mt-2">Data Desa</h2>
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
@@ -272,7 +271,7 @@ const actionsIndex2 = getActionsDusun({
         </div>
         <!-- TABEL DESA -->
         <DataTable
-            title="Desa"
+            label="Desa"
             :items="items"
             :totalData="totalFirstData"
             :columns="columnsIndex"
@@ -292,7 +291,6 @@ const actionsIndex2 = getActionsDusun({
         />
 
         <!-- TABEL DUSUN -->
-        <h2 class="text-2xl font-semibold mt-4">Data Dusun</h2>
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
@@ -326,7 +324,7 @@ const actionsIndex2 = getActionsDusun({
             </div>
         </div>
         <DataTable
-            title="Dusun"
+            label="Dusun"
             :items="items2"
             :totalData="totalData"
             :columns="columnsIndex2"

@@ -148,7 +148,7 @@ watch(pageJabatan, () => {
             />
         </div>
     </div>
-    <div class="drop-shadow-md w-full grid gap-2">
+    <div class="drop-shadow-md w-full grid gap-2 mb-2">
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
@@ -171,7 +171,7 @@ watch(pageJabatan, () => {
                     tabindex="-1"
                     type="button"
                 >
-                    <X class="size-5" />
+                    <XIcon class="size-5" />
                 </button>
             </div>
             <div
@@ -179,7 +179,6 @@ watch(pageJabatan, () => {
             >
                 <Button @click="createJabatan"> <SquarePlus /> Jabatan </Button>
             </div>
-            -->
         </div>
 
         <DataTable
@@ -223,11 +222,11 @@ watch(pageJabatan, () => {
                     tabindex="-1"
                     type="button"
                 >
-                    <X class="size-5" />
+                    <XIcon class="size-5" />
                 </button>
             </div>
             <div
-                class="flex bg-primary-foreground p-2 rounded-lg gap-4 justify-between items-center"
+                class="flex bg-primary-foreground px-2 rounded-lg gap-4 justify-between items-center"
             >
                 <Select v-model="selectedStatus">
                     <SelectTrigger>

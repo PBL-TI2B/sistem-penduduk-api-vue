@@ -3,9 +3,7 @@ import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { columnsIndex } from "./utils/table";
-import { Pencil, Trash2 } from "lucide-vue-next";
-import { router } from "@inertiajs/vue3";
-import { route } from "ziggy-js";
+import { PenBoxIcon, SquarePlus, Trash2 } from "lucide-vue-next";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
@@ -95,7 +93,7 @@ const applySearch = () => {
 const actionsIndex = [
     {
         label: "Edit",
-        icon: Pencil,
+        icon: PenBoxIcon,
         handler: (item) => openDialog("edit", item),
     },
     {
@@ -131,7 +129,7 @@ watch(isDialogOpen, (newVal, oldVal) => {
                 ]"
             />
         </div>
-        <Button @click="openDialog('create')">+ Pendidikan</Button>
+        <Button @click="openDialog('create')"><SquarePlus /> Pendidikan</Button>
     </div>
 
     <!-- Filter -->
