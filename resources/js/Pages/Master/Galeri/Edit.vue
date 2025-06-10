@@ -50,7 +50,7 @@ const onSubmit = handleSubmit(async (values) => {
         await apiPost(`/galeri/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data galeri");
-        router.visit("/galeri-admin");
+        router.visit("/galeri");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -97,14 +97,16 @@ onMounted(async () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/' },
-                { label: 'Galeri', href: '/galeri-admin' },
+                { label: 'Galeri', href: '/galeri' },
                 { label: 'Edit Galeri' },
             ]"
         />
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
-        <div v-if="isLoading" class="text-center py-12 text-gray-400">Memuat data...</div>
+        <div v-if="isLoading" class="text-center py-12 text-gray-400">
+            Memuat data...
+        </div>
         <div v-else class="flex flex-col lg:flex-row gap-8 justify-between">
             <!-- Form Section -->
             <form @submit="onSubmit" class="space-y-6 w-full">
@@ -139,13 +141,17 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">Peringatan: Pastikan data galeri sudah benar sebelum disimpan.</p>
+                    <p class="text-xs text-gray-500">
+                        Peringatan: Pastikan data galeri sudah benar sebelum
+                        disimpan.
+                    </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/galeri-admin')"
+                            @click="router.visit('/galeri')"
                             type="button"
                             variant="secondary"
-                        >Batal</Button>
+                            >Batal</Button
+                        >
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>

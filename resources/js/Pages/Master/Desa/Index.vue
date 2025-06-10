@@ -23,6 +23,7 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const searchDesa = ref("");
+const totalFirstData = ref(0);
 
 // Dialog dan state hapus desa
 const isFormDialogDesaOpen = ref(false);
@@ -43,6 +44,7 @@ const fetchData = async () => {
         items.value = res.data.data;
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalFirstData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data desa");
     } finally {
@@ -96,7 +98,14 @@ const actionsIndex = getActionsDesa({
 });
 
 onMounted(fetchData);
-watch([page, searchDesa], fetchData);
+
+// watch([page, fetchData]);
+const onSearchEnterDesa = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
 
 // ======================= DUSUN ========================
 const items2 = ref([]);
@@ -105,6 +114,7 @@ const page2 = ref(1);
 const perPage2 = ref(10);
 const isLoading2 = ref(false);
 const searchDusun = ref("");
+const totalData = ref(0);
 
 // Dialog dan state hapus dusun
 const isFormDialogDusunOpen = ref(false);
@@ -125,6 +135,7 @@ const fetchData2 = async () => {
         items2.value = res.data.data;
         perPage2.value = res.data.per_page;
         totalPages2.value = res.data.last_page;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data dusun");
     } finally {
@@ -133,7 +144,13 @@ const fetchData2 = async () => {
 };
 
 onMounted(fetchData2);
-watch([page2, searchDusun], fetchData2);
+// watch([page2, searchDusun], fetchData2);
+const onSearchEnterDusun = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData2();
+    }
+};
 
 const createDusun = () => {
     dialogModeDusun.value = "create";
@@ -200,24 +217,24 @@ const actionsIndex2 = getActionsDusun({
     </div>
 
     <div class="drop-shadow-md w-full grid gap-2">
-        <h2 class="text-2xl font-semibold mt-8">Data Desa</h2>
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
             <Input
                 v-model="searchDesa"
+                @keyup.enter="onSearchEnterDesa"
                 placeholder="Cari desa berdasarkan nama"
                 class="md:w-1/3"
             />
             <div class="flex gap-4">
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
-                >
+                <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
         <!-- TABEL DESA -->
         <DataTable
+            title="Desa"
             :items="items"
+            :totalData="totalFirstData"
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
@@ -235,24 +252,24 @@ const actionsIndex2 = getActionsDusun({
         />
 
         <!-- TABEL DUSUN -->
-        <h2 class="text-2xl font-semibold mt-8">Data Dusun</h2>
         <div
             class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
         >
             <Input
                 v-model="searchDusun"
+                @keyup.enter="onSearchEnterDusun"
                 placeholder="Cari dusun berdasarkan nama"
                 class="md:w-1/3"
             />
             <div class="flex gap-4">
-                <Button class="cursor-pointer" @click="fetchData2"
-                    >Terapkan</Button
-                >
+                <Button class="cursor-pointer">Terapkan</Button>
             </div>
         </div>
 
         <DataTable
+            title="Dusun"
             :items="items2"
+            :totalData="totalData"
             :columns="columnsIndex2"
             :actions="actionsIndex2"
             :totalPages="totalPages2"

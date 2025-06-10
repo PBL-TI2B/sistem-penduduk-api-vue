@@ -25,12 +25,15 @@ class JabatanController extends Controller
             });
         }
 
+        $query->withCount ('perangkatDesa');
+        // $data = $query->with(['jabatan'])->withCount('perangkatDesa');
         $jabatan = $query->paginate($request->get('per_page', 10));
 
         return new ApiResource(true, 'Daftar Data Jabatan', $jabatan);
         // $perPage = $request->input('per_page', 10);
         // $jabatan = Jabatan::paginate($perPage);
         // return new ApiResource(true, 'Daftar Data Jabatan', $jabatan);
+
     }
 
     /**

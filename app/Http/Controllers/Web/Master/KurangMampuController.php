@@ -39,10 +39,10 @@ class KurangMampuController extends Controller
      */
     public function show(KurangMampu $kurangMampu)
     {
-        abort(404);
-        // return Inertia::render('Master/KurangMampu/Show', [
-        //     'uuid' => $kurangMampu->uuid
-        // ]);
+        // abort(404);
+        return Inertia::render('Master/KurangMampu/Show', [
+            'uuid' => $kurangMampu->uuid
+        ]);
     }
 
     /**

@@ -65,18 +65,19 @@ const createJabatan = () => {
 
 const actionsJabatan = [
     {
-        label: "",
+        label: "Kelola",
         icon: PenBoxIcon,
         handler: (item) => {
             editJabatan(item);
         },
     },
     {
-        label: "",
+        label: "Hapus",
         icon: Trash2,
         handler: (item) => {
             onClickDeleteButton(item.uuid);
         },
+        disabled: (item) => item.perangkat_desa_count > 0,
     },
 ];
 
@@ -102,10 +103,18 @@ onMounted(() => {
     fetchPerangkatDesa();
     fetchJabatan();
 });
-watch(searchJabatan, () => {
-    pageJabatan.value = 1;
-    fetchJabatan();
-});
+
+const onSearchEnter = (e) => {
+    if (e.key === "Enter") {
+        pageJabatan.value = 1;
+        fetchJabatan();
+    }
+};
+
+// watch(searchJabatan, () => {
+//     pageJabatan.value = 1;
+//     fetchJabatan();
+// });
 
 watch(page, () => {
     fetchPerangkatDesa();
@@ -146,6 +155,7 @@ watch(pageJabatan, () => {
         >
             <Input
                 v-model="searchJabatan"
+                @keyup.enter="onSearchEnter"
                 placeholder="Cari jabatan"
                 class="md:w-1/3"
             />

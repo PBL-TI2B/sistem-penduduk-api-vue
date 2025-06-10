@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Kematian;
+use App\Models\Penduduk;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
 use Illuminate\Http\Request;
@@ -24,12 +25,12 @@ class KematianController extends Controller
             });
         }
 
-
         $kematian = $query->paginate($request->get('per_page', 10));
         //$kematian->setCollection(collect(KematianResource::collection($kematian->getCollection())));
 
         return new ApiResource(true, 'Daftar Data Kematian', $kematian);
     }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -49,12 +50,18 @@ class KematianController extends Controller
             'penduduk_id' => $request->penduduk_id,
         ]);
 
+        if ($request->penduduk_id) {
+            Penduduk::where('id', $request->penduduk_id)->update(['status' => 'mati']);
+        }
+
         return new ApiResource(true, 'Data Kematian Berhasil Ditambahkan', $kematian);
     }
+
     public function show(Kematian $kematian): ApiResource
     {
         return new ApiResource(true, 'Detail Data Kematian', $kematian);
     }
+
     public function update(Request $request, Kematian $kematian)
     {
         $validator = Validator::make($request->all(),[
@@ -66,12 +73,19 @@ class KematianController extends Controller
         $data = $request->all();
 
         $kematian->update($data);
+        if ($request->penduduk_id) {
+            Penduduk::where('id', $request->penduduk_id)->update(['status' => 'mati']);
+        }        
 
         return new ApiResource(true, 'Data Kematian Berhasil Diubah', $kematian);
     }
+
     public function destroy(Kematian $kematian)
     {
         $kematian->delete();
+        if ($kematian->penduduk_id) {
+            Penduduk::where('id', $kematian->penduduk_id)->update(['status' => 'hidup']);
+        }
         return new ApiResource(true, 'Data Kematian Berhasil Dihapus', null);
     }
 }

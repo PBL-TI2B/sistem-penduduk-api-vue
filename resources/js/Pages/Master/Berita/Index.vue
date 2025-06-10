@@ -71,7 +71,7 @@ watch(page, fetchData);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('berita-admin.create')">
+                <Link :href="route('berita.create')">
                     <SquarePlus /> Tambah Berita
                 </Link>
             </Button>
@@ -83,6 +83,7 @@ watch(page, fetchData);
         >
             <Input
                 v-model="search"
+                @keyup.enter="applySearch"
                 placeholder="Cari berita berdasarkan judul"
                 class="md:w-1/3"
             />

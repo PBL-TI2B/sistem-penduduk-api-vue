@@ -31,9 +31,9 @@ function generateSlug(text) {
         .toString()
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, '-')           // Replace spaces with -
-        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-        .replace(/\-\-+/g, '-');        // Replace multiple - with single -
+        .replace(/\s+/g, "-") // Replace spaces with -
+        .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+        .replace(/\-\-+/g, "-"); // Replace multiple - with single -
 }
 
 const onFileChange = (e) => {
@@ -88,7 +88,7 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
         previewThumbnail.value = null;
         toast.success("Berhasil tambah data berita");
-        router.visit("/berita-admin");
+        router.visit("/berita");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -100,23 +100,33 @@ const onSubmit = handleSubmit(async (values) => {
 
     <div class="grid gap-1">
         <h1 class="text-3xl font-bold">Tambah Data Berita</h1>
-        <BreadcrumbComponent :items="[
-            { label: 'Dashboard', href: '/' },
-            { label: 'Berita', href: '/berita-admin' },
-            { label: 'Tambah Data Berita' },
-        ]" />
+        <BreadcrumbComponent
+            :items="[
+                { label: 'Dashboard', href: '/' },
+                { label: 'Berita', href: '/berita' },
+                { label: 'Tambah Data Berita' },
+            ]"
+        />
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
         <div class="flex flex-col lg:flex-row gap-8 justify-between">
             <!-- Form Section -->
             <form @submit="onSubmit" class="space-y-6 w-full">
-                <FormField v-for="field in fields" :key="field.name" :name="field.name" v-slot="{ componentField }">
+                <FormField
+                    v-for="field in fields"
+                    :key="field.name"
+                    :name="field.name"
+                    v-slot="{ componentField }"
+                >
                     <FormItem v-if="field.name !== 'thumbnail'">
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
                             <Input
-                                v-if="field.type !== 'textarea' && field.type !== 'select'"
+                                v-if="
+                                    field.type !== 'textarea' &&
+                                    field.type !== 'select'
+                                "
                                 :type="field.type"
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
@@ -133,7 +143,11 @@ const onSubmit = handleSubmit(async (values) => {
                                 v-bind="componentField"
                             >
                                 <option value="" disabled>Pilih status</option>
-                                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">
+                                <option
+                                    v-for="opt in field.options"
+                                    :key="opt.value"
+                                    :value="opt.value"
+                                >
                                     {{ opt.label }}
                                 </option>
                             </select>
@@ -144,16 +158,29 @@ const onSubmit = handleSubmit(async (values) => {
 
                 <!-- Upload Thumbnail Berita -->
                 <div>
-                    <label class="block mb-2 font-medium">Thumbnail Berita</label>
-                    <input type="file" accept="image/*"
+                    <label class="block mb-2 font-medium"
+                        >Thumbnail Berita</label
+                    >
+                    <input
+                        type="file"
+                        accept="image/*"
                         class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
-                        @change="onFileChange" />
+                        @change="onFileChange"
+                    />
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">Peringatan: Pastikan data berita sudah benar sebelum disimpan.</p>
+                    <p class="text-xs text-gray-500">
+                        Peringatan: Pastikan data berita sudah benar sebelum
+                        disimpan.
+                    </p>
                     <div class="flex gap-2 items-center">
-                        <Button @click="router.visit('/berita-admin')" type="button" variant="secondary">Batal</Button>
+                        <Button
+                            @click="router.visit('/berita')"
+                            type="button"
+                            variant="secondary"
+                            >Batal</Button
+                        >
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>
@@ -161,10 +188,18 @@ const onSubmit = handleSubmit(async (values) => {
 
             <!-- Preview Section -->
             <div class="flex items-center justify-center">
-                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border" />
-                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border" />
+                <img
+                    v-if="previewThumbnail"
+                    :src="previewThumbnail"
+                    alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
+                <img
+                    v-else
+                    src="https://placehold.co/400x300?text=No+Image"
+                    alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
             </div>
         </div>
     </div>
