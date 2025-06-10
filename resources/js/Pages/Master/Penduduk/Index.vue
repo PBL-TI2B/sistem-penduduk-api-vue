@@ -19,7 +19,13 @@ import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { SquarePlus } from "lucide-vue-next";
+import {
+    Funnel,
+    FunnelX,
+    SearchIcon,
+    SquarePlus,
+    XIcon,
+} from "lucide-vue-next";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -27,6 +33,7 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const totalData = ref(0);
+const searchPenduduk = ref("");
 const filter = ref({
     status: "",
     status_perkawinan: "",
@@ -51,6 +58,7 @@ const fetchData = async () => {
 
         const res = await apiGet("/penduduk", {
             page: page.value,
+            search: searchPenduduk.value,
             status,
             status_perkawinan,
             pendidikan,
@@ -66,6 +74,29 @@ const fetchData = async () => {
     } finally {
         isLoading.value = false;
     }
+};
+
+const onSearchEnter = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
+
+const clearSearchPenduduk = () => {
+    searchPenduduk.value = "";
+    page.value = 1;
+    fetchData();
+};
+
+const resetFilter = () => {
+    filter.value = {
+        status: "",
+        status_perkawinan: "",
+        pendidikan: "",
+        agama: "",
+    };
+    fetchData();
 };
 
 onMounted(fetchData);
@@ -93,15 +124,33 @@ watch(page, fetchData);
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="search"
-                placeholder="Cari penduduk berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
+        <div class="flex flex-wrap gap-2 justify-between">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-[35%]"
+            >
+                <Input
+                    v-model="searchPenduduk"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari data Penduduk"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchPenduduk"
+                    @click="clearSearchPenduduk"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    title="Hapus pencarian"
+                >
+                    <XIcon />
+                </button>
+            </div>
+            <div
+                class="flex flex-wrap gap-4 bg-primary-foreground p-2 rounded-lg"
+            >
                 <Select v-model="filter.status">
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
@@ -172,9 +221,15 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-
-                <Button class="cursor-pointer" @click="fetchData"
-                    >Terapkan</Button
+                <Button asChild @click="resetFilter">
+                    <div>
+                        <FunnelX />
+                        Reset
+                    </div>
+                </Button>
+                <Button class="cursor-pointer" @click="fetchData">
+                    <Funnel />
+                    Terapkan</Button
                 >
             </div>
         </div>

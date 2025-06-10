@@ -17,21 +17,28 @@ class PendudukController extends Controller
     {
         $query = Penduduk::with(['pekerjaan', 'pendidikan'])->orderBy('status', 'asc');
 
-        // Filter status hidup/mati
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        // Filter status perkawinan
         if ($request->filled('status_perkawinan')) {
             $query->where('status_perkawinan', $request->status_perkawinan);
         }
 
-        // Filter pendidikan (jika nama ada di tabel relasi `pendidikan`)
         if ($request->filled('pendidikan')) {
             $query->whereHas('pendidikan', function ($q) use ($request) {
                 $q->where('jenjang', $request->pendidikan); // sesuaikan nama kolom jika perlu
             });
         }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%")
+                  ->orWhere('nik', 'like', "%$search%")
+                  ->orWhere('tempat_lahir', 'like', "%$search%");
+            });
+        }
+
         // Filter agama
         if ($request->filled('agama')) {
             $query->where('agama', $request->agama);

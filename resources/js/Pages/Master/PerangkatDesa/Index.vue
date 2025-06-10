@@ -18,7 +18,13 @@ import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { columnsJabatan } from "./utils/table";
-import { PenBoxIcon, SquarePlus, Trash2 } from "lucide-vue-next";
+import {
+    PenBoxIcon,
+    SearchIcon,
+    SquarePlus,
+    Trash2,
+    XIcon,
+} from "lucide-vue-next";
 import FormDialogJabatan from "./components/FormDialogJabatan.vue";
 import { usePerangkatDesa } from "@/composables/usePerangkatDesa";
 import { useJabatan } from "@/composables/useJabatan";
@@ -111,10 +117,11 @@ const onSearchEnter = (e) => {
     }
 };
 
-// watch(searchJabatan, () => {
-//     pageJabatan.value = 1;
-//     fetchJabatan();
-// });
+const clearSearchJabatan = () => {
+    searchJabatan.value = "";
+    pageJabatan.value = 1;
+    fetchJabatan();
+};
 
 watch(page, () => {
     fetchPerangkatDesa();
@@ -151,44 +158,27 @@ watch(pageJabatan, () => {
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+            class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full"
         >
             <Input
                 v-model="searchJabatan"
                 @keyup.enter="onSearchEnter"
-                placeholder="Cari jabatan"
-                class="md:w-1/3"
+                placeholder="Cari data jabatan"
+                class="pl-10 pr-8"
             />
-            <!-- filter -->
-            <!-- <div class="flex gap-4">
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Status</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="aktif"> Aktif </SelectItem>
-                            <SelectItem value="nonaktif"> Nonaktif </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Jabatan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Jabatan</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="ketua"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua-rw"> Ketua RW </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
-            </div> -->
+            <span
+                class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+            >
+                <SearchIcon class="size-6 text-muted-foreground" />
+            </span>
+            <button
+                v-if="searchJabatan"
+                @click="clearSearchJabatan"
+                class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                title="Hapus pencarian"
+            >
+                <XIcon />
+            </button>
         </div>
 
         <DataTable
@@ -205,15 +195,31 @@ watch(pageJabatan, () => {
         />
 
         <!-- //- ! - PERANGKAT DESA :} -->
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between mt-8"
-        >
-            <Input
-                v-model="search"
-                placeholder="Cari perangkat desa berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
+        <div class="flex flex-wrap gap-2 justify-between mt-8">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-1/2"
+            >
+                <Input
+                    v-model="searchJabatan"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari data perangkat desa"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchJabatan"
+                    @click="clearSearchJabatan"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    title="Hapus pencarian"
+                >
+                    <XIcon />
+                </button>
+            </div>
+            <div class="flex gap-4 bg-primary-foreground p-2 rounded-lg">
                 <Select>
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />

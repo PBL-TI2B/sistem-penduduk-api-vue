@@ -2,8 +2,8 @@
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
-import { actionsIndex, columnsIndex } from "./utils/table";
-import { PackagePlus, SearchIcon } from "lucide-vue-next";
+import { columnsIndex } from "./utils/table";
+import { PackagePlus, SearchIcon, XIcon } from "lucide-vue-next";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -21,7 +21,6 @@ const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
-const totalData = ref(0);
 
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
@@ -133,9 +132,7 @@ const clearSearchKematian = () => {
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
-            <Button asChild>
-                <Link :href="route('kematian.create')">+ Kematian</Link>
-            </Button>
+            <Button @click="createKematian"> <SquarePlus /> Kematian </Button>
         </div>
     </div>
 
@@ -162,15 +159,8 @@ const clearSearchKematian = () => {
                     class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
                     title="Hapus pencarian"
                 >
-                    ✕
+                    <XIcon />
                 </button>
-            </div>
-            <div
-                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
-            >
-                <Button asChild>
-                    <Link :href="route('kematian.create')">+ Kematian</Link>
-                </Button>
             </div>
         </div>
 
