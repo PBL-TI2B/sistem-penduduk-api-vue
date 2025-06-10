@@ -50,7 +50,7 @@ const onConfirmDelete = async () => {
     try {
         await apiDelete(`/galeri/${uuid}`);
         toast.success("Data galeri berhasil dihapus");
-        router.visit("/galeri-admin");
+        router.visit("/galeri");
     } catch (error) {
         useErrorHandler(error, "Gagal menghapus data galeri");
     } finally {
@@ -62,29 +62,30 @@ onMounted(fetchGaleri);
 </script>
 
 <template>
-
     <Head title=" | Detail Galeri" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
             <h1 class="text-3xl font-bold">Detail Galeri</h1>
-            <BreadcrumbComponent :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Galeri', href: '/galeri-admin' },
-                { label: 'Detail Galeri' },
-            ]" />
+            <BreadcrumbComponent
+                :items="[
+                    { label: 'Dashboard', href: '/' },
+                    { label: 'Galeri', href: '/galeri' },
+                    { label: 'Detail Galeri' },
+                ]"
+            />
         </div>
         <div class="flex gap-2 items-center">
             <Button asChild v-if="galeri.uuid">
-                <Link :href="route('galeri-admin.edit', galeri.uuid)">
-                <SquarePen /> Ubah
+                <Link :href="route('galeri.edit', galeri.uuid)">
+                    <SquarePen /> Ubah
                 </Link>
             </Button>
-            <Button @click="onClickDeleteButton">
-                <Trash2 /> Hapus
-            </Button>
+            <Button @click="onClickDeleteButton"> <Trash2 /> Hapus </Button>
         </div>
     </div>
-    <div class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-8 justify-between">
+    <div
+        class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-8 justify-between"
+    >
         <div class="w-full">
             <h2 class="text-lg font-bold mb-4">
                 {{ galeri.judul }}
@@ -97,16 +98,24 @@ onMounted(fetchGaleri);
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Username</td>
-                        <td>{{ galeri.user?.username ?? '-' }}</td>
+                        <td>{{ galeri.user?.username ?? "-" }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <img :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'" alt="Foto Galeri" loading="lazy"
-            class="rounded-md w-[400px] h-[300px] object-cover border" />
+        <img
+            :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'"
+            alt="Foto Galeri"
+            loading="lazy"
+            class="rounded-md w-[400px] h-[300px] object-cover border"
+        />
     </div>
 
-    <AlertDialog v-model:isOpen="isAlertDeleteOpen" :title="'Hapus Data Galeri'"
-        :description="'Apakah anda yakin ingin menghapus data galeri ini?'" :onConfirm="onConfirmDelete"
-        :onCancel="onCancelDelete" />
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        :title="'Hapus Data Galeri'"
+        :description="'Apakah anda yakin ingin menghapus data galeri ini?'"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>

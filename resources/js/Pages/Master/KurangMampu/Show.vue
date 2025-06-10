@@ -1,10 +1,26 @@
 <script setup>
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
+import Button from "@/components/ui/button/Button.vue";
+import Badge from "@/components/ui/badge/Badge.vue";
+
 import { rowsShow } from "./utils/table";
+import EditStatusDialog from "./components/EditStatusDialog.vue";
+import EditDetailDialog from "./components/EditDetailDialog.vue";
 import { onMounted, ref, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { useKurangMampu } from "@/composables/useKurangMampu";
 // import AlertDialog from "@/components/master/AlertDialog.vue";
+
+import {
+    PackagePlus,
+    SearchIcon,
+    Eye,
+    Trash2,
+    PackageSearch,
+    X,
+    FunnelX,
+    SquarePen,
+} from "lucide-vue-next";
 
 const { uuid } = usePage().props;
 
@@ -12,7 +28,12 @@ const {
     item,
     imageUrl,
     fetchDetailData,
+    // editStatusValidasi,
+    editDetailData,
 } = useKurangMampu();
+
+const isEditStatusDialogOpen = ref(false, item);
+const isEditDetailDialogOpen = ref(false);
 
 onMounted(() => {
     fetchDetailData(uuid);
@@ -47,49 +68,24 @@ onMounted(() => {
     <div class="shadow-md p-2 rounded-lg flex gap-2 justify-between my-4">
         <div class="w-full">
             <div class="flex items-center justify-between">
-                <h2 class="text-lg font-bold p-2">Detail Kurang Mampu</h2>
+                 <h2 class="text-lg font-bold p-2">Detail Kurang Mampu <Badge variant="outline">
+                    {{ item.status_validasi }}
+                 </Badge></h2>
                 <div class="flex gap-2">
-                    <!-- <Button
-                        @click="createDomisiliPenduduk"
-                        :disabled="items.domisili?.id !== null"
-                        type="button"
+                    <Button
+                        @click="isEditStatusDialogOpen = true"
                         variant="secondary"
                     >
-                        Tambah
-                        <SquarePlus />
-                    </Button> -->
-                    <!-- <Button
-                        @click="editDomisiliPenduduk(items)"
-                        :disabled="items.domisili?.id === null"
-                        variant="secondary"
-                    >
-                        Ubah
+                        Ubah Status Validasi
                         <SquarePen />
                     </Button>
                     <Button
-                        @click="editDomisiliPenduduk(items)"
-                        :disabled="items.domisili?.id === null"
+                        @click="isEditDetailDialogOpen = true"
                         variant="secondary"
                     >
-                        Ubah
+                        Ubah Detail Data
                         <SquarePen />
                     </Button>
-                    <Button
-                        @click="editDomisiliPenduduk(items)"
-                        :disabled="items.domisili?.id === null"
-                        variant="secondary"
-                    >
-                        Ubah
-                        <SquarePen />
-                    </Button> -->
-                    <!-- <Button
-                        @click="deleteDomisili"
-                        :disabled="items.domisili?.id === null"
-                        variant="secondary"
-                    >
-                        Hapus
-                        <Trash2 />
-                    </Button> -->
                 </div>
             </div>
 
@@ -152,5 +148,17 @@ onMounted(() => {
             class="rounded-md w-[450px] h-[600px] object-cover"
         />
     </div>
+
+<EditStatusDialog
+    v-model:isOpen="isEditStatusDialogOpen"
+    :initial-data="item"
+    @success="fetchDetailData(uuid)"
+/>
+
+<EditDetailDialog
+    v-model:isOpen="isEditDetailDialogOpen"
+    :initial-data="item"
+    @success="fetchDetailData(uuid)"
+/>
 
 </template>

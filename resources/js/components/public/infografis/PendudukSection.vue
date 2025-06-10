@@ -4,12 +4,9 @@ import { router, usePage } from "@inertiajs/vue3";
 // import axios from "axios";
 import { useStatistik } from "@/composables/useStatistik";
 
-const {
-    statistikItems,
-    fetchStatistikByType
-} = useStatistik();
+const { statistikItems, fetchStatistikByType } = useStatistik();
 
-onMounted(async () =>  {
+onMounted(async () => {
     await fetchStatistikByType("demografi");
     statistik.value = statistikItems.value;
 });
@@ -25,7 +22,6 @@ const statistik = ref({
 const page = usePage();
 const isActive = (path) => page.url === path;
 console.log(page.url);
-
 </script>
 
 <template>
@@ -35,9 +31,10 @@ console.log(page.url);
     </h2>
     <div
         :class="{
-            'relative grid gap-4 text-white text-center': isActive('/infografis') || isActive('/dashboard'),
+            'relative grid gap-4 text-white text-center':
+                isActive('/infografis') || isActive('/admin/dashboard'),
             'grid-cols-2 md:grid-cols-2': isActive('/infografis'),
-            'grid-cols-4': isActive('/dashboard')
+            'grid-cols-4': isActive('/admin/dashboard'),
         }"
     >
         <div

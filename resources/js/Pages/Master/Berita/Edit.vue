@@ -75,7 +75,7 @@ const onSubmit = handleSubmit(async (values) => {
         await apiPost(`/berita/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
-        router.visit("/berita-admin");
+        router.visit("/berita");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -124,7 +124,7 @@ onMounted(async () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/' },
-                { label: 'Berita', href: '/berita-admin' },
+                { label: 'Berita', href: '/berita' },
                 { label: 'Edit Berita' },
             ]"
         />
@@ -204,7 +204,7 @@ onMounted(async () => {
                     </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/berita-admin')"
+                            @click="router.visit('/berita')"
                             type="button"
                             variant="secondary"
                             >Batal</Button

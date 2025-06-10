@@ -8,12 +8,13 @@ use App\Http\Resources\ApiResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Http\Resources\KartuKeluargaResource;
 
 class KartuKeluargaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = KartuKeluarga::query();
+        $query = KartuKeluarga::query()->with(['rt', 'anggotaKeluarga.penduduk', 'anggotaKeluarga.statusKeluarga', 'anggotaKeluarga.kurangMampu']);
         
         if ($request->filled('search')) {
             $search = $request->search;
@@ -59,7 +60,12 @@ class KartuKeluargaController extends Controller
     public function show(KartuKeluarga $kartuKeluarga)
     {
         // Menampilkan detail Kartu Keluarga
-        return new ApiResource(true, 'Detail Kartu Keluarga', $kartuKeluarga);
+        $kartuKeluarga->load(['rt.rw', 'anggotaKeluarga.penduduk', 'anggotaKeluarga.statusKeluarga']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil ambil detail data kartu keluarga',
+            'data' => new KartuKeluargaResource($kartuKeluarga),
+        ]);
     }
 
     public function update(Request $request, KartuKeluarga $kartuKeluarga)

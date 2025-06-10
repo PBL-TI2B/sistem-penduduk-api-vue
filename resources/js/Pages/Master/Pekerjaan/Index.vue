@@ -44,6 +44,7 @@ const fetchData = async () => {
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
         totalData.value = res.data.total;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data pekerjaan");
     } finally {

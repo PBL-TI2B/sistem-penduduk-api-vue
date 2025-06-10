@@ -14,7 +14,7 @@ export const items = [
     {
         title: "Dashboard",
         icon: LayoutDashboard,
-        to: "/dashboard",
+        to: "/admin/dashboard",
         roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
@@ -24,17 +24,17 @@ export const items = [
         children: [
             {
                 title: "Penduduk",
-                to: "/penduduk",
+                to: "/admin/penduduk",
                 roles: ["admin", "superadmin"],
             },
             {
                 title: "Kematian",
-                to: "/kematian",
+                to: "/admin/kematian",
                 roles: ["admin", "superadmin"],
             },
             {
                 title: "Kelahiran",
-                to: "/kelahiran",
+                to: "/admin/kelahiran",
                 roles: ["admin", "superadmin"],
             },
         ],
@@ -42,19 +42,19 @@ export const items = [
     {
         title: "Perangkat Desa",
         icon: Network,
-        to: "/perangkat-desa",
+        to: "/admin/perangkat-desa",
         roles: ["superadmin"],
     },
     {
         title: "Keluarga",
         icon: IdCard,
-        to: "/keluarga",
+        to: "/admin/keluarga",
         roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Data Desa",
         icon: MapPinHouse,
-        to: "/desa",
+        to: "/admin/desa",
         roles: ["admin", "superadmin"],
     },
     {
@@ -63,12 +63,12 @@ export const items = [
         children: [
             {
                 title: "Berita",
-                to: "/berita-admin",
+                to: "/admin/berita",
                 roles: ["admin", "superadmin"],
             },
             {
                 title: "Galeri",
-                to: "/galeri-admin",
+                to: "/admin/galeri",
                 roles: ["admin", "superadmin"],
             },
         ],
@@ -76,13 +76,13 @@ export const items = [
     {
         title: "Pendidikan",
         icon: GraduationCap,
-        to: "/pendidikan",
+        to: "/admin/pendidikan",
         roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
         title: "Pekerjaan",
         icon: BriefcaseBusiness,
-        to: "/pekerjaan",
+        to: "/admin/pekerjaan",
         roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
@@ -91,21 +91,23 @@ export const items = [
         children: [
             {
                 title: "Bantuan",
-                to: "/bantuan",
+                to: "/admin/bantuan",
             },
             {
                 title: "Kurang Mampu",
-                to: "/kurang-mampu",
+                to: "/admin/kurang-mampu",
             },
             {
                 title: "Penerima Bantuan",
-                to: "/penerima-bantuan",
+                to: "/admin/penerima-bantuan",
             },
-            // {
-            //     title: "Kategori Bantuan",
-            //     to: "/kategori-bantuan",
-            // },
         ],
         roles: ["admin", "superadmin", "rt", "rw"],
+    },
+    {
+        title: "User",
+        icon: UsersRound,
+        to: "/admin/user",
+        roles: ["admin", "superadmin"],
     },
 ];

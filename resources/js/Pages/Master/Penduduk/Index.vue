@@ -26,6 +26,7 @@ const totalPages = ref(1);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
+const totalData = ref(0);
 const filter = ref({
     status: "",
     status_perkawinan: "",
@@ -59,6 +60,7 @@ const fetchData = async () => {
         items.value = res.data.data;
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data penduduk");
     } finally {
@@ -182,6 +184,7 @@ watch(page, fetchData);
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
+            :totalData="totalData"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
