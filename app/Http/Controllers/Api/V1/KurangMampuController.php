@@ -67,7 +67,7 @@ class KurangMampuController extends Controller
             'pendapatan_per_hari' => 'nullable|string',
             'pendapatan_per_bulan' => 'nullable|string',
             'jumlah_tanggungan' => 'nullable|string',
-            // 'status_validasi' => 'required|in:pending,terverifikasi,ditolak',
+            // 'status_validasi' => 'required|in:pending,tervalidasi,ditolak',
             'keterangan' => 'nullable|string',
             'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
         ]);
@@ -79,7 +79,7 @@ class KurangMampuController extends Controller
         $kurangMampu = KurangMampu::create([
             'pendapatan_per_hari' => $request->pendapatan_per_hari,
             'pendapatan_per_bulan' => $request->pendapatan_per_bulan,
-            'jumlah_tanggungan' => $request->jumlah_tanggungan,
+            'jumlah_tanggungan' => $request->jumlah_tanggungan ?? 0,
             // 'status_validasi' => $request->status_validasi,
             'status_validasi' => 'pending',
             'keterangan' => $request->keterangan,
@@ -102,14 +102,27 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        $validator = Validator::make($request->all(), [
-            'pendapatan_per_hari' => 'nullable|string',
-            'pendapatan_per_bulan' => 'nullable|string',
-            'jumlah_tanggungan' => 'nullable|string',
-            'status_validasi' => 'required|in:pending,terverifikasi,ditolak',
-            'keterangan' => 'nullable|string',
-            'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'pendapatan_per_hari' => 'nullable|string',
+        //     'pendapatan_per_bulan' => 'nullable|string',
+        //     'jumlah_tanggungan' => 'nullable|string',
+        //     'status_validasi' => 'required|in:pending,tervalidasi,ditolak',
+        //     'keterangan' => 'nullable|string',
+        //     // 'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
+        // ]);
+
+        if ($request->has('status_validasi')) {
+            $validator = Validator::make($request->all(), [
+                'status_validasi' => 'required|in:tervalidasi,ditolak',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'pendapatan_per_hari' => 'nullable|string',
+                'pendapatan_per_bulan' => 'nullable|string',
+                'jumlah_tanggungan' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+            ]);
+        }
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

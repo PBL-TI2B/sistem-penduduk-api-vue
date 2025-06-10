@@ -139,10 +139,10 @@ const rowsShow = [
     { label: "Nomor RW", key: "penduduk", format: (value) => value?.nomor_rw ?? '-' },
     { label: "Nama Dusun", key: "penduduk", format: (value) => value?.nama_dusun ?? '-' },
 
+    { label: "Status Validasi", key: "status_validasi" },
     { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari", format: formatCurrency },
     { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan", format: formatCurrency },
     { label: "Jumlah Tanggungan", key: "jumlah_tanggungan", format: (value) => value ?? '0' },
-    { label: "Status Validasi", key: "status_validasi" },
     { label: "Keterangan", key: "keterangan", format: (value) => value ?? '-' },
 ];
 
