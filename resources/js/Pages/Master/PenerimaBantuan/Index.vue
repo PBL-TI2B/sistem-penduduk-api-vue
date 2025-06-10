@@ -26,6 +26,7 @@ import {
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 
+import AlertDialog from "@/components/master/AlertDialog.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
@@ -68,6 +69,25 @@ const resetFilter = () => {
     selectedStatusPenerimaanBantuan.value = "";
     applyFilter();
 };
+
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
+
+// Setting Action Buttons
+const actionsIndexPenerimaBantuan = actionsIndex(onClickDeleteButton);
 
 onMounted(() => {
     fetchData();
@@ -181,7 +201,7 @@ watch(page, () => {
         <DataTable
             :items="items"
             :columns="columnsIndex"
-            :actions="actionsIndex"
+            :actions="actionsIndexPenerimaBantuan"
             :totalPages="totalPages"
             :page="page"
             :per-page="perPage"
@@ -189,4 +209,11 @@ watch(page, () => {
             @update:page="page = $event"
         />
     </div>
+        <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        title="Hapus Penerima Bantuan"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>
