@@ -117,12 +117,15 @@ const onSearchEnter = (e) => {
     }
 };
 
-const clearSearchJabatan = () => {
-    searchJabatan.value = "";
-    pageJabatan.value = 1;
+const applyFilter = () => {
+    page.value = 1;
     fetchJabatan();
 };
 
+const clearSearchJabatan = () => {
+    searchJabatan.value = "";
+    applyFilter();
+};
 watch(page, () => {
     fetchPerangkatDesa();
 });
@@ -144,41 +147,39 @@ watch(pageJabatan, () => {
                 ]"
             />
         </div>
-        <div class="flex flex-wrap gap-4 items-center">
-            <Button @click="createJabatan"> <SquarePlus /> Jabatan </Button>
-            <Button asChild>
-                <Link
-                    :href="route('perangkat-desa.create')"
-                    class="flex items-center gap-1"
-                >
-                    <SquarePlus /> Perangkat Desa
-                </Link>
-            </Button>
-        </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full"
-        >
-            <Input
-                v-model="searchJabatan"
-                @keyup.enter="onSearchEnter"
-                placeholder="Cari data jabatan"
-                class="pl-10 pr-8"
-            />
-            <span
-                class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
             >
-                <SearchIcon class="size-6 text-muted-foreground" />
-            </span>
-            <button
-                v-if="searchJabatan"
-                @click="clearSearchJabatan"
-                class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                title="Hapus pencarian"
+                <Input
+                    v-model="searchJabatan"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari jabatan"
+                    class="pl-10 pr8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchJabatan"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchJabatan"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <XIcon />
-            </button>
+                <Button @click="createJabatan"> <SquarePlus /> Jabatan </Button>
+            </div>
+            -->
         </div>
 
         <DataTable
@@ -193,17 +194,22 @@ watch(pageJabatan, () => {
             :is-loading="isLoadingJabatan"
             @update:page="pageJabatan = $event"
         />
+    </div>
 
-        <!-- //- ! - PERANGKAT DESA :} -->
-        <div class="flex flex-wrap gap-2 justify-between mt-8">
+    <!-- //- ! - PERANGKAT DESA :} -->
+    <div class="drop-shadow-md w-full grid gap-2">
+        <!-- Search & Filter -->
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-1/2"
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
             >
                 <Input
-                    v-model="searchJabatan"
-                    @keyup.enter="onSearchEnter"
-                    placeholder="Cari data perangkat desa"
+                    id="searchPerangkat"
+                    v-model="search"
+                    type="text"
+                    placeholder="Cari perangkat desa berdasarkan nama"
                     class="pl-10 pr-8"
+                    @change="applySearchPerangkat"
                 />
                 <span
                     class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
@@ -211,45 +217,62 @@ watch(pageJabatan, () => {
                     <SearchIcon class="size-6 text-muted-foreground" />
                 </span>
                 <button
-                    v-if="searchJabatan"
-                    @click="clearSearchJabatan"
+                    v-if="search"
                     class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                    title="Hapus pencarian"
+                    @click="search = ''"
+                    tabindex="-1"
+                    type="button"
                 >
-                    <XIcon />
+                    <X class="size-5" />
                 </button>
             </div>
-            <div class="flex gap-4 bg-primary-foreground p-2 rounded-lg">
-                <Select>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-4 justify-between items-center"
+            >
+                <Select v-model="selectedStatus">
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Status</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="aktif"> Aktif </SelectItem>
-                            <SelectItem value="nonaktif"> Nonaktif </SelectItem>
+                            <SelectItem value="-">Semua</SelectItem>
+                            <SelectItem value="aktif">Aktif</SelectItem>
+                            <SelectItem value="nonaktif">Nonaktif</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select>
+
+                <Select v-model="selectedJabatan">
                     <SelectTrigger>
                         <SelectValue placeholder="Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Jabatan</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="ketua"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua-rw"> Ketua RW </SelectItem>
+                            <SelectItem value="-">Semua</SelectItem>
+                            <SelectItem value="ketua">Ketua RT</SelectItem>
+                            <SelectItem value="ketua-rw">Ketua RW</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
+
+                <Button @click="applyFilterPerangkat">Terapkan</Button>
+                <div
+                    class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                >
+                    <Button asChild>
+                        <Link
+                            :href="route('perangkat-desa.create')"
+                            class="flex items-center gap-1"
+                        >
+                            <SquarePlus /> Perangkat Desa
+                        </Link>
+                    </Button>
+                </div>
             </div>
         </div>
-        <!-- //- ! - Belum ada Total Datanya, TAMBAHIN SENDIRI :} -->
+
         <DataTable
             label="Perangkat Desa"
             :items="items"
@@ -265,6 +288,7 @@ watch(pageJabatan, () => {
             @update:page="page = $event"
         />
     </div>
+
     <FormDialogJabatan
         v-model:isOpen="isFormDialogOpen"
         :mode="dialogMode"
