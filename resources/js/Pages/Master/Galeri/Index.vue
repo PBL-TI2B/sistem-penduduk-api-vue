@@ -21,11 +21,14 @@ const fetchData = async () => {
     try {
         items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/galeri", { page: page.value, search: search.value });
-        items.value = res.data.data.map(item => ({
+        const res = await apiGet("/galeri", {
+            page: page.value,
+            search: search.value,
+        });
+        items.value = res.data.data.map((item) => ({
             ...item,
             uuid: item.uuid ?? null,
-            username: item.user?.username ?? "-"
+            username: item.user?.username ?? "-",
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
@@ -59,20 +62,24 @@ watch(page, fetchData);
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
-                <Link :href="route('galeri-admin.create')">
+                <Link :href="route('galeri.create')">
                     <SquarePlus /> Tambah Gambar
                 </Link>
             </Button>
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between">
+        <div
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+        >
             <Input
                 v-model="search"
                 placeholder="Cari galeri berdasarkan judul"
                 class="md:w-1/3"
             />
-            <Button class="cursor-pointer" @click="applySearch">Terapkan</Button>
+            <Button class="cursor-pointer" @click="applySearch"
+                >Terapkan</Button
+            >
         </div>
         <DataTable
             label="Galeri"

@@ -16,6 +16,7 @@ export function getActionsPekerjaan({ onEdit, onDelete }) {
             label: "Hapus",
             icon: Trash,
             handler: (item) => onDelete(item),
+            disabled: (item) => item.penduduk_count > 0,
         },
     ];
 }

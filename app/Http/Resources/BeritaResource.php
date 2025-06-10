@@ -21,13 +21,14 @@ class BeritaResource extends JsonResource
             'judul' => $this->judul,
             'slug' => $this->slug,
             'konten' => $this->konten,
-            'tanggal_post' => $this->tanggal_post,
             'jumlah_dilihat' => $this->jumlah_dilihat,
             'status' => $this->status,
             'user_id' => [
                 'id' => $this->user?->id,
                 'username' => $this->user?->username,
             ],
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toIso8601String() : null,
         ];
     }
 

@@ -25,4 +25,8 @@ class Pekerjaan extends Model
     {
         return 'uuid';
     }
+    public function penduduk()
+    {
+        return $this->hasMany(Penduduk::class, 'pekerjaan_id', 'id');
+    }
 }

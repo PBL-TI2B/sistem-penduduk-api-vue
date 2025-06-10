@@ -62,7 +62,6 @@ const onSubmit = handleSubmit(async (values) => {
         formData.append("judul", values.judul);
         formData.append("slug", values.slug);
         formData.append("konten", values.konten);
-        formData.append("tanggal_post", values.tanggal_post);
         formData.append("status", values.status);
         if (thumbnailFile.value) {
             formData.append("thumbnail", thumbnailFile.value);
@@ -75,7 +74,7 @@ const onSubmit = handleSubmit(async (values) => {
         await apiPost(`/berita/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
-        router.visit("/berita-admin");
+        router.visit("/berita");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -90,7 +89,6 @@ onMounted(async () => {
             judul: data.judul ?? "",
             slug: data.slug ?? "",
             konten: data.konten ?? "",
-            tanggal_post: data.tanggal_post ?? "",
             status: data.status && data.status !== "" ? data.status : "draft", // lebih aman
         });
         if (data.thumbnail) {
@@ -124,7 +122,7 @@ onMounted(async () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/' },
-                { label: 'Berita', href: '/berita-admin' },
+                { label: 'Berita', href: '/berita' },
                 { label: 'Edit Berita' },
             ]"
         />
@@ -204,7 +202,7 @@ onMounted(async () => {
                     </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/berita-admin')"
+                            @click="router.visit('/berita')"
                             type="button"
                             variant="secondary"
                             >Batal</Button
