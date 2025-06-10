@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('thumbnail')->nullable();
             $table->text('konten');
-            $table->datetime('tanggal_post');
             $table->string('jumlah_dilihat')->default(0);
             $table->enum('status', ['draft', 'publish'])->default('draft');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
