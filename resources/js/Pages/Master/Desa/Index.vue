@@ -3,7 +3,7 @@ import { Head, router } from "@inertiajs/vue3";
 import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { SquarePlus } from "lucide-vue-next";
+import { SquarePlus, SearchIcon, X } from "lucide-vue-next";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -51,6 +51,9 @@ const fetchData = async () => {
         isLoading.value = false;
     }
 };
+watch(page, () => {
+    fetchData();
+});
 
 const createDesa = () => {
     dialogModeDesa.value = "create";
@@ -106,6 +109,15 @@ const onSearchEnterDesa = (e) => {
         fetchData();
     }
 };
+const applyFilter = () => {
+    page.value = 1;
+    fetchData();
+};
+
+const clearSearchDesa = () => {
+    searchDesa.value = "";
+    applyFilter();
+};
 
 // ======================= DUSUN ========================
 const items2 = ref([]);
@@ -144,6 +156,18 @@ const fetchData2 = async () => {
 };
 
 onMounted(fetchData2);
+watch(page, () => {
+    fetchData2();
+});
+const applyFilter2 = () => {
+    page.value = 1;
+    fetchData2();
+};
+
+const clearSearchDusun = () => {
+    searchDusun.value = "";
+    applyFilter2();
+};
 // watch([page2, searchDusun], fetchData2);
 const onSearchEnterDusun = (e) => {
     if (e.key === "Enter") {
@@ -210,24 +234,40 @@ const actionsIndex2 = getActionsDusun({
                 ]"
             />
         </div>
-        <div class="flex flex-wrap gap-4 items-center">
-            <Button @click="createDusun"><SquarePlus />Dusun </Button>
-            <Button @click="createDesa"><SquarePlus />Desa </Button>
-        </div>
     </div>
 
     <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="searchDesa"
-                @keyup.enter="onSearchEnterDesa"
-                placeholder="Cari desa berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
-                <Button class="cursor-pointer">Terapkan</Button>
+        <h2 class="text-2xl font-semibold mt-2">Data Desa</h2>
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    v-model="searchDesa"
+                    @keyup.enter="onSearchEnterDesa"
+                    placeholder="Cari desa berdasarkan nama"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchDesa"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchDesa"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+                <!-- <button class="cursor-pointer">Terapkan</button> -->
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createDesa"><SquarePlus />Desa </Button>
             </div>
         </div>
         <!-- TABEL DESA -->
@@ -252,20 +292,39 @@ const actionsIndex2 = getActionsDusun({
         />
 
         <!-- TABEL DUSUN -->
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="searchDusun"
-                @keyup.enter="onSearchEnterDusun"
-                placeholder="Cari dusun berdasarkan nama"
-                class="md:w-1/3"
-            />
-            <div class="flex gap-4">
-                <Button class="cursor-pointer">Terapkan</Button>
+        <h2 class="text-2xl font-semibold mt-4">Data Dusun</h2>
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    v-model="searchDusun"
+                    @keyup.enter="onSearchEnterDusun"
+                    placeholder="Cari dusun berdasarkan nama"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchDusun"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchDusun"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+                <!-- <Button class="cursor-pointer">Terapkan</Button> -->
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createDusun"><SquarePlus />Dusun </Button>
             </div>
         </div>
-
         <DataTable
             title="Dusun"
             :items="items2"
