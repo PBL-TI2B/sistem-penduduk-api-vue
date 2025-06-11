@@ -1,5 +1,6 @@
 import { Eye } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
+import dayjs from "dayjs";
 
 const columnsIndex = [
     { label: "Nama Lengkap", key: "nama_lengkap" },
@@ -11,7 +12,11 @@ const columnsIndex = [
         },
     },
     { label: "Tempat Lahir", key: "tempat_lahir" },
-    { label: "Tanggal Lahir", key: "tanggal_lahir" },
+    {
+        label: "Tanggal Lahir",
+        key: "tanggal_lahir",
+        format: (val) => dayjs(val).format("DD MMM YYYY"),
+    },
     {
         label: "Pendidikan",
         key: "pendidikan",

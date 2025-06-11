@@ -89,7 +89,7 @@ export function usePenerimaBantuan() {
     };
 
     //! Create Penerima Bantuan
-    const createData  = async (values) => {
+    const createData = async (values) => {
         try {
             isLoading.value = true;
 
@@ -99,7 +99,7 @@ export function usePenerimaBantuan() {
             }
             await apiPost("/penerima-bantuan", values);
             toast.success("Berhasil Tambah Data Penerima Bantuan");
-            router.visit("/penerima-bantuan");
+            router.visit("/admin/penerima-bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data penerima bantuan");
         } finally {
@@ -108,7 +108,7 @@ export function usePenerimaBantuan() {
     };
 
     //! Edit Keterangan Penerima Bantuan
-    const editKeterangan  = async (uuid, values) => {
+    const editKeterangan = async (uuid, values) => {
         try {
             isLoading.value = true;
 
@@ -121,9 +121,12 @@ export function usePenerimaBantuan() {
             // }
             await apiPost(`/penerima-bantuan/${uuid}`, formData);
             toast.success("Berhasil memperbarui keterangan penerima bantuan");
-            router.visit("/penerima-bantuan");
+            router.visit("/admin/penerima-bantuan");
         } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui keterangan penerima bantuan");
+            useErrorHandler(
+                error,
+                "Gagal memperbarui keterangan penerima bantuan"
+            );
         } finally {
             isLoading.value = false;
         }
@@ -149,12 +152,12 @@ export function usePenerimaBantuan() {
     };
 
     //! Delete Penerima Bantuan
-    const deleteData  = async (uuid) => {
+    const deleteData = async (uuid) => {
         try {
             // isLoading.value = true;
             await apiDelete(`/penerima-bantuan/${uuid}`);
             toast.success("Berhasil menghapus penerima-bantuan");
-            router.visit("/penerima-bantuan");
+            router.visit("/admin/penerima-bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus penerima bantuan");
         } finally {

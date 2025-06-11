@@ -28,6 +28,7 @@ import { usePerangkatDesa } from "@/composables/usePerangkatDesa";
 const fields = ref([]);
 const perangkatDesa = ref(null);
 const { uuid } = usePage().props;
+const customInputMode = ref({});
 
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchemaPerangkatDesa,
@@ -134,6 +135,57 @@ onMounted(async () => {
                 <FormItem>
                     <FormLabel>{{ field.label }}</FormLabel>
                     <FormControl>
+                        <template v-if="field.type === 'selectOrInput'">
+                            <div class="flex gap-2 items-center">
+                                <template v-if="!customInputMode[field.name]">
+                                    <Select v-bind="componentField">
+                                        <SelectTrigger class="w-full">
+                                            <SelectValue
+                                                placeholder="Pilih..."
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem
+                                                v-for="option in field.options"
+                                                :key="option.value"
+                                                :value="option.value"
+                                            >
+                                                {{ option.label }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="outline"
+                                        @click="
+                                            customInputMode[field.name] = true
+                                        "
+                                    >
+                                        Input Manual
+                                    </Button>
+                                </template>
+                                <template v-else>
+                                    <Input
+                                        type="text"
+                                        placeholder="Contoh: 2024 - 2029"
+                                        v-bind="componentField"
+                                    />
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="outline"
+                                        @click="
+                                            customInputMode[field.name] = false
+                                        "
+                                    >
+                                        Pilih dari Daftar
+                                    </Button>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Default text & select fallback -->
                         <Input
                             v-if="
                                 field.type === 'text' || field.type === 'date'
@@ -152,10 +204,10 @@ onMounted(async () => {
                             <SelectContent>
                                 <SelectItem
                                     v-for="option in field.options"
-                                    :key="option.value || option"
-                                    :value="option.value || option"
+                                    :key="option.value"
+                                    :value="option.value"
                                 >
-                                    {{ option.label || option }}
+                                    {{ option.label }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>

@@ -25,16 +25,18 @@ export function useKategoriBantuan() {
                 itemsKategoriAll.value = [];
 
                 const res = await apiGet("/kategori-bantuan", {
-                    all: all
+                    all: all,
                 });
 
                 // return itemsKategoriAll = res.data;
-                return itemsKategoriAll.value = [
-                    ...res.data.map(kat => ({
+                return (itemsKategoriAll.value = [
+                    ...res.data.map((kat) => ({
                         value: kat.id,
-                        label: kat.kategori.charAt(0).toUpperCase() + kat.kategori.slice(1)
-                    }))
-                ];
+                        label:
+                            kat.kategori.charAt(0).toUpperCase() +
+                            kat.kategori.slice(1),
+                    })),
+                ]);
                 // return
             }
 
@@ -52,7 +54,6 @@ export function useKategoriBantuan() {
             perPageKategori.value = res.data.per_page;
             totalPagesKategori.value = res.data.last_page;
             totalDataKategori.value = res.data.total;
-
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data kategori");
         } finally {
@@ -72,7 +73,10 @@ export function useKategoriBantuan() {
 
             if (props.mode === "edit") {
                 formData.append("_method", "PUT");
-                await apiPost(`/kategori-bantuan/${props.initialData?.uuid}`, formData);
+                await apiPost(
+                    `/kategori-bantuan/${props.initialData?.uuid}`,
+                    formData
+                );
             } else {
                 await apiPost("/kategori-bantuan", formData);
             }
@@ -97,7 +101,7 @@ export function useKategoriBantuan() {
 
             await apiDelete(`/kategori-bantuan/${uuid}`);
             toast.success("Berhasil menghapus kategori");
-            router.visit("/bantuan");
+            router.visit("/admin/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kategori");
         } finally {

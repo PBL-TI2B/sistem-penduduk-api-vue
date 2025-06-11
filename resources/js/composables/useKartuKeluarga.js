@@ -63,7 +63,7 @@ export function useKartuKeluarga(uuid) {
             }
             await apiPost("/kartu-keluarga", values);
             toast.success("Berhasil Tambah Data kartu keluarga");
-            router.visit("/kartu-keluarga");
+            router.visit("/admin/kartu-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data kartu keluarga");
         } finally {
@@ -83,7 +83,7 @@ export function useKartuKeluarga(uuid) {
             }
             await apiPost(`/kartu-keluarga/${uuid}`, formData);
             toast.success("Berhasil memperbarui data kartu keluarga");
-            router.visit("/kartu-keluarga");
+            router.visit("/admin/kartu-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data kartu keluarga");
         } finally {
@@ -97,7 +97,7 @@ export function useKartuKeluarga(uuid) {
             // isLoading.value = true;
             await apiDelete(`/kartu-keluarga/${uuid}`);
             toast.success("Berhasil menghapus kartu keluarga");
-            router.visit("/kartu-keluarga");
+            router.visit("/admin/kartu-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kartu keluarga");
         } finally {
