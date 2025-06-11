@@ -61,7 +61,7 @@ class PendudukController extends Controller
         $validator = Validator::make($request->all(), [
             'nik' => 'required|unique:penduduk',
             'nama_lengkap' => 'required',
-            'foto' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'foto' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',
@@ -81,12 +81,14 @@ class PendudukController extends Controller
         }
 
         $foto = $request->file('foto');
-        $foto->storeAs('penduduk', $foto->hashName());
+        if ($foto) {
+            $foto->storeAs('penduduk', $foto->hashName());
+        }
 
         $penduduk = Penduduk::create([
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
-            'foto' => $foto->hashName(),
+            'foto' => $foto ? $foto->hashName() : null,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
