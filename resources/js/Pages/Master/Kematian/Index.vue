@@ -21,7 +21,6 @@ const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
-const totalData = ref(0);
 
 const isFormDialogOpen = ref(false);
 const dialogMode = ref("create");
@@ -30,24 +29,6 @@ const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 
 const searchKematian = ref("");
-
-const actionsIndex = (onClickDeleteBantuanButton) => [
-    {
-        label: "Ubah",
-        icon: SquarePen,
-        handler: (item) => {
-            editKematian(item);
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash2,
-        handler: (item) => {
-            onClickDeleteBantuanButton(item.uuid);
-        },
-        disabled: (item) => item.penerima_bantuan_count > 0,
-    },
-];
 
 const onClickDeleteKematianButton = (uuid) => {
     selectedUuid.value = uuid;
