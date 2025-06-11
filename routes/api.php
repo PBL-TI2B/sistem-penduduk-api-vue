@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\{
     PekerjaanController,
     InfografisController,
     PenerimaBantuanController,
+    RiwayatBantuanController,
     PendidikanController,
     RtController,
     RwController
@@ -76,7 +77,7 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::get('/galeri/url_media/{filename}', [GaleriController::class, 'getGaleri']);
         Route::get('/berita/thumbnail/{filename}', [BeritaController::class, 'getBerita']);
-        
+
         RoutePermission('rt', RtController::class, 'rt');
         RoutePermission('rw', RwController::class, 'rw');
         RoutePermission('jabatan', JabatanController::class, 'jabatan');
@@ -94,5 +95,6 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
         RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
         RoutePermission('notifikasi', NotifikasiController::class, 'notifikasi');
         RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
+        RoutePermission('riwayat-bantuan', RiwayatBantuanController::class, 'riwayatBantuan');
     });
 });

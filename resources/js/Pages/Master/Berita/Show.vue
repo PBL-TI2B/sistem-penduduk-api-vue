@@ -104,23 +104,11 @@ onMounted(fetchBerita);
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Tanggal Posting</td>
-                        <td>
-                            {{
-                                dayjs(berita.created_at).format(
-                                    "DD MMM YYYY HH:mm"
-                                )
-                            }}
-                        </td>
+                        <td>{{ dayjs(berita.created_at).format('DD MMM YYYY HH:mm') }}</td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Terakhir Diubah</td>
-                        <td>
-                            {{
-                                dayjs(berita.updated_at).format(
-                                    "DD MMM YYYY HH:mm"
-                                )
-                            }}
-                        </td>
+                        <td>{{ dayjs(berita.updated_at).format('DD MMM YYYY HH:mm') }}</td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Status</td>

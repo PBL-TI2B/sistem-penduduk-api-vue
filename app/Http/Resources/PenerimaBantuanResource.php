@@ -20,6 +20,7 @@ class PenerimaBantuanResource extends JsonResource
             'status' => ucfirst($this->status),
             'tanggal_penerimaan' => $this->tanggal_penerimaan,
             'keterangan' => $this->keterangan,
+            'riwayat_bantuan_count' => $this->riwayat_bantuan_count,
 
             'kurang_mampu' => new KurangMampuResource($this->whenLoaded('kurangMampu')),
             // 'kurang_mampu' => new KurangMampuResource($this->kurangMampu),
