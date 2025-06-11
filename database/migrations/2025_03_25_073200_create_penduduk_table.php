@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('tanggal_lahir');
             $table->string('agama', 20);
             $table->string('gol_darah', 10)->nullable();
-            $table->enum('status_perkawinan', ['kawin', 'belum kawin']);
+            $table->enum('status_perkawinan', ['kawin', 'belum kawin', 'cerai hidup', 'cerai mati']);
             $table->string('tinggi_badan', 20)->nullable();
             $table->enum('status', ['hidup', 'mati']);
 

@@ -239,12 +239,22 @@ const handleExport = async (format) => {
                     <TableCell>{{
                         (page - 1) * perPage + index + 1
                     }}</TableCell>
+
                     <TableCell v-for="col in columns" :key="col.key">
-                        {{
-                            col.format
-                                ? col.format(item[col.key], item)
-                                : item[col.key]
-                        }}
+                        <span
+                            :class="
+                                col.customClass
+                                    ? `${col.customClass(item[col.key], item)}
+                                      px-3 p-1 rounded-md`
+                                    : ''
+                            "
+                        >
+                            {{
+                                col.format
+                                    ? col.format(item[col.key], item)
+                                    : item[col.key]
+                            }}
+                        </span>
                     </TableCell>
 
                     <!-- Terapkan Disabled Button -->
