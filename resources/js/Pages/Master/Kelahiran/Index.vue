@@ -17,6 +17,9 @@ import { useKelahiran } from "@/composables/useKelahiran";
 import { columnsIndexKelahiran } from "./utils/table";
 import { actionsIndexKelahiran } from "./utils/table";
 
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 const {
     items,
     item,
@@ -79,7 +82,7 @@ onMounted(() => {
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
                 <Link
-                    :href="route('user.create')"
+                    :href="route('kelahiran.create')"
                     class="flex items-center gap-1"
                 >
                     <SquarePlus /> Kelahiran
@@ -115,7 +118,11 @@ onMounted(() => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Input type="date" />
+                <Datepicker
+                    locale="id"
+                    :enable-time-picker="false"
+                    :format="'dd MMMM yyyy'"
+                />
                 <Button @click="createKematian"> <Funnel /> Terapkan </Button>
             </div>
         </div>
@@ -134,3 +141,27 @@ onMounted(() => {
         />
     </div>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>
