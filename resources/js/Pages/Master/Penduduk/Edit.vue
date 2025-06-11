@@ -235,7 +235,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <Button
-                        @click="router.visit('../')"
+                        @click="router.visit('/admin/penduduk')"
                         type="button"
                         variant="secondary"
                         >Batal</Button

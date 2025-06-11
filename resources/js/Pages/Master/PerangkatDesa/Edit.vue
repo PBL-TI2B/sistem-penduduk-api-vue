@@ -168,7 +168,7 @@ onMounted(async () => {
                 <p>Pastikan semua data sudah benar sebelum menyimpan.</p>
                 <div class="flex gap-2 items-center">
                     <Button
-                        @click="router.visit('/perangkat-desa')"
+                        @click="router.visit('/admin/perangkat-desa')"
                         type="button"
                         variant="secondary"
                     >

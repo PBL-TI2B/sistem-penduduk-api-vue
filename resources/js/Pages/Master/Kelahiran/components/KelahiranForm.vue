@@ -1,9 +1,8 @@
-<!-- src/pages/Kelahiran/components/KelahiranForm.vue -->
 <script setup>
-import { useForm, Form as VeeForm } from "vee-validate"; // Menggunakan VeeForm untuk menghindari konflik nama
+import { useForm } from "vee-validate";
 
-import { formSchemaKelahiran } from "../utils/form-schema"; // Sesuaikan path import
-import { fieldsKelahiran } from "../utils/fields"; // Sesuaikan path import
+import { formSchemaKelahiran } from "../utils/form-schema";
+import { fieldsKelahiran } from "../utils/fields";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +16,7 @@ import { Input } from "@/components/ui/input";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
 const props = defineProps({
     isLoading: {
@@ -24,28 +24,22 @@ const props = defineProps({
         default: false,
     },
     pendudukId: {
-        type: String, // Asumsikan pendudukId adalah string UUID
+        type: String,
         default: null,
     },
 });
 
 const emit = defineEmits(["submit", "back"]);
 
-// === FORM KELAHIRAN ===
 const kelahiranForm = useForm({
     validationSchema: formSchemaKelahiran,
 });
 
-// Mengirimkan data saat formulir disubmit
 const handleSubmit = kelahiranForm.handleSubmit((values) => {
-    // Pastikan pendudukId ada sebelum mengirimkan
     if (!props.pendudukId) {
-        // Ini seharusnya tidak terjadi jika alur step sudah benar
-        // Tapi sebagai safeguard
-        console.error("Penduduk ID not available for Kelahiran Form.");
+        useErrorHandler("Penduduk ID not available for Kelahiran Form.");
         return;
     }
-    // Gabungkan nilai formulir dengan penduduk_id
     const rawTanggal = values.waktu_kelahiran;
     const dateObj = new Date(rawTanggal);
 
@@ -93,9 +87,6 @@ const handleSubmit = kelahiranForm.handleSubmit((values) => {
             </FormField>
 
             <div class="col-span-2 flex gap-2 w-full justify-end">
-                <Button type="button" variant="outline" @click="emit('back')">
-                    Kembali
-                </Button>
                 <Button type="submit" :disabled="isLoading">
                     <span v-if="isLoading">Menyimpan...</span>
                     <span v-else>Simpan Data Kelahiran</span>

@@ -76,7 +76,7 @@ const menus = [
                 <img
                     src="@/images/logo.svg"
                     alt="Logo Desa Jabung"
-                    class="h-8 md:h-14"
+                    class="h-8 md:h-12"
                 />
                 <div class="leading-tight">
                     <p class="text-sm md:text-2xl font-bold text-emerald-500">
@@ -94,7 +94,7 @@ const menus = [
                 <component
                     :is="isOpen ? X : Menu"
                     :class="
-                        isScrolled || !isHomePath ? 'text-black' : 'text-white'
+                        isScrolled || !isHomePath ? 'text-black ' : 'text-white'
                     "
                     :size="30"
                 />
@@ -103,7 +103,7 @@ const menus = [
             <!-- Menu Items -->
             <ul
                 :class="[
-                    'w-full md:w-auto mt-3 md:mt-0 items-center text-sm md:text-lg',
+                    'w-full md:w-auto mt-3 md:mt-0 items-center text-sm md:text-base',
                     isOpen
                         ? 'grid gap-y-4 p-4 backdrop-blur-sm rounded-b-lg'
                         : 'hidden md:flex space-x-4 md:space-x-6',
@@ -120,7 +120,11 @@ const menus = [
                                 : '',
                         ]"
                     >
-                        <component :is="menu.icon" size="15" />
+                        <component
+                            :is="menu.icon"
+                            size="15"
+                            class="text-sidebar-border"
+                        />
                         {{ menu.name }}
                     </Link>
                 </li>

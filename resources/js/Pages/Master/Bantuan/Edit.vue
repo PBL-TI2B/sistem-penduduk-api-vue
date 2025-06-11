@@ -25,6 +25,7 @@ import { getFields } from "./utils/fields"; // Import getFields
 import { formSchemaBantuan } from "./utils/form-schema";
 import { useBantuan } from "@/composables/useBantuan";
 import { useKategoriBantuan } from "@/composables/useKategoriBantuan";
+import { router } from "@inertiajs/vue3";
 
 // Routing ID
 const { uuid } = usePage().props;
@@ -131,12 +132,12 @@ onMounted(async () => {
             </div>
             <!-- Submit Button -->
             <div class="flex justify-end gap-4">
-                <!-- <Button
-                    @click="router.visit('/bantuan')"
+                <Button
+                    @click="router.visit('/admin/bantuan')"
                     type="button"
                     variant="secondary"
                     >Batal</Button
-                > -->
+                >
                 <Button type="submit">Simpan Perubahan</Button>
             </div>
         </form>

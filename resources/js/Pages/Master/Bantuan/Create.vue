@@ -113,12 +113,12 @@ onMounted(() => {
             </div>
             <!-- Submit Button -->
             <div class="flex justify-end gap-4">
-                <!-- <Button
-                    @click="router.visit('/bantuan')"
+                <Button
+                    @click="router.visit('/admin/bantuan')"
                     type="button"
                     variant="secondary"
                     >Batal</Button
-                > -->
+                >
                 <Button type="submit" :disabled="isLoading">Simpan</Button>
             </div>
         </form>
