@@ -48,6 +48,8 @@ const { handleSubmit, resetForm, setValues, values } = useForm({
         penduduk_id: "",
         rt_id: "",
         status_tempat_tinggal: "",
+        alamat_asal: "",
+        alamat_saat_ini: "",
     },
 });
 
@@ -111,12 +113,17 @@ watch(
                 rt_id: props.initialData.domisili?.rt_id || "",
                 status_tempat_tinggal:
                     props.initialData.domisili?.status_tempat_tinggal || "",
+                alamat_asal: props.initialData.domisili?.alamat_asal || "",
+                alamat_saat_ini:
+                    props.initialData.domisili?.alamat_saat_ini || "",
             });
         } else if (isOpen && props.mode === "create") {
             setValues({
                 penduduk_id: props.initialData.id,
                 rt_id: "",
                 status_tempat_tinggal: "",
+                alamat_asal: "",
+                alamat_saat_ini: "",
             });
         } else if (!isOpen) {
             resetForm();
@@ -191,6 +198,39 @@ const dialogTitle = computed(() =>
                                     >
                                 </SelectContent>
                             </Select>
+                        </div>
+                    </div>
+
+                    <!-- Alamat Asal -->
+                    <div
+                        class="grid grid-cols-4 items-center gap-4"
+                        v-if="selectedStatus === 'sementara'"
+                    >
+                        <Label for="status" class="text-right"
+                            >Alamat Asal</Label
+                        >
+                        <div class="col-span-3">
+                            <Input
+                                type="text"
+                                name="alamat_asal"
+                                v-model="values.alamat_asal"
+                                placeholder="Alamat Asal"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Alamat Saat Ini -->
+                    <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="alamat_saat_ini" class="text-left"
+                            >Alamat Saat Ini</Label
+                        >
+                        <div class="col-span-3">
+                            <Input
+                                type="text"
+                                name="alamat_saat_ini"
+                                v-model="values.alamat_saat_ini"
+                                placeholder="Alamat Saat Ini"
+                            />
                         </div>
                     </div>
                 </div>

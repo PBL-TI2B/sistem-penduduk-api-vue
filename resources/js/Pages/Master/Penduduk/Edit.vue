@@ -28,6 +28,9 @@ import Cookies from "js-cookie";
 import { formSchemaPenduduk } from "./utils/form-schema";
 import { usePenduduk } from "@/composables/usePenduduk";
 
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 // Routing ID
 const { uuid } = usePage().props;
 
@@ -54,6 +57,15 @@ const { editPenduduk } = usePenduduk();
 // Submit edit
 const onSubmit = handleSubmit(async (values) => {
     try {
+        const rawTanggal = values.tanggal_lahir;
+        const dateObj = new Date(rawTanggal);
+
+        const formattedDate = dateObj
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+        values.tanggal_lahir = formattedDate;
+
         const formData = new FormData();
         formData.append("_method", "PUT");
 
@@ -178,6 +190,13 @@ onMounted(async () => {
                                 </SelectItem>
                             </SelectContent>
                         </Select>
+                        <Datepicker
+                            v-else-if="field.type === 'datepicker'"
+                            locale="id"
+                            :enable-time-picker="false"
+                            :format="'dd MMMM yyyy'"
+                            v-bind="componentField"
+                        />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -227,3 +246,27 @@ onMounted(async () => {
         </form>
     </div>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>
