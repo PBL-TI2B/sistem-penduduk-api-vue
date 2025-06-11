@@ -124,7 +124,7 @@ watch(page, () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Data Kurang Mampu', href: '/kurang-mampu' },
+                { label: 'Data Kurang Mampu', href: '/admin/kurang-mampu' },
                 { label: 'Tambah Data Kurang Mampu' },
             ]"
         />

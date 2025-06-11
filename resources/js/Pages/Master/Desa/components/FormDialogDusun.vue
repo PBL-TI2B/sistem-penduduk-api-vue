@@ -133,25 +133,25 @@ const dialogTitle = computed(() =>
             </DialogHeader>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
-                <div>
+                <div class="space-y-2">
                     <Label for="nama">Nama Dusun</Label>
                     <Input id="nama" v-model="nama" />
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <Label for="deskripsi">Deskripsi</Label>
                     <Textarea id="deskripsi" v-model="deskripsi" />
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <Label for="lokasi">Lokasi</Label>
                     <Textarea id="lokasi" v-model="lokasi" />
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <Label for="desa">Desa</Label>
                     <Select v-model="desa_id">
-                        <SelectTrigger>
+                        <SelectTrigger class="w-full">
                             <SelectValue placeholder="Pilih desa" />
                         </SelectTrigger>
                         <SelectContent>

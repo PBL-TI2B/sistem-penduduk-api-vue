@@ -70,8 +70,8 @@ onMounted(fetchBerita);
             <h1 class="text-3xl font-bold">Detail Berita</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Berita', href: '/berita' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Berita', href: '/admin/berita' },
                     { label: 'Detail Berita' },
                 ]"
             />
@@ -104,11 +104,23 @@ onMounted(fetchBerita);
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Tanggal Posting</td>
-                        <td>{{ dayjs(berita.created_at).format('DD MMM YYYY HH:mm') }}</td>
+                        <td>
+                            {{
+                                dayjs(berita.created_at).format(
+                                    "DD MMM YYYY HH:mm"
+                                )
+                            }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Terakhir Diubah</td>
-                        <td>{{ dayjs(berita.updated_at).format('DD MMM YYYY HH:mm') }}</td>
+                        <td>
+                            {{
+                                dayjs(berita.updated_at).format(
+                                    "DD MMM YYYY HH:mm"
+                                )
+                            }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Status</td>

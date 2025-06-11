@@ -72,7 +72,7 @@ onMounted(async () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Data Bantuan', href: '/bantuan' },
+                { label: 'Data Bantuan', href: '/admin/bantuan' },
                 { label: 'Ubah Data Bantuan' },
             ]"
         />

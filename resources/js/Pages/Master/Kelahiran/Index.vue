@@ -71,7 +71,7 @@ onMounted(() => {
             <h1 class="text-3xl font-bold">Data Kelahiran</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Kelahiran' },
                 ]"
             />
@@ -90,7 +90,7 @@ onMounted(() => {
     <div class="drop-shadow-md w-full grid gap-2">
         <div class="flex flex-wrap gap-2 justify-between">
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full"
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-1/2"
             >
                 <Input
                     v-model="searchPenduduk"
@@ -111,6 +111,12 @@ onMounted(() => {
                 >
                     <XIcon />
                 </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Input type="date" />
+                <Button @click="createKematian"> <Funnel /> Terapkan </Button>
             </div>
         </div>
 

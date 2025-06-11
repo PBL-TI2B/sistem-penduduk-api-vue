@@ -114,17 +114,17 @@ const dialogTitle = computed(() =>
             </DialogHeader>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
-                <div>
+                <div class="space-y-2">
                     <Label for="nama">Nama desa</Label>
                     <Input id="nama" v-model="nama" />
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <Label for="deskripsi">Deskripsi</Label>
                     <Textarea id="deskripsi" v-model="deskripsi" />
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <Label for="lokasi">Lokasi</Label>
                     <Textarea id="lokasi" v-model="lokasi" />
                 </div>

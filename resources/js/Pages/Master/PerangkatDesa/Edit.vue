@@ -116,8 +116,8 @@ onMounted(async () => {
         <h1 class="text-3xl font-bold">Edit Data Perangkat Desa</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Data Perangkat Desa', href: '/perangkat-desa' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Data Perangkat Desa', href: '/admin/perangkat-desa' },
                 { label: 'Edit Data Perangkat Desa' },
             ]"
         />

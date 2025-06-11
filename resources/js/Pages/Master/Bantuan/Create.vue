@@ -54,8 +54,8 @@ onMounted(() => {
         <h1 class="text-3xl font-bold">Tambah Data Bantuan</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Data Bantuan', href: '/bantuan' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Data Bantuan', href: '/admin/bantuan' },
                 { label: 'Tambah Data Bantuan' },
             ]"
         />

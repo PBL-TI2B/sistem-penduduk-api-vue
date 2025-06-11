@@ -124,7 +124,7 @@ watch(isDialogOpen, (newVal, oldVal) => {
             <h1 class="text-3xl font-bold">Data Pendidikan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Pendidikan' },
                 ]"
             />

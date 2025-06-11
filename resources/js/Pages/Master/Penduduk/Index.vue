@@ -110,7 +110,7 @@ watch(page, fetchData);
             <h1 class="text-3xl font-bold">Data Penduduk</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Penduduk' },
                 ]"
             />
@@ -124,9 +124,9 @@ watch(page, fetchData);
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div class="flex flex-wrap gap-2 justify-between">
+        <div class="flex flex-wrap justify-between">
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-[35%]"
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-1/3"
             >
                 <Input
                     v-model="searchPenduduk"

@@ -86,8 +86,8 @@ onMounted(async () => {
         <h1 class="text-3xl font-bold">Tambah Data Penduduk</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Data Penduduk', href: '/penduduk' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Data Penduduk', href: '/admin/penduduk' },
                 { label: 'Tambah Data Penduduk' },
             ]"
         />

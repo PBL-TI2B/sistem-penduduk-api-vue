@@ -61,8 +61,8 @@ onMounted(fetchDetailPenduduk);
             <h1 class="text-3xl font-bold">Data Penduduk</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Data Penduduk', href: '../' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Data Penduduk', href: '/admin/penduduk' },
                     { label: 'Detail Penduduk' },
                 ]"
             />
