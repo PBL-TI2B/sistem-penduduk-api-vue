@@ -11,4 +11,9 @@ class KelahiranController extends Controller
     {
         return inertia('Master/Kelahiran/Index');
     }
+
+    public function create()
+    {
+        return inertia('Master/Kelahiran/Create');
+    }
 }

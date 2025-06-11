@@ -26,6 +26,7 @@ import {
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 
+import AlertDialog from "@/components/master/AlertDialog.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
@@ -33,23 +34,23 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
 
 const {
-items,
-        item,
-        isLoading,
-        page,
-        perPage,
-        totalPages,
-        totalItems,
-        search,
-        selectedStatusPenerimaanBantuan,
-        // statusValidasiOptions,
-        // imageUrl,
-        fetchData,
-        fetchDetailData,
-        createData,
-        editKeterangan,
-        editStatusPenerimaanBantuan,
-        deleteData,
+    items,
+    item,
+    isLoading,
+    page,
+    perPage,
+    totalPages,
+    totalItems,
+    search,
+    selectedStatusPenerimaanBantuan,
+    // statusValidasiOptions,
+    // imageUrl,
+    fetchData,
+    fetchDetailData,
+    createData,
+    editKeterangan,
+    editStatusPenerimaanBantuan,
+    deleteData,
 } = usePenerimaBantuan();
 
 const clearSearch = () => {
@@ -69,12 +70,31 @@ const resetFilter = () => {
     applyFilter();
 };
 
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
+
+// Setting Action Buttons
+const actionsIndexPenerimaBantuan = actionsIndex(onClickDeleteButton);
+
 onMounted(() => {
     fetchData();
 });
 
 watch(page, () => {
-    fetchData()
+    fetchData();
 });
 </script>
 
@@ -85,7 +105,7 @@ watch(page, () => {
             <h1 class="text-3xl font-bold">Data Penerima Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Penerima Bantuan' },
                 ]"
             />
@@ -140,15 +160,11 @@ watch(page, () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem>
-                                    Semua
-                                </SelectItem>
+                                <SelectItem> Semua </SelectItem>
                                 <SelectItem value="diajukan">
                                     Diajukan
                                 </SelectItem>
-                                <SelectItem value="aktif">
-                                    Aktif
-                                </SelectItem>
+                                <SelectItem value="aktif"> Aktif </SelectItem>
                                 <SelectItem value="selesai">
                                     Selesai
                                 </SelectItem>
@@ -181,7 +197,7 @@ watch(page, () => {
         <DataTable
             :items="items"
             :columns="columnsIndex"
-            :actions="actionsIndex"
+            :actions="actionsIndexPenerimaBantuan"
             :totalPages="totalPages"
             :page="page"
             :per-page="perPage"
@@ -189,4 +205,11 @@ watch(page, () => {
             @update:page="page = $event"
         />
     </div>
+        <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        title="Hapus Penerima Bantuan"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>

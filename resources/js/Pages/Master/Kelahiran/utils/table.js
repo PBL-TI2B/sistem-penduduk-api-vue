@@ -42,7 +42,7 @@ const columnsIndexKelahiran = [
 
 const actionsIndexKelahiran = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
             router.visit(route("perangkat-desa.show", item.uuid));

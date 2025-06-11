@@ -89,7 +89,7 @@ onMounted(async () => {
     <div class="relative z-10 md:mx-5">
         <!-- screen medium -->
         <div
-            class="text-white md:-mt-40 lg:-mt-60 flex md:px-6 py-6 max-w-6xl mx-auto md:px-auto md:justify-center items-center"
+            class="text-white md:-mt-40 flex md:px-6 py-6 max-w-6xl mx-auto md:px-auto md:justify-center items-center"
         >
             <div
                 class="hidden md:block bg-center bg-no-repeat bg-contain drop-shadow-2xl"

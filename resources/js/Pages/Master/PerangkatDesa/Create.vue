@@ -97,8 +97,8 @@ onMounted(async () => {
         <h1 class="text-3xl font-bold">Tambah Data Perangkat Desa</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Data Perangkat Desa', href: '/perangkat-desa' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Data Perangkat Desa', href: '/admin/perangkat-desa' },
                 { label: 'Tambah Data Perangkat Desa' },
             ]"
         />
@@ -152,7 +152,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <Button
-                        @click="router.visit('/perangkat-desa')"
+                        @click="router.visit('/admin/perangkat-desa')"
                         type="button"
                         variant="secondary"
                         >Batal</Button

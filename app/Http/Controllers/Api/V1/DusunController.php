@@ -25,6 +25,7 @@ class DusunController extends Controller
                 ->orWhere('lokasi', 'like', "%$search%");
             });
         }
+        $query->withCount ('perangkatDesa');
 
         // Paginasi
         $dusun = $query->paginate($request->get('per_page', 10));

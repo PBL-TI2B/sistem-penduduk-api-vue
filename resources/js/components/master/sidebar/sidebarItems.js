@@ -18,6 +18,12 @@ export const items = [
         roles: ["admin", "superadmin", "rt", "rw"],
     },
     {
+        title: "Penduduk",
+        icon: UsersRound,
+        to: "/admin/penduduk",
+        roles: ["rt", "rw"],
+    },
+    {
         title: "Master Penduduk",
         icon: UsersRound,
         roles: ["admin", "superadmin"],

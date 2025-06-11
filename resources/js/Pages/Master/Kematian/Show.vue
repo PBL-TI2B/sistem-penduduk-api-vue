@@ -30,8 +30,8 @@ onMounted(fetchData);
             <h1 class="text-3xl font-bold">Detail Kematian</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Data Kematian', href: '/kematian' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Data Kematian', href: '/admin/kematian' },
                     { label: 'Detail' },
                 ]"
             />
@@ -42,15 +42,16 @@ onMounted(fetchData);
                     <SquarePen /> Ubah
                 </Link>
             </Button>
-            <Button variant="destructive">
-                <Trash /> Hapus
-            </Button>
+            <Button variant="destructive"> <Trash /> Hapus </Button>
         </div>
     </div>
 
     <div class="bg-primary-foreground p-4 rounded-lg space-y-2">
         <p><strong>Tanggal Kematian:</strong> {{ items.tanggal_kematian }}</p>
         <p><strong>Sebab Kematian:</strong> {{ items.sebab_kematian }}</p>
-        <p><strong>Nama Penduduk:</strong> {{ items.penduduk?.nama_lengkap || '-' }}</p>
+        <p>
+            <strong>Nama Penduduk:</strong>
+            {{ items.penduduk?.nama_lengkap || "-" }}
+        </p>
     </div>
 </template>

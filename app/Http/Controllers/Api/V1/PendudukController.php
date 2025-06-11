@@ -17,21 +17,28 @@ class PendudukController extends Controller
     {
         $query = Penduduk::with(['pekerjaan', 'pendidikan'])->orderBy('status', 'asc');
 
-        // Filter status hidup/mati
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        // Filter status perkawinan
         if ($request->filled('status_perkawinan')) {
             $query->where('status_perkawinan', $request->status_perkawinan);
         }
 
-        // Filter pendidikan (jika nama ada di tabel relasi `pendidikan`)
         if ($request->filled('pendidikan')) {
             $query->whereHas('pendidikan', function ($q) use ($request) {
                 $q->where('jenjang', $request->pendidikan); // sesuaikan nama kolom jika perlu
             });
         }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%")
+                  ->orWhere('nik', 'like', "%$search%")
+                  ->orWhere('tempat_lahir', 'like', "%$search%");
+            });
+        }
+
         // Filter agama
         if ($request->filled('agama')) {
             $query->where('agama', $request->agama);
@@ -54,7 +61,7 @@ class PendudukController extends Controller
         $validator = Validator::make($request->all(), [
             'nik' => 'required|unique:penduduk',
             'nama_lengkap' => 'required',
-            'foto' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'foto' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',
@@ -74,12 +81,14 @@ class PendudukController extends Controller
         }
 
         $foto = $request->file('foto');
-        $foto->storeAs('penduduk', $foto->hashName());
+        if ($foto) {
+            $foto->storeAs('penduduk', $foto->hashName());
+        }
 
         $penduduk = Penduduk::create([
             'nik' => $request->nik,
             'nama_lengkap' => $request->nama_lengkap,
-            'foto' => $foto->hashName(),
+            'foto' => $foto ? $foto->hashName() : null,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,

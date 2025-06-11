@@ -47,8 +47,8 @@ onMounted(() => {
             <h1 class="text-3xl font-bold">Data Kurang Mampu</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: './dashboard' },
-                    { label: 'Data Kurang Mampu', href: '..//kurang-mampu' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Data Kurang Mampu', href: '/admin/kurang-mampu' },
                     { label: 'Detail Kurang Mampu' },
                 ]"
             />
@@ -68,9 +68,12 @@ onMounted(() => {
     <div class="shadow-md p-2 rounded-lg flex gap-2 justify-between my-4">
         <div class="w-full">
             <div class="flex items-center justify-between">
-                 <h2 class="text-lg font-bold p-2">Detail Kurang Mampu <Badge variant="outline">
-                    {{ item.status_validasi }}
-                 </Badge></h2>
+                <h2 class="text-lg font-bold p-2">
+                    Detail Kurang Mampu
+                    <Badge variant="outline">
+                        {{ item.status_validasi }}
+                    </Badge>
+                </h2>
                 <div class="flex gap-2">
                     <Button
                         @click="isEditStatusDialogOpen = true"
@@ -149,16 +152,15 @@ onMounted(() => {
         />
     </div>
 
-<EditStatusDialog
-    v-model:isOpen="isEditStatusDialogOpen"
-    :initial-data="item"
-    @success="fetchDetailData(uuid)"
-/>
+    <EditStatusDialog
+        v-model:isOpen="isEditStatusDialogOpen"
+        :initial-data="item"
+        @success="fetchDetailData(uuid)"
+    />
 
-<EditDetailDialog
-    v-model:isOpen="isEditDetailDialogOpen"
-    :initial-data="item"
-    @success="fetchDetailData(uuid)"
-/>
-
+    <EditDetailDialog
+        v-model:isOpen="isEditDetailDialogOpen"
+        :initial-data="item"
+        @success="fetchDetailData(uuid)"
+    />
 </template>

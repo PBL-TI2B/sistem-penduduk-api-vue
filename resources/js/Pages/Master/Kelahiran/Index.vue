@@ -10,12 +10,15 @@ import SelectItem from "@/components/ui/select/SelectItem.vue";
 import SelectLabel from "@/components/ui/select/SelectLabel.vue";
 import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
 import SelectValue from "@/components/ui/select/SelectValue.vue";
-import { SquarePlus } from "lucide-vue-next";
+import { SearchIcon, SquarePlus, XIcon } from "lucide-vue-next";
 import { route } from "ziggy-js";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useKelahiran } from "@/composables/useKelahiran";
 import { columnsIndexKelahiran } from "./utils/table";
 import { actionsIndexKelahiran } from "./utils/table";
+
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 const {
     items,
@@ -24,6 +27,7 @@ const {
     page,
     perPage,
     totalPages,
+    filter,
     totalItems,
     totalData,
     search,
@@ -36,7 +40,28 @@ const {
     deleteData,
 } = useKelahiran();
 
-console.log(items);
+const searchPenduduk = ref("");
+
+const onSearchEnter = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
+
+const clearSearchPenduduk = () => {
+    searchPenduduk.value = "";
+    page.value = 1;
+    fetchData();
+};
+
+const resetFilter = () => {
+    filter.value = {
+        waktu_kelahiran: "",
+    };
+    fetchData();
+};
+
 onMounted(() => {
     fetchData();
 });
@@ -49,7 +74,7 @@ onMounted(() => {
             <h1 class="text-3xl font-bold">Data Kelahiran</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Kelahiran' },
                 ]"
             />
@@ -57,7 +82,7 @@ onMounted(() => {
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
                 <Link
-                    :href="route('user.create')"
+                    :href="route('kelahiran.create')"
                     class="flex items-center gap-1"
                 >
                     <SquarePlus /> Kelahiran
@@ -66,33 +91,39 @@ onMounted(() => {
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                placeholder="Cari keluarga (No. KK atau Kepala Keluarga)"
-                class="md:w-1/3"
-            />
-            <!-- filter -->
-            <div class="flex gap-4">
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Filter Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Role</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="superadmin">
-                                Superadmin
-                            </SelectItem>
-                            <SelectItem value="admin"> Admin </SelectItem>
-                            <SelectItem value="ketua rt"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua rw"> Ketua RW </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
+        <div class="flex flex-wrap gap-2 justify-between">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-1/2"
+            >
+                <Input
+                    v-model="searchPenduduk"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari data Penduduk"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchPenduduk"
+                    @click="clearSearchPenduduk"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    title="Hapus pencarian"
+                >
+                    <XIcon />
+                </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Datepicker
+                    locale="id"
+                    :enable-time-picker="false"
+                    :format="'dd MMMM yyyy'"
+                />
+                <Button @click="createKematian"> <Funnel /> Terapkan </Button>
             </div>
         </div>
 
@@ -110,3 +141,27 @@ onMounted(() => {
         />
     </div>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>

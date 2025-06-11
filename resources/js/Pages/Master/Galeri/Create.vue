@@ -75,8 +75,8 @@ const onSubmit = handleSubmit(async (values) => {
         <h1 class="text-3xl font-bold">Tambah Data Galeri</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Galeri', href: '/galeri' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Galeri', href: '/admin/galeri' },
                 { label: 'Tambah Data Galeri' },
             ]"
         />
@@ -123,7 +123,7 @@ const onSubmit = handleSubmit(async (values) => {
                     </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/galeri')"
+                            @click="router.visit('/admin/galeri')"
                             type="button"
                             variant="secondary"
                             >Batal</Button

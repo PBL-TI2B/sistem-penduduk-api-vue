@@ -64,7 +64,7 @@ watch(page, fetchData);
             <h1 class="text-3xl font-bold">Berita</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Berita' },
                 ]"
             />

@@ -42,7 +42,7 @@ const columnsIndexKK = [
 
 const actionsIndexKK = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
             router.visit(route("keluarga.show", item.uuid));

@@ -24,7 +24,7 @@ export function getFields(pekerjaanOptions = [], pendidikanOptions = []) {
             placeholder: "Contoh: Klaten",
             type: "text",
         },
-        { name: "tanggal_lahir", label: "Tanggal Lahir", type: "date" },
+        { name: "tanggal_lahir", label: "Tanggal Lahir", type: "datepicker" },
         {
             name: "agama",
             label: "Agama",

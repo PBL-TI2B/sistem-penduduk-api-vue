@@ -34,7 +34,7 @@ const columnsIndex = [
 
 const actionsIndex = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
             router.visit(route("penduduk.show", item.uuid));
@@ -110,6 +110,16 @@ const rowsShow = [
         label: "Status Tempat Tinggal",
         key: "domisili",
         format: (val, row) => row.domisili?.status_tempat_tinggal || "-",
+    },
+    {
+        label: "Alamat Asal",
+        key: "domisili",
+        format: (val, row) => row.domisili?.alamat_asal || "-",
+    },
+    {
+        label: "Alamat Saat Ini",
+        key: "domisili",
+        format: (val, row) => row.domisili?.alamat_saat_ini || "-",
     },
     {
         label: "RT",

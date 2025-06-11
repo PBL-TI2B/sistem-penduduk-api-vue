@@ -1,5 +1,6 @@
 import { Eye, PencilIcon, Trash2Icon } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
 const columnsIndex = [
     {
@@ -65,7 +66,7 @@ const columnsIndex = [
 ];
 
 
-const actionsIndex = [
+const actionsIndex =  (onClickDeleteButton) => [
     {
         label: "Kelola",
         icon: Eye,
@@ -85,11 +86,16 @@ const actionsIndex = [
     {
         label: "Hapus",
         icon: Trash2Icon,
-                class: "bg-red-500 hover:bg-red-600 text-white", // warna merah untuk hapus
+        class: "bg-red-500 hover:bg-red-600 text-white", // warna merah untuk hapus
+        disabled: (item) => item.riwayat_bantuan_count > 0,
+        // handler: (item) => {
+        //     if (confirm("Yakin ingin menghapus data ini?")) {
+        //         router.delete(route("penerima-bantuan.destroy", item.uuid));
+        //     }
+        // },
+        // handler bisa diisi di tempat penggunaan
         handler: (item) => {
-            if (confirm("Yakin ingin menghapus data ini?")) {
-                router.delete(route("penerima-bantuan.destroy", item.uuid));
-            }
+            onClickDeleteButton(item.uuid);
         },
     },
 ];
