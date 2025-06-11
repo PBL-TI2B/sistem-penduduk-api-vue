@@ -22,6 +22,8 @@ class DomisiliSeeder extends Seeder
                 'rt_id' => 1,
                 'penduduk_id' => 1,
                 'status_tempat_tinggal' => 'tetap',
+                'alamat_asal' => null,
+                'alamat_saat_ini' => 'Jl. Contoh Alamat Saat Ini No. 1',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

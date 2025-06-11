@@ -55,6 +55,11 @@ const onSubmit = form.handleSubmit(async () => {
             sameSite: "Lax",
         });
 
+        if (response.success === false) {
+            useErrorHandler(new Error(response.message), "Login gagal");
+            return;
+        }
+
         if (response.success === true) {
             router.visit("/admin/dashboard");
         }

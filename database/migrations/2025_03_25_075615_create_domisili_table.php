@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->enum('status_tempat_tinggal', ['tetap', 'sementara']);
-
+            $table->string('alamat_asal', 255)->nullable();
+            $table->string('alamat_saat_ini', 255);
 
             $table->foreignId('penduduk_id')->constrained('penduduk')->onDelete('cascade');
             $table->foreignId('rt_id')->constrained('rt')->onDelete('cascade');
