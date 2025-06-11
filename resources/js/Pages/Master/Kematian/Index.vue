@@ -15,6 +15,9 @@ import { SquarePen, SquarePlus, Trash2 } from "lucide-vue-next";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 import { useKematian } from "@/composables/useKematian";
 
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 const items = ref([]);
 const totalPages = ref(1);
 const totalData = ref(0);
@@ -165,7 +168,11 @@ const clearSearchKematian = () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Input type="date" />
+                <Datepicker
+                    locale="id"
+                    :enable-time-picker="false"
+                    :format="'dd MMMM yyyy'"
+                />
                 <Button @click="createKematian"> <Funnel /> Terapkan </Button>
             </div>
         </div>
@@ -200,3 +207,27 @@ const clearSearchKematian = () => {
         />
     </div>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>
