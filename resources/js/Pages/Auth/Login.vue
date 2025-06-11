@@ -24,7 +24,7 @@ onBeforeMount(async () => {
     try {
         const res = await apiGet("/auth/me");
         const user = res.data;
-        if (user) router.visit("/dashboard");
+        if (user) router.visit("/admin/dashboard");
     } catch (e) {
         // user not logged in → biarkan tetap di halaman login
     }
