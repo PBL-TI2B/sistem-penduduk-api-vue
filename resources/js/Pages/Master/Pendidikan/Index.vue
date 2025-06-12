@@ -147,6 +147,7 @@ watch(isDialogOpen, (newVal, oldVal) => {
         </div>
 
         <DataTable
+            label="Pendidikan"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"

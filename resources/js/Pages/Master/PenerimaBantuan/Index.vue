@@ -195,6 +195,7 @@ watch(page, () => {
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <DataTable
+            label="Penerima Bantuan"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndexPenerimaBantuan"
@@ -205,7 +206,7 @@ watch(page, () => {
             @update:page="page = $event"
         />
     </div>
-        <AlertDialog
+    <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
         title="Hapus Penerima Bantuan"
         description="Apakah anda yakin ingin menghapus?"
