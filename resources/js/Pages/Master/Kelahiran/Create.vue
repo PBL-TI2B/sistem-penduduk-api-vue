@@ -58,8 +58,6 @@ const handleKelahiranSubmit = async (values) => {
         // pendudukId sudah dijamin ada karena ini adalah langkah kedua
         const payload = { ...values, penduduk_id: pendudukId.value };
         await createKelahiran(payload);
-        toast.success("Data Kelahiran Berhasil Ditambahkan");
-        router.visit("/kelahiran"); // Redirect setelah berhasil
     } catch (error) {
         useErrorHandler(error);
     } finally {

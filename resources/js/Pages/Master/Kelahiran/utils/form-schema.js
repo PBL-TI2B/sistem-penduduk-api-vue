@@ -34,6 +34,6 @@ export const formSchemaKelahiran = toTypedSchema(
         panjang: z.number().optional(),
         waktu_kelahiran: z.date().optional(),
         lokasi: z.string().optional(),
-        keterangan: z.string().optional(),
+        keterangan: z.string().nullable().optional(),
     })
 );

@@ -3,22 +3,27 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import Select from "@/components/ui/select/Select.vue";
-import SelectContent from "@/components/ui/select/SelectContent.vue";
-import SelectGroup from "@/components/ui/select/SelectGroup.vue";
-import SelectItem from "@/components/ui/select/SelectItem.vue";
-import SelectLabel from "@/components/ui/select/SelectLabel.vue";
-import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
-import SelectValue from "@/components/ui/select/SelectValue.vue";
-import { SearchIcon, SquarePlus, XIcon } from "lucide-vue-next";
+import {
+    Eye,
+    PenBox,
+    SearchIcon,
+    SquarePlus,
+    Trash2,
+    XIcon,
+} from "lucide-vue-next";
 import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useKelahiran } from "@/composables/useKelahiran";
 import { columnsIndexKelahiran } from "./utils/table";
-import { actionsIndexKelahiran } from "./utils/table";
+import { router } from "@inertiajs/vue3";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import AlertDialog from "@/components/master/AlertDialog.vue";
+
+const searchPenduduk = ref("");
+const selectedUuid = ref(null);
+const isAlertDeleteOpen = ref(false);
 
 const {
     items,
@@ -40,7 +45,48 @@ const {
     deleteData,
 } = useKelahiran();
 
-const searchPenduduk = ref("");
+const actionsIndexKelahiran = [
+    {
+        label: "Penduduk",
+        icon: Eye,
+        handler: (item) => {
+            router.visit(route("penduduk.show", item.penduduk.uuid));
+        },
+    },
+    {
+        label: "Ubah",
+        icon: PenBox,
+        class: "bg-yellow-500 hover:bg-yellow-600 text-white",
+        handler: (item) => {
+            router.visit(route("kelahiran.edit", item.uuid));
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        class: "bg-red-500 hover:bg-red-600 text-white",
+        disabled: (item) => item.riwayat_bantuan_count > 0,
+        handler: (item) => {
+            onClickDeleteButton(item.uuid);
+        },
+    },
+];
+
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
 
 const onSearchEnter = (e) => {
     if (e.key === "Enter") {
@@ -140,6 +186,13 @@ onMounted(() => {
             @update:page="page = $event"
         />
     </div>
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        title="Hapus Kelahiran"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>
 
 <style scoped>
