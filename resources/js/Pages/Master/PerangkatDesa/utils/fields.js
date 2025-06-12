@@ -32,8 +32,9 @@ export function getFields(
         {
             name: "periode_jabatan_id",
             label: "Periode Jabatan",
-            type: "select",
+            type: "selectOrInput", // tipe khusus
             options: periode_jabatan,
+            placeholder: "Pilih atau input manual",
         },
         {
             name: "desa_id",

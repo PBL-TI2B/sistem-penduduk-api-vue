@@ -69,7 +69,7 @@ export function useJabatan(uuid) {
         try {
             await apiDelete(`/jabatan/${uuid}`);
             toast.success("Berhasil menghapus jabatan");
-            router.visit("/perangkat-desa");
+            router.visit("/admin/jabatan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus jabatan");
         }

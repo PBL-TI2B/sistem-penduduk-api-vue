@@ -11,7 +11,6 @@ export function usePenduduk(uuid) {
     const imageUrl = ref(null);
     const fotoFile = ref(null);
 
-
     const fetchDetailPenduduk = async () => {
         try {
             const res = await apiGet(`penduduk/${uuid}`);
@@ -49,7 +48,7 @@ export function usePenduduk(uuid) {
 
             resetForm();
             toast.success("Berhasil Tambah Data Penduduk");
-            router.visit("/penduduk");
+            router.visit("/admin/penduduk");
         } catch (error) {
             useErrorHandler(error);
         }
@@ -72,7 +71,7 @@ export function usePenduduk(uuid) {
             resetForm();
 
             toast.success("Berhasil memperbarui data");
-            router.visit("/penduduk");
+            router.visit("/admin/penduduk");
         } catch (error) {
             useErrorHandler(error);
         }
@@ -82,7 +81,7 @@ export function usePenduduk(uuid) {
         try {
             await apiDelete(`penduduk/${uuid}`);
             toast.success("Data penduduk berhasil dihapus");
-            router.visit("/penduduk");
+            router.visit("/admin/penduduk");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus data penduduk.");
         }

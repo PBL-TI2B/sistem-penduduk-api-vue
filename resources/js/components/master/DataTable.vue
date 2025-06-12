@@ -239,27 +239,25 @@ const handleExport = async (format) => {
                     <TableCell>{{
                         (page - 1) * perPage + index + 1
                     }}</TableCell>
+
                     <TableCell v-for="col in columns" :key="col.key">
-                        {{
-                            col.format
-                                ? col.format(item[col.key], item)
-                                : item[col.key]
-                        }}
+                        <span
+                            :class="
+                                col.customClass
+                                    ? `${col.customClass(item[col.key], item)}
+                                      px-3 p-1 rounded-md`
+                                    : ''
+                            "
+                        >
+                            {{
+                                col.format
+                                    ? col.format(item[col.key], item)
+                                    : item[col.key]
+                            }}
+                        </span>
                     </TableCell>
 
                     <!-- Terapkan Disabled Button -->
-                    <!-- <TableCell v-if="actions.length">
-                        <Button
-                            v-for="(action, index) in actions"
-                            :key="index"
-                            variant="secondary"
-                            @click="() => action.handler(item)"
-                            class="mr-2 cursor-pointer"
-                        >
-                            <component :is="action.icon" class="w-4 h-4" />
-                            {{ action.label }}
-                        </Button>
-                    </TableCell> -->
                     <TableCell v-if="actions.length">
                         <Button
                             v-for="(action, index) in actions"

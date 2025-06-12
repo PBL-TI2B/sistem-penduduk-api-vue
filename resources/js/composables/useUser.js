@@ -66,7 +66,7 @@ export function useUser() {
             }
             await apiPost("/user", values);
             toast.success("Berhasil Tambah Data user");
-            router.visit("/user");
+            router.visit("/admin/user");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data user");
         } finally {
@@ -86,7 +86,7 @@ export function useUser() {
             }
             await apiPost(`/user/${uuid}`, formData);
             toast.success("Berhasil memperbarui data user");
-            router.visit("/user");
+            router.visit("/admin/user");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data user");
         } finally {
@@ -100,7 +100,7 @@ export function useUser() {
             // isLoading.value = true;
             await apiDelete(`/user/${uuid}`);
             toast.success("Berhasil menghapus user");
-            router.visit("/user");
+            router.visit("/admin/user");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus user");
         } finally {

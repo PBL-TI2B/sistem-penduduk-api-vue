@@ -12,16 +12,19 @@ class GaleriResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+   public function toArray(Request $request): array
     {
         return  [
             'id' => $this->id,
             'uuid' => $this->uuid,
             'judul' => $this->judul,
-            'url_media' => $this->url_media,
-            'user'=> [
+            'foto' => $this->url_media 
+                ? asset('storage/galeri/' . $this->url_media)
+                : null,
+            'user' => [
                 'username' => $this->user?->username
             ],
         ];
     }
+
 }

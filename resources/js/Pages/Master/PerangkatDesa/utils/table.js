@@ -49,12 +49,17 @@ const columnsIndex = [
         label: "Status Keaktifan",
         key: "status_keaktifan",
         format: (val, row) => row.status_keaktifan || "-",
+        customClass: (val) => {
+            return val === "aktif"
+                ? "text-green-600 bg-green-100"
+                : "text-red-600 bg-red-100";
+        },
     },
 ];
 
 const actionsIndex = [
     {
-        label: "Manage",
+        label: "Kelola",
         icon: Eye,
         handler: (item) => {
             router.visit(route("perangkat-desa.show", item.uuid));

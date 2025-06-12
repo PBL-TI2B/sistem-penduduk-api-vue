@@ -3,9 +3,7 @@ import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { columnsIndex } from "./utils/table";
-import { Pencil, Trash2 } from "lucide-vue-next";
-import { router } from "@inertiajs/vue3";
-import { route } from "ziggy-js";
+import { PenBoxIcon, SquarePlus, Trash2 } from "lucide-vue-next";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
@@ -74,7 +72,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -95,13 +93,14 @@ const applySearch = () => {
 const actionsIndex = [
     {
         label: "Edit",
-        icon: Pencil,
+        icon: PenBoxIcon,
         handler: (item) => openDialog("edit", item),
     },
     {
         label: "Hapus",
         icon: Trash2,
         handler: (item) => onClickDeleteButton(item.uuid),
+        disabled: (item) => item.penduduk_count > 0,
     },
 ];
 
@@ -126,12 +125,12 @@ watch(isDialogOpen, (newVal, oldVal) => {
             <h1 class="text-3xl font-bold">Data Pendidikan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Pendidikan' },
                 ]"
             />
         </div>
-        <Button @click="openDialog('create')">+ Pendidikan</Button>
+        <Button @click="openDialog('create')"><SquarePlus /> Pendidikan</Button>
     </div>
 
     <!-- Filter -->
@@ -157,8 +156,6 @@ watch(isDialogOpen, (newVal, oldVal) => {
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
-            @edit-item="(item) => openDialog('edit', item)"
-            @delete-item="(item) => handleDelete(item)"
         />
     </div>
 
@@ -175,6 +172,6 @@ watch(isDialogOpen, (newVal, oldVal) => {
         :title="'Hapus Data Pendidikan'"
         :description="'Apakah anda yakin ingin menghapus data pendidikan ini?'"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

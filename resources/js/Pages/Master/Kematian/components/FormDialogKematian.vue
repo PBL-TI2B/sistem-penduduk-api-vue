@@ -20,6 +20,9 @@ import SelectContent from "@/components/ui/select/SelectContent.vue";
 import SelectItem from "@/components/ui/select/SelectItem.vue";
 import { apiGet } from "@/utils/api";
 
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 const props = defineProps({
     isOpen: Boolean,
     mode: {
@@ -62,7 +65,14 @@ const onSubmit = handleSubmit(async (formValues) => {
             tanggal_kematian: formValues.tanggal_kematian || "",
             sebab_kematian: formValues.sebab_kematian || "",
         };
+        const rawTanggal = validatedValues.tanggal_kematian;
+        const dateObj = new Date(rawTanggal);
 
+        const formattedDate = dateObj
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+        validatedValues.tanggal_kematian = formattedDate;
         await createAndEditKematian(validatedValues, props, emit);
     } catch (error) {
         console.error("Form submission error:", error);
@@ -183,12 +193,11 @@ const dialogTitle = computed(() =>
                             >Tanggal Kematian</Label
                         >
                         <div class="col-span-3">
-                            <Input
+                            <Datepicker
+                                locale="id"
+                                :enable-time-picker="false"
+                                :format="'dd MMMM yyyy'"
                                 v-model="tanggal_kematian"
-                                type="date"
-                                placeholder="Tanggal Kematian"
-                                class="w-full"
-                                name="tanggal_kematian"
                             />
                             <span
                                 v-if="tanggalKematianError"
@@ -211,3 +220,27 @@ const dialogTitle = computed(() =>
         </DialogContent>
     </Dialog>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>

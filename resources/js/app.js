@@ -4,24 +4,28 @@ import { createApp, h } from "vue";
 import { createInertiaApp, Head, Link } from "@inertiajs/vue3";
 import MasterLayout from "@/Layouts/MasterLayout.vue";
 import { ZiggyVue } from "ziggy-js";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+
+dayjs.locale("id");
 // import { useCurrencyInput } from "vue-currency-input"
 
 // Setup currency input options https://dm4t2.github.io/vue-currency-input/playground.html
 // const optionsCurrency = {
 //     globalOptions: {
-        // locale: "id-ID",
-        // currency: "IDR",
-        // currencyDisplay: "hidden",
-        // precision: {
-        //   min: 2,
-        //   max: 5
-        // },
-        // hideCurrencySymbolOnFocus: true,
-        // hideGroupingSeparatorOnFocus: false,
-        // hideNegligibleDecimalDigitsOnFocus: false,
-        // autoDecimalDigits: false,
-        // useGrouping: true,
-        // accountingSign: true
+// locale: "id-ID",
+// currency: "IDR",
+// currencyDisplay: "hidden",
+// precision: {
+//   min: 2,
+//   max: 5
+// },
+// hideCurrencySymbolOnFocus: true,
+// hideGroupingSeparatorOnFocus: false,
+// hideNegligibleDecimalDigitsOnFocus: false,
+// autoDecimalDigits: false,
+// useGrouping: true,
+// accountingSign: true
 //     },
 // }
 

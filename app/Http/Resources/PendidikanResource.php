@@ -12,6 +12,7 @@ class PendidikanResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'jenjang' => $this->jenjang,
+            'penduduk_count' => $this->penduduk->count(),
         ];
     }
 }

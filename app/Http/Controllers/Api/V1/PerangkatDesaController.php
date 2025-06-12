@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\PerangkatDesa;
+use App\Models\PeriodeJabatan;
+use Illuminate\Support\Str;
 use App\Http\Resources\ApiResource;
 use App\Http\Resources\PerangkatDesaResource;
 use App\Http\Resources\PaginatedResource;
@@ -55,12 +57,11 @@ class PerangkatDesaController extends Controller
 
     public function store(Request $request)
     {
-        // Validate and create a new perangkat desa
         $validator = Validator::make($request->all(), [
             'penduduk_id' => 'required|exists:penduduk,id',
             'jabatan_id' => 'required|exists:jabatan,id',
-            'periode_jabatan_id' => 'required|exists:periode_jabatan,id',
-            'status_keaktifan' => 'required|in:aktif,tak aktif',
+            'periode_jabatan_id' => 'required',
+            'status_keaktifan' => 'required|in:aktif,nonaktif',
             'desa_id' => 'nullable|exists:desa,id',
             'dusun_id' => 'nullable|exists:dusun,id',
             'rw_id' => 'nullable|exists:rw,id',
@@ -71,10 +72,28 @@ class PerangkatDesaController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        $validated = $validator->validated();
+        $periodeValue = $validated['periode_jabatan_id'];
+
+        if (is_numeric($periodeValue)) {
+            $periodeJabatanId = (int) $periodeValue;
+        } else {
+            [$awal, $akhir] = explode('-', $periodeValue);
+
+            $periode = PeriodeJabatan::create([
+                'uuid' => Str::uuid(),
+                'awal_menjabat' => trim($awal) . '-01-01',
+                'akhir_menjabat' => trim($akhir) . '-12-31',
+                'keterangan' => 'Diinput manual saat tambah perangkat',
+            ]);
+
+            $periodeJabatanId = $periode->id;
+        }
+
         $perangkatDesa = PerangkatDesa::create([
             'penduduk_id' => $request->penduduk_id,
             'jabatan_id' => $request->jabatan_id,
-            'periode_jabatan_id' => $request->periode_jabatan_id,
+            'periode_jabatan_id' => $periodeJabatanId,
             'status_keaktifan' => $request->status_keaktifan,
             'desa_id' => $request->desa_id,
             'dusun_id' => $request->dusun_id,
@@ -105,8 +124,8 @@ class PerangkatDesaController extends Controller
         $validator = Validator::make($request->all(), [
             'penduduk_id' => 'required|exists:penduduk,id',
             'jabatan_id' => 'required|exists:jabatan,id',
-            'periode_jabatan_id' => 'required|exists:periode_jabatan,id',
-            'status_keaktifan' => 'required|in:aktif,tak aktif',
+            'periode_jabatan_id' => 'required',
+            'status_keaktifan' => 'required|in:aktif,nonaktif',
             'desa_id' => 'nullable|exists:desa,id',
             'dusun_id' => 'nullable|exists:dusun,id',
             'rw_id' => 'nullable|exists:rw,id',
@@ -116,9 +135,29 @@ class PerangkatDesaController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        
-        $data = $request->all();
-        $perangkatDesa->update($data);
+
+        $validated = $validator->validated();
+        $periodeValue = $validated['periode_jabatan_id'];
+
+        if (is_numeric($periodeValue)) {
+            $periodeJabatanId = (int) $periodeValue;
+        } else {
+            [$awal, $akhir] = explode('-', $periodeValue);
+
+            $periode = PeriodeJabatan::create([
+                'uuid' => Str::uuid(),
+                'awal_menjabat' => trim($awal) . '-01-01',
+                'akhir_menjabat' => trim($akhir) . '-12-31',
+                'keterangan' => 'Diinput manual saat tambah perangkat',
+            ]);
+
+            $periodeJabatanId = $periode->id;
+        }
+
+        $validated['periode_jabatan_id'] = $periodeJabatanId;
+
+        $perangkatDesa->update($validated);
+
 
         return response()->json([
             'success' => true,
