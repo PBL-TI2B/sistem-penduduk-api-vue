@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Penduduk;
+use App\Models\Kematian;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PendudukResource;
 use App\Http\Resources\PaginatedResource;
@@ -10,38 +11,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class PendudukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Penduduk::with(['pekerjaan', 'pendidikan'])->orderBy('status', 'asc');
+        $query = Penduduk::with(['pekerjaan', 'pendidikan', 'domisili'])
+        ->orderBy('status', 'asc');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('status_perkawinan')) {
-            $query->where('status_perkawinan', $request->status_perkawinan);
-        }
+        $this->applyDirectFilters($query, $request);
 
-        if ($request->filled('pendidikan')) {
-            $query->whereHas('pendidikan', function ($q) use ($request) {
-                $q->where('jenjang', $request->pendidikan); // sesuaikan nama kolom jika perlu
-            });
-        }
+        $this->applyRelationFilters($query, $request);
+
+        $this->applyAgeFilter($query, $request);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%$search%")
-                  ->orWhere('nik', 'like', "%$search%")
-                  ->orWhere('tempat_lahir', 'like', "%$search%");
+                ->orWhere('nik', 'like', "%$search%")
+                ->orWhere('tempat_lahir', 'like', "%$search%");
             });
-        }
-
-        // Filter agama
-        if ($request->filled('agama')) {
-            $query->where('agama', $request->agama);
         }
 
         $penduduk = $query->paginate($request->get('per_page', 10));
@@ -55,6 +46,76 @@ class PendudukController extends Controller
         ]);
     }
 
+    protected function applyDirectFilters($query, Request $request)
+    {
+        $filters = [
+            'status',
+            'status_perkawinan',
+            'jenis_kelamin',
+            'agama'
+        ];
+
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                $query->where($filter, $request->$filter);
+            }
+        }
+    }
+
+    protected function applyRelationFilters($query, Request $request)
+    {
+        if ($request->filled('pendidikan')) {
+            $query->whereHas('pendidikan', function ($q) use ($request) {
+                $q->where('jenjang', $request->pendidikan);
+            });
+        }
+
+        if ($request->filled('pekerjaan')) {
+            $query->whereHas('pekerjaan', function ($q) use ($request) {
+                $q->where('nama_pekerjaan', 'like', "%{$request->pekerjaan}%");
+            });
+        }
+
+        if ($request->filled('domisili')) {
+            $query->whereHas('domisili', function ($q) use ($request) {
+                $q->where('status_tempat_tinggal', 'like', "%{$request->domisili}%");
+            });
+        }
+
+        if ($request->filled('rt')) {
+            $query->whereHas('domisili.rt', function ($q) use ($request) {
+                $q->where('nomor_rt', $request->rt);
+            });
+        }
+
+        if ($request->filled('rw')) {
+            $query->whereHas('domisili.rt.rw', function ($q) use ($request) {
+                $q->where('nomor_rw', $request->rw);
+            });
+        }
+    }
+
+    protected function applyAgeFilter($query, Request $request)
+    {
+        $minUmur = $request->get('min_umur');
+        $maxUmur = $request->get('max_umur');
+
+        if ($minUmur === null && $maxUmur === null) {
+            return;
+        }
+
+        $today = Carbon::today();
+
+        if ($minUmur !== null) {
+            $maxTanggalLahir = $today->copy()->subYears($minUmur);
+            $query->whereDate('tanggal_lahir', '<=', $maxTanggalLahir);
+        }
+
+        if ($maxUmur !== null) {
+            $minTanggalLahir = $today->copy()->subYears($maxUmur + 1)->addDay();
+            $query->whereDate('tanggal_lahir', '>=', $minTanggalLahir);
+        }
+    }
 
     public function store(Request $request)
     {
@@ -161,6 +222,11 @@ class PendudukController extends Controller
         }
 
         $penduduk->update($data);
+
+        if ($request->has('status') && $request->status === 'hidup') {
+            Kematian::where('penduduk_id', $penduduk->id)->delete();
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ubah data penduduk',
