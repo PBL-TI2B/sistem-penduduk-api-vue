@@ -66,7 +66,7 @@ export function useAnggotaKeluarga() {
             }
             await apiPost("/anggota-keluarga", values);
             toast.success("Berhasil Tambah Data anggota keluarga");
-            router.visit("/anggota-keluarga");
+            router.visit("/admin/anggota-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data anggota keluarga");
         } finally {
@@ -86,7 +86,7 @@ export function useAnggotaKeluarga() {
             }
             await apiPost(`/anggota-keluarga/${uuid}`, formData);
             toast.success("Berhasil memperbarui data anggota keluarga");
-            router.visit("/anggota-keluarga");
+            router.visit("/admin/anggota-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data anggota keluarga");
         } finally {
@@ -100,7 +100,7 @@ export function useAnggotaKeluarga() {
             // isLoading.value = true;
             await apiDelete(`/anggota-keluarga/${uuid}`);
             toast.success("Berhasil menghapus anggota keluarga");
-            router.visit("/anggota-keluarga");
+            router.visit("/admin/anggota-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus anggota keluarga");
         } finally {

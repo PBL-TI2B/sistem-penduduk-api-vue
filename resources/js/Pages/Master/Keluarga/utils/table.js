@@ -20,12 +20,6 @@ const columnsIndexKK = [
             row?.anggota_keluarga[0].penduduk?.nama_lengkap || "-",
     },
     {
-        label: "Status Perkawinan",
-        key: "penduduk.status_perkawinan",
-        format: (val, row) =>
-            row?.anggota_keluarga[0].penduduk?.status_perkawinan || "-",
-    },
-    {
         label: "Jenis Kelamin",
         key: "jenis_kelamin",
         format: (val, row) =>
@@ -37,6 +31,28 @@ const columnsIndexKK = [
         label: "No. RT",
         key: "no_rt",
         format: (val, row) => row.rt?.nomor_rt || "-",
+    },
+
+    {
+        label: "Status Perkawinan",
+        key: "penduduk.status_perkawinan",
+        format: (val, row) =>
+            row?.anggota_keluarga[0].penduduk?.status_perkawinan || "-",
+        customClass: (val, row) => {
+            const status =
+                row?.anggota_keluarga?.[0]?.penduduk?.status_perkawinan;
+
+            if (status === "belum kawin") {
+                return "text-blue-600 bg-blue-100 px-2 py-1 rounded";
+            } else if (status === "kawin") {
+                return "text-green-600 bg-green-100 px-2 py-1 rounded";
+            } else if (status === "cerai hidup") {
+                return "text-yellow-600 bg-yellow-100 px-2 py-1 rounded";
+            } else if (status === "cerai mati") {
+                return "text-red-600 bg-red-100 px-2 py-1 rounded";
+            }
+            return "bg-gray-100 text-gray-600 px-2 py-1 rounded";
+        },
     },
 ];
 

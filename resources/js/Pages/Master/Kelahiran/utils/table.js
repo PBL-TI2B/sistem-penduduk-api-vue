@@ -26,7 +26,8 @@ const columnsIndexKelahiran = [
     {
         label: "Waktu Kelahiran",
         key: "waktu_kelahiran",
-        format: (val, row) => row?.waktu_kelahiran || "-",
+        format: (val, row) =>
+            dayjs(row?.waktu_kelahiran).format("DD MMM YYYY HH:mm") || "-",
     },
     {
         label: "Lokasi",

@@ -33,6 +33,24 @@ const selectedUuid = ref(null);
 
 const searchKematian = ref("");
 
+const actionsIndex = (onClickDeleteBantuanButton) => [
+    {
+        label: "Ubah",
+        icon: SquarePen,
+        handler: (item) => {
+            editKematian(item);
+        },
+    },
+    {
+        label: "Hapus",
+        icon: Trash2,
+        handler: (item) => {
+            onClickDeleteBantuanButton(item.uuid);
+        },
+        disabled: (item) => item.penerima_bantuan_count > 0,
+    },
+];
+
 const onClickDeleteKematianButton = (uuid) => {
     selectedUuid.value = uuid;
     isAlertDeleteOpen.value = true;
