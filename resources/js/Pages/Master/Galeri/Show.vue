@@ -68,8 +68,8 @@ onMounted(fetchGaleri);
             <h1 class="text-3xl font-bold">Detail Galeri</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Galeri', href: '/galeri' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Galeri', href: '/admin/galeri' },
                     { label: 'Detail Galeri' },
                 ]"
             />

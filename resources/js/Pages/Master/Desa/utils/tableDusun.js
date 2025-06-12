@@ -1,4 +1,4 @@
-import { Pencil, Trash } from "lucide-vue-next";
+import { PenBoxIcon, Trash2 } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
 export const columnsIndex2 = [
@@ -8,18 +8,19 @@ export const columnsIndex2 = [
 ];
 
 export function getActionsDusun({ onEdit, onDelete }) {
-  return [
-    {
-      label: "Edit",
-      icon: Pencil,
-      handler: (item) => onEdit(item),
-    },
-    {
-      label: "Hapus",
-      icon: Trash,
-      handler: (item) => onDelete(item),
-    },
-  ];
+    return [
+        {
+            label: "Edit",
+            icon: PenBoxIcon,
+            handler: (item) => onEdit(item),
+        },
+        {
+            label: "Hapus",
+            icon: Trash2,
+            handler: (item) => onDelete(item),
+            disabled: (item) => item.perangkat_desa_count > 0,
+        },
+    ];
 }
 
 export const rowsShow = [
@@ -36,5 +37,3 @@ export const rowsShow = [
         key: "lokasi",
     },
 ];
-
-

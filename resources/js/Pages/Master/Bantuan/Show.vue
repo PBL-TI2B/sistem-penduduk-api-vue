@@ -51,8 +51,8 @@ onMounted(async () => {
             <h1 class="text-3xl font-bold">Detail Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/dashboard' },
-                    { label: 'Data Bantuan', href: '/bantuan' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Data Bantuan', href: '/admin/bantuan' },
                     { label: 'Detail Bantuan' },
                 ]"
             />
@@ -79,7 +79,7 @@ onMounted(async () => {
                             {{
                                 row.format
                                     ? row.format(item[row.key], item)
-                                    : (item[row.key] ?? "-")
+                                    : item[row.key] ?? "-"
                             }}
                         </td>
                     </tr>

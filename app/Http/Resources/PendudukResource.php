@@ -47,6 +47,8 @@ class PendudukResource extends JsonResource
                  'rt_id' => $this->domisili?->rt?->id,
                  'rt' => $this->domisili?->rt?->nomor_rt,
                  'rw' => $this->domisili?->rt?->rw?->nomor_rw,
+                'alamat_asal' => $this->domisili?->alamat_asal,
+                'alamat_saat_ini' => $this->domisili?->alamat_saat_ini,
              ],
          ];
      }

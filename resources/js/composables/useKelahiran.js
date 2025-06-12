@@ -66,7 +66,7 @@ export function useKelahiran() {
             }
             await apiPost("/kelahiran", values);
             toast.success("Berhasil Tambah Data kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data kelahiran");
         } finally {
@@ -86,7 +86,7 @@ export function useKelahiran() {
             }
             await apiPost(`/kelahiran/${uuid}`, formData);
             toast.success("Berhasil memperbarui data kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data kelahiran");
         } finally {
@@ -100,7 +100,7 @@ export function useKelahiran() {
             // isLoading.value = true;
             await apiDelete(`/kelahiran/${uuid}`);
             toast.success("Berhasil menghapus kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kelahiran");
         } finally {

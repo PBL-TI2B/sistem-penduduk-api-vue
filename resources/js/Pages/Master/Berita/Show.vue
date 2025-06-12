@@ -70,8 +70,8 @@ onMounted(fetchBerita);
             <h1 class="text-3xl font-bold">Detail Berita</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Berita', href: '/berita' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Berita', href: '/admin/berita' },
                     { label: 'Detail Berita' },
                 ]"
             />

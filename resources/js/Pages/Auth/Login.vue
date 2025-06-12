@@ -24,7 +24,7 @@ onBeforeMount(async () => {
     try {
         const res = await apiGet("/auth/me");
         const user = res.data;
-        if (user) router.visit("/dashboard");
+        if (user) router.visit("/admin/dashboard");
     } catch (e) {
         // user not logged in → biarkan tetap di halaman login
     }
@@ -54,6 +54,11 @@ const onSubmit = form.handleSubmit(async () => {
             secure: false,
             sameSite: "Lax",
         });
+
+        if (response.success === false) {
+            useErrorHandler(new Error(response.message), "Login gagal");
+            return;
+        }
 
         if (response.success === true) {
             router.visit("/admin/dashboard");

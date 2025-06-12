@@ -32,7 +32,7 @@ class Dusun extends Model
 
     public function perangkatDesa()
     {
-        return $this->hasOne(PerangkatDesa::class);
+        return $this->hasMany(PerangkatDesa::class);
     }
 
     public function rw()

@@ -104,7 +104,7 @@ watch(page, () => {
             <h1 class="text-3xl font-bold">Data Kurang Mampu</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Kurang Mampu' },
                 ]"
             />

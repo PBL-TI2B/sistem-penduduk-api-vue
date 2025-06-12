@@ -29,7 +29,7 @@ console.log(item);
             <h1 class="text-3xl font-bold">Data Keluarga</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Keluarga', href: '/admin/keluarga' },
                     { label: 'Detail Keluarga' },
                 ]"

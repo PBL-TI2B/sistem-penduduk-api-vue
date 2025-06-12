@@ -121,8 +121,8 @@ onMounted(async () => {
         <h1 class="text-3xl font-bold">Edit Data Berita</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Berita', href: '/berita' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Berita', href: '/admin/berita' },
                 { label: 'Edit Berita' },
             ]"
         />
@@ -202,7 +202,7 @@ onMounted(async () => {
                     </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/berita')"
+                            @click="router.visit('/admin/berita')"
                             type="button"
                             variant="secondary"
                             >Batal</Button

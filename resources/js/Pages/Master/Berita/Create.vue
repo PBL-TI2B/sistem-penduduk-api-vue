@@ -102,8 +102,8 @@ const onSubmit = handleSubmit(async (values) => {
         <h1 class="text-3xl font-bold">Tambah Data Berita</h1>
         <BreadcrumbComponent
             :items="[
-                { label: 'Dashboard', href: '/' },
-                { label: 'Berita', href: '/berita' },
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Berita', href: '/admin/berita' },
                 { label: 'Tambah Data Berita' },
             ]"
         />

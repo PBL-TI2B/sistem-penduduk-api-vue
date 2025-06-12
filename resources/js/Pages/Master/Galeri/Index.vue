@@ -57,7 +57,7 @@ watch(page, fetchData);
             <h1 class="text-3xl font-bold">Galeri</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Galeri' },
                 ]"
             />
