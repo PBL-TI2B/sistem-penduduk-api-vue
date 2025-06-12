@@ -24,9 +24,7 @@ export function useKelahiran() {
                 per_page: perPage.value,
                 search: search.value,
             };
-            // if (selectedKategori.value && selectedKategori.value !== "-") {
-            //     params.kategori_bantuan_id = selectedKategori.value;
-            // }
+
             const res = await apiGet("/kelahiran", params);
             items.value = res.data.data;
             perPage.value = res.data.per_page;
@@ -39,17 +37,16 @@ export function useKelahiran() {
         }
     };
 
-    // Fetch detail kelahiran (untuk halaman edit/detail)
     const fetchDetailData = async (uuid) => {
-        if (!uuid) return;
-        // item = ref({});
+        if (!uuid) return null;
         try {
             isLoading.value = true;
             const res = await apiGet(`/kelahiran/${uuid}`);
             item.value = res.data;
-            // console.log(res.data);
+            return res.data; // ⬅️ penting
         } catch (error) {
             useErrorHandler(error, "Gagal memuat detail kelahiran");
+            return null;
         } finally {
             isLoading.value = false;
         }
@@ -66,7 +63,7 @@ export function useKelahiran() {
             }
             await apiPost("/kelahiran", values);
             toast.success("Berhasil Tambah Data kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data kelahiran");
         } finally {
@@ -86,7 +83,7 @@ export function useKelahiran() {
             }
             await apiPost(`/kelahiran/${uuid}`, formData);
             toast.success("Berhasil memperbarui data kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data kelahiran");
         } finally {
@@ -100,7 +97,7 @@ export function useKelahiran() {
             // isLoading.value = true;
             await apiDelete(`/kelahiran/${uuid}`);
             toast.success("Berhasil menghapus kelahiran");
-            router.visit("/kelahiran");
+            router.visit("/admin/kelahiran");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kelahiran");
         } finally {

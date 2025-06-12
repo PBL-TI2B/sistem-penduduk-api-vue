@@ -61,8 +61,8 @@ onMounted(fetchDetailPenduduk);
             <h1 class="text-3xl font-bold">Data Penduduk</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
-                    { label: 'Data Penduduk', href: '../' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Data Penduduk', href: '/admin/penduduk' },
                     { label: 'Detail Penduduk' },
                 ]"
             />
@@ -87,7 +87,7 @@ onMounted(fetchDetailPenduduk);
             </h2>
             <table class="w-full gap-2 table">
                 <tr
-                    v-for="row in rowsShow.slice(0, -3)"
+                    v-for="row in rowsShow.slice(0, -5)"
                     :key="row.key"
                     class="even:bg-card/30 p-2"
                 >

@@ -72,7 +72,7 @@ const onClickDeleteButton = (uuid) => {
     isAlertDeleteOpen.value = true;
 };
 
-const onCancleDelete = () => {
+const onCancelDelete = () => {
     isAlertDeleteOpen.value = false;
     selectedUuid.value = null;
 };
@@ -100,6 +100,7 @@ const actionsIndex = [
         label: "Hapus",
         icon: Trash2,
         handler: (item) => onClickDeleteButton(item.uuid),
+        disabled: (item) => item.penduduk_count > 0,
     },
 ];
 
@@ -124,7 +125,7 @@ watch(isDialogOpen, (newVal, oldVal) => {
             <h1 class="text-3xl font-bold">Data Pendidikan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Pendidikan' },
                 ]"
             />
@@ -155,8 +156,6 @@ watch(isDialogOpen, (newVal, oldVal) => {
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
-            @edit-item="(item) => openDialog('edit', item)"
-            @delete-item="(item) => handleDelete(item)"
         />
     </div>
 
@@ -173,6 +172,6 @@ watch(isDialogOpen, (newVal, oldVal) => {
         :title="'Hapus Data Pendidikan'"
         :description="'Apakah anda yakin ingin menghapus data pendidikan ini?'"
         :onConfirm="onConfirmDelete"
-        :onCancle="onCancleDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

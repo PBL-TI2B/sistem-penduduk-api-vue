@@ -64,7 +64,7 @@ export function usePerangkatDesa(uuid) {
             await apiPost("/perangkat-desa", formData);
             resetForm();
             toast.success("Berhasil Tambah Data Perangkat Desa");
-            router.visit("/perangkat-desa");
+            router.visit("/admin/perangkat-desa");
         } catch (error) {
             useErrorHandler(error);
         }
@@ -82,7 +82,7 @@ export function usePerangkatDesa(uuid) {
             await apiPost(`/perangkat-desa/${uuid}`, formData);
             resetForm();
             toast.success("Berhasil Edit Data Perangkat Desa");
-            router.visit("/perangkat-desa");
+            router.visit("/admin/perangkat-desa");
         } catch (error) {
             useErrorHandler(error);
         }
@@ -92,7 +92,7 @@ export function usePerangkatDesa(uuid) {
         try {
             await apiDelete(`/perangkat-desa/${uuid}`);
             toast.success("Berhasil Hapus Data Perangkat Desa");
-            router.visit("/perangkat-desa");
+            router.visit("/admin/perangkat-desa");
         } catch (error) {
             useErrorHandler(error);
         }

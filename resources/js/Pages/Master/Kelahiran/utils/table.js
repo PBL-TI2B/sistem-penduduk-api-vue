@@ -26,7 +26,8 @@ const columnsIndexKelahiran = [
     {
         label: "Waktu Kelahiran",
         key: "waktu_kelahiran",
-        format: (val, row) => row?.waktu_kelahiran || "-",
+        format: (val, row) =>
+            dayjs(row?.waktu_kelahiran).format("DD MMM YYYY HH:mm") || "-",
     },
     {
         label: "Lokasi",
@@ -37,16 +38,6 @@ const columnsIndexKelahiran = [
         label: "Ket",
         key: "keterangan",
         format: (val, row) => row?.keterangan || "-",
-    },
-];
-
-const actionsIndexKelahiran = [
-    {
-        label: "Kelola",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("perangkat-desa.show", item.uuid));
-        },
     },
 ];
 
@@ -127,9 +118,4 @@ const columnsKelahiran = [
 //     },
 // ];
 
-export {
-    columnsIndexKelahiran,
-    actionsIndexKelahiran,
-    rowsShowKelahiran,
-    columnsKelahiran,
-};
+export { columnsIndexKelahiran, rowsShowKelahiran, columnsKelahiran };

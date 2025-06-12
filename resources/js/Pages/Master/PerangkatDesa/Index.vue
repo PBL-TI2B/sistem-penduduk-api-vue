@@ -19,6 +19,7 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { actionsIndex, columnsIndex } from "./utils/table";
 import { columnsJabatan } from "./utils/table";
 import {
+    Funnel,
     PenBoxIcon,
     SearchIcon,
     SquarePlus,
@@ -142,7 +143,7 @@ watch(pageJabatan, () => {
             <h1 class="text-3xl font-bold">Data Perangkat Desa</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Perangkat Desa' },
                 ]"
             />
@@ -226,7 +227,7 @@ watch(pageJabatan, () => {
                 </button>
             </div>
             <div
-                class="flex bg-primary-foreground px-2 rounded-lg gap-4 justify-between items-center"
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between items-center"
             >
                 <Select v-model="selectedStatus">
                     <SelectTrigger>
@@ -256,19 +257,17 @@ watch(pageJabatan, () => {
                     </SelectContent>
                 </Select>
 
-                <Button @click="applyFilterPerangkat">Terapkan</Button>
-                <div
-                    class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                <Button @click="applyFilterPerangkat"
+                    ><Funnel /> Terapkan</Button
                 >
-                    <Button asChild>
-                        <Link
-                            :href="route('perangkat-desa.create')"
-                            class="flex items-center gap-1"
-                        >
-                            <SquarePlus /> Perangkat Desa
-                        </Link>
-                    </Button>
-                </div>
+                <Button asChild>
+                    <Link
+                        :href="route('perangkat-desa.create')"
+                        class="flex items-center gap-1"
+                    >
+                        <SquarePlus /> Perangkat Desa
+                    </Link>
+                </Button>
             </div>
         </div>
 

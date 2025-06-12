@@ -34,23 +34,23 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
 
 const {
-items,
-        item,
-        isLoading,
-        page,
-        perPage,
-        totalPages,
-        totalItems,
-        search,
-        selectedStatusPenerimaanBantuan,
-        // statusValidasiOptions,
-        // imageUrl,
-        fetchData,
-        fetchDetailData,
-        createData,
-        editKeterangan,
-        editStatusPenerimaanBantuan,
-        deleteData,
+    items,
+    item,
+    isLoading,
+    page,
+    perPage,
+    totalPages,
+    totalItems,
+    search,
+    selectedStatusPenerimaanBantuan,
+    // statusValidasiOptions,
+    // imageUrl,
+    fetchData,
+    fetchDetailData,
+    createData,
+    editKeterangan,
+    editStatusPenerimaanBantuan,
+    deleteData,
 } = usePenerimaBantuan();
 
 const clearSearch = () => {
@@ -94,7 +94,7 @@ onMounted(() => {
 });
 
 watch(page, () => {
-    fetchData()
+    fetchData();
 });
 </script>
 
@@ -105,7 +105,7 @@ watch(page, () => {
             <h1 class="text-3xl font-bold">Data Penerima Bantuan</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Penerima Bantuan' },
                 ]"
             />
@@ -160,15 +160,11 @@ watch(page, () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem>
-                                    Semua
-                                </SelectItem>
+                                <SelectItem> Semua </SelectItem>
                                 <SelectItem value="diajukan">
                                     Diajukan
                                 </SelectItem>
-                                <SelectItem value="aktif">
-                                    Aktif
-                                </SelectItem>
+                                <SelectItem value="aktif"> Aktif </SelectItem>
                                 <SelectItem value="selesai">
                                     Selesai
                                 </SelectItem>

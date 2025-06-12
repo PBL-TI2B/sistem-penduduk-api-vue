@@ -9,17 +9,15 @@ const hasData = ref(true);
 const fetchGaleri = async () => {
     try {
         const res = await apiGet("/galeri");
-        const apiData = res.data.data.data;
+        const apiData = res.data.data;
 
         if (apiData.length === 0) {
             hasData.value = false;
         } else {
             galleryList.value = apiData.map((item) => ({
                 id: item.id,
-                image: item.foto
-                    ? `/storage/${item.foto}`
-                    : "/images/fallback.png",
-                alt: item.nama ?? "Foto Galeri",
+                image: item.foto ? item.foto : "fallback.png", // nama file aja
+                alt: item.judul ?? "Foto Galeri",
             }));
         }
     } catch (error) {
@@ -46,11 +44,8 @@ onMounted(fetchGaleri);
             v-else
             class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
         >
-            <div
-                v-for="(image, index) in galleryList"
-                :key="index"
-                class="mb-4"
-            >
+            <div v-for="image in galleryList" :key="image.id">
+                {{ console.log(image.image) }}
                 <img
                     :src="image.image"
                     :alt="image.alt"

@@ -36,7 +36,7 @@ import { motion } from "motion-v";
             class="absolute inset-0 flex flex-col justify-center lg:justify-start items-center text-white text-center"
         >
             <motion.h2
-                class="mx-4 mt-28 sm:mt-52 md:mt-60 lg:mt-72 mb-2 text-6xl md:text-8xl font-italianno"
+                class="mx-4 mt-32 md:mt-32 lg:mt-60 mb-2 text-6xl md:text-8xl font-italianno"
                 :initial="{ opacity: 0, y: 40 }"
                 :animate="{ opacity: 1, y: 0 }"
                 :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"

@@ -229,7 +229,7 @@ const actionsIndex2 = getActionsDusun({
             <h1 class="text-3xl font-bold">Data Desa & Dusun</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Desa & Dusun' },
                 ]"
             />

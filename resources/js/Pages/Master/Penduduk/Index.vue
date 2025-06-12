@@ -26,6 +26,7 @@ import {
     SquarePlus,
     XIcon,
 } from "lucide-vue-next";
+import Label from "@/components/ui/label/Label.vue";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -37,9 +38,20 @@ const searchPenduduk = ref("");
 const filter = ref({
     status: "",
     status_perkawinan: "",
+    jenis_kelamin: "",
+    domisili: "",
+    rt: "",
+    rw: "",
     pendidikan: "",
+    pekerjaan: "",
     agama: "",
+    min_umur: "",
+    max_umur: "",
 });
+const rtData = ref([]);
+const rwData = ref([]);
+const pendidikanData = ref([]);
+const pekerjaanData = ref([]);
 
 const fetchData = async () => {
     try {
@@ -52,9 +64,25 @@ const fetchData = async () => {
             filter.value.status_perkawinan === "-"
                 ? ""
                 : filter.value.status_perkawinan;
+        const jenis_kelamin =
+            filter.value.jenis_kelamin === "-"
+                ? ""
+                : filter.value.jenis_kelamin;
+        const domisili =
+            filter.value.domisili === "-" ? "" : filter.value.domisili;
+        const rt = filter.value.rt === "-" ? "" : filter.value.rt;
+        const rw = filter.value.rw === "-" ? "" : filter.value.rw;
+        const pekerjaan =
+            filter.value.pekerjaan === "-" ? "" : filter.value.pekerjaan;
         const pendidikan =
             filter.value.pendidikan === "-" ? "" : filter.value.pendidikan;
         const agama = filter.value.agama === "-" ? "" : filter.value.agama;
+        const min_umur = filter.value.min_umur
+            ? parseInt(filter.value.min_umur)
+            : "";
+        const max_umur = filter.value.max_umur
+            ? parseInt(filter.value.max_umur)
+            : "";
 
         const res = await apiGet("/penduduk", {
             page: page.value,
@@ -63,6 +91,13 @@ const fetchData = async () => {
             status_perkawinan,
             pendidikan,
             agama,
+            jenis_kelamin,
+            domisili,
+            rt,
+            rw,
+            pekerjaan,
+            min_umur,
+            max_umur,
         });
 
         items.value = res.data.data;
@@ -95,12 +130,44 @@ const resetFilter = () => {
         status_perkawinan: "",
         pendidikan: "",
         agama: "",
+        jenis_kelamin: "",
+        domisili: "",
+        rt: "",
+        rw: "",
+        pekerjaan: "",
+        min_umur: "",
+        max_umur: "",
     };
     fetchData();
 };
 
-onMounted(fetchData);
+onMounted(async () => {
+    try {
+        isLoading.value = true;
+
+        // Fetch RT and RW data
+        const [rtRes, rwRes, pendidikanRes, pekerjaanRes] = await Promise.all([
+            apiGet("/rt"),
+            apiGet("/rw"),
+            apiGet("/pendidikan"),
+            apiGet("/pekerjaan"),
+        ]);
+
+        rtData.value = rtRes.data.data;
+        rwData.value = rwRes.data.data;
+        pendidikanData.value = pendidikanRes.data.data;
+        pekerjaanData.value = pekerjaanRes.data.data;
+
+        // Fetch initial data
+        await fetchData();
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data penduduk");
+    } finally {
+        isLoading.value = false;
+    }
+});
 watch(page, fetchData);
+console.log(rtData);
 </script>
 
 <template>
@@ -110,7 +177,7 @@ watch(page, fetchData);
             <h1 class="text-3xl font-bold">Data Penduduk</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Penduduk' },
                 ]"
             />
@@ -126,12 +193,12 @@ watch(page, fetchData);
     <div class="drop-shadow-md w-full grid gap-2">
         <div class="flex flex-wrap gap-2 justify-between">
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-[35%]"
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-1/2"
             >
                 <Input
                     v-model="searchPenduduk"
                     @keyup.enter="onSearchEnter"
-                    placeholder="Cari data Penduduk"
+                    placeholder="Cari data penduduk berdasarkan nama atau nik"
                     class="pl-10 pr-8"
                 />
                 <span
@@ -149,7 +216,7 @@ watch(page, fetchData);
                 </button>
             </div>
             <div
-                class="flex flex-wrap gap-4 bg-primary-foreground p-2 rounded-lg"
+                class="max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
             >
                 <Select v-model="filter.status">
                     <SelectTrigger>
@@ -179,29 +246,71 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.pendidikan">
+                <Select v-model="filter.jenis_kelamin">
                     <SelectTrigger>
-                        <SelectValue placeholder="Pendidikan" />
+                        <SelectValue placeholder="Jenis Kelamin" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Pendidikan</SelectLabel>
+                            <SelectLabel>Jenis Kelamin</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="tidak sekolah">
-                                Tidak Sekolah
-                            </SelectItem>
-                            <SelectItem value="SD"> SD </SelectItem>
-                            <SelectItem value="SMP"> SMP </SelectItem>
-                            <SelectItem value="SMA"> SMA </SelectItem>
-                            <SelectItem value="SMK"> SMK </SelectItem>
-                            <SelectItem value="D3"> D3 </SelectItem>
-                            <SelectItem value="D4"> D4 </SelectItem>
-                            <SelectItem value="S1"> S1 </SelectItem>
-                            <SelectItem value="S2"> S2 </SelectItem>
-                            <SelectItem value="S3"> S3 </SelectItem>
+                            <SelectItem value="L"> Laki-Laki </SelectItem>
+                            <SelectItem value="P"> Perempuan </SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
+                <Select v-model="filter.domisili">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Domisili" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Domisili</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem value="tetap"> Tetap </SelectItem>
+                            <SelectItem value="sementara">
+                                Sementara
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Select v-model="filter.rt">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Nomor RT" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Nomor RT</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem
+                                v-for="rt in rtData"
+                                :key="rt.id"
+                                :value="rt.nomor_rt"
+                            >
+                                {{ rt.nomor_rt }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Select v-model="filter.rw">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Nomor RW" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Nomor RW</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem
+                                v-for="rw in rwData"
+                                :key="rw.id"
+                                :value="rw.nomor_rw"
+                            >
+                                {{ rw.nomor_rw }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+
                 <Select v-model="filter.agama">
                     <SelectTrigger>
                         <SelectValue placeholder="Agama" />
@@ -221,16 +330,69 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button asChild @click="resetFilter">
+                <Select v-model="filter.pendidikan">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Pendidikan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Pendidikan</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem
+                                v-for="pendidikan in pendidikanData"
+                                :key="pendidikan.id"
+                                :value="pendidikan.jenjang"
+                            >
+                                {{ pendidikan.jenjang }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Select v-model="filter.pekerjaan">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Pekerjaan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Pekerjaan</SelectLabel>
+                            <SelectItem value="-"> Semua </SelectItem>
+                            <SelectItem
+                                v-for="pekerjaan in pekerjaanData"
+                                :key="pekerjaan.id"
+                                :value="pekerjaan.nama_pekerjaan"
+                            >
+                                {{ pekerjaan.nama_pekerjaan }}
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <div class="flex gap-2 border border-gray-200 pl-2 rounded-md">
+                    <Label class="text-right">Filter Umur</Label>
+                    <Input
+                        v-model="filter.min_umur"
+                        placeholder="Min"
+                        class="w-20"
+                        type="number"
+                    />
+                    <Input
+                        v-model="filter.max_umur"
+                        placeholder="Max"
+                        class="w-20"
+                        type="number"
+                    />
+                </div>
+            </div>
+            <div class="grid gap-2 bg-primary-foreground p-2 rounded-lg">
+                <Button asChild @click="fetchData">
                     <div>
-                        <FunnelX />
-                        Reset
+                        <Funnel />
+                        Terapkan Filter
                     </div>
                 </Button>
-                <Button class="cursor-pointer" @click="fetchData">
-                    <Funnel />
-                    Terapkan</Button
-                >
+                <Button @click="resetFilter">
+                    <FunnelX />
+                    Reset Filter
+                </Button>
             </div>
         </div>
         <DataTable

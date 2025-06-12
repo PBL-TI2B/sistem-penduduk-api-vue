@@ -3,7 +3,7 @@ import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
 import { columnsIndex } from "./utils/table";
-import { PackagePlus, SearchIcon, XIcon } from "lucide-vue-next";
+import { Funnel, PackagePlus, SearchIcon, XIcon } from "lucide-vue-next";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -14,6 +14,9 @@ import FormDialogKematian from "./components/FormDialogKematian.vue";
 import { SquarePen, SquarePlus, Trash2 } from "lucide-vue-next";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 import { useKematian } from "@/composables/useKematian";
+
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -126,7 +129,7 @@ const clearSearchKematian = () => {
             <h1 class="text-3xl font-bold">Data Kematian</h1>
             <BreadcrumbComponent
                 :items="[
-                    { label: 'Dashboard', href: '/' },
+                    { label: 'Dashboard', href: '/admin/dashboard' },
                     { label: 'Data Kematian' },
                 ]"
             />
@@ -145,7 +148,7 @@ const clearSearchKematian = () => {
                 <Input
                     v-model="searchKematian"
                     @keyup.enter="onSearchEnter"
-                    placeholder="Cari data kematian"
+                    placeholder="Cari data kematian berdasarkan nama penduduk"
                     class="pl-10 pr-8"
                 />
                 <span
@@ -162,10 +165,21 @@ const clearSearchKematian = () => {
                     <XIcon />
                 </button>
             </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Datepicker
+                    locale="id"
+                    :enable-time-picker="false"
+                    :format="'dd MMMM yyyy'"
+                />
+                <Button @click="createKematian"> <Funnel /> Terapkan </Button>
+            </div>
         </div>
 
         <!-- Data Table -->
         <DataTable
+            label="Kematian"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndexKematian"
@@ -194,3 +208,27 @@ const clearSearchKematian = () => {
         />
     </div>
 </template>
+
+<style scoped>
+:deep(.dp__cell_inner.dp__active_date) {
+    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    color: white !important;
+    border-radius: 6px;
+}
+
+:deep(.dp__cell_inner.dp__today) {
+    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border-radius: 6px;
+}
+
+:deep(.dp__action_button) {
+    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
+    color: white; /* warna teks */
+    border-radius: 6px;
+    border: none;
+}
+
+:deep(.dp__action_button:hover) {
+    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+</style>

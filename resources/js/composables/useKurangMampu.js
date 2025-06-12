@@ -89,7 +89,7 @@ export function useKurangMampu() {
     };
 
     //! Create Kurang Mampu
-    const createData  = async (values) => {
+    const createData = async (values) => {
         try {
             isLoading.value = true;
 
@@ -99,7 +99,7 @@ export function useKurangMampu() {
             }
             await apiPost("/kurang-mampu", values);
             toast.success("Berhasil Tambah Data KurangMampu");
-            router.visit("/kurang-mampu");
+            router.visit("/admin/kurang-mampu");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data kurang mampu");
         } finally {
@@ -153,9 +153,18 @@ export function useKurangMampu() {
 
             const formData = new FormData();
             formData.append("_method", "PUT");
-            formData.append("pendapatan_per_hari", values.pendapatan_per_hari ?? "");
-            formData.append("pendapatan_per_bulan", values.pendapatan_per_bulan ?? "");
-            formData.append("jumlah_tanggungan", values.jumlah_tanggungan ?? "");
+            formData.append(
+                "pendapatan_per_hari",
+                values.pendapatan_per_hari ?? ""
+            );
+            formData.append(
+                "pendapatan_per_bulan",
+                values.pendapatan_per_bulan ?? ""
+            );
+            formData.append(
+                "jumlah_tanggungan",
+                values.jumlah_tanggungan ?? ""
+            );
             formData.append("keterangan", values.keterangan ?? "");
 
             await apiPost(`/kurang-mampu/${uuid}`, formData);
@@ -169,12 +178,12 @@ export function useKurangMampu() {
     };
 
     //! Delete Kurang Mampu
-    const deleteData  = async (uuid) => {
+    const deleteData = async (uuid) => {
         try {
             // isLoading.value = true;
             await apiDelete(`/kurang-mampu/${uuid}`);
             toast.success("Berhasil menghapus kurang-mampu");
-            router.visit("/kurang-mampu");
+            router.visit("/admin/kurang-mampu");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kurang mampu");
         } finally {
