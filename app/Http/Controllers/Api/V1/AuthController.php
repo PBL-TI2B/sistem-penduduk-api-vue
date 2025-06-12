@@ -17,6 +17,8 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255',
             'password' => 'required|string|min:8',
+            'perangkat_id' => 'nullable',
+            'status'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -26,14 +28,14 @@ class AuthController extends Controller
         $user = User::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
-            'role' => 'admin',
             'status' => 'aktif',
         ]);
 
+        $user->assignRole($request->role);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return new ApiResource(true, 'Berhasil mendaftar', [
+        return new ApiResource(true, 'Berhasil menambah user', [
             'user' => $user,
             'access_token' => $token,
             'token_type'=> 'Bearer',

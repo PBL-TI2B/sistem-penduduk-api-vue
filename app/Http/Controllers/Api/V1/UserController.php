@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
 use App\Http\Resources\ApiResource;
-// use App\Http\Resources\RtResource;
-use App\Http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -13,10 +11,18 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all RT
-        $user = User::paginate(10);
+        $query = User::with(['roles', 'perangkatDesa.penduduk']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('username', 'like', "%$search%");
+            });
+        }
+
+        $user = $query->paginate($request->get('per_page',10));
         return new ApiResource(true, 'Daftar Data User', $user);
     }
 
@@ -26,8 +32,8 @@ class UserController extends Controller
             'username' => 'required|string|unique:users|max:255',
             'password' => 'required|string|min:8',
             'status' => 'required|in:aktif,nonaktif',
+            'roles' => 'required|string|exists:roles,name',
             'perangkat_id' => 'nullable|exists:perangkat_desa,id',
-            'role' => 'required|in:superadmin,admin,rt,rw'  
         ]);
 
         if ($validator->fails()) {
@@ -41,25 +47,25 @@ class UserController extends Controller
             'perangkat_id' => $request->perangkat_id,
         ]);
 
-        $user->assignRole($request->role); 
+        $user->assignRole($request->roles); 
 
-        return new ApiResource(true, 'User Berhasil Ditambahkan', $user);
+        return new ApiResource(true, 'User Berhasil Ditambahkan', $user->load(['roles', 'perangkatDesa.penduduk']));
     }
 
-    
     public function show(User $user)
     {
+        $user->load(['roles', 'perangkatDesa.penduduk']);
         return new ApiResource(true, 'Detail Data User', $user);
     }
 
     public function update(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users,username,' . $user->id . '|max:255',
-            'password' => 'required|string|min:8',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'password' => 'nullable|string|min:8',
             'status' => 'required|in:aktif,nonaktif',
+            'roles' => 'required|string|exists:roles,name',
             'perangkat_id' => 'nullable|exists:perangkat_desa,id',
-            'role' => 'required|in:superadmin,admin,rt,rw'  
         ]);
 
         if ($validator->fails()) {
@@ -73,18 +79,17 @@ class UserController extends Controller
             'perangkat_id' => $request->perangkat_id,
         ]);
 
-        $user->syncRoles([$request->role]); 
+        $user->syncRoles([$request->roles]); 
 
-        return new ApiResource(true, 'User Berhasil Diperbarui', $user);
+        return new ApiResource(true, 'User Berhasil Diperbarui', $user->load(['roles', 'perangkatDesa.penduduk']));
     }
 
-    public function destroy(Rt $rt)
+    public function destroy(User $user)
     {
-        // Delete the RT
-        $rt->delete();
+        $user->delete();
         return response()->json([
             'success' => true,
-            'message' => 'RT Deleted',
+            'message' => 'User Deleted',
             'data' => null,
         ]);
     }

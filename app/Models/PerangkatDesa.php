@@ -25,6 +25,11 @@ class PerangkatDesa extends Model
         return 'uuid';
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
     public function penduduk()
     {
         return $this->belongsTo(Penduduk::class, 'penduduk_id', 'id');
