@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('pendapatan_per_hari', 50)->nullable();
             $table->string('pendapatan_per_bulan', 50)->nullable();
             $table->string('jumlah_tanggungan', 50)->nullable();
-            $table->enum('status_validasi', ['pending', 'tervalidasi', 'ditolak'])->default('pending');
+            $table->enum('status_validasi', ['belum tervalidasi', 'tervalidasi', 'ditolak'])->default('belum tervalidasi');
             $table->text('keterangan')->nullable();
 
             $table->foreignId('anggota_keluarga_id')->constrained('anggota_keluarga')->onDelete('cascade');
