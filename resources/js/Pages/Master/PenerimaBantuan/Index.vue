@@ -200,6 +200,7 @@ watch(page, () => {
             :columns="columnsIndex"
             :actions="actionsIndexPenerimaBantuan"
             :totalPages="totalPages"
+            :totalData="totalItems"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"

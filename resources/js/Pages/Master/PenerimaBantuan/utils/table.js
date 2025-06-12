@@ -1,6 +1,7 @@
 import { Eye, PencilIcon, Trash2Icon } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import { formatCurrency, formatDate } from "@/composables/formatData";
 
 const columnsIndex = [
     {
@@ -65,6 +66,64 @@ const columnsIndex = [
     },
 ];
 
+const columnsIndexBantuan = [
+    { label: "Nama Bantuan", key: "nama_bantuan" },
+    { label: "Kategori",key: "kategori", },
+    { label: "Nominal", key: "nominal",
+        format: formatCurrency
+    },
+    { label: "Periode", key: "periode" },
+    { label: "Lama Periode", key: "lama_periode" },
+    { label: "Instansi", key: "instansi" },
+    { label: "Keterangan", key: "keterangan",
+        format: (value) => {
+            return value?? '-';
+        },
+    },
+];
+
+const columnsIndexKurangMampu = [
+   {
+        label: "Nama Penduduk",
+        key: "penduduk",
+        format: (value) => value?.nama_lengkap ?? '-',
+    },
+    {
+        label: "NIK",
+        key: "penduduk",
+        format: (value) => value?.nik ?? '-',
+    },
+    {
+        label: "Pendapatan Per-Hari",
+        key: "pendapatan_per_hari",
+        format: formatCurrency,
+    },
+    {
+        label: "Pendapatan Per-Bulan",
+        key: "pendapatan_per_bulan",
+        format: formatCurrency,
+    },
+    {
+        label: "Tanggungan",
+        key: "jumlah_tanggungan",
+        format: (value) => value ?? '0',
+    },
+    {
+        label: "Pekerjaan",
+        key: "penduduk",
+        format: (value) => value?.pekerjaan ?? '-',
+    },
+    {
+        label: "Pendidikan Terakhir",
+        key: "penduduk",
+        format: (value) => value?.pendidikan ?? '-',
+    },
+    {
+        label: "Status Validasi",
+        key: "status_validasi"
+    },
+];
+
 
 const actionsIndex =  (onClickDeleteButton) => [
     {
@@ -115,4 +174,4 @@ const rowsShow = [
 ];
 
 
-export { columnsIndex, actionsIndex, rowsShow };
+export { columnsIndex, columnsIndexBantuan, columnsIndexKurangMampu, actionsIndex, rowsShow };
