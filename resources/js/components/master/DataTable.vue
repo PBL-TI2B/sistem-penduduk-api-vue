@@ -258,18 +258,6 @@ const handleExport = async (format) => {
                     </TableCell>
 
                     <!-- Terapkan Disabled Button -->
-                    <!-- <TableCell v-if="actions.length">
-                        <Button
-                            v-for="(action, index) in actions"
-                            :key="index"
-                            variant="secondary"
-                            @click="() => action.handler(item)"
-                            class="mr-2 cursor-pointer"
-                        >
-                            <component :is="action.icon" class="w-4 h-4" />
-                            {{ action.label }}
-                        </Button>
-                    </TableCell> -->
                     <TableCell v-if="actions.length">
                         <Button
                             v-for="(action, index) in actions"
