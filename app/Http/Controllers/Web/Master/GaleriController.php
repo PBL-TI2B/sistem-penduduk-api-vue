@@ -36,20 +36,20 @@ class GaleriController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Galeri $galeri_admin)
+    public function show(Galeri $galeri)
     {
         return Inertia::render('Master/Galeri/Show', [
-            'uuid' => $galeri_admin->uuid
+            'uuid' => $galeri->uuid
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Galeri $galeri_admin)
+    public function edit(Galeri $galeri)
     {
         return Inertia::render('Master/Galeri/Edit', [
-            'uuid' => $galeri_admin->uuid
+            'uuid' => $galeri->uuid
         ]);
     }
 

@@ -16,6 +16,8 @@ import { apiPost, apiGet } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 const fields = ref(getFields());
 const { handleSubmit, resetForm, setFieldValue, values } = useForm();
@@ -25,16 +27,6 @@ const previewThumbnail = ref(null);
 const user_id = ref(null);
 const username = ref(""); // Untuk menampilkan nama penulis jika perlu
 
-// Fungsi generate slug dari judul
-function generateSlug(text) {
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-") // Replace spaces with -
-        .replace(/[^\w\-]+/g, "") // Remove all non-word chars
-        .replace(/\-\-+/g, "-"); // Replace multiple - with single -
-}
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
@@ -47,13 +39,6 @@ const onFileChange = (e) => {
     }
 };
 
-// Watch judul, update slug otomatis
-watch(
-    () => values.judul,
-    (newJudul) => {
-        setFieldValue("slug", generateSlug(newJudul || ""));
-    }
-);
 
 // Ambil user_id dan username dari endpoint /auth/me
 onMounted(async () => {
@@ -74,7 +59,6 @@ const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
         formData.append("judul", values.judul);
-        formData.append("slug", generateSlug(values.judul));
         formData.append("konten", values.konten);
         formData.append("status", values.status);
         formData.append("jumlah_dilihat", 0);
@@ -88,7 +72,7 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
         previewThumbnail.value = null;
         toast.success("Berhasil tambah data berita");
-        router.visit("/berita");
+        router.visit("/admin/berita");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -131,12 +115,16 @@ const onSubmit = handleSubmit(async (values) => {
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-                            <textarea
-                                v-else-if="field.type === 'textarea'"
-                                :placeholder="field.placeholder"
-                                class="w-full border rounded p-2"
-                                v-bind="componentField"
-                            />
+                            <div v-else-if="field.name === 'konten'">
+                                <QuillEditor
+                                    theme="snow"
+                                    toolbar="full"
+                                    contentType="html"
+                                    v-model:content="componentField.value"
+                                    @update:content="setFieldValue('konten', $event)"
+                                    style="height: 300px"
+                                />
+                            </div>
                             <select
                                 v-else-if="field.type === 'select'"
                                 class="w-full border rounded p-2"
@@ -176,7 +164,7 @@ const onSubmit = handleSubmit(async (values) => {
                     </p>
                     <div class="flex gap-2 items-center">
                         <Button
-                            @click="router.visit('/berita')"
+                            @click="router.visit('/admin/berita')"
                             type="button"
                             variant="secondary"
                             >Batal</Button

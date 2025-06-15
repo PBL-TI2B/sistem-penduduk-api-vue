@@ -8,6 +8,7 @@ use App\Http\Resources\BeritaResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BeritaController extends Controller
 {
@@ -23,11 +24,14 @@ class BeritaController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%$search%")
-                ->orWhere('konten', 'like', "%$search%")
-                ->orWhere('status', 'like', "%$search%");
+                    ->orWhere('konten', 'like', "%$search%")
+                    ->orWhere('status', 'like', "%$search%");
             });
         }
-
+        // // Fitur filter berdasarkan status
+        // if ($request->filled('status')) {
+        //     $query->where('status', $request->status);
+        // }
         // Paginasi
         $berita = $query->paginate($request->get('per_page', 10));
 
@@ -55,45 +59,54 @@ class BeritaController extends Controller
     //     ]);
     // }
 
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'thumbnail' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'judul' => 'required',
-            'slug' => 'required|unique:berita',
-            'konten' => 'required',
-            'jumlah_dilihat' => 'required|integer',
-            'status' => 'required|in:draft,publish',
-            'user_id' => 'required|exists:users,id',
-        ]);
+public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'thumbnail' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+        'judul' => 'required',
+        // Hapus validasi slug dari sini
+        'konten' => 'required',
+        'jumlah_dilihat' => 'required|integer',
+        'status' => 'required|in:draft,publish',
+        'user_id' => 'required|exists:users,id',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-        $thumbnail = $request->file('thumbnail');
-        $thumbnail->storeAs('berita', $thumbnail->hashName());
-
-        $berita = Berita::create([
-            'thumbnail' => $thumbnail->hashName(),
-            'judul' => $request->judul,
-            'slug' => $request->slug,
-            'konten' => $request->konten,
-            'jumlah_dilihat' => $request->input('jumlah_dilihat', 0),
-            'status' => $request->input('status', 'draft'),
-            'user_id' => $request->user_id,
-        ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Berita Berhasil Ditambahkan',
-            'data'    => new BeritaResource($berita->load('user')),
-        ]);
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
+    $thumbnail = $request->file('thumbnail');
+    $thumbnail->storeAs('berita', $thumbnail->hashName());
+
+    $slug = Str::slug($request->judul);
+
+    // Pastikan slug unik
+    $originalSlug = $slug;
+    $i = 1;
+    while (Berita::where('slug', $slug)->exists()) {
+        $slug = $originalSlug . '-' . $i++;
+    }
+
+    $berita = Berita::create([
+        'thumbnail' => $thumbnail->hashName(),
+        'judul' => $request->judul,
+        'slug' => $slug,
+        'konten' => $request->konten,
+        'jumlah_dilihat' => $request->input('jumlah_dilihat', 0),
+        'status' => $request->input('status', 'draft'),
+        'user_id' => $request->user_id,
+    ]);
+    return response()->json([
+        'success' => true,
+        'message' => 'Data Berita Berhasil Ditambahkan',
+        'data' => new BeritaResource($berita->load('user')),
+    ]);
+}
     public function show(Berita $berita)
     {
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Berita',
-            'data'    => new BeritaResource($berita->load('user')),
+            'data' => new BeritaResource($berita->load('user')),
         ]);
     }
 
@@ -102,7 +115,7 @@ class BeritaController extends Controller
         $validator = Validator::make($request->all(), [
             'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'judul' => 'required',
-            'slug' => 'required|unique:berita,slug,' . $berita->id,
+            // Hapus validasi slug dari sini
             'konten' => 'required',
             'jumlah_dilihat' => 'default:0',
             'status' => 'required|in:draft,publish',
@@ -114,6 +127,15 @@ class BeritaController extends Controller
         }
 
         $data = $request->except('thumbnail');
+
+        // Generate slug dari judul
+        $slug = Str::slug($request->judul);
+        $originalSlug = $slug;
+        $i = 1;
+        while (Berita::where('slug', $slug)->where('id', '!=', $berita->id)->exists()) {
+            $slug = $originalSlug . '-' . $i++;
+        }
+        $data['slug'] = $slug;
 
         if ($request->hasfile('thumbnail')) {
             Storage::delete('berita/' . $berita->thumbnail);
@@ -129,7 +151,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Diubah',
-            'data'    => new BeritaResource($berita->load('user')),
+            'data' => new BeritaResource($berita->load('user')),
         ]);
     }
 
@@ -140,13 +162,13 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Berita Berhasil Dihapus',
-            'data'    => null
+            'data' => null
         ]);
     }
 
     public function getBerita($filename, Request $request)
     {
-        if(!$request->user()){
+        if (!$request->user()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $path = storage_path('app/private/berita/' . $filename);

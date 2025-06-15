@@ -18,17 +18,8 @@ import { router, usePage } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
 import axios from "axios";
 import Cookies from "js-cookie";
-
-// Slug generator
-function generateSlug(text) {
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-") // Replace spaces with -
-        .replace(/[^\w\-]+/g, "") // Remove all non-word chars
-        .replace(/\-\-+/g, "-"); // Replace multiple - with single -
-}
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 const { uuid } = usePage().props;
 const fields = ref(getFields());
@@ -47,20 +38,13 @@ const onFileChange = (e) => {
     }
 };
 
-// Watch judul, update slug otomatis
-watch(
-    () => values.judul,
-    (newJudul) => {
-        setFieldValue("slug", generateSlug(newJudul || ""));
-    }
-);
+
 
 const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
         formData.append("_method", "PUT");
         formData.append("judul", values.judul);
-        formData.append("slug", values.slug);
         formData.append("konten", values.konten);
         formData.append("status", values.status);
         if (thumbnailFile.value) {
@@ -74,7 +58,7 @@ const onSubmit = handleSubmit(async (values) => {
         await apiPost(`/berita/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
-        router.visit("/berita");
+        router.visit("/admin/berita");
     } catch (error) {
         useErrorHandler(error);
     }
@@ -87,7 +71,6 @@ onMounted(async () => {
         const data = beritaRes.data; // pastikan ambil data yang benar
         setValues({
             judul: data.judul ?? "",
-            slug: data.slug ?? "",
             konten: data.konten ?? "",
             status: data.status && data.status !== "" ? data.status : "draft", // lebih aman
         });
@@ -149,19 +132,15 @@ onMounted(async () => {
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-                            <textarea
+                            <QuillEditor
                                 v-else-if="field.type === 'textarea'"
-                                :placeholder="field.placeholder"
-                                class="w-full border rounded p-2"
-                                :value="values[field.name]"
-                                @input="
-                                    (e) =>
-                                        setFieldValue(
-                                            field.name,
-                                            e.target.value
-                                        )
-                                "
-                            ></textarea>
+                                theme="snow"
+                                toolbar="full"
+                                contentType="html"
+                                style="min-height: 250px"
+                                v-model:content="values[field.name]"
+                                @update:content="setFieldValue(field.name, $event)"
+                            />
                             <select
                                 v-else-if="field.type === 'select'"
                                 class="w-full border rounded p-2"

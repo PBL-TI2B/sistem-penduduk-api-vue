@@ -50,7 +50,7 @@ const onConfirmDelete = async () => {
     try {
         await apiDelete(`/galeri/${uuid}`);
         toast.success("Data galeri berhasil dihapus");
-        router.visit("/galeri");
+        router.visit("/admin/galeri");
     } catch (error) {
         useErrorHandler(error, "Gagal menghapus data galeri");
     } finally {

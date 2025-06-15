@@ -13,7 +13,7 @@ export const columnsIndex = [
 
 export const actionsIndex = [
     {
-        label: "Lihat",
+        label: "Manage",
         icon: Eye,
         handler: (item) => {
             if (!item.uuid) {
@@ -24,7 +24,8 @@ export const actionsIndex = [
                 alert("Route berita.show tidak tersedia!");
                 return;
             }
-            const url = route("berita.show", { berita_admin: item.uuid });
+            // Ganti 'berita_admin' menjadi 'beritum'
+            const url = route("berita.show", { beritum: item.uuid });
             router.visit(url);
         },
     },
