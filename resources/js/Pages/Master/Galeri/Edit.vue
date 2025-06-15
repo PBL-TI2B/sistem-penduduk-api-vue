@@ -50,7 +50,7 @@ const onSubmit = handleSubmit(async (values) => {
         await apiPost(`/galeri/${uuid}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data galeri");
-        router.visit("/galeri");
+        router.visit("/admin/galeri");
     } catch (error) {
         useErrorHandler(error);
     }

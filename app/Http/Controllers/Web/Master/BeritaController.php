@@ -36,20 +36,20 @@ class BeritaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Berita $berita_admin)
+    public function show(Berita $beritum)
     {
         return Inertia::render('Master/Berita/Show', [
-            'uuid' => $berita_admin->uuid
+            'uuid' => $beritum->uuid
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Berita $berita_admin)
+    public function edit(Berita $beritum)
     {
         return Inertia::render('Master/Berita/Edit', [
-            'uuid' => $berita_admin->uuid
+            'uuid' => $beritum->uuid
         ]);
     }
 
