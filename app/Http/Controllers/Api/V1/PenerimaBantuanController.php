@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Resources\ApiResource;
 use App\Models\PenerimaBantuan;
 use App\Http\Resources\PenerimaBantuanResource;
@@ -48,15 +49,6 @@ class PenerimaBantuanController extends Controller
         $data->setCollection(collect($collection));
 
         return new ApiResource(true, 'Daftar Data Penerima Bantuan', $data);
-
-        // $penerimaBantuan = PenerimaBantuan::with(['bantuan.kategoriBantuan', 'kurangMampu'])->paginate(10);
-        // $collection = PenerimaBantuanResource::collection($penerimaBantuan->getCollection());
-        // $penerimaBantuan->setCollection(collect($collection));
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => 'Daftar Data Penerima Bantuan',
-        //     'data'    => $penerimaBantuan,
-        // ]);
     }
 
     // $table->timestamps();
@@ -66,29 +58,34 @@ class PenerimaBantuanController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:diajukan,aktif,selesai,ditolak',
-            'tanggal_penerimaan' => 'required|date',
-            'keterangan' => 'nullable|string',
             'kurang_mampu_id' => 'required|exists:kurang_mampu,id',
             'bantuan_id' => 'required|exists:bantuan,id',
+            'tanggal_penerimaan' => 'required|date',
+            'keterangan' => 'nullable|string',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
-        $penerimaBantuan = PenerimaBantuan::create([
-            'status' => $request->status,
-            'tanggal_penerimaan' => $request->tanggal_penerimaan,
-            'keterangan' => $request->keterangan,
+
+        // Cek kombinasi kurang_mampu_id dan bantuan_id sudah ada atau belum
+        $exists = PenerimaBantuan::where('kurang_mampu_id', $request->kurang_mampu_id)
+            ->where('bantuan_id', $request->bantuan_id)
+            ->exists();
+
+        if ($exists) {
+            return new ApiResource(false, 'Data dengan Penduduk Kurang Mampu dan Bantuan yang sama sudah', null, 409);
+        }
+
+        $data = PenerimaBantuan::create([
             'kurang_mampu_id' => $request->kurang_mampu_id,
             'bantuan_id' => $request->bantuan_id,
+            'status' => 'diajukan',
+            'tanggal_penerimaan' => $request->tanggal_penerimaan,
+            'keterangan' => $request->keterangan,
         ]);
-        return new PenerimaBantuanResource($penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu.anggotaKeluarga.penduduk']));
 
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => 'Data Penerima Bantuan Berhasil Ditambahkan',
-        //     'data'    => new PenerimaBantuanResource($penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu']))
-        // ]);
+        return new ApiResource(true, 'Data berhasil ditambahkan', new PenerimaBantuanResource($data));
     }
 
     /**
@@ -96,12 +93,7 @@ class PenerimaBantuanController extends Controller
      */
     public function show(PenerimaBantuan $penerimaBantuan)
     {
-        $penerimaBantuan->load(['bantuan.kategoriBantuan', 'kurangMampu']);
-        return response()->json([
-            'success' => true,
-            'message' => 'Detail Data Penerima Bantuan',
-            'data'    => new PenerimaBantuanResource($penerimaBantuan)
-        ]);
+        return new ApiResource(true, 'Detail Data Penerima Bantuan', new PenerimaBantuanResource($penerimaBantuan));
     }
 
 
@@ -110,28 +102,22 @@ class PenerimaBantuanController extends Controller
      */
     public function update(PenerimaBantuan $penerimaBantuan, Request $request)
     {
+
+
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:aktif,selesai,ditolak',
-            'tanggal_penerimaan' => 'required|date',
+            'status' => 'in:diajukan,aktif,selesai,ditolak',
+            'tanggal_penerimaan' => 'date',
             'keterangan' => 'nullable|string',
-            'kurang_mampu_id' => 'required|exists:kurang_mampu,id',
-            'bantuan_id' => 'required|exists:bantuan,id',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
-        $penerimaBantuan->update([
-            'status' => $request->status,
-            'tanggal_penerimaan' => $request->tanggal_penerimaan,
-            'keterangan' => $request->keterangan,
-            'kurang_mampu_id' => $request->kurang_mampu_id,
-            'bantuan_id' => $request->bantuan_id,
-        ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Penerima Bantuan Berhasil Diubah',
-            'data'    => new PenerimaBantuanResource($penerimaBantuan->load(['kurangMampu', 'bantuan', 'bantuan.kategoriBantuan', 'kurangMampu.anggota_keluarga', 'kurangMampu.anggota_keluarga.penduduk']))
-        ]);
+        $data = $request->only(['status', 'tanggal_penerimaan', 'keterangan']);
+
+        $penerimaBantuan->update($data);
+
+        return new ApiResource(true, 'Data berhasil diperbarui', new PenerimaBantuanResource($penerimaBantuan));
     }
 
 
@@ -139,12 +125,16 @@ class PenerimaBantuanController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(PenerimaBantuan $penerimaBantuan)
+    { {
+            $penerimaBantuan->delete();
+            return new ApiResource(true, 'Data penerima bantuan berhasil dihapus', null);
+        }
+    }
+
+    public function exportPdf()
     {
-        $penerimaBantuan->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Penerima Bantuan Berhasil Dihapus',
-            'data'    => null,
-        ]);
+        $kurangMampu = PenerimaBantuan::get();
+        $pdf = Pdf::loadView('exports.penerima-bantuan', compact('penerimaBantuan'));
+        return $pdf->download('penerima-bantuan.pdf');
     }
 }
