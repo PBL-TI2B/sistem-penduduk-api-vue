@@ -24,6 +24,7 @@ dayjs.locale("id");
 
 const items = ref([]);
 const totalPages = ref(1);
+const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
@@ -52,6 +53,7 @@ const fetchData = async () => {
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data berita");
     } finally {
@@ -120,6 +122,7 @@ watch(page, fetchData);
         </div>
         <DataTable
             label="Berita"
+            :totalData="totalData"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"
