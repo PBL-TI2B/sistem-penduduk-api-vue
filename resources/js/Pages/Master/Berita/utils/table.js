@@ -24,8 +24,8 @@ export const actionsIndex = [
                 alert("Route berita.show tidak tersedia!");
                 return;
             }
-            // Ganti 'berita_admin' menjadi 'beritum'
-            const url = route("berita.show", { beritum: item.uuid });
+
+            const url = route("berita.show", { berita: item.uuid });
             router.visit(url);
         },
     },
