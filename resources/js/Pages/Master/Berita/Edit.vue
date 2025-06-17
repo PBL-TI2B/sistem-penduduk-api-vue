@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
-const { uuid } = usePage().props;
+const { slug } = usePage().props;
 const fields = ref(getFields());
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
@@ -55,7 +55,7 @@ const onSubmit = handleSubmit(async (values) => {
         }
         // Tambahkan log ini
         console.log("FormData:", [...formData.entries()]);
-        await apiPost(`/berita/${uuid}`, formData);
+        await apiPost(`/berita/${slug}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
         router.visit("/admin/berita");
@@ -67,7 +67,7 @@ const onSubmit = handleSubmit(async (values) => {
 // Load data saat mount
 onMounted(async () => {
     try {
-        const beritaRes = await apiGet(`/berita/${uuid}`);
+        const beritaRes = await apiGet(`/berita/${slug}`);
         const data = beritaRes.data; // pastikan ambil data yang benar
         setValues({
             judul: data.judul ?? "",

@@ -39,7 +39,7 @@ class BeritaController extends Controller
     public function show(Berita $berita)
     {
         return Inertia::render('Master/Berita/Show', [
-            'uuid' => $berita->uuid
+            'slug' => $berita->slug
         ]);
     }
 
@@ -49,7 +49,7 @@ class BeritaController extends Controller
     public function edit(Berita $berita)
     {
         return Inertia::render('Master/Berita/Edit', [
-            'uuid' => $berita->uuid
+            'slug' => $berita->slug
         ]);
     }
 

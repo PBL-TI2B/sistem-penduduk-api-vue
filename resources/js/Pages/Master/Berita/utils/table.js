@@ -16,8 +16,8 @@ export const actionsIndex = [
         label: "Manage",
         icon: Eye,
         handler: (item) => {
-            if (!item.uuid) {
-                alert("UUID tidak ditemukan!");
+            if (!item.slug) {
+                alert("Slug tidak ditemukan!");
                 return;
             }
             if (!route().has("berita.show")) {
@@ -25,7 +25,7 @@ export const actionsIndex = [
                 return;
             }
 
-            const url = route("berita.show", { berita: item.uuid });
+            const url = route("berita.show", { berita: item.slug });
             router.visit(url);
         },
     },
