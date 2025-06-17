@@ -20,6 +20,8 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from "@/components/ui/number-field";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/currency-input";
@@ -32,7 +34,7 @@ import { router } from "@inertiajs/vue3";
 
 import { PackagePlus, SearchIcon, X, FunnelX, Eye } from "lucide-vue-next";
 import { getFields } from "./utils/fields"; // Import getFields
-import { formSchemaKurangMampu } from "./utils/form-schema";
+import { formSchemaPenerimaBantuan } from "./utils/form-schema";
 import { columnsIndexKurangMampu, columnsIndexBantuan } from "./utils/table";
 import { useKurangMampu } from "@/composables/useKurangMampu";
 import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
@@ -62,20 +64,20 @@ const {
 } = useKurangMampu();
 
 const {
-        items: itemsBantuan,
-        // item,
-        isLoading: isLoadingBantuan,
-        page: pageBantuan,
-        perPage: perPageBantuan,
-        totalPages: totalPagesBantuan,
-        totalData: totalDataBantuan,
-        search: searchBantuan,
-        // selectedKategori,
-        fetchBantuan: fetchDataBantuan,
-        // fetchDetailBantuan,
-        // createBantuan,
-        // editBantuan,
-        // deleteBantuan,
+    items: itemsBantuan,
+    // item,
+    isLoading: isLoadingBantuan,
+    page: pageBantuan,
+    perPage: perPageBantuan,
+    totalPages: totalPagesBantuan,
+    totalData: totalDataBantuan,
+    search: searchBantuan,
+    // selectedKategori,
+    fetchBantuan: fetchDataBantuan,
+    // fetchDetailBantuan,
+    // createBantuan,
+    // editBantuan,
+    // deleteBantuan,
 } = useBantuan();
 
 // Initialize fields from getFields
@@ -84,14 +86,14 @@ const fields = ref([]);
 const showForm = ref(false);
 
 const { handleSubmit, resetForm, setFieldValue } = useForm({
-    validationSchema: formSchemaKurangMampu,
-    initialValues: {
-        anggota_keluarga_id: "",
-        jumlah_tanggungan: "",
-        pendapatan_per_hari: null,
-        pendapatan_per_bulan: null,
-        keterangan: "",
-    },
+    validationSchema: formSchemaPenerimaBantuan,
+    // initialValues: {
+    //     anggota_keluarga_id: "",
+    //     jumlah_tanggungan: "",
+    //     pendapatan_per_hari: null,
+    //     pendapatan_per_bulan: null,
+    //     keterangan: "",
+    // },
 });
 
 const clearSearchKurangMampu = () => {
@@ -138,18 +140,11 @@ const actionPilihBantuan = [
         label: "Pilih",
         icon: Eye,
         handler: (item) => {
-            // fields.value = getFields();
+            fields.value = getFields();
             // // fields.value = getFields(item); // Masih dipakai untuk label/placeholder dll
-
-            // // Sinkronkan juga ke form (vee-validate)
-            // setFieldValue("nama_penduduk", item.penduduk.nama_lengkap);
-            // setFieldValue("anggota_keluarga_id", item.id);
-            // // setFieldValue("jumlah_tanggungan", "");
-            // // setFieldValue("pendapatan_per_hari", null);
-            // // setFieldValue("pendapatan_per_bulan", null);
-            // // setFieldValue("keterangan", "");
-
-            // showForm.value = true;
+            setFieldValue("nama_bantuan", item.nama_bantuan);
+            setFieldValue("bantuan_id", item.id);
+            showForm.value = true;
         },
     },
 ];
@@ -177,7 +172,10 @@ watch(pageBantuan, () => {
         <BreadcrumbComponent
             :items="[
                 { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Data Penerima Bantuan', href: '/admin/penerima-bantuan' },
+                {
+                    label: 'Data Penerima Bantuan',
+                    href: '/admin/penerima-bantuan',
+                },
                 { label: 'Tambah Data Penerima Bantuan' },
             ]"
         />
@@ -269,6 +267,54 @@ watch(pageBantuan, () => {
         />
     </div>
 
+    <!-- <div class="shadow-md p-2 rounded-lg flex gap-2 justify-between my-4">
+        <div class="w-full">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold p-2">
+                    Detail Kurang Mampu
+                    <Badge variant="outline">
+                        {{ item.status_validasi }}
+                    </Badge>
+                </h2>
+                <div class="flex gap-2">
+                    <Button
+                        @click="isEditStatusDialogOpen = true"
+                        variant="secondary"
+                    >
+                        Ubah Status Validasi
+                        <SquarePen />
+                    </Button>
+                    <Button
+                        @click="isEditDetailDialogOpen = true"
+                        variant="secondary"
+                    >
+                        Ubah Detail Data
+                        <SquarePen />
+                    </Button>
+                </div>
+            </div>
+
+            <table class="w-full gap-2 table">
+                <tr
+                    v-for="row in rowsShow.slice(13)"
+                    :key="row.key"
+                    class="even:bg-card/30 p-2"
+                >
+                    <td class="font-medium p-2">
+                        {{ row.label }}
+                    </td>
+                    <td>
+                        {{
+                            row.format
+                                ? row.format(item[row.key], item)
+                                : item[row.key]
+                        }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div> -->
+
     <div
         v-if="showForm"
         class="shadow-lg p-8 my-4 rounded-lg"
@@ -293,17 +339,24 @@ watch(pageBantuan, () => {
                                 :disabled="field.disabled"
                                 :Readonly="field.readonly"
                             />
-                            <CurrencyInput
+                            <Datepicker
+                                v-else-if="field.type === 'datepicker'"
+                                locale="id"
+                                :enable-time-picker="false"
+                                :format="'dd MMMM yyyy'"
+                                v-bind="componentField"
+                            />
+                            <!-- <CurrencyInput
                                 v-else-if="field.type === 'currency'"
                                 v-bind="componentField"
                                 :placeholder="field.placeholder"
-                            />
+                            /> -->
                             <Textarea
                                 v-else-if="field.type === 'textarea'"
                                 v-bind="componentField"
                                 :placeholder="field.placeholder"
                             />
-                            <NumberField
+                            <!-- <NumberField
                                 v-else-if="field.type === 'number'"
                                 v-bind="componentField"
                                 :default-value="0"
@@ -332,14 +385,15 @@ watch(pageBantuan, () => {
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                            -->
                             <!-- Hidden input to send value when field is hidden -->
-                            <input
+                            <!-- <input
                                 v-if="field.type === 'hidden'"
                                 type="hidden"
                                 :name="field.name"
                                 v-model="componentField.value"
                                 v-bind="componentField"
-                            />
+                            /> -->
                         </FormControl>
                         <FormMessage />
                     </FormItem>

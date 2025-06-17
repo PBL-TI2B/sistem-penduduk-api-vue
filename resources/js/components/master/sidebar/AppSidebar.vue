@@ -38,7 +38,6 @@ onBeforeMount(async () => {
             ? res.data.role
             : [res.data.role];
     } catch (error) {
-        useErrorHandler(error, "Gagal mendapatkan data user");
     } finally {
         isLoading.value = false;
     }

@@ -12,6 +12,7 @@ import { SquarePlus } from "lucide-vue-next";
 
 const items = ref([]);
 const totalPages = ref(1);
+const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);

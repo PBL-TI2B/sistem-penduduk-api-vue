@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiGet } from "@/utils/api";
@@ -6,11 +6,10 @@ import { usePage } from "@inertiajs/vue3";
 
 const uuid = window.location.pathname.split("/").pop();
 
-const berita = ref(null);
 const isLoading = ref(true);
-const notFound = ref(false);
+const berita = ref(null);
 
-const formatTanggalWIB = (input) => {
+const formatTanggalWIB = (input: string): string => {
     const date = new Date(input);
     const utc = date.getTime() + date.getTimezoneOffset() * 60000;
     const wibTime = new Date(utc + 7 * 60 * 60000);
@@ -22,29 +21,14 @@ const formatTanggalWIB = (input) => {
     return `${day}/${month}/${year}, ${hours}.${minutes} WIB`;
 };
 
+const props = defineProps<{ slug: string }>();
+
 const fetchDetailBerita = async () => {
     try {
-        const res = await apiGet(`/berita/${uuid}`);
-        const item = res.data.data;
-
-        if (!item) {
-            notFound.value = true;
-            return;
-        }
-
-        berita.value = {
-            title: item.judul,
-            image: item.thumbnail
-                ? `/storage/berita/${item.thumbnail}`
-                : "/images/berita-lain.png",
-            date: formatTanggalWIB(item.tanggal_post ?? item.created_at),
-            views: item.jumlah_dilihat,
-            content: item.konten,
-            author: item.user?.name ?? "Admin",
-        };
+        const res = await apiGet(`/berita/${props.slug}`);
+        berita.value = res.data.data;
     } catch (error) {
-        console.error("Gagal mengambil detail berita:", error);
-        notFound.value = true;
+        console.error("Gagal mengambil berita:", error);
     } finally {
         isLoading.value = false;
     }
@@ -54,23 +38,31 @@ onMounted(fetchDetailBerita);
 </script>
 
 <template>
-    <div>
+    <div class="max-w-4xl mx-auto px-4 py-6">
         <div v-if="isLoading">Memuat detail berita...</div>
-        <div v-else-if="notFound">Berita tidak ditemukan.</div>
-        <article v-else class="space-y-4">
-            <h2 class="text-3xl font-bold">{{ berita.title }}</h2>
-            <div class="text-sm text-gray-500">
-                {{ berita.date }} &bull; {{ berita.views }}x dilihat
-            </div>
+        <div v-else-if="!berita">Berita tidak ditemukan.</div>
+        <div v-else>
+            <h1 class="text-3xl font-bold text-emerald-700 mb-2">
+                {{ berita.judul }}
+            </h1>
+            <p class="text-sm text-gray-500 mb-4">
+                Diposting
+                {{ formatTanggalWIB(berita.tanggal_post ?? berita.created_at) }}
+                • {{ berita.jumlah_dilihat }} Kali Dilihat
+            </p>
             <img
-                :src="berita.image"
-                class="w-full rounded-lg shadow"
+                :src="
+                    berita.thumbnail
+                        ? `/storage/berita/${berita.thumbnail}`
+                        : '/images/berita-lain.png'
+                "
+                class="rounded-xl mb-6 shadow"
                 alt="Gambar Berita"
             />
             <div
-                class="text-justify text-base md:text-lg"
-                v-html="berita.content"
+                class="text-gray-700 text-justify leading-relaxed"
+                v-html="berita.konten"
             ></div>
-        </article>
+        </div>
     </div>
 </template>

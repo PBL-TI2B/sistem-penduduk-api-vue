@@ -1,15 +1,12 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 
-export const formSchemaKurangMampu = toTypedSchema(
+export const formSchemaPenerimaBantuan = toTypedSchema(
     z.object({
-        anggota_keluarga_id: z.number(),
-        pendapatan_per_hari: z.number().optional().nullable(),
-        pendapatan_per_bulan: z.number().optional().nullable(),
-        jumlah_tanggungan: z.string(),
-        // status_validasi: z.string(),
+        nama_penduduk: z.string(),
+        nama_bantuan: z.string(),
+        tanggal_penerimaan: z.date(),
         keterangan: z.string().optional().nullable(),
-
     })
 );
 

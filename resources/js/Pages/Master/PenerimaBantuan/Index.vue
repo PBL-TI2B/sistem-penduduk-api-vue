@@ -53,6 +53,9 @@ const {
     deleteData,
 } = usePenerimaBantuan();
 
+const isAlertDeleteOpen = ref(false);
+const selectedUuid = ref(null);
+
 const clearSearch = () => {
     search.value = "";
     page.value = 1;
