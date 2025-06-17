@@ -12,10 +12,12 @@ import { SquarePlus } from "lucide-vue-next";
 
 const items = ref([]);
 const totalPages = ref(1);
+const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const search = ref("");
+const totalData = ref(0);
 
 const fetchData = async () => {
     try {
@@ -32,6 +34,7 @@ const fetchData = async () => {
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data galeri");
     } finally {
@@ -87,6 +90,7 @@ watch(page, fetchData);
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
+            :totalData="totalData"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"

@@ -13,7 +13,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
 
-const { uuid } = usePage().props;
+const { slug } = usePage().props;
 const berita = ref({});
 const imageUrl = ref(null);
 const isAlertDeleteOpen = ref(false);
@@ -36,7 +36,7 @@ const kontenPendek = computed(() => {
 
 const fetchBerita = async () => {
     try {
-        const res = await apiGet(`/berita/${uuid}`);
+        const res = await apiGet(`/berita/${slug}`);
         berita.value = res.data;
 
         if (berita.value.thumbnail) {
@@ -66,7 +66,7 @@ const onCancelDelete = () => {
 
 const onConfirmDelete = async () => {
     try {
-        await apiDelete(`/berita/${uuid}`);
+        await apiDelete(`/berita/${slug}`);
         toast.success("Data berita berhasil dihapus");
         router.visit("/admin/berita");
     } catch (error) {
@@ -92,8 +92,8 @@ onMounted(fetchBerita);
             ]" />
         </div>
         <div class="flex gap-2 items-center">
-            <Button asChild v-if="berita.uuid">
-                <Link :href="route('berita.edit', berita.uuid)">
+            <Button asChild v-if="berita.slug">
+                <Link :href="route('berita.edit', berita.slug)">
                 <SquarePen /> Ubah
                 </Link>
             </Button>

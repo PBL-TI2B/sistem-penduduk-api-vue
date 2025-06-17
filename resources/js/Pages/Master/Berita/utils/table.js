@@ -16,16 +16,16 @@ export const actionsIndex = [
         label: "Manage",
         icon: Eye,
         handler: (item) => {
-            if (!item.uuid) {
-                alert("UUID tidak ditemukan!");
+            if (!item.slug) {
+                alert("Slug tidak ditemukan!");
                 return;
             }
             if (!route().has("berita.show")) {
                 alert("Route berita.show tidak tersedia!");
                 return;
             }
-            // Ganti 'berita_admin' menjadi 'beritum'
-            const url = route("berita.show", { beritum: item.uuid });
+
+            const url = route("berita.show", { berita: item.slug });
             router.visit(url);
         },
     },

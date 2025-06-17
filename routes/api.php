@@ -16,14 +16,12 @@ use App\Http\Controllers\Api\V1\{
     PindahanController,
     KartuKeluargaController,
     KurangMampuController,
-    NotifikasiPenerimaController,
     AnggotaKeluargaController,
     StatusKeluargaController,
     KategoriBantuanController,
     BantuanController,
     DomisiliController,
     KelahiranController,
-    NotifikasiController,
     PekerjaanController,
     InfografisController,
     PenerimaBantuanController,
@@ -87,13 +85,11 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
         RoutePermission('pindahan', PindahanController::class, 'pindahan');
         RoutePermission('kartu-keluarga', KartuKeluargaController::class, 'kartuKeluarga');
         RoutePermission('kurang-mampu', KurangMampuController::class, 'kurangMampu');
-        RoutePermission('notifikasi-penerima', NotifikasiPenerimaController::class, 'notifikasiPenerima');
         RoutePermission('anggota-keluarga', AnggotaKeluargaController::class, 'anggotaKeluarga');
         RoutePermission('status-keluarga', StatusKeluargaController::class, 'statusKeluarga');
         RoutePermission('kategori-bantuan', KategoriBantuanController::class, 'kategoriBantuan');
         RoutePermission('domisili', DomisiliController::class, 'domisili');
         RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
-        RoutePermission('notifikasi', NotifikasiController::class, 'notifikasi');
         RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
         RoutePermission('riwayat-bantuan', RiwayatBantuanController::class, 'riwayatBantuan');
     });
