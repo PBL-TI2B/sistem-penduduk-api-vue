@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { apiGet } from "@/utils/api";
+import { usePage } from "@inertiajs/vue3";
+
+const uuid = window.location.pathname.split("/").pop();
 
 const isLoading = ref(true);
 const berita = ref(null);

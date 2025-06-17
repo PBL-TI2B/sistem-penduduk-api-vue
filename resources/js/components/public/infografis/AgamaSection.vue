@@ -41,11 +41,18 @@ onMounted(async () => {
 
 <template>
     <!-- Agama -->
-    <section>
-        <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
-            Berdasarkan Kepercayaan
-        </h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+    <section class="bg-gray shadow-md rounded-xl p-6">
+        <div
+            class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+            >
+                <span>Berdasarkan Kepercayaan</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 md:grid-cols-2 gap-4 text-center">
             <div
                 v-for="(item, index) in kepercayaan"
                 :key="index"

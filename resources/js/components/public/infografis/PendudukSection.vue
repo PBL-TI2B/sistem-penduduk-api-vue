@@ -26,19 +26,28 @@ console.log(page.url);
 
 <template>
     <!-- Demografi Penduduk -->
-    <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-8">
+    <!-- <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-8">
         Jumlah Penduduk dan Kepala Keluarga
-    </h2>
+    </h2> -->
+    <div
+        class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mt-8 mb-4"
+    >
+        <div class="w-1 h-6 bg-green-500 rounded"></div>
+        <div class="flex items-center gap-2 text-xl font-bold text-[#233D34]">
+            <span>Jumlah Penduduk dan Kepala Keluarga</span>
+        </div>
+    </div>
+
     <div
         :class="{
             'relative grid gap-4 text-white text-center':
                 isActive('/infografis') || isActive('/admin/dashboard'),
-            'grid-cols-2 md:grid-cols-2': isActive('/infografis'),
-            'grid-cols-4': isActive('/admin/dashboard'),
+            'grid-cols-4':
+                isActive('/infografis') || isActive('/admin/dashboard'),
         }"
     >
         <div
-            class="bg-[#40798C] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+            class="bg-grey p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
         >
             <img
                 src="@/images/ttlpenduduk.png"
@@ -46,14 +55,14 @@ console.log(page.url);
                 class="w-12 h-12"
             />
             <div class="text-start">
-                <p class="text-sm md:text-lg">TOTAL PENDUDUK</p>
-                <p class="text-xl font-bold">
+                <p class="text-sm md:text-lg text-[#40798C]">TOTAL PENDUDUK</p>
+                <p class="text-xl font-bold text-[#40798C]">
                     {{ statistik.total_penduduk }} Jiwa
                 </p>
             </div>
         </div>
         <div
-            class="bg-[#70A9A1] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+            class="bg-grey p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
         >
             <img
                 src="@/images/kepalakeluarga.png"
@@ -61,25 +70,25 @@ console.log(page.url);
                 class="w-12 h-12"
             />
             <div class="text-start">
-                <p class="text-sm md:text-lg">KEPALA KELUARGA</p>
-                <p class="text-xl font-bold">
+                <p class="text-sm md:text-lg text-[#70A9A1]">KEPALA KELUARGA</p>
+                <p class="text-xl font-bold text-[#70A9A1]">
                     {{ statistik.jumlah_kepala_keluarga }} Jiwa
                 </p>
             </div>
         </div>
         <div
-            class="bg-[#CD8B76] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+            class="bg-grey p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
         >
             <img src="@/images/laki.png" alt="Laki-Laki" class="w-12 h-12" />
             <div class="text-start">
-                <p class="text-sm md:text-lg">LAKI-LAKI</p>
-                <p class="text-xl font-bold">
+                <p class="text-sm md:text-lg text-[#CD8B76]">LAKI-LAKI</p>
+                <p class="text-xl font-bold text-[#CD8B76]">
                     {{ statistik.jumlah_laki_laki }} Jiwa
                 </p>
             </div>
         </div>
         <div
-            class="bg-[#734B5E] p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+            class="bg-grey p-4 rounded-[20px] flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
         >
             <img
                 src="@/images/perempuan.png"
@@ -87,8 +96,8 @@ console.log(page.url);
                 class="w-12 h-12"
             />
             <div class="text-start">
-                <p class="text-sm md:text-lg">PEREMPUAN</p>
-                <p class="text-xl font-bold">
+                <p class="text-sm md:text-lg text-[#734B5E]">PEREMPUAN</p>
+                <p class="text-xl font-bold text-[#734B5E]">
                     {{ statistik.jumlah_perempuan }} Jiwa
                 </p>
             </div>
