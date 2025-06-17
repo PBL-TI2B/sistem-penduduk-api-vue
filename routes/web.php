@@ -24,8 +24,7 @@ Route::inertia('/login', 'Auth/Login');
 Route::inertia('/infografis', 'Infografis');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');
-Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/{berita:slug}', [BeritaController::class, 'show'])->name('berita.show');
+Route::resource('/berita', BeritaController::class)->only(['index', 'show']);
 
 Route::prefix('/admin')->group(function () {
         Route::inertia('/dashboard', 'Master/Dashboard');
