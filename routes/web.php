@@ -25,7 +25,7 @@ Route::inertia('/berita', 'Berita');
 Route::inertia('/infografis', 'Infografis');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');
-Route::inertia('/detailberita', 'DetailBerita');
+Route::resource('/berita', BeritaController::class)->only(['index', 'show'])->parameters(['berita' => 'berita']);;
 
 Route::prefix('/admin')->group(function () {
         Route::inertia('/dashboard', 'Master/Dashboard');
@@ -43,5 +43,5 @@ Route::prefix('/admin')->group(function () {
         Route::resource('/penerima-bantuan', PenerimaBantuanController::class);
         Route::resource('/pendidikan', PendidikanController::class);
         Route::resource('/galeri', GaleriController::class);
-        Route::resource('/berita', BeritaController::class);    
+        Route::resource('/berita', BeritaControllerAdmin::class)->parameters(['berita' => 'berita']);;    
 });
