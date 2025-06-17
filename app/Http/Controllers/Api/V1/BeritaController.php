@@ -17,7 +17,8 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('user');
+        $query = Berita::with('user')
+        ->where('status', 'publish');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {
@@ -75,7 +76,7 @@ class BeritaController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $thumbnail = $request->file('thumbnail');
-        $thumbnail->storeAs('berita', $thumbnail->hashName());
+        $thumbnail->storeAs('berita', $thumbnail->hashName(), 'public');
 
         $slug = Str::slug($request->judul);
 

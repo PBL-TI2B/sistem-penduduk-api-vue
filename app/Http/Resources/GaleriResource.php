@@ -24,6 +24,7 @@ class GaleriResource extends JsonResource
             'user' => [
                 'username' => $this->user?->username
             ],
+            'created_at' => $this->created_at,
         ];
     }
 

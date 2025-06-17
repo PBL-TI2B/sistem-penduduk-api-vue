@@ -85,11 +85,11 @@ watch(page, fetchData);
         </div>
         <DataTable
             label="Galeri"
-            :totalData="totalData"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
+            :totalData="totalData"
             :page="page"
             :per-page="perPage"
             :is-loading="isLoading"
