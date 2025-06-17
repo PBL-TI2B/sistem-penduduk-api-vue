@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { apiGet } from "@/utils/api";
 
 import { CalendarDays, Eye, User } from "lucide-vue-next";
+import { Link } from "@inertiajs/vue3";
 
 const newsList = ref([]);
 const isLoading = ref(true);
@@ -44,6 +45,7 @@ const fetchBerita = async () => {
                 id: item.id,
                 uuid: item.uuid,
                 title: item.judul,
+                slug: item.slug,
                 image: item.thumbnail
                     ? `/storage/berita/${item.thumbnail}`
                     : "/images/berita-lain.png",
@@ -78,50 +80,49 @@ onMounted(fetchBerita);
                 :key="news.id"
                 class="bg-white rounded-xl shadow overflow-hidden drop-shadow-md hover:drop-shadow-xl"
             >
-                <router-link :to="`/detailberita/${news.id}`">
-                    <img
-                        :src="news.image"
-                        alt="Berita"
-                        class="w-full h-48 object-cover"
-                    />
-                    <div class="px-4 lg:px-6 pb-4">
+                <img
+                    :src="news.image"
+                    alt="Berita"
+                    class="w-full h-48 object-cover"
+                />
+                <div class="px-4 lg:px-6 pb-4">
+                    <Link :href="`/detailberita/${news.slug}`">
                         <h3
-                            class="font-semibold text-sm md:text-lg text-gray-600 mt-4"
+                            class="font-semibold text-sm md:text-lg text-emerald-700 mt-4 hover:underline"
                         >
                             {{ news.title }}
                         </h3>
-
-                        <div
-                            class="text-xs text-gray-500 flex items-center gap-4 mt-2"
-                        >
-                            <div class="flex items-center gap-1">
-                                <CalendarDays
-                                    :size="isLarge ? 12 : 8"
-                                    class="text-emerald-600"
-                                />
-                                <span>{{ news.date }}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <Eye
-                                    :size="isLarge ? 12 : 8"
-                                    class="text-emerald-600"
-                                />
-                                <span>{{ news.views }} Kali Dilihat</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <User
-                                    :size="isLarge ? 12 : 8"
-                                    class="text-emerald-600"
-                                />
-                                <span>{{ news.author }}</span>
-                            </div>
+                    </Link>
+                    <div
+                        class="text-xs text-gray-500 flex items-center gap-4 mt-2"
+                    >
+                        <div class="flex items-center gap-1">
+                            <CalendarDays
+                                :size="isLarge ? 12 : 8"
+                                class="text-emerald-600"
+                            />
+                            <span>{{ news.date }}</span>
                         </div>
-
-                        <p class="text-sm text-gray-600 mt-2">
-                            {{ news.excerpt }}
-                        </p>
+                        <div class="flex items-center gap-1">
+                            <Eye
+                                :size="isLarge ? 12 : 8"
+                                class="text-emerald-600"
+                            />
+                            <span>{{ news.views }} Kali Dilihat</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <User
+                                :size="isLarge ? 12 : 8"
+                                class="text-emerald-600"
+                            />
+                            <span>{{ news.author }}</span>
+                        </div>
                     </div>
-                </router-link>
+
+                    <p class="text-sm text-gray-600 mt-2">
+                        {{ news.excerpt }}
+                    </p>
+                </div>
             </div>
         </div>
     </section>

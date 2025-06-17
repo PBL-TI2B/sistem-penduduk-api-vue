@@ -25,7 +25,7 @@ Route::inertia('/berita', 'Berita');
 Route::inertia('/infografis', 'Infografis');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');
-Route::inertia('/detailberita/{uuid}', 'DetailBerita');
+Route::inertia('/detailberita', 'DetailBerita');
 
 Route::prefix('/admin')->group(function () {
         Route::inertia('/dashboard', 'Master/Dashboard');
