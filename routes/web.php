@@ -13,7 +13,7 @@ use App\Http\Controllers\Web\Master\BantuanController;
 use App\Http\Controllers\Web\Master\KurangMampuController;
 use App\Http\Controllers\Web\Master\PenerimaBantuanController;
 use App\Http\Controllers\Web\Master\GaleriController;
-use App\Http\Controllers\Web\Master\BeritaController;
+use App\Http\Controllers\Web\Master\BeritaController as BeritaControllerAdmin;
 use App\Http\Controllers\Web\Master\KategoriBantuanController;
 use App\Http\Controllers\Web\Master\KeluargaController;
 use App\Http\Controllers\Web\Master\UserController;
