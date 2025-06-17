@@ -17,7 +17,8 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('user');
+        $query = Berita::with('user')
+        ->where('status', 'publish');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {

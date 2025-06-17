@@ -100,9 +100,16 @@ onMounted(async () => {
 <template>
     <section>
         <div class="flex items-center justify-between mb-4 mt-10">
-            <h2 class="text-xl font-bold text-[#233D34]">
-                Angka Kelahiran dan Kematian
-            </h2>
+            <div
+                class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+            >
+                <div class="w-1 h-6 bg-green-500 rounded"></div>
+                <div
+                    class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+                >
+                    <span>Angka Kelahiran dan Kematian </span>
+                </div>
+            </div>
             <span class="text-sm md:text-lg text-gray-500">{{ tahun }}</span>
         </div>
         <canvas id="kelahiranKematianChart" height="100"></canvas>

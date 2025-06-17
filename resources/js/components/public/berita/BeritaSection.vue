@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { apiGet } from "@/utils/api";
 
@@ -9,24 +9,48 @@ const isLoading = ref(true);
 const isLarge = ref(true);
 const hasData = ref(true);
 
+const formatTanggalWIB = (input: string): string => {
+    const date = new Date(input);
+
+    // Ubah ke waktu Indonesia (WIB = UTC+7)
+    const utc = date.getTime() + date.getTimezoneOffset() * 60000;
+    const wibTime = new Date(utc + 7 * 60 * 60000);
+
+    const day = String(wibTime.getDate()).padStart(2, "0");
+    const month = String(wibTime.getMonth() + 1).padStart(2, "0");
+    const year = wibTime.getFullYear();
+    const hours = String(wibTime.getHours()).padStart(2, "0");
+    const minutes = String(wibTime.getMinutes()).padStart(2, "0");
+
+    return `${day}/${month}/${year}, ${hours}.${minutes} WIB`;
+};
+
 const fetchBerita = async () => {
     try {
         const res = await apiGet("/berita");
-        const apiData = res.data.data.data;
+        const apiData = res.data.data;
 
         if (apiData.length === 0) {
             hasData.value = false;
         } else {
+            // Urutkan berdasarkan tanggal paling baru
+            apiData.sort((a, b) => {
+                const dateA = new Date(a.tanggal_post || a.created_at);
+                const dateB = new Date(b.tanggal_post || b.created_at);
+                return dateB.getTime() - dateA.getTime(); // descending
+            });
+
             newsList.value = apiData.map((item) => ({
                 id: item.id,
+                uuid: item.uuid,
                 title: item.judul,
                 image: item.thumbnail
-                    ? `/storage/${item.thumbnail}`
+                    ? `/storage/berita/${item.thumbnail}`
                     : "/images/berita-lain.png",
-                date: item.tanggal_post,
+                date: formatTanggalWIB(item.tanggal_post ?? item.created_at),
                 views: item.jumlah_dilihat,
                 excerpt: item.konten.slice(0, 60) + "...",
-                author: item.author ?? "Admin",
+                author: item.user?.name ?? "Admin",
             }));
         }
     } catch (error) {
@@ -42,13 +66,9 @@ onMounted(fetchBerita);
 
 <template>
     <section>
-        <!-- Loading -->
         <div v-if="isLoading" class="text-gray-500">Memuat berita...</div>
-
-        <!-- Jika data kosong -->
         <div v-else-if="!hasData" class="text-gray-500">Belum ada berita.</div>
 
-        <!-- Jika data tersedia -->
         <div
             v-else
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
