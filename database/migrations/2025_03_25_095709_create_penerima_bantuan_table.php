@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('penerima_bantuan', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->enum('status', ['aktif', 'selesai', 'ditolak']);
+            $table->enum('status', ['diajukan', 'aktif', 'selesai', 'ditolak']);
             $table->date('tanggal_penerimaan');
             $table->text('keterangan')->nullable();
 

@@ -10,9 +10,21 @@ import { actionsIndex, columnsIndex } from "./utils/table";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { SquarePlus } from "lucide-vue-next";
 import dayjs from "dayjs";
+import "dayjs/locale/id";
+dayjs.locale("id");
+// import {
+//     Select,
+//     SelectContent,
+//     SelectGroup,
+//     SelectItem,
+//     SelectLabel,
+//     SelectTrigger,
+//     SelectValue,
+// } from "@/components/ui/select";
 
 const items = ref([]);
 const totalPages = ref(1);
+const totalData = ref(0);
 const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
@@ -33,14 +45,15 @@ const fetchData = async () => {
             uuid: item.uuid ?? null,
             username: item.user_id?.username ?? "-",
             tanggal_post: item.created_at
-                ? dayjs(item.created_at).format("DD MMM YYYY HH:mm")
+                ? dayjs(item.created_at).format("dddd, DD MMMM YYYY HH:mm")
                 : "-",
             terakhir_diubah: item.updated_at
-                ? dayjs(item.updated_at).format("DD MMM YYYY HH:mm")
+                ? dayjs(item.updated_at).format("dddd, DD MMMM YYYY HH:mm")
                 : "-",
         }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data berita");
     } finally {
@@ -51,6 +64,11 @@ const fetchData = async () => {
 const applySearch = () => {
     page.value = 1;
     fetchData();
+};
+
+const resetFilter = () => {
+    statusFilter.value = "";
+    applySearch();
 };
 
 onMounted(fetchData);
@@ -87,29 +105,24 @@ watch(page, fetchData);
                 placeholder="Cari berita berdasarkan judul"
                 class="md:w-1/3"
             />
-            <Select
-                v-model="statusFilter"
-                @update:modelValue="applySearch"
-                id="statusFilter"
+            <Button
+                asChild
+                @click="
+                    () => {
+                        statusFilter = '';
+                        applySearch();
+                    }
+                "
             >
-                <SelectTrigger>
-                    <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Status</SelectLabel>
-                        <SelectItem value="">Semua Status</SelectItem>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="publish">Publish</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-            <Button class="cursor-pointer" @click="applySearch"
-                >Terapkan</Button
-            >
+                <div>
+                    <FunnelX />
+                    Reset
+                </div>
+            </Button>
         </div>
         <DataTable
             label="Berita"
+            :totalData="totalData"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"

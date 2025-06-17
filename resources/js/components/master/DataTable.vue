@@ -210,7 +210,7 @@ const handleExport = async (format) => {
             </TableHeader>
 
             <TableBody>
-                <!-- ===== Tak komen sek ===== -->
+                <!-- Skeleton Loading -->
                 <TableRow
                     v-if="isLoading"
                     v-for="i in perPage"
@@ -223,29 +223,37 @@ const handleExport = async (format) => {
                     </TableCell>
                 </TableRow>
 
-                <TableRow v-if="isLoading" :key="'skeleton-' + i">
-                    <TableCell v-for="n in columns.length + 1" :key="n">
-                        <div
-                            class="h-9 bg-card/20 rounded animate-pulse w-full"
-                        ></div>
+                <!-- Jika tidak loading dan tidak ada data -->
+                <TableRow v-else-if="items.length === 0">
+                    <TableCell :colspan="columns.length + 2">
+                        <p
+                            class="text-center w-full py-6 text-muted-foreground font-semibold"
+                        >
+                            Data tidak ditemukan.
+                        </p>
                     </TableCell>
                 </TableRow>
 
+                <!-- Data Rows -->
                 <TableRow
                     v-else
                     v-for="(item, index) in items"
                     :key="item.uuid || item.id"
                 >
-                    <TableCell>{{
-                        (page - 1) * perPage + index + 1
-                    }}</TableCell>
+                    <!-- Nomor -->
+                    <TableCell>
+                        {{ (page - 1) * perPage + index + 1 }}
+                    </TableCell>
 
+                    <!-- Isi kolom -->
                     <TableCell v-for="col in columns" :key="col.key">
                         <span
                             :class="
                                 col.customClass
-                                    ? `${col.customClass(item[col.key], item)}
-                                      px-3 p-1 rounded-md`
+                                    ? `${col.customClass(
+                                          item[col.key],
+                                          item
+                                      )} px-3 p-1 rounded-md`
                                     : ''
                             "
                         >
@@ -257,19 +265,7 @@ const handleExport = async (format) => {
                         </span>
                     </TableCell>
 
-                    <!-- Terapkan Disabled Button -->
-                    <!-- <TableCell v-if="actions.length">
-                        <Button
-                            v-for="(action, index) in actions"
-                            :key="index"
-                            variant="secondary"
-                            @click="() => action.handler(item)"
-                            class="mr-2 cursor-pointer"
-                        >
-                            <component :is="action.icon" class="w-4 h-4" />
-                            {{ action.label }}
-                        </Button>
-                    </TableCell> -->
+                    <!-- Aksi -->
                     <TableCell v-if="actions.length">
                         <Button
                             v-for="(action, index) in actions"

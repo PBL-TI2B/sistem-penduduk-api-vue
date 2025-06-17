@@ -41,7 +41,7 @@ class GaleriController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $url_media = $request->file('url_media');
-        $url_media->storeAs('galeri', $url_media->hashName(), 'public');
+        $url_media->storeAs('galeri', $url_media->hashName());
         $galeri = Galeri::create([
             'judul' => $request->judul,
             'url_media' => $url_media->hashName(),

@@ -25,6 +25,7 @@ export function usePerangkatDesa(uuid) {
             perPage.value = res.data.per_page;
             totalItems.value = res.data.total;
             totalPages.value = res.data.last_page;
+            return res;
         } catch (error) {
             useErrorHandler(error, "Gagal memuat data perangkat desa");
         } finally {

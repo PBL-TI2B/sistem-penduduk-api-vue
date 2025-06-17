@@ -99,6 +99,7 @@ class KelahiranController extends Controller
      */
     public function destroy(Kelahiran $kelahiran)
     {
+        $kelahiran->penduduk()->delete();
         $kelahiran->delete();
         return new ApiResource(true, 'Data Kelahiran Berhasil Dihapus', null);
     }

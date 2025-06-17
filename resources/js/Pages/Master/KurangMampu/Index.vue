@@ -192,6 +192,7 @@ watch(page, () => {
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <DataTable
+            label="Kurang Mampu"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndexKurangMampu"

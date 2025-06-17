@@ -1,5 +1,3 @@
-import { items } from "@/components/master/sidebar/sidebarItems";
-
 export function getFields() {
     return [
 

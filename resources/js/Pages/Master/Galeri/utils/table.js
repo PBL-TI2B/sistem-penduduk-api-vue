@@ -23,7 +23,7 @@ export const actionsIndex = [
                 return;
             }
 
-            const url = route("galeri.show", { galeri_admin: item.uuid });
+            const url = route("galeri.show", { galeri: item.uuid });
             console.log("Navigating to:", url);
             router.visit(url);
         },

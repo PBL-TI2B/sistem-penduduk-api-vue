@@ -87,7 +87,7 @@ onMounted(fetchDetailPenduduk);
             </h2>
             <table class="w-full gap-2 table">
                 <tr
-                    v-for="row in rowsShow.slice(0, -3)"
+                    v-for="row in rowsShow.slice(0, -5)"
                     :key="row.key"
                     class="even:bg-card/30 p-2"
                 >

@@ -62,44 +62,34 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
         previewFoto.value = null;
         toast.success("Berhasil tambah data galeri");
-        router.visit("/galeri");
+        router.visit("/admin/galeri");
     } catch (error) {
         useErrorHandler(error);
     }
 });
 </script>
 <template>
+
     <Head title="Tambah Galeri" />
 
     <div class="grid gap-1">
         <h1 class="text-3xl font-bold">Tambah Data Galeri</h1>
-        <BreadcrumbComponent
-            :items="[
-                { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Galeri', href: '/admin/galeri' },
-                { label: 'Tambah Data Galeri' },
-            ]"
-        />
+        <BreadcrumbComponent :items="[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Galeri', href: '/admin/galeri' },
+            { label: 'Tambah Data Galeri' },
+        ]" />
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
         <div class="flex flex-col lg:flex-row gap-8 justify-between">
             <!-- Form Section -->
             <form @submit="onSubmit" class="space-y-6 w-full">
-                <FormField
-                    v-for="field in fields"
-                    :key="field.name"
-                    :name="field.name"
-                    v-slot="{ componentField }"
-                >
+                <FormField v-for="field in fields" :key="field.name" :name="field.name" v-slot="{ componentField }">
                     <FormItem v-if="field.name === 'judul'">
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
-                            <Input
-                                :type="field.type"
-                                :placeholder="field.placeholder"
-                                v-bind="componentField"
-                            />
+                            <Input :type="field.type" :placeholder="field.placeholder" v-bind="componentField" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -108,26 +98,15 @@ const onSubmit = handleSubmit(async (values) => {
                 <!-- Upload Foto Galeri -->
                 <div>
                     <label class="block mb-2 font-medium">Foto Galeri</label>
-                    <input
-                        type="file"
-                        accept="image/*"
+                    <input type="file" accept="image/*"
                         class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
-                        @change="onFileChange"
-                    />
+                        @change="onFileChange" />
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">
-                        Peringatan: Pastikan data galeri sudah benar sebelum
-                        disimpan.
-                    </p>
+                    <p class="text-xs text-gray-500">Peringatan: Pastikan data galeri sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
-                        <Button
-                            @click="router.visit('/admin/galeri')"
-                            type="button"
-                            variant="secondary"
-                            >Batal</Button
-                        >
+                        <Button @click="router.visit('/admin/galeri')" type="button" variant="secondary">Batal</Button>
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>
@@ -135,18 +114,10 @@ const onSubmit = handleSubmit(async (values) => {
 
             <!-- Preview Section -->
             <div class="flex items-center justify-center">
-                <img
-                    v-if="previewFoto"
-                    :src="previewFoto"
-                    alt="Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
-                <img
-                    v-else
-                    src="https://placehold.co/400x300?text=No+Image"
-                    alt="No Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
+                <img v-if="previewFoto" :src="previewFoto" alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border" />
+                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border" />
             </div>
         </div>
     </div>

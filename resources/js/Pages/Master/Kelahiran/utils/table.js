@@ -41,16 +41,6 @@ const columnsIndexKelahiran = [
     },
 ];
 
-const actionsIndexKelahiran = [
-    {
-        label: "Kelola",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("perangkat-desa.show", item.uuid));
-        },
-    },
-];
-
 const rowsShowKelahiran = [
     {
         label: "Nama Lengkap",
@@ -128,9 +118,4 @@ const columnsKelahiran = [
 //     },
 // ];
 
-export {
-    columnsIndexKelahiran,
-    actionsIndexKelahiran,
-    rowsShowKelahiran,
-    columnsKelahiran,
-};
+export { columnsIndexKelahiran, rowsShowKelahiran, columnsKelahiran };

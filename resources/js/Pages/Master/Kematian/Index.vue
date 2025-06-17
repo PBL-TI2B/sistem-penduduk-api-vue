@@ -179,6 +179,7 @@ const clearSearchKematian = () => {
 
         <!-- Data Table -->
         <DataTable
+            label="Kematian"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndexKematian"

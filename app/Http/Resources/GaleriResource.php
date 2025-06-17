@@ -18,9 +18,9 @@ class GaleriResource extends JsonResource
             'id' => $this->id,
             'uuid' => $this->uuid,
             'judul' => $this->judul,
-            'foto' => $this->url_media 
-                ? asset('storage/galeri/' . $this->url_media)
-                : null,
+            'url_media' => $this->url_media,
+                // ? asset('storage/galeri/' . $this->url_media)
+                // : null,
             'user' => [
                 'username' => $this->user?->username
             ],

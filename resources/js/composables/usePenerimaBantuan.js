@@ -22,8 +22,8 @@ export function usePenerimaBantuan() {
     //         label: "Semua",
     //     },
     //     {
-    //         value: "pending",
-    //         label: "Pending",
+    //         value: "belum tervalidasi",
+    //         label: "Belum Tervalidasi",
     //     },
     //     {
     //         value: "tervalidasi",

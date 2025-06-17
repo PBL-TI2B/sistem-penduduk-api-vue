@@ -65,7 +65,14 @@ const onSubmit = handleSubmit(async (formValues) => {
             tanggal_kematian: formValues.tanggal_kematian || "",
             sebab_kematian: formValues.sebab_kematian || "",
         };
+        const rawTanggal = validatedValues.tanggal_kematian;
+        const dateObj = new Date(rawTanggal);
 
+        const formattedDate = dateObj
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+        validatedValues.tanggal_kematian = formattedDate;
         await createAndEditKematian(validatedValues, props, emit);
     } catch (error) {
         console.error("Form submission error:", error);

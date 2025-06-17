@@ -42,7 +42,7 @@ const status_validasi = computed({
 });
 
 const isFormValid = computed(() => {
-    return status_validasi.value !== "pending";
+    return status_validasi.value !== "belum tervalidasi";
 });
 
 const { editStatusValidasi, isLoading } = useKurangMampu();
@@ -77,7 +77,7 @@ watch(
                 <DialogHeader>
                     <DialogTitle>Ubah Status Validasi</DialogTitle>
                     <DialogDescription>
-                        Ubah status validasi data kurang mampu
+                        Ubah  validasi data kurang mampu
                     </DialogDescription>
                 </DialogHeader>
 
@@ -97,8 +97,8 @@ watch(
                                     <SelectItem value="tervalidasi">
                                         Tervalidasi
                                     </SelectItem>
-                                    <!-- <SelectItem value="pending">
-                                        Pending
+                                    <!-- <SelectItem value="belum tervalidasi">
+                                        Belum Tervalidasi
                                     </SelectItem> -->
                                     <SelectItem value="ditolak">
                                         Ditolak
