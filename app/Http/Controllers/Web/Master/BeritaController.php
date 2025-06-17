@@ -36,7 +36,7 @@ class BeritaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Berita $beritum)
+    public function show(Berita $berita)
     {
         return Inertia::render('Master/Berita/Show', [
             'slug' => $berita->slug
@@ -46,7 +46,7 @@ class BeritaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Berita $beritum)
+    public function edit(Berita $berita)
     {
         return Inertia::render('Master/Berita/Edit', [
             'slug' => $berita->slug

@@ -162,6 +162,7 @@ const clearSearchPekerjaan = () => {
             </div>
         </div>
         <DataTable
+            label="Pekerjaan"
             :items="items"
             :columns="columnsIndex"
             :actions="actionsIndex"
