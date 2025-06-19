@@ -23,7 +23,7 @@ const activeTab = ref("penduduk");
 <template>
     <Head title=" - Infografis" />
 
-    <div class="bg-gray-50 min-h-screen px-6 py-8 pt-15">
+    <div class="bg-gray-50 min-h-screen px-6 md:px-48 py-8 pt-15">
         <div class="flex flex-col max-w-6xl mx-auto py-8">
             <!-- SVG Lengkung Atas -->
             <div class="absolute top-0 left-0 w-full z-0">
@@ -66,63 +66,40 @@ const activeTab = ref("penduduk");
 
             <!-- Kontainer Konten Atas -->
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-40 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-20 text-center text-white"
             >
                 <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow">
                     INFOGRAFIS DESA JABUNG
                 </h1>
-                <div class="flex justify-center gap-4 mt-8">
-                    <button
-                        @click="activeTab = 'penduduk'"
-                        :class="[
-                            'px-5 py-2 font-semibold rounded-full text-sm transition',
-                            activeTab === 'penduduk'
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
-                        ]"
-                    >
-                        Penduduk
-                    </button>
-                    <button
-                        @click="activeTab = 'bansos'"
-                        :class="[
-                            'px-5 py-2 font-semibold rounded-full text-sm transition',
-                            activeTab === 'bansos'
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
-                        ]"
-                    >
-                        Bantuan Sosial
-                    </button>
-                </div>
-            </div>
-
-            <!-- Deskripsi Umum -->
-            <div v-if="activeTab === 'penduduk'" class="mb-6">
-                <h2 class="text-[#2FB586] font-bold text-2xl mb-2">
-                    DEMOGRAFI PENDUDUK
+                <h2 class="text-xl md:text-xl mb-4 mt-4 drop-shadow">
+                    Informasi Penduduk dan Bantuan Sosial dalam bentuk Statistik
+                    Visual
                 </h2>
-                <p class="text-sm md:text-lg text-gray-600">
-                    Memberikan informasi lengkap mengenai karakteristik
-                    demografi penduduk suatu wilayah. Mulai dari jumlah
-                    penduduk, usia, jenis kelamin, tingkat pendidikan,
-                    pekerjaan, agama, dan aspek penting lainnya yang
-                    menggambarkan komposisi populasi secara rinci.
-                </p>
             </div>
-
-            <div v-else-if="activeTab === 'bansos'" class="mb-6">
-                <h2 class="text-[#2FB586] font-bold text-2xl mb-2">
-                    BANTUAN SOSIAL
-                </h2>
-                <p class="text-sm md:text-lg text-gray-600">
-                    Memberikan informasi mengenai jumlah serta jenis bantuan
-                    sosial yang diterima oleh masyarakat. Disini juga dapat
-                    dilakukan pencarian pemenerima bantuan sosial dengan
-                    memasukkan NIK pada kolom pencarian bantuan sosial.
-                </p>
+            <div class="flex justify-center gap-4 mt-8 z-0">
+                <button
+                    @click="activeTab = 'penduduk'"
+                    :class="[
+                        'px-5 py-2 font-semibold rounded-full text-sm transition',
+                        activeTab === 'penduduk'
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
+                    ]"
+                >
+                    Penduduk
+                </button>
+                <button
+                    @click="activeTab = 'bansos'"
+                    :class="[
+                        'px-5 py-2 font-semibold rounded-full text-sm transition',
+                        activeTab === 'bansos'
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
+                    ]"
+                >
+                    Bantuan Sosial
+                </button>
             </div>
-
             <!-- Component Section berdasarkan Tab -->
             <div v-show="activeTab === 'penduduk'">
                 <PendudukSection />
