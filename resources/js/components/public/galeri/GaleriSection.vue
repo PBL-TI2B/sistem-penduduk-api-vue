@@ -18,7 +18,9 @@ const fetchGaleri = async () => {
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
                 .map((item) => ({
                     id: item.id,
-                    image: item.foto ? item.foto : "fallback.png",
+                    image: item.url_public
+                        ? item.url_public
+                        : "/images/galeri-fallback.png",
                     alt: item.judul ?? "Foto Galeri",
                 }));
         }
