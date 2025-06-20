@@ -54,11 +54,15 @@ defineOptions({
                 </svg>
             </div>
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-40 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-25 text-center text-white"
             >
                 <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow">
-                    PROFIL DESA
+                    PROFIL DESA JABUNG
                 </h1>
+                <h2 class="text-xl md:text-xl mb-4 mt-4 drop-shadow">
+                    Mengenal Visi Misi, Struktur Perangkat Desa, dan Sejarah
+                    Desa Jabung
+                </h2>
             </div>
         </div>
         <DeskripsiSection />

@@ -21,18 +21,18 @@ const fetchGaleri = async () => {
         const res = await apiGet(`/galeri/${uuid}`);
         galeri.value = res.data;
 
-        if (galeri.value.url_media) {
-            const resImage = await axios.get(
-                `/api/v1/galeri/url_media/${galeri.value.url_media}`,
-                {
-                    responseType: "blob",
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("token")}`,
-                    },
-                }
-            );
-            imageUrl.value = URL.createObjectURL(resImage.data);
-        }
+        // if (galeri.value.url_media) {
+        //     const resImage = await axios.get(
+        //         `/api/v1/galeri/url_media/${galeri.value.url_media}`,
+        //         {
+        //             responseType: "blob",
+        //             headers: {
+        //                 Authorization: `Bearer ${Cookies.get("token")}`,
+        //             },
+        //         }
+        //     );
+        //     imageUrl.value = URL.createObjectURL(resImage.data);
+        // }
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data galeri");
     }
@@ -104,7 +104,10 @@ onMounted(fetchGaleri);
             </table>
         </div>
         <img
-            :src="imageUrl || 'https://placehold.co/400x300?text=No+Image'"
+            :src="
+                galeri.url_public ||
+                'https://placehold.co/400x300?text=No+Image'
+            "
             alt="Foto Galeri"
             loading="lazy"
             class="rounded-md w-[400px] h-[300px] object-cover border"

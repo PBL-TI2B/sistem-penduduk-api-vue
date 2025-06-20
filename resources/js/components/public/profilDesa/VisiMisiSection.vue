@@ -1,8 +1,16 @@
 <template>
     <section>
-        <h2 class="text-2xl font-bold mb-4 text-[#2FB586] mt-10">
-            VISI DAN MISI
-        </h2>
+        <!-- Judul Halaman -->
+        <div
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mt-8 mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+            >
+                <span>VISI & MISI</span>
+            </div>
+        </div>
         <div class="flex flex-col md:flex-row gap-6">
             <!-- Visi -->
             <div

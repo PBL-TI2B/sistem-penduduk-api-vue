@@ -64,7 +64,7 @@ onMounted(async () => {
 <template>
     <section class="bg-gray shadow-md rounded-xl p-6">
         <div
-            class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
         >
             <div class="w-1 h-6 bg-green-500 rounded"></div>
             <div
