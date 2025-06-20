@@ -25,8 +25,15 @@ class KematianController extends Controller
             });
         }
 
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal_kematian', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal_kematian', '<=', $request->end_date);
+        }
+
         $kematian = $query->paginate($request->get('per_page', 10));
-        //$kematian->setCollection(collect(KematianResource::collection($kematian->getCollection())));
 
         return new ApiResource(true, 'Daftar Data Kematian', $kematian);
     }
