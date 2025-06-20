@@ -31,8 +31,8 @@ onBeforeMount(async () => {
 });
 const formSchema = toTypedSchema(
     z.object({
-        username: z.string().min(2).max(50),
-        password: z.string().min(8).max(50),
+        username: z.string().min(4, "Username minimal 4 Karakter").max(50),
+        password: z.string().min(8, "Password minimal 8 karakter").max(50),
     })
 );
 
