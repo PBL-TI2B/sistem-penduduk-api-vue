@@ -14,8 +14,13 @@ class RtController extends Controller
 {
     public function index()
     {
-        // Fetch all RT
-        $rt = Rt::with(['rw'])->paginate(10);
+        $rt = Rt::with(['rw']);
+
+        if ($request->has('nomor_rt')) {
+            $rt->where('nomor_rt', $request->nomor_rt);
+        }
+
+        $rt = $rt->paginate(10);
         $collection = RtResource::collection($rt->getCollection());
         $rt->setCollection(collect($collection));
         
@@ -24,6 +29,7 @@ class RtController extends Controller
             'message' => 'Berhasil ambil data RT',
             'data' => $rt,
         ]);
+
     }
 
     public function store(Request $request)
