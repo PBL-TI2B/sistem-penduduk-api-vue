@@ -17,23 +17,20 @@ onMounted(async () => {
         >
             <div class="w-1 h-6 bg-green-500 rounded"></div>
             <div
-                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+                class="flex items-center gap-2 md:text-xl font-bold text-[#233D34]"
             >
                 <span>Jumlah Penerima Bansos</span>
             </div>
         </div>
 
         <!-- Grid Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-2">
+        <div class="grid md:grid-cols-2 gap-4 mb-2">
             <div
                 v-for="dataBantuanItem in items"
                 :key="dataBantuanItem.id"
-                class="bg-white rounded-[20px] px-6 py-4 flex items-center space-x-4 shadow-sm hover:drop-shadow-lg"
+                class="w-full bg-white rounded-md px-6 py-4 flex items-center space-x-4 shadow-sm hover:drop-shadow-lg"
             >
                 <div class="text-center">
-                    <!-- <p class="text-2xl font-bold text-[#233D34] leading-tight">
-                    67
-                </p> -->
                     <p class="text-2xl font-bold text-[#233D34] leading-tight">
                         {{ dataBantuanItem.penerima_bantuan_count }}
                     </p>
@@ -41,7 +38,6 @@ onMounted(async () => {
                 </div>
                 <p class="text-sm md:text-lg text-black">
                     mendapatkan bantuan <br />
-                    <!-- <span class="font-bold">BPJS PBI Ketenagakerjaan</span> -->
                     <span class="font-bold">
                         {{ dataBantuanItem.nama_bantuan }}
                     </span>

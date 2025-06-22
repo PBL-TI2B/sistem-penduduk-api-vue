@@ -96,7 +96,7 @@ watch(page, () => {
         >
             <div class="w-1 h-6 bg-green-500 rounded"></div>
             <div
-                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+                class="flex items-center gap-2 md:text-xl font-bold text-[#233D34]"
             >
                 <span>Cari Informasi Bansos</span>
             </div>
