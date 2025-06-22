@@ -30,6 +30,7 @@ const toggleDropdown = (title) => {
 };
 
 const userRoles = ref([]);
+const user = ref();
 
 onBeforeMount(async () => {
     try {
@@ -37,6 +38,7 @@ onBeforeMount(async () => {
         userRoles.value = Array.isArray(res.data.role)
             ? res.data.role
             : [res.data.role];
+        user.value = res.data.username;
     } catch (error) {
     } finally {
         isLoading.value = false;
@@ -88,7 +90,7 @@ const logout = async () => {
                     </div>
                 </SidebarHeader>
                 <SidebarGroupContent>
-                    <SidebarMenu v-if="!isLoading">
+                    <SidebarMenu v-if="!isLoading" class="mb-24">
                         <SidebarMenuItem
                             v-for="item in filteredItems"
                             :key="item.title"
@@ -173,14 +175,19 @@ const logout = async () => {
                             ></Skeleton>
                         </div>
                     </SidebarMenu>
-                    <Button
-                        class="absolute bottom-2 w-[93%]"
-                        variant="secondary"
-                        @click="logout"
-                    >
-                        <LogOut />
-                        <span> Keluar </span>
-                    </Button>
+                    <div class="absolute bottom-2 w-[93%]">
+                        <p class="m-2 font-medium text-card text-center">
+                            Login sebagai {{ user }}
+                        </p>
+                        <Button
+                            variant="secondary"
+                            @click="logout"
+                            class="w-full"
+                        >
+                            <LogOut />
+                            <span> Keluar </span>
+                        </Button>
+                    </div>
                 </SidebarGroupContent>
             </SidebarGroup>
         </SidebarContent>
