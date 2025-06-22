@@ -75,9 +75,17 @@ defineOptions({
 </script>
 
 <template>
-    <div class="grid place-items-center h-screen bg-gray-100">
-        <div class="w-full max-w-sm p-6 rounded-lg shadow-md">
-            <form @submit="onSubmit">
+    <div
+        class="grid place-items-center h-screen bg-gradient-to-tr from-primary to-border"
+    >
+        <div
+            class="w-full max-w-sm p-6 rounded-lg shadow-md backdrop-blur-2xl bg-gray-50/30 text-gray-200"
+        >
+            <h2 class="text-lg font-semibold">Masuk</h2>
+            <h2 class="font-semibold mb-4">
+                Masuk menggunakan akun yang valid
+            </h2>
+            <form @submit="onSubmit" class="grid gap-2">
                 <FormField v-slot="{ componentField }" name="username">
                     <FormItem>
                         <FormLabel>Username</FormLabel>
@@ -85,6 +93,7 @@ defineOptions({
                             <Input
                                 type="text"
                                 placeholder="Masukkan Username"
+                                class="placeholder:text-gray-200"
                                 v-bind="componentField"
                             />
                         </FormControl>
@@ -98,6 +107,7 @@ defineOptions({
                             <Input
                                 type="password"
                                 placeholder="Masukkan Password"
+                                class="placeholder:text-gray-200"
                                 v-bind="componentField"
                             />
                         </FormControl>

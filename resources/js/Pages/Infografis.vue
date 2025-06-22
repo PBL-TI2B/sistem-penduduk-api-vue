@@ -23,7 +23,7 @@ const activeTab = ref("penduduk");
 <template>
     <Head title=" - Infografis" />
 
-    <div class="bg-gray-50 min-h-screen px-6 md:px-48 py-8 pt-15">
+    <div class="bg-gray-50 min-h-screen px-6 lg:px-48 py-8 pt-15">
         <div class="flex flex-col max-w-6xl mx-auto py-8">
             <!-- SVG Lengkung Atas -->
             <div class="absolute top-0 left-0 w-full z-0">
@@ -66,17 +66,19 @@ const activeTab = ref("penduduk");
 
             <!-- Kontainer Konten Atas -->
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-20 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 md:py-20 text-center text-white"
             >
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow">
+                <h1
+                    class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 drop-shadow"
+                >
                     INFOGRAFIS DESA JABUNG
                 </h1>
-                <h2 class="text-xl md:text-xl mb-4 mt-4 drop-shadow">
+                <h2 class="text-lg md:text-xl mb-4 mt-4 drop-shadow">
                     Informasi Penduduk dan Bantuan Sosial dalam bentuk Statistik
                     Visual
                 </h2>
             </div>
-            <div class="flex justify-center gap-4 mt-8 z-0">
+            <div class="flex justify-center gap-4 mt-20 z-0">
                 <button
                     @click="activeTab = 'penduduk'"
                     :class="[
@@ -101,7 +103,7 @@ const activeTab = ref("penduduk");
                 </button>
             </div>
             <!-- Component Section berdasarkan Tab -->
-            <div v-show="activeTab === 'penduduk'">
+            <div v-show="activeTab === 'penduduk'" class="z-10">
                 <PendudukSection />
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     <UmurSection />
@@ -114,7 +116,7 @@ const activeTab = ref("penduduk");
                 <KelahiranKematianSection />
             </div>
 
-            <div v-show="activeTab === 'bansos'">
+            <div v-show="activeTab === 'bansos'" class="z-10 my-6">
                 <JumlahPenerima />
                 <CekBansos />
                 <!-- Bisa tambahkan komponen input & tabel seperti sebelumnya -->

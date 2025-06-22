@@ -50,17 +50,21 @@ defineOptions({
                 </svg>
             </div>
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 pt-15 mb-25 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 md:py-20 text-center text-white"
             >
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow">
+                <h1
+                    class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 drop-shadow"
+                >
                     BERITA DESA JABUNG
                 </h1>
-                <h2 class="text-xl md:text-xl mb-4 mt-4 drop-shadow">
+                <h2 class="md:text-xl mb-4 mt-4 drop-shadow">
                     Informasi dan Pengumuman Terbaru
                 </h2>
             </div>
         </div>
-        <BeritaSection />
-        <Pagination />
+        <div class="relative z-10">
+            <BeritaSection />
+            <Pagination />
+        </div>
     </div>
 </template>
