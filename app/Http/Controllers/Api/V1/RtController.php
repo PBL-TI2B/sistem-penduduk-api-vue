@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class RtController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $rt = Rt::with(['rw']);
 

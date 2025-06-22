@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class StatusKeluargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = StatusKeluarga::query(); 
 

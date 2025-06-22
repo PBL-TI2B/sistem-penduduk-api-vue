@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class RwController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $rw = Rw::with(['dusun']);
 

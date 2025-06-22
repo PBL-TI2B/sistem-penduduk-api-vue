@@ -17,8 +17,7 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('user')
-        ->where('status', 'publish');
+        $query = Berita::with('user');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {
@@ -29,11 +28,11 @@ class BeritaController extends Controller
                     ->orWhere('status', 'like', "%$search%");
             });
         }
-        // // Fitur filter berdasarkan status
-        // if ($request->filled('status')) {
-        //     $query->where('status', $request->status);
-        // }
-        // Paginasi
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
         $berita = $query->paginate($request->get('per_page', 10));
 
         // Format resource
@@ -47,18 +46,6 @@ class BeritaController extends Controller
             'data'    => $berita,
         ]);
     }
-
-    // public function index()
-    // {
-    //     $berita= Berita::with('user')->paginate(10);
-    //     $collection = BeritaResource::collection($berita->getCollection());
-    //     $berita->setCollection(collect($collection));
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Daftar Data Berita',
-    //         'data'    => $berita,
-    //     ]);
-    // }
 
     public function store(Request $request)
     {
@@ -105,6 +92,9 @@ class BeritaController extends Controller
 
     public function show(Berita $berita)
     {
+        $berita = $berita->load('user');
+        $berita->increment('jumlah_dilihat');
+        
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Berita',
@@ -142,7 +132,7 @@ class BeritaController extends Controller
         if ($request->hasfile('thumbnail')) {
             Storage::delete('berita/' . $berita->thumbnail);
             $thumbnail = $request->file('thumbnail');
-            $thumbnail->storeAs('berita', $thumbnail->hashName());
+            $thumbnail->storeAs('berita', $thumbnail->hashName(), 'public');
 
             $data['thumbnail'] = $thumbnail->hashName();
         } else {

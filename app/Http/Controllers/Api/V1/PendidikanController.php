@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PendidikanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = Pendidikan::query(); 
 
