@@ -167,7 +167,6 @@ onMounted(async () => {
     }
 });
 watch(page, fetchData);
-console.log(rtData);
 </script>
 
 <template>
@@ -395,6 +394,7 @@ console.log(rtData);
                 </Button>
             </div>
         </div>
+
         <DataTable
             label="Penduduk"
             :items="items"

@@ -19,14 +19,13 @@ export function useUser() {
         try {
             items.value = [];
             isLoading.value = true;
+
             const params = {
                 page: page.value,
                 per_page: perPage.value,
                 search: search.value,
             };
-            // if (selectedKategori.value && selectedKategori.value !== "-") {
-            //     params.kategori_bantuan_id = selectedKategori.value;
-            // }
+
             const res = await apiGet("/user", params);
             items.value = res.data.data;
             perPage.value = res.data.per_page;

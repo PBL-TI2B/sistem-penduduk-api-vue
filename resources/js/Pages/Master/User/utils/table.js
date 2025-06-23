@@ -12,11 +12,33 @@ const columnsIndexUser = [
         label: "Status",
         key: "status",
         format: (val, row) => row?.status || "-",
+        customClass: (val, row) => {
+            const status = row?.status;
+            if (status === "aktif") {
+                return "text-green-600 bg-green-100";
+            } else {
+                return "text-red-600 bg-red-100";
+            }
+        },
+    },
+    {
+        label: "Role",
+        key: "role",
+        format: (val, row) => row?.roles[0].name || "-",
+        customClass: (val, row) => {
+            const role = row?.roles[0].name || "-";
+
+            if (role === "superadmin" || role === "admin") {
+                return "text-blue-600 bg-blue-100";
+            } else {
+                return "text-yellow-600 bg-yellow-100";
+            }
+        },
     },
     {
         label: "Perangkat Desa",
-        key: "perangkat_desa.nama_lengkap",
-        format: (val, row) => row?.perangkat_desa?.nama_lengkap || "-",
+        key: "perangkat_desa.penduduk.nama_lengkap",
+        format: (val, row) => row?.perangkat_desa?.penduduk.nama_lengkap || "-",
     },
 ];
 

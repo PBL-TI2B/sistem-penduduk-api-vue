@@ -24,7 +24,7 @@ class Berita extends Model
 
     public function getRouteKeyName()
     {
-        return 'uuid';
+        return 'slug';
     }
 
     public function user()

@@ -24,7 +24,6 @@ class User extends Authenticatable
         'uuid',    
         'username',
         'password',
-        'role',
         'status',
         'perangkat_id',
     ];
@@ -42,6 +41,11 @@ class User extends Authenticatable
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    public function perangkatDesa()
+    {
+        return $this->belongsTo(PerangkatDesa::class, 'perangkat_id');
     }
 
     /**

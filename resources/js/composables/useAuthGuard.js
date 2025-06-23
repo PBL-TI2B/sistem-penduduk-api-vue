@@ -24,7 +24,7 @@ export function useAuthGuard(requiredRoles = []) {
                 required.some((r) => roles.includes(r));
 
             if (!hasRole) {
-                return router.visit("/unauthorized");
+                useErrorHandler("Unauthorized!");
             }
         } catch (error) {
             useErrorHandler(error, "Token expired");
