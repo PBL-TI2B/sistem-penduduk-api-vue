@@ -64,28 +64,21 @@ const onSubmit = handleSubmit(async (values) => {
     }
 });
 
-// Load data saat mount
+
 onMounted(async () => {
     try {
         const beritaRes = await apiGet(`/berita/${slug}`);
-        const data = beritaRes.data; // pastikan ambil data yang benar
+        const data = beritaRes.data;
         setValues({
             judul: data.judul ?? "",
             konten: data.konten ?? "",
-            status: data.status && data.status !== "" ? data.status : "draft", // lebih aman
+            status: data.status && data.status !== "" ? data.status : "draft",
         });
+
         if (data.thumbnail) {
-            const resImage = await axios.get(
-                `/api/v1/berita/thumbnail/${data.thumbnail}`,
-                {
-                    responseType: "blob",
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("token")}`,
-                    },
-                }
-            );
-            previewThumbnail.value = URL.createObjectURL(resImage.data);
+            previewThumbnail.value = `/storage/berita/${data.thumbnail}`;
         }
+
         const userRes = await apiGet("/auth/me");
         user_id.value = userRes.data?.id;
         if (!user_id.value) {
