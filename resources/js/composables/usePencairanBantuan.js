@@ -4,7 +4,7 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 
-export function usePenerimaBantuan() {
+export function usePencairanBantuan() {
     const items = ref([]);
     const item = ref({});
     const isLoading = ref(false);
@@ -15,28 +15,33 @@ export function usePenerimaBantuan() {
     // const imageUrl = ref(null);
 
     const search = ref("");
-    const selectedStatusPenerimaanBantuan = ref("");
+    // const selectedStatusPenerimaanBantuan = ref("");
 
     //! Fetch Data Penerima Bantuan
-    const fetchData = async () => {
+    const fetchData = async (penerima_bantuan_id) => {
+        if (!penerima_bantuan_id) {
+            useErrorHandler(new Error("Parameter penerima_bantuan_id wajib diisi"), "Parameter penerima_bantuan_id wajib diisi");
+            // items.value = [];
+            // totalItems.value = 0;
+            // totalPages.value = 1;
+            // return;
+        }
+
         try {
             items.value = [];
             isLoading.value = true;
-            const res = await apiGet("/penerima-bantuan", {
-                page: page.value,
-                search: search.value,
-                status: selectedStatusPenerimaanBantuan.value,
+            const res = await apiGet("/riwayat-bantuan", {
+                // page: page.value,
+                // search: search.value,
+                penerima_bantuan_id,
+                // status: selectedStatusPenerimaanBantuan.value,
             });
-            // items.value = res.data.data.map((item) => ({
-            //     ...item,
-            //     nama_penduduk: item.penduduk?.nama_lengkap || "-",
-            // }));
             items.value = res.data.data;
             perPage.value = res.data.per_page;
             totalPages.value = res.data.last_page;
             totalItems.value = res.data.total;
         } catch (error) {
-            useErrorHandler(error, "Gagal memuat data penerima bantuan");
+            useErrorHandler(error, "Gagal memuat data pencairan bantuan");
         } finally {
             isLoading.value = false;
         }
@@ -48,7 +53,7 @@ export function usePenerimaBantuan() {
 
         try {
             isLoading.value = true;
-            const res = await apiGet(`/penerima-bantuan/${uuid}`);
+            const res = await apiGet(`/riwayat-bantuan/${uuid}`);
             item.value = res.data;
 
             // if (items.value.penduduk.foto) {
@@ -64,7 +69,7 @@ export function usePenerimaBantuan() {
             //     imageUrl.value = URL.createObjectURL(resImage.data);
             // }
         } catch (error) {
-            useErrorHandler(error, "Gagal memuat detail penerima bantuan");
+            useErrorHandler(error, "Gagal memuat detail pencairan bantuan");
         } finally {
             isLoading.value = false;
         }
@@ -79,7 +84,7 @@ export function usePenerimaBantuan() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            const res = await apiPost("/penerima-bantuan", values);
+            const res = await apiPost("/riwayat-bantuan", values);
 
             if (res.success === false) {
                 toast.error("Penduduk kurang mampu dengan bantuan yang sama sudah ada");
@@ -87,9 +92,9 @@ export function usePenerimaBantuan() {
             }
 
             toast.success("Berhasil Tambah Data Penerima Bantuan");
-            router.visit("/admin/penerima-bantuan");
+            router.visit("/admin/riwayat-bantuan");
         } catch (error) {
-            useErrorHandler(error, "Gagal menyimpan data penerima bantuan");
+            useErrorHandler(error, "Gagal menyimpan data pencairan bantuan");
         } finally {
             isLoading.value = false;
         }
@@ -107,13 +112,13 @@ export function usePenerimaBantuan() {
             // for (const [key, value] of Object.entries(values)) {
             //     formData.append(key, value ?? "");
             // }
-            await apiPost(`/penerima-bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui keterangan penerima bantuan");
-            router.visit("/admin/penerima-bantuan");
+            await apiPost(`/riwayat-bantuan/${uuid}`, formData);
+            toast.success("Berhasil memperbarui keterangan pencairan bantuan");
+            router.visit("/admin/riwayat-bantuan");
         } catch (error) {
             useErrorHandler(
                 error,
-                "Gagal memperbarui keterangan penerima bantuan"
+                "Gagal memperbarui keterangan pencairan bantuan"
             );
         } finally {
             isLoading.value = false;
@@ -129,9 +134,9 @@ export function usePenerimaBantuan() {
             formData.append("_method", "PUT");
             formData.append("status", status ?? "");
 
-            await apiPost(`/penerima-bantuan/${uuid}`, formData);
+            await apiPost(`/riwayat-bantuan/${uuid}`, formData);
             toast.success("Berhasil memperbarui status validasi");
-            router.visit(`/penerima-bantuan/${uuid}`);
+            router.visit(`/riwayat-bantuan/${uuid}`);
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui status validasi");
         } finally {
@@ -143,11 +148,11 @@ export function usePenerimaBantuan() {
     const deleteData = async (uuid) => {
         try {
             // isLoading.value = true;
-            await apiDelete(`/penerima-bantuan/${uuid}`);
-            toast.success("Berhasil menghapus penerima-bantuan");
-            router.visit("/admin/penerima-bantuan");
+            await apiDelete(`/riwayat-bantuan/${uuid}`);
+            toast.success("Berhasil menghapus riwayat-bantuan");
+            router.visit("/admin/riwayat-bantuan");
         } catch (error) {
-            useErrorHandler(error, "Gagal menghapus penerima bantuan");
+            useErrorHandler(error, "Gagal menghapus pencairan bantuan");
         } finally {
             // isLoading.value = false;
         }
@@ -162,7 +167,7 @@ export function usePenerimaBantuan() {
         totalPages,
         totalItems,
         search,
-        selectedStatusPenerimaanBantuan,
+        // selectedStatusPenerimaanBantuan,
         // statusValidasiOptions,
         // imageUrl,
         fetchData,

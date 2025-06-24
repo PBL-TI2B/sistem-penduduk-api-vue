@@ -66,7 +66,7 @@ const columnsIndex = [
     },
 ];
 
-const columnsIndexBantuan = [
+const columnsCreateBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
     { label: "Kategori",key: "kategori", },
     { label: "Nominal", key: "nominal",
@@ -82,7 +82,7 @@ const columnsIndexBantuan = [
     },
 ];
 
-const columnsIndexKurangMampu = [
+const columnsCreateKurangMampu = [
    {
         label: "Nama Penduduk",
         key: "penduduk",
@@ -124,6 +124,46 @@ const columnsIndexKurangMampu = [
     },
 ];
 
+const columnsShowPencairan = [
+    {
+        label: "Tanggal Pencairan",
+        key: "tanggal_penerimaan",
+        format: (val) => {
+            if (!val) return "-";
+            const date = new Date(val);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+            });
+        },
+    },
+    {
+        label: "Status",
+        key: "status",
+        format: (val) => val ?? "-",
+    },
+    // {
+    //     label: "Keterangan",
+    //     key: "keterangan",
+    //     format: (val) => val ?? "-",
+    // },
+    {
+        label: "Dibuat Pada",
+        key: "created_at",
+        format: formatDate,
+
+    },
+    // {
+    //     label: "Diperbarui Pada",
+    //     key: "updated_at",
+    //     format: (val) => {
+    //         if (!val) return "-";
+    //         const date = new Date(val);
+    //         return date.toLocaleString('id-ID');
+    //     },
+    // },
+];
 
 const actionsIndex =  (onClickDeleteButton) => [
     {
@@ -177,12 +217,27 @@ const rowsShow = [
         format: (val, row) => val?.nama_bantuan || "-",
     },
     {
+        label: "Nominal",
+        key: "bantuan",
+        format: (val, row) => formatCurrency(val?.nominal) || "-",
+    },
+    {
+        label: "Periode",
+        key: "bantuan",
+        format: (val, row) => val?.periode || "-",
+    },
+    {
+        label: "Lama Periode",
+        key: "bantuan",
+        format: (val, row) => val?.lama_periode || "-",
+    },
+    {
         label: "Tanggungan",
         key: "kurang_mampu",
         format: (val) => val?.jumlah_tanggungan ?? "-",
     },
     {
-        label: "Tanggal Penerimaan",
+        label: "Tanggal Pengajuan",
         key: "tanggal_penerimaan",
         // format: (val) => formatDate(val, false),
         format: (val) => {
@@ -202,7 +257,19 @@ const rowsShow = [
         key: "status",
         format: (val) => val ?? "-",
     },
+    {
+        label: "Keterangan",
+        key: "keterangan",
+        format: (val) => val ?? "-",
+    },
 ];
 
 
-export { columnsIndex, columnsIndexBantuan, columnsIndexKurangMampu, actionsIndex, rowsShow };
+export {
+    columnsIndex,
+    columnsCreateBantuan as columnsIndexBantuan,
+    columnsCreateKurangMampu as columnsIndexKurangMampu,
+    columnsShowPencairan as columnsIndexPencairan,
+    rowsShow,
+    actionsIndex,
+};
