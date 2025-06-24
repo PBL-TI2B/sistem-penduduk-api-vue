@@ -12,6 +12,7 @@ import KelahiranKematianSection from "@/components/public/infografis/KelahiranKe
 
 import JumlahPenerima from "@/components/public/bansos/JumlahPenerima.vue";
 import CekBansos from "@/components/public/bansos/CekBansos.vue";
+import { motion } from "motion-v";
 
 defineOptions({
     layout: PublicLayout,
@@ -66,17 +67,25 @@ const activeTab = ref("penduduk");
 
             <!-- Kontainer Konten Atas -->
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 md:py-20 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 py-10 md:py-20 text-center text-white"
             >
-                <h1
+                <motion.h1
+                    :initial="{ opacity: 0, y: -40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
                     class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 drop-shadow"
                 >
-                    INFOGRAFIS DESA JABUNG
-                </h1>
-                <h2 class="text-lg md:text-xl mb-4 mt-4 drop-shadow">
+                    Infografis Desa Jabung
+                </motion.h1>
+                <motion.h2
+                    class="text-lg md:text-xl mb-4 mt-4 drop-shadow"
+                    :initial="{ opacity: 0, y: 40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
+                >
                     Informasi Penduduk dan Bantuan Sosial dalam bentuk Statistik
                     Visual
-                </h2>
+                </motion.h2>
             </div>
             <div class="flex justify-center gap-4 mt-20 z-0">
                 <button

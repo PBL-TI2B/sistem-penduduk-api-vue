@@ -3,7 +3,11 @@ import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 
 export const columnsIndex = [
-    { label: "Judul", key: "judul" },
+    {
+        label: "Judul",
+        key: "judul",
+        format: (val, row) => row.judul.substring(0, 30) + "...",
+    },
     { label: "Tanggal Posting", key: "tanggal_post" },
     { label: "Terakhir Diubah", key: "terakhir_diubah" },
     { label: "Status", key: "status" },

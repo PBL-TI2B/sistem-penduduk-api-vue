@@ -1,7 +1,7 @@
 <script setup>
 import PublicLayout from "@/Layouts/PublicLayout.vue";
 import BeritaSection from "@/components/public/berita/BeritaSection.vue";
-import Pagination from "@/components/public/berita/Pagination.vue";
+import { motion } from "motion-v";
 
 defineOptions({
     layout: PublicLayout,
@@ -50,21 +50,28 @@ defineOptions({
                 </svg>
             </div>
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 md:py-20 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 py-10 md:py-20 text-center text-white"
             >
-                <h1
+                <motion.h1
                     class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 drop-shadow"
+                    :initial="{ opacity: 0, y: -40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
                 >
-                    BERITA DESA JABUNG
-                </h1>
-                <h2 class="md:text-xl mb-4 mt-4 drop-shadow">
-                    Informasi dan Pengumuman Terbaru
-                </h2>
+                    Berita Desa Jabung
+                </motion.h1>
+                <motion.h2
+                    class="md:text-xl mb-4 mt-4 drop-shadow"
+                    :initial="{ opacity: 0, y: 40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
+                >
+                    Informasi Artikel dan Pengumuman Terbaru Desa Jabung
+                </motion.h2>
             </div>
         </div>
         <div class="relative z-10">
             <BeritaSection />
-            <Pagination />
         </div>
     </div>
 </template>
