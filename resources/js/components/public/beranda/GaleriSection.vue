@@ -6,7 +6,6 @@ import { apiGet } from "@/utils/api";
 const galleryList = ref([]);
 const isLoading = ref(true);
 const hasData = ref(true);
-
 const fetchGaleri = async () => {
     try {
         const res = await apiGet("/galeri");
@@ -20,7 +19,9 @@ const fetchGaleri = async () => {
                 .slice(0, 8)
                 .map((item) => ({
                     id: item.id,
-                    image: item.foto ? item.foto : "fallback.png",
+                    image: item.url_public
+                        ? item.url_public
+                        : "/images/galeri-fallback.png",
                     alt: item.judul ?? "Foto Galeri",
                 }));
         }
