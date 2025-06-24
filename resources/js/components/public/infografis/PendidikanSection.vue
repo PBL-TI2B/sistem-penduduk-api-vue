@@ -10,9 +10,7 @@ onMounted(async () => {
     await nextTick();
 
     try {
-        const response = await axios.get(
-            "http://127.0.0.1:8000/api/v1/statistik/pendidikan"
-        );
+        const response = await axios.get("/api/v1/statistik/pendidikan");
         const data = response.data.data;
 
         const labels = data.map((item) => item.pendidikan);
@@ -64,11 +62,11 @@ onMounted(async () => {
 <template>
     <section class="bg-gray shadow-md rounded-xl p-6">
         <div
-            class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
         >
             <div class="w-1 h-6 bg-green-500 rounded"></div>
             <div
-                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+                class="flex items-center gap-2 md:text-lg font-bold text-[#233D34]"
             >
                 <span>Berdasarkan Pendidikan</span>
             </div>

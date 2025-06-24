@@ -23,9 +23,7 @@ const kepercayaan = ref([]); // data dinamis
 
 onMounted(async () => {
     try {
-        const res = await axios.get(
-            "http://127.0.0.1:8000/api/v1/statistik/agama"
-        );
+        const res = await axios.get("/api/v1/statistik/agama");
         const apiData = res.data.data;
 
         kepercayaan.value = apiData.map((item) => ({
@@ -43,23 +41,23 @@ onMounted(async () => {
     <!-- Agama -->
     <section class="bg-gray shadow-md rounded-xl p-6">
         <div
-            class="flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
         >
             <div class="w-1 h-6 bg-green-500 rounded"></div>
             <div
-                class="flex items-center gap-2 text-xl font-bold text-[#233D34]"
+                class="flex items-center gap-2 md:text-lg font-bold text-[#233D34]"
             >
                 <span>Berdasarkan Kepercayaan</span>
             </div>
         </div>
-        <div class="grid grid-cols-3 md:grid-cols-2 gap-4 text-center">
+        <div class="grid grid-cols-3 md:grid-cols-2 gap-2 md:gap-4 text-center">
             <div
                 v-for="(item, index) in kepercayaan"
                 :key="index"
                 class="bg-white shadow-sm hover:drop-shadow-lg p-4 rounded-[20px] flex flex-col items-center justify-center"
             >
                 <img :src="item.icon" alt="" class="w-12 h-12 mb-2" />
-                <p class="text-[#233D34] font-medium">
+                <p class="text-[#233D34] font-medium text-xs md:text-base">
                     {{ item.nama }}
                 </p>
                 <p

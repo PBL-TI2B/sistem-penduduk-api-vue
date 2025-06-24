@@ -23,7 +23,7 @@ class BeritaResource extends JsonResource
             'konten' => $this->konten,
             'jumlah_dilihat' => $this->jumlah_dilihat,
             'status' => $this->status,
-            'user_id' => [
+            'user' => [
                 'id' => $this->user?->id,
                 'username' => $this->user?->username,
             ],

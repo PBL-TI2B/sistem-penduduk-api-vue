@@ -9,7 +9,9 @@ const hasData = ref(true);
 
 const fetchBerita = async () => {
     try {
-        const res = await apiGet("/berita");
+        const res = await apiGet("/berita", {
+            status: "publish",
+        });
         const apiData = res.data.data.data;
 
         if (!apiData || apiData.length === 0) {

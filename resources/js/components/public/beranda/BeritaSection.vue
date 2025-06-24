@@ -29,7 +29,9 @@ const formatTanggalWIB = (input: string): string => {
 
 const fetchBerita = async () => {
     try {
-        const res = await apiGet("/berita");
+        const res = await apiGet("/berita", {
+            status: "publish",
+        });
         const apiData = res.data.data;
 
         if (apiData.length === 0) {

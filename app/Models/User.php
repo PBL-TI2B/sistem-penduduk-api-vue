@@ -48,6 +48,11 @@ class User extends Authenticatable
         return $this->belongsTo(PerangkatDesa::class, 'perangkat_id');
     }
 
+    public function berita()
+    {
+        return $this->hasMany(Berita::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

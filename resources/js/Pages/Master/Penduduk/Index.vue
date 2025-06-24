@@ -215,7 +215,7 @@ watch(page, fetchData);
                 </button>
             </div>
             <div
-                class="max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
+                class="lg:max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
             >
                 <Select v-model="filter.status">
                     <SelectTrigger>
@@ -381,7 +381,7 @@ watch(page, fetchData);
                     />
                 </div>
             </div>
-            <div class="grid gap-2 bg-primary-foreground p-2 rounded-lg">
+            <div class="w-auto grid gap-2 bg-primary-foreground p-2 rounded-lg">
                 <Button asChild @click="fetchData">
                     <div>
                         <Funnel />

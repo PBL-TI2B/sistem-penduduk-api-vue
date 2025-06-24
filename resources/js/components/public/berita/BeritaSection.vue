@@ -28,7 +28,9 @@ const formatTanggalWIB = (input: string): string => {
 
 const fetchBerita = async () => {
     try {
-        const res = await apiGet("/berita");
+        const res = await apiGet("/berita", {
+            status: "publish",
+        });
         const apiData = res.data.data;
 
         if (apiData.length === 0) {
@@ -36,8 +38,8 @@ const fetchBerita = async () => {
         } else {
             // Urutkan berdasarkan tanggal paling baru
             apiData.sort((a, b) => {
-                const dateA = new Date(a.tanggal_post || a.created_at);
-                const dateB = new Date(b.tanggal_post || b.created_at);
+                const dateA = new Date(a.created_at);
+                const dateB = new Date(b.created_at);
                 return dateB.getTime() - dateA.getTime(); // descending
             });
 
@@ -49,7 +51,7 @@ const fetchBerita = async () => {
                 image: item.thumbnail
                     ? `/storage/berita/${item.thumbnail}`
                     : "/images/berita-lain.png",
-                date: formatTanggalWIB(item.tanggal_post ?? item.created_at),
+                date: formatTanggalWIB(item.created_at),
                 views: item.jumlah_dilihat,
                 excerpt: item.konten.slice(0, 60) + "...",
                 author: item.user?.name ?? "Admin",
@@ -69,7 +71,9 @@ onMounted(fetchBerita);
 <template>
     <section>
         <div v-if="isLoading" class="text-gray-500">Memuat berita...</div>
-        <div v-else-if="!hasData" class="text-gray-500">Belum ada berita.</div>
+        <div v-else-if="!hasData" class="text-gray-500 text-center">
+            Belum ada berita.
+        </div>
 
         <div
             v-else
@@ -85,16 +89,9 @@ onMounted(fetchBerita);
                     alt="Berita"
                     class="w-full h-48 object-cover"
                 />
-                <div class="px-4 lg:px-6 pb-4">
-                    <Link :href="`/detailberita/${news.slug}`">
-                        <h3
-                            class="font-semibold text-sm md:text-lg text-emerald-700 mt-4 hover:underline"
-                        >
-                            {{ news.title }}
-                        </h3>
-                    </Link>
+                <div class="px-4 pb-4">
                     <div
-                        class="text-xs text-gray-500 flex items-center gap-4 mt-2"
+                        class="text-xs text-gray-500 flex items-center gap-4 my-4"
                     >
                         <div class="flex items-center gap-1">
                             <CalendarDays
@@ -118,10 +115,13 @@ onMounted(fetchBerita);
                             <span>{{ news.author }}</span>
                         </div>
                     </div>
-
-                    <p class="text-sm text-gray-600 mt-2">
-                        {{ news.excerpt }}
-                    </p>
+                    <Link :href="`/berita/${news.slug}`">
+                        <h3
+                            class="font-semibold text-sm md:text-lg text-emerald-700 hover:underline"
+                        >
+                            {{ news.title }}
+                        </h3>
+                    </Link>
                 </div>
             </div>
         </div>
