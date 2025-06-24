@@ -16,24 +16,6 @@ export function usePenerimaBantuan() {
 
     const search = ref("");
     const selectedStatusPenerimaanBantuan = ref("");
-    // const statusValidasiOptions = [
-    //     {
-    //         value: null,
-    //         label: "Semua",
-    //     },
-    //     {
-    //         value: "belum tervalidasi",
-    //         label: "Belum Tervalidasi",
-    //     },
-    //     {
-    //         value: "tervalidasi",
-    //         label: "Tervalidasi",
-    //     },
-    //     {
-    //         value: "ditolak",
-    //         label: "Ditolak",
-    //     },
-    // ];
 
     //! Fetch Data Penerima Bantuan
     const fetchData = async () => {

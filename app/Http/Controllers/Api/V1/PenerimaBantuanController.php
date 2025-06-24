@@ -96,6 +96,12 @@ class PenerimaBantuanController extends Controller
      */
     public function show(PenerimaBantuan $penerimaBantuan)
     {
+
+        $penerimaBantuan->load([
+            'bantuan.kategoriBantuan',
+            'kurangMampu.anggotaKeluarga.penduduk',
+            // 'riwayatBantuan'
+        ]);
         return new ApiResource(true, 'Detail Data Penerima Bantuan', new PenerimaBantuanResource($penerimaBantuan));
     }
 
@@ -106,17 +112,22 @@ class PenerimaBantuanController extends Controller
     public function update(PenerimaBantuan $penerimaBantuan, Request $request)
     {
 
-
-        $validator = Validator::make($request->all(), [
-            'status' => 'in:diajukan,aktif,selesai,ditolak',
-            'tanggal_penerimaan' => 'date',
-            'keterangan' => 'nullable|string',
-        ]);
+        if ($request->has('status')) {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|in:aktif,selesai',
+            ]);
+            $data = $request->only('status');
+        } else {
+            $validator = Validator::make($request->all(), [
+                'keterangan' => 'nullable|string',
+            ]);
+            $data = $request->only('keterangan');
+        }
 
         if ($validator->fails()) {
             return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
-        $data = $request->only(['status', 'tanggal_penerimaan', 'keterangan']);
+        // $data = $request->only(['status', 'keterangan']);
 
         $penerimaBantuan->update($data);
 
@@ -128,10 +139,9 @@ class PenerimaBantuanController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(PenerimaBantuan $penerimaBantuan)
-    { {
-            $penerimaBantuan->delete();
-            return new ApiResource(true, 'Data penerima bantuan berhasil dihapus', null);
-        }
+    {
+        $penerimaBantuan->delete();
+        return new ApiResource(true, 'Data penerima bantuan berhasil dihapus', null);
     }
 
     public function exportPdf()
