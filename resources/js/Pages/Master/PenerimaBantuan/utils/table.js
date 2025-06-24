@@ -42,7 +42,7 @@ const columnsIndex = [
     {
         label: "Tanggungan",
         key: "kurang_mampu",
-        format: (val) => val.jumlah_tanggungan ?? "-",
+        format: (val) => val?.jumlah_tanggungan ?? "-",
     },
     {
         label: "Tanggal Penerimaan",
@@ -161,16 +161,47 @@ const actionsIndex =  (onClickDeleteButton) => [
 
 const rowsShow = [
 //     { label: "Nama Bantuan", key: "nama_bantuan" },
-//     {
-//         label: "Kategori",
-//         key: "anggota_keluarga",
-//         format: (val, row) => row.anggota_keluarga?.kategori || "-",
-//     },
-//     { label: "Nominal (Rp.)", key: "nominal" },
-//     { label: "Periode", key: "periode" },
-//     { label: "Lama Periode", key: "lama_periode" },
-//     { label: "Instansi", key: "instansi" },
-//     { label: "Keterangan", key: "keterangan" },
+{
+        label: "Nama Lengkap",
+        key: "kurang_mampu",
+        format: (val, row) => val?.penduduk.nama_lengkap || "-",
+    },
+    {
+        label: "NIK",
+        key: "kurang_mampu",
+        format: (val, row) => val?.penduduk.nik || "-",
+    },
+    {
+        label: "Bantuan",
+        key: "bantuan",
+        format: (val, row) => val?.nama_bantuan || "-",
+    },
+    {
+        label: "Tanggungan",
+        key: "kurang_mampu",
+        format: (val) => val?.jumlah_tanggungan ?? "-",
+    },
+    {
+        label: "Tanggal Penerimaan",
+        key: "tanggal_penerimaan",
+        // format: (val) => formatDate(val, false),
+        format: (val) => {
+            if (!val) return "-";
+            const date = new Date(val);
+            const hari = date.toLocaleDateString('id-ID', { weekday: 'long' });
+            const tanggal = date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+            });
+            return `${hari}, ${tanggal}`;
+        },
+    },
+    {
+        label: "Status Bantuan",
+        key: "status",
+        format: (val) => val ?? "-",
+    },
 ];
 
 
