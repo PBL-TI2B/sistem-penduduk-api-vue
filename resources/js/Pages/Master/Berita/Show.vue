@@ -23,8 +23,8 @@ const plainKonten = computed(() => {
     if (!berita.value.konten) return "";
     let text = berita.value.konten.replace(/<[^>]+>/g, "");
     text = text.replace(/&nbsp;/g, " ");
-    text = text.replace(/\n{2,}/g, '<br><br>');
-    text = text.replace(/\n/g, '<br>');
+    text = text.replace(/\n{2,}/g, "<br><br>");
+    text = text.replace(/\n/g, "<br>");
     return text;
 });
 const kontenPendek = computed(() => {
@@ -38,19 +38,6 @@ const fetchBerita = async () => {
     try {
         const res = await apiGet(`/berita/${slug}`);
         berita.value = res.data;
-
-        if (berita.value.thumbnail) {
-            const resImage = await axios.get(
-                `/api/v1/berita/thumbnail/${berita.value.thumbnail}`,
-                {
-                    responseType: "blob",
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("token")}`,
-                    },
-                }
-            );
-            imageUrl.value = URL.createObjectURL(resImage.data);
-        }
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data berita");
     }
@@ -80,29 +67,30 @@ onMounted(fetchBerita);
 </script>
 
 <template>
-
     <Head title=" | Detail Berita" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
             <h1 class="text-3xl font-bold">Detail Berita</h1>
-            <BreadcrumbComponent :items="[
-                { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Berita', href: '/admin/berita' },
-                { label: 'Detail Berita' },
-            ]" />
+            <BreadcrumbComponent
+                :items="[
+                    { label: 'Dashboard', href: '/admin/dashboard' },
+                    { label: 'Berita', href: '/admin/berita' },
+                    { label: 'Detail Berita' },
+                ]"
+            />
         </div>
         <div class="flex gap-2 items-center">
             <Button asChild v-if="berita.slug">
                 <Link :href="route('berita.edit', berita.slug)">
-                <SquarePen /> Ubah
+                    <SquarePen /> Ubah
                 </Link>
             </Button>
-            <Button @click="onClickDeleteButton">
-                <Trash2 /> Hapus
-            </Button>
+            <Button @click="onClickDeleteButton"> <Trash2 /> Hapus </Button>
         </div>
     </div>
-    <div class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-8 justify-between">
+    <div
+        class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-8 justify-between"
+    >
         <div class="w-full">
             <h2 class="text-lg font-bold mb-4">
                 {{ berita.judul }}
@@ -117,19 +105,41 @@ onMounted(fetchBerita);
                         <td class="font-medium p-2">Konten</td>
                         <td>
                             <div v-if="plainKonten">
-                                <span v-if="plainKonten.replace(/<br>/g, '').length > maxKontenLength"
-                                    v-html="kontenPendek" style="white-space: normal;"></span>
-                                <span v-else v-html="plainKonten" style="white-space: normal;"></span>
+                                <span
+                                    v-if="
+                                        plainKonten.replace(/<br>/g, '')
+                                            .length > maxKontenLength
+                                    "
+                                    v-html="kontenPendek"
+                                    style="white-space: normal"
+                                ></span>
+                                <span
+                                    v-else
+                                    v-html="plainKonten"
+                                    style="white-space: normal"
+                                ></span>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Tanggal Posting</td>
-                        <td>{{ dayjs(berita.created_at).format('DD MMM YYYY HH:mm') }}</td>
+                        <td>
+                            {{
+                                dayjs(berita.created_at).format(
+                                    "DD MMM YYYY HH:mm"
+                                )
+                            }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Terakhir Diubah</td>
-                        <td>{{ dayjs(berita.updated_at).format('DD MMM YYYY HH:mm') }}</td>
+                        <td>
+                            {{
+                                dayjs(berita.updated_at).format(
+                                    "DD MMM YYYY HH:mm"
+                                )
+                            }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Status</td>
@@ -141,7 +151,7 @@ onMounted(fetchBerita);
                     </tr>
                     <tr>
                         <td class="font-medium p-2">Penulis</td>
-                        <td>{{ berita.user_id?.username ?? "-" }}</td>
+                        <td>{{ berita.user?.username ?? "-" }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -163,7 +173,11 @@ onMounted(fetchBerita);
         </div>
     </div>
 
-    <AlertDialog v-model:isOpen="isAlertDeleteOpen" :title="'Hapus Data Berita'"
-        :description="'Apakah anda yakin ingin menghapus data berita ini?'" :onConfirm="onConfirmDelete"
-        :onCancel="onCancelDelete" />
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        :title="'Hapus Data Berita'"
+        :description="'Apakah anda yakin ingin menghapus data berita ini?'"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>

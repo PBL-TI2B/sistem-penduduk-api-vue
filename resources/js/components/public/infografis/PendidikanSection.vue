@@ -10,9 +10,7 @@ onMounted(async () => {
     await nextTick();
 
     try {
-        const response = await axios.get(
-            "http://127.0.0.1:8000/api/v1/statistik/pendidikan"
-        );
+        const response = await axios.get("/api/v1/statistik/pendidikan");
         const data = response.data.data;
 
         const labels = data.map((item) => item.pendidikan);
@@ -36,10 +34,13 @@ onMounted(async () => {
                         backgroundColor: "rgba(75, 85, 99, 0.8)",
                         borderRadius: 4,
                         borderSkipped: false,
+                        barThickness: 25, // 🎯 Ukuran bar
+                        categoryPercentage: 0.1, // 🎯 Jarak antar bar
                     },
                 ],
             },
             options: {
+                indexAxis: "y",
                 responsive: true,
                 plugins: {
                     legend: { display: false },
@@ -59,10 +60,19 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section>
-        <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
-            Berdasarkan Pendidikan
-        </h2>
-        <canvas ref="pendidikanChart" height="150"></canvas>
+    <section class="bg-gray shadow-md rounded-xl p-6">
+        <div
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 md:text-lg font-bold text-[#233D34]"
+            >
+                <span>Berdasarkan Pendidikan</span>
+            </div>
+        </div>
+        <div style="height: 400px">
+            <canvas ref="pendidikanChart" class="w-full mt-20"></canvas>
+        </div>
     </section>
 </template>

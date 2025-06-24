@@ -38,8 +38,6 @@ const onFileChange = (e) => {
     }
 };
 
-
-
 const onSubmit = handleSubmit(async (values) => {
     try {
         const formData = new FormData();
@@ -132,7 +130,9 @@ onMounted(async () => {
                                 contentType="html"
                                 style="min-height: 250px"
                                 v-model:content="values[field.name]"
-                                @update:content="setFieldValue(field.name, $event)"
+                                @update:content="
+                                    setFieldValue(field.name, $event)
+                                "
                             />
                             <select
                                 v-else-if="field.type === 'select'"

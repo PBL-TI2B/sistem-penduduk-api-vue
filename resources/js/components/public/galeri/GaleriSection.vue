@@ -14,11 +14,15 @@ const fetchGaleri = async () => {
         if (apiData.length === 0) {
             hasData.value = false;
         } else {
-            galleryList.value = apiData.map((item) => ({
-                id: item.id,
-                image: item.foto ? item.foto : "fallback.png", // nama file aja
-                alt: item.judul ?? "Foto Galeri",
-            }));
+            galleryList.value = apiData
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .map((item) => ({
+                    id: item.id,
+                    image: item.url_public
+                        ? item.url_public
+                        : "/images/galeri-fallback.png",
+                    alt: item.judul ?? "Foto Galeri",
+                }));
         }
     } catch (error) {
         console.error("Gagal mengambil data galeri:", error);
@@ -45,7 +49,6 @@ onMounted(fetchGaleri);
             class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
         >
             <div v-for="image in galleryList" :key="image.id">
-                {{ console.log(image.image) }}
                 <img
                     :src="image.image"
                     :alt="image.alt"

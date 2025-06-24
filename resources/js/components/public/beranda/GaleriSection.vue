@@ -1,33 +1,38 @@
 <script setup>
 import Button from "@/components/ui/button/Button.vue";
-import { Images } from "lucide-vue-next";
+import { ref, onMounted } from "vue";
+import { apiGet } from "@/utils/api";
 
-const images = [
-    {
-        src: "/images/kepala-desa.png",
-        alt: "Galeri 1",
-    },
-    {
-        src: "/images/kantor-desa.png",
-        alt: "Galeri 2",
-    },
-    {
-        src: "/images/berita-utama.png",
-        alt: "Galeri 3",
-    },
-    {
-        src: "/images/kepala-desa.png",
-        alt: "Galeri 4",
-    },
-    {
-        src: "/images/berita-lain.png",
-        alt: "Galeri 5",
-    },
-    {
-        src: "/images/kantor-desa.png",
-        alt: "Galeri 6",
-    },
-];
+const galleryList = ref([]);
+const isLoading = ref(true);
+const hasData = ref(true);
+
+const fetchGaleri = async () => {
+    try {
+        const res = await apiGet("/galeri");
+        const apiData = res.data.data;
+
+        if (apiData.length === 0) {
+            hasData.value = false;
+        } else {
+            galleryList.value = apiData
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 8)
+                .map((item) => ({
+                    id: item.id,
+                    image: item.foto ? item.foto : "fallback.png",
+                    alt: item.judul ?? "Foto Galeri",
+                }));
+        }
+    } catch (error) {
+        console.error("Gagal mengambil data galeri:", error);
+        hasData.value = false;
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(fetchGaleri);
 </script>
 
 <template>
@@ -49,9 +54,7 @@ const images = [
                         </p>
                     </div>
                     <Button asChild variant="frontend">
-                        <Link href="/galeri">
-                            Jelajahi Galeri Desa
-                        </Link>
+                        <Link href="/galeri"> Jelajahi Galeri Desa </Link>
                     </Button>
                 </div>
             </div>
@@ -79,9 +82,9 @@ const images = [
             <div
                 class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
             >
-                <div v-for="(image, index) in images" :key="index" class="mb-4">
+                <div v-for="image in galleryList" :key="image.id">
                     <img
-                        :src="image.src"
+                        :src="image.image"
                         :alt="image.alt"
                         class="w-full rounded-xl object-cover"
                     />
