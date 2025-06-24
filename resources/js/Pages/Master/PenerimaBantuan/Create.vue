@@ -124,7 +124,7 @@ const actionPilihKurangMampu = [
 
             // Sinkronkan juga ke form (vee-validate)
             setFieldValue("nama_penduduk", item.penduduk.nama_lengkap);
-            setFieldValue("anggota_keluarga_id", item.id);
+            setFieldValue("kurang_mampu_id", item.id);
             // setFieldValue("jumlah_tanggungan", "");
             // setFieldValue("pendapatan_per_hari", null);
             // setFieldValue("pendapatan_per_bulan", null);

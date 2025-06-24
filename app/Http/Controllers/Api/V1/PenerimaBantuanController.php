@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Resources\ApiResource;
 use App\Models\PenerimaBantuan;
 use App\Http\Resources\PenerimaBantuanResource;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class PenerimaBantuanController extends Controller
@@ -77,11 +78,13 @@ class PenerimaBantuanController extends Controller
             return new ApiResource(false, 'Data dengan Penduduk Kurang Mampu dan Bantuan yang sama sudah', null, 409);
         }
 
+        $tanggal_penerimaan = Carbon::parse($request->tanggal_penerimaan)->format('Y-m-d');
+
         $data = PenerimaBantuan::create([
             'kurang_mampu_id' => $request->kurang_mampu_id,
             'bantuan_id' => $request->bantuan_id,
             'status' => 'diajukan',
-            'tanggal_penerimaan' => $request->tanggal_penerimaan,
+            'tanggal_penerimaan' => $tanggal_penerimaan,
             'keterangan' => $request->keterangan,
         ]);
 
