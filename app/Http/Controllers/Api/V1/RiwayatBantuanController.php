@@ -14,14 +14,16 @@ class RiwayatBantuanController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
-        $query = RiwayatBantuan::query();
 
-        // Filter berdasarkan penerima_bantuan_id (wajib)
-        if ($request->filled('penerima_bantuan_id')) {
-            $query->where('penerima_bantuan_id', $request->penerima_bantuan_id);
-        } else {
-            return new ApiResource(false, 'Harus mencantumkan id penerima bantuan', []);
+        // Hanya ambil data jika parameter penerima_bantuan_id ada
+        if (!$request->filled('penerima_bantuan_id')) {
+            $emptyPaginator = (new RiwayatBantuan())->newQuery()->whereRaw('1=0')->paginate($perPage);
+            $emptyPaginator->setCollection(collect([]));
+            return new ApiResource(true, 'Daftar Data Riwayat Bantuan', $emptyPaginator);
         }
+
+        $query = RiwayatBantuan::query();
+        $query->where('penerima_bantuan_id', $request->penerima_bantuan_id);
 
         $data = $query->paginate($perPage);
         $collection = RiwayatBantuanResource::collection($data->getCollection());
@@ -34,9 +36,9 @@ class RiwayatBantuanController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'penerima_bantuan_id' => 'required|exists:penerima_bantuan,id',
-            'status_pencairan' => 'required|in:diterima,diproses,belum diterima',
-            'tanggal' => 'required|date',
-            'dokumentasi' => 'nullable|string',
+            // 'status_pencairan' => 'required|in:diterima, diproses, belum diterima',
+            'tanggal_penerimaan' => 'required|date',
+            // 'dokumentasi' => 'nullable|string',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -44,7 +46,9 @@ class RiwayatBantuanController extends Controller
             return new ApiResource(false, 'Validasi gagal', $validator->errors());
         }
 
-        $data = RiwayatBantuan::create($validator->validated());
+        $validated = $validator->validated();
+        $validated['status'] = 'diproses';
+        $data = RiwayatBantuan::create($validated);
 
         return new ApiResource(true, 'Data Riwayat Bantuan berhasil ditambahkan', new RiwayatBantuanResource($data));
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('riwayat_bantuan', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->enum('status', ['diterima', 'belum diterima']);
+            $table->enum('status', ['diproses', 'diterima', 'belum diterima']);
             $table->date('tanggal_penerimaan');
             $table->text('keterangan')->nullable();
 
