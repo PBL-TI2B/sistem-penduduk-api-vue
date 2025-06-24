@@ -68,19 +68,11 @@ onMounted(async () => {
         setValues({
             judul: data.judul,
         });
-        if (data.url_media) {
-            // Ambil gambar pakai axios (dengan token)
-            const resImage = await axios.get(
-                `/api/v1/galeri/url_media/${data.url_media}`,
-                {
-                    responseType: "blob",
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("token")}`,
-                    },
-                }
-            );
-            previewFoto.value = URL.createObjectURL(resImage.data);
+
+        if (data.url_public) {
+            previewFoto.value = data.url_public;
         }
+
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data galeri");
     } finally {
