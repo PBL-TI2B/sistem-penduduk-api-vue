@@ -46,16 +46,17 @@ console.log(berita);
         </div>
 
         <div v-else>
+            <h1 class="text-4xl font-extrabold text-emerald-800 mb-2">
+                {{ berita.judul }}
+            </h1>
+
             <img
                 v-if="berita.thumbnail"
                 :src="`/storage/berita/${berita.thumbnail}`"
                 alt="Thumbnail Berita"
                 class="rounded-xl w-full h-64 object-cover mb-6"
+                loading="lazy"
             />
-
-            <h1 class="text-2xl font-bold text-emerald-800 mb-2">
-                {{ berita.judul }}
-            </h1>
 
             <div class="text-sm text-gray-500 mb-6">
                 <span
