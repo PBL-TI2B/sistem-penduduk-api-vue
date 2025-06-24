@@ -19,13 +19,13 @@ export function usePencairanBantuan() {
 
     //! Fetch Data Penerima Bantuan
     const fetchData = async (penerima_bantuan_id) => {
-        if (!penerima_bantuan_id) {
-            useErrorHandler(new Error("Parameter penerima_bantuan_id wajib diisi"), "Parameter penerima_bantuan_id wajib diisi");
-            // items.value = [];
-            // totalItems.value = 0;
-            // totalPages.value = 1;
-            // return;
-        }
+        // if (!penerima_bantuan_id) {
+        //     useErrorHandler(new Error("Parameter penerima_bantuan_id wajib diisi"), "Parameter penerima_bantuan_id wajib diisi");
+        //     // items.value = [];
+        //     // totalItems.value = 0;
+        //     // totalPages.value = 1;
+        //     // return;
+        // }
 
         try {
             items.value = [];
