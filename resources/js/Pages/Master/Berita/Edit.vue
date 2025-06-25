@@ -11,23 +11,50 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onBeforeUnmount } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { router, usePage } from "@inertiajs/vue3";
+import { router, usePage, Head } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { QuillEditor } from "@vueup/vue-quill";
-import "@vueup/vue-quill/dist/vue-quill.snow.css";
+
+// Import Tiptap dan ekstensinya (tanpa Image)
+import { useEditor, EditorContent } from '@tiptap/vue-3';
+import StarterKit from '@tiptap/starter-kit';
+import TextAlign from '@tiptap/extension-text-align';
 
 const { slug } = usePage().props;
 const fields = ref(getFields());
+const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
+
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
 
-const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
+const editor = useEditor({
+    content: '',
+    extensions: [
+        StarterKit,
+        TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    ],
+    editorProps: {
+        attributes: {
+            class: 'prose prose-sm dark:prose-invert max-w-none w-full border rounded-b-md p-2 focus:outline-none min-h-[300px]',
+        },
+    },
+    onUpdate: () => {
+        setFieldValue('konten', editor.value.getHTML());
+    },
+});
+
+onBeforeUnmount(() => {
+    if (editor.value) editor.value.destroy();
+});
+
+watch(() => values.konten, (newValue) => {
+    if (editor.value && editor.value.getHTML() !== newValue) {
+        editor.value.commands.setContent(newValue || '');
+    }
+});
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
@@ -40,21 +67,16 @@ const onFileChange = (e) => {
 
 
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (formValues) => {
     try {
         const formData = new FormData();
         formData.append("_method", "PUT");
-        formData.append("judul", values.judul);
-        formData.append("konten", values.konten);
-        formData.append("status", values.status);
-        if (thumbnailFile.value) {
-            formData.append("thumbnail", thumbnailFile.value);
-        }
-        if (user_id.value) {
-            formData.append("user_id", user_id.value);
-        }
-        // Tambahkan log ini
-        console.log("FormData:", [...formData.entries()]);
+        formData.append("judul", formValues.judul);
+        formData.append("konten", formValues.konten);
+        formData.append("status", formValues.status);
+        if (thumbnailFile.value) formData.append("thumbnail", thumbnailFile.value);
+        if (user_id.value) formData.append("user_id", user_id.value);
+        
         await apiPost(`/berita/${slug}`, formData);
         resetForm();
         toast.success("Berhasil memperbarui data berita");
@@ -63,7 +85,6 @@ const onSubmit = handleSubmit(async (values) => {
         useErrorHandler(error);
     }
 });
-
 
 onMounted(async () => {
     try {
@@ -81,9 +102,7 @@ onMounted(async () => {
 
         const userRes = await apiGet("/auth/me");
         user_id.value = userRes.data?.id;
-        if (!user_id.value) {
-            throw new Error("user_id tidak ditemukan di response /auth/me");
-        }
+        if (!user_id.value) throw new Error("user_id tidak ditemukan");
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data berita");
     }
@@ -117,23 +136,25 @@ onMounted(async () => {
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
                             <Input
-                                v-if="
-                                    field.type !== 'textarea' &&
-                                    field.type !== 'select'
-                                "
+                                v-if="field.type !== 'textarea' && field.type !== 'select'"
                                 :type="field.type"
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-                            <QuillEditor
-                                v-else-if="field.type === 'textarea'"
-                                theme="snow"
-                                toolbar="full"
-                                contentType="html"
-                                style="min-height: 250px"
-                                v-model:content="values[field.name]"
-                                @update:content="setFieldValue(field.name, $event)"
-                            />
+                            <div v-else-if="field.type === 'textarea' && editor">
+                                <div class="border rounded-t-md p-2 flex gap-2 items-center flex-wrap bg-gray-50">
+                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleBold().run()" :class="{ 'bg-gray-200': editor.isActive('bold') }">Bold</Button>
+                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'bg-gray-200': editor.isActive('italic') }">Italic</Button>
+                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'bg-gray-200': editor.isActive('strike') }">Strike</Button>
+                                    <div class="flex gap-1">
+                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('left').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'left' }) }">Left</Button>
+                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('center').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'center' }) }">Center</Button>
+                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('right').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'right' }) }">Right</Button>
+                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('justify').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'justify' }) }">Justify</Button>
+                                    </div>
+                                </div>
+                                <EditorContent :editor="editor" />
+                            </div>
                             <select
                                 v-else-if="field.type === 'select'"
                                 class="w-full border rounded p-2"
@@ -149,55 +170,27 @@ onMounted(async () => {
                                 </option>
                             </select>
                         </FormControl>
-
                         <FormMessage />
                     </FormItem>
                 </FormField>
 
-                <!-- Upload Thumbnail Berita -->
                 <div>
-                    <label class="block mb-2 font-medium"
-                        >Thumbnail Berita</label
-                    >
-                    <input
-                        type="file"
-                        accept="image/*"
-                        class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
-                        @change="onFileChange"
-                    />
+                    <label class="block mb-2 font-medium">Thumbnail Berita</label>
+                    <input type="file" accept="image/*" class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2" @change="onFileChange"/>
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">
-                        Peringatan: Pastikan data berita sudah benar sebelum
-                        disimpan.
-                    </p>
+                    <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
-                        <Button
-                            @click="router.visit('/admin/berita')"
-                            type="button"
-                            variant="secondary"
-                            >Batal</Button
-                        >
+                        <Button @click="router.visit('/admin/berita')" type="button" variant="secondary">Batal</Button>
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>
             </form>
 
-            <!-- Preview Section -->
             <div class="flex items-center justify-center">
-                <img
-                    v-if="previewThumbnail"
-                    :src="previewThumbnail"
-                    alt="Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
-                <img
-                    v-else
-                    src="https://placehold.co/400x300?text=No+Image"
-                    alt="No Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
+                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
+                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
             </div>
         </div>
     </div>
