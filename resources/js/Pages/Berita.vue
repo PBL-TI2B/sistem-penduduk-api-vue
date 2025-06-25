@@ -10,7 +10,7 @@ defineOptions({
 
 <template>
     <Head title=" - Berita Desa" />
-    <div class="bg-gray-50 min-h-screen px-6 md:px-48 py-8 pt-15">
+    <div class="bg-gray-50 min-h-screen px-6 lg:px-12 py-8 pt-15">
         <div class="flex flex-col max-w-6xl mx-auto py-8">
             <div class="absolute top-0 left-0 w-full z-0">
                 <svg
@@ -69,9 +69,9 @@ defineOptions({
                     Informasi Artikel dan Pengumuman Terbaru Desa Jabung
                 </motion.h2>
             </div>
-        </div>
-        <div class="relative z-10">
-            <BeritaSection />
+            <div class="relative z-10 my-12">
+                <BeritaSection />
+            </div>
         </div>
     </div>
 </template>

@@ -11,7 +11,11 @@ export const columnsIndex = [
     { label: "Tanggal Posting", key: "tanggal_post" },
     { label: "Terakhir Diubah", key: "terakhir_diubah" },
     { label: "Status", key: "status" },
-    { label: "Penulis", key: "username" },
+    {
+        label: "Penulis",
+        key: "username",
+        format: (val, row) => row.user.username,
+    },
     { label: "Dilihat", key: "jumlah_dilihat" },
 ];
 

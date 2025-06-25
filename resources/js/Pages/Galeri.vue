@@ -10,7 +10,7 @@ defineOptions({
 
 <template>
     <Head title=" - Galeri Desa" />
-    <div class="bg-gray-50 min-h-screen px-6 md:px-48 py-8 pt-15">
+    <div class="bg-gray-50 min-h-screen px-6 py-8 pt-15">
         <div class="flex flex-col max-w-6xl mx-auto py-8">
             <div class="absolute top-0 left-0 w-full z-0">
                 <svg

@@ -74,20 +74,63 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 onMounted(async () => {
-    const pekerjaanRes = await apiGet("/pekerjaan");
-    const pendidikanRes = await apiGet("/pendidikan");
+    try {
+        const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
+            await Promise.all([
+                apiGet("/pekerjaan"),
+                apiGet("/pendidikan"),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "L",
+                    status_perkawinan: "kawin",
+                    exclude_ayah: true,
+                }),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "P",
+                    status_perkawinan: "kawin",
+                    exclude_ibu: true,
+                }),
+            ]);
 
-    const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
-        value: item.id.toString(),
-        label: item.nama_pekerjaan,
-    }));
+        const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_pekerjaan,
+        }));
 
-    const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
-        value: item.id.toString(),
-        label: item.jenjang,
-    }));
+        const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.jenjang,
+        }));
 
-    fields.value = getFields(pekerjaanOptions, pendidikanOptions);
+        const ayahOptions = ayahRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        const ibuOptions = ibuRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        fields.value = [
+            ...getFields(pekerjaanOptions, pendidikanOptions),
+            {
+                name: "ayah_id",
+                label: "Nama Ayah",
+                type: "select",
+                options: ayahOptions,
+                placeholder: "Pilih Ayah",
+            },
+            {
+                name: "ibu_id",
+                label: "Nama Ibu",
+                type: "select",
+                options: ibuOptions,
+                placeholder: "Pilih Ibu",
+            },
+        ];
+    } catch (error) {
+        useErrorHandler(error);
+    }
 });
 </script>
 
