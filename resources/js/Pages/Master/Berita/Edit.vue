@@ -65,8 +65,6 @@ const onFileChange = (e) => {
     }
 };
 
-
-
 const onSubmit = handleSubmit(async (formValues) => {
     try {
         const formData = new FormData();

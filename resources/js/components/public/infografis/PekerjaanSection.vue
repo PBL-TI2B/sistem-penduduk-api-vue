@@ -7,9 +7,7 @@ const chartInstance = ref(null);
 
 const fetchPekerjaanData = async () => {
     try {
-        const response = await axios.get(
-            "http://127.0.0.1:8000/api/v1/statistik/pekerjaan"
-        );
+        const response = await axios.get("/api/v1/statistik/pekerjaan");
 
         if (response.data.success) {
             const data = response.data.data;
@@ -49,7 +47,7 @@ const fetchPekerjaanData = async () => {
                         {
                             data: values,
                             backgroundColor: colors.slice(0, data.length),
-                            radius: "50%",
+                            radius: "100%",
                         },
                     ],
                 },
@@ -89,10 +87,22 @@ onMounted(() => {
 </script>
 
 <template>
-    <section>
-        <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
+    <section class="bg-gray shadow-md rounded-xl p-6">
+        <!-- <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
             Berdasarkan Pekerjaan
-        </h2>
-        <canvas id="pekerjaanChart" height="150"></canvas>
+        </h2> -->
+        <div
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 md:text-lg font-bold text-[#233D34]"
+            >
+                <span>Berdasarkan Pekerjaan</span>
+            </div>
+        </div>
+        <div class="h-[400px] flex items-center justify-center">
+            <canvas id="pekerjaanChart" class="max-w-full max-h-full"></canvas>
+        </div>
     </section>
 </template>

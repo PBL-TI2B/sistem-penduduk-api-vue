@@ -4,9 +4,7 @@ import Chart from "chart.js/auto";
 
 const fetchUmurData = async () => {
     try {
-        const response = await fetch(
-            "http://127.0.0.1:8000/api/v1/statistik/umur"
-        );
+        const response = await fetch("/api/v1/statistik/umur");
         const result = await response.json();
 
         if (result.success) {
@@ -80,11 +78,19 @@ onMounted(async () => {
 </script>
 <template>
     <!-- Grafik kelompok umur -->
-    <section>
-        <h2 class="text-xl font-bold text-[#233D34] mb-4 mt-10">
-            Berdasarkan Kelompok Umur
-        </h2>
-
-        <canvas id="umurChart" height="100"></canvas>
+    <section class="bg-gray shadow-md rounded-xl p-2 md:p-6">
+        <div
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 md:text-lg font-bold text-[#233D34]"
+            >
+                <span>Berdasarkan Kelompok Umur</span>
+            </div>
+        </div>
+        <div style="height: 400px">
+            <canvas id="umurChart" class="w-full mt-20"></canvas>
+        </div>
     </section>
 </template>

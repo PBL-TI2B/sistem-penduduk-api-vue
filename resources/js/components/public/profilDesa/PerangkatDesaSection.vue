@@ -36,10 +36,16 @@ onMounted(fetchPerangkatDesa);
 
 <template>
     <section>
-        <h2 class="text-2xl font-bold text-[#2FB586] mb-4 mt-12">
-            PERANGKAT DESA
-        </h2>
-
+        <div
+            class="flex items-center gap-2 bg-[#e7fcee] text-green-700 font-semibold px-4 py-2 rounded-full w-fit mt-8 mb-4"
+        >
+            <div class="w-1 h-6 bg-green-500 rounded"></div>
+            <div
+                class="flex items-center gap-2 md:text-xl font-bold text-[#233D34]"
+            >
+                <span>Perangkat Desa</span>
+            </div>
+        </div>
         <div v-if="isLoading" class="text-gray-500">
             Memuat data perangkat...
         </div>

@@ -11,10 +11,18 @@ use Illuminate\Support\Str;
 
 class StatusKeluargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = StatusKeluarga::all();
+        $query = StatusKeluarga::query(); 
+
+        if ($request->filled('status_keluarga')) {
+            $query->where('status_keluarga', 'like', '%' . $request->status_keluarga . '%');
+        }
+
+        $data = $query->paginate(10);
+
         return new ApiResource(true, 'Daftar Status Keluarga', $data);
+
     }
 
     public function store(Request $request)

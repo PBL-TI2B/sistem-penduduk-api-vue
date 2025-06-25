@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Validator;
 
 class RwController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all RW
-        $rw = Rw::with(['dusun'])->paginate(10);
+        $rw = Rw::with(['dusun']);
+
+        if ($request->has('nomor_rw')) {
+            $rw->where('nomor_rw', $request->nomor_rw);
+        }
+
+        $rw = $rw->paginate(10);
         $collection = RwResource::collection($rw->getCollection());
         $rw->setCollection(collect($collection));
 
@@ -24,6 +29,7 @@ class RwController extends Controller
             'message' => 'Berhasil ambil data RW',
             'data' => $rw,
         ]);
+
     }
 
     public function store(Request $request)

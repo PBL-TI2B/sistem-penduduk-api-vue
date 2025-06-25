@@ -10,16 +10,31 @@ use Illuminate\Support\Facades\Validator;
 
 class PendidikanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pendidikan = Pendidikan::paginate(10);
+        $query = Pendidikan::query(); 
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('jenjang', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('jenjang')) {
+            $jenjang = $request->jenjang;
+            $query->where('jenjang', $jenjang);
+        }
+
+        $pendidikan = $query->paginate($request->get('per_page', 10));
+
         $collection = PendidikanResource::collection($pendidikan->getCollection());
         $pendidikan->setCollection(collect($collection));
+
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Pendidikan',
             'data'    => $pendidikan,
         ]);
+
     }
 
     public function store(Request $request)
