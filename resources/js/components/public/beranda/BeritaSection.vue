@@ -70,7 +70,7 @@ onMounted(fetchBerita);
 </script>
 
 <template>
-    <section class="pt-5">
+    <section class="lg:px-12">
         <div class="mx-4 max-w-6xl lg:mx-auto">
             <!-- Header judul + tombol -->
             <div class="flex items-center justify-between mb-8">

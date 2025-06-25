@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { CalendarDays, Eye, MoveRight, User } from "lucide-vue-next";
 import { motion } from "motion-v";
 import Button from "@/components/ui/button/Button.vue";
+import ToastViewer from "@/components/ToastViewer.vue";
 
 const props = defineProps({
     news: Object,
@@ -112,18 +113,15 @@ const layoutType = computed(() => {
                         :size="layoutType === 'large' ? 16 : 12"
                         class="text-emerald-600"
                     />
-                    <span>{{ news.views }} Kali Dilihat</span>
+                    <span>{{ news.views }}x Dilihat</span>
                 </div>
             </div>
 
-            <div
-                :class="[
-                    layoutType === 'large'
-                        ? 'prose prose-sm text-gray-700 leading-relaxed'
-                        : 'hidden',
-                ]"
-                v-html="news.excerpt"
-            ></div>
+            <ToastViewer
+                v-if="layoutType === 'large'"
+                :content="news.excerpt"
+                class="text-gray-700 leading-relaxed"
+            />
 
             <div
                 :class="[

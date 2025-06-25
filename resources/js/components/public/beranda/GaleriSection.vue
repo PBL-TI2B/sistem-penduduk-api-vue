@@ -37,9 +37,9 @@ onMounted(fetchGaleri);
 </script>
 
 <template>
-    <section>
+    <section class="lg:px-12">
         <div class="relative">
-            <div class="mx-4 max-w-6xl lg:mx-auto">
+            <div class="mx-4 max-w-4xl lg:max-w-6xl lg:mx-auto">
                 <!-- Header judul + tombol -->
                 <div class="flex items-center justify-between mb-8">
                     <div>

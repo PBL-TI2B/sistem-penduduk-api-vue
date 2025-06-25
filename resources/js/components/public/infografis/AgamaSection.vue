@@ -62,7 +62,8 @@ onMounted(async () => {
                 </p>
                 <p
                     :class="{
-                        'text-[#E5A025] font-semibold': item.jumlah > 0,
+                        'bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-500 font-semibold':
+                            item.jumlah > 0,
                         'text-orange-400': item.jumlah === 0,
                     }"
                 >
