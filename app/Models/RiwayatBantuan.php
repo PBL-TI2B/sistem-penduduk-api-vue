@@ -20,6 +20,10 @@ class RiwayatBantuan extends Model
         });
     }
 
+    protected $casts = [
+        'tanggal_penerimaan' => 'date', // Ini akan memastikan Laravel mengonversi ke format DATE yang benar
+    ];
+
     public function penerimaBantuan()
     {
         return $this->belongsTo(PenerimaBantuan::class, 'penerima_bantuan_id', 'id');

@@ -88,13 +88,15 @@ export function usePencairanBantuan() {
 
             if (res.success === false) {
                 toast.error("Penambahan data pencairan bantuan gagal");
-                return
+                return null;
             }
 
             toast.success("Berhasil menyimpan data pencairan bantuan");
+            return res.data;
             // router.visit("/admin/riwayat-bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data pencairan bantuan");
+            return null;
         } finally {
             isLoading.value = false;
         }
