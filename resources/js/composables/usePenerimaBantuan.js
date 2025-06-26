@@ -131,7 +131,7 @@ export function usePenerimaBantuan() {
 
             await apiPost(`/penerima-bantuan/${uuid}`, formData);
             toast.success("Berhasil memperbarui status validasi");
-            router.visit(`/penerima-bantuan/${uuid}`);
+            // router.visit(`/penerima-bantuan/${uuid}`);
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui status validasi");
         } finally {

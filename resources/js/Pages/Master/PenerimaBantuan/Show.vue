@@ -5,8 +5,8 @@ import Badge from "@/components/ui/badge/Badge.vue";
 import DataTable from "@/components/master/DataTable.vue";
 
 import { rowsShow, columnsIndexPencairan, actionsIndex } from "./utils/table";
-// import EditStatusDialog from "./components/EditStatusDialog.vue";
-// import EditDetailDialog from "./components/EditDetailDialog.vue";
+import EditStatusBantuanDialog from "./components/EditStatusBantuanDialog.vue";
+import EditStatusPencairanDialog from "./components/EditStatusPencairanDialog.vue";
 import { onMounted, ref, computed, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
@@ -42,22 +42,22 @@ const {
     perPage,
     totalPages,
     totalItems,
-    fetchData,
+    fetchData: fetchDataPencairan,
     // editStatusBantuan,
     // editDetailData,
 } = usePencairanBantuan();
 
-// const isEditStatusDialogOpen = ref(false, item);
-// const isEditDetailDialogOpen = ref(false);
+const isEditStatusBantuanDialogOpen = ref(false, itemPenerimaBantuan);
+// const isEditStatusPencairanDialogOpen = ref(false, item);
 
 onMounted(async () => {
     await fetchDetailPenerimaBantuan(uuid);
     if (itemPenerimaBantuan.value && itemPenerimaBantuan.value.id) {
-        fetchData(itemPenerimaBantuan.value.id);
+        fetchDataPencairan(itemPenerimaBantuan.value.id);
     }
 });
 
-watch(page, fetchData(itemPenerimaBantuan.value.id));
+watch(page, fetchDataPencairan(itemPenerimaBantuan.value.id));
 </script>
 
 <template>
@@ -76,7 +76,7 @@ watch(page, fetchData(itemPenerimaBantuan.value.id));
                 ]"
             />
         </div>
-        <div class="flex gap-2 items-center">
+        <!-- <div class="flex gap-2 items-center">
             <Button asChild>
                 <Link :href="route('penduduk.edit', uuid)">
                     <SquarePen /> Ubah
@@ -85,7 +85,7 @@ watch(page, fetchData(itemPenerimaBantuan.value.id));
             <Button @click="onClickDeleteButton(uuid)">
                 <Trash2 /> Hapus
             </Button>
-        </div>
+        </div> -->
     </div>
 
     <div class="shadow-md p-2 rounded-lg flex my-4">
@@ -99,19 +99,19 @@ watch(page, fetchData(itemPenerimaBantuan.value.id));
                 </h2>
                 <div class="flex gap-2">
                     <Button
-                        @click="isEditStatusDialogOpen = true"
+                        @click="isEditStatusBantuanDialogOpen = true"
                         variant="secondary"
                     >
                         Ubah Status Bantuan
                         <SquarePen />
                     </Button>
-                    <Button
-                        @click="isEditDetailDialogOpen = true"
+                    <!-- <Button
+                        @click="isEditStatusPencairanDialogOpen = true"
                         variant="secondary"
                     >
-                        Ubah Detail Data
+                        Ubah Keterangan
                         <SquarePen />
-                    </Button>
+                    </Button> -->
                 </div>
             </div>
 
@@ -146,7 +146,7 @@ watch(page, fetchData(itemPenerimaBantuan.value.id));
                 <h2 class="text-lg font-bold p-2">Riwayat Pencairan Bantuan</h2>
                 <div class="flex gap-2">
                     <Button
-                        @click="isEditStatusDialogOpen = true"
+                        @click="isEditStatusBantuanDialogOpen = true"
                         variant="secondary"
                     >
                         Cairkan Bantuan
@@ -170,15 +170,25 @@ watch(page, fetchData(itemPenerimaBantuan.value.id));
         </div>
     </div>
 
-    <EditStatusDialog
-        v-model:isOpen="isEditStatusDialogOpen"
+    <EditStatusBantuanDialog
+        v-model:isOpen="isEditStatusBantuanDialogOpen"
         :initial-data="itemPenerimaBantuan"
-        @success="fetchDetailPenerimaBantuan(uuid)"
+        @success="
+            () => {
+                fetchDetailPenerimaBantuan(uuid),
+                    (isEditStatusBantuanDialogOpen = false);
+            }
+        "
     />
 
-    <EditDetailDialog
-        v-model:isOpen="isEditDetailDialogOpen"
-        :initial-data="itemPenerimaBantuan"
-        @success="fetchDetailPenerimaBantuan(uuid)"
+    <EditStatusPencairanDialog
+        v-model:isOpen="isEditStatusPencairanDialogOpen"
+        :initial-data="item"
+        @success="
+            () => {
+                fetchDataPencairan(itemPenerimaBantuan.value.id),
+                    (isEditStatusPencairanDialogOpen = false);
+            }
+        "
     />
 </template>
