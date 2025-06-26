@@ -8,7 +8,7 @@ import { apiGet } from "@/utils/api";
 const hoverIndex = ref(null);
 
 const newsList = ref([]);
-const isLoading = ref(true);
+const isLoading = ref(false);
 const hasData = ref(true);
 
 const formatTanggalWIB = (input: string): string => {
@@ -29,6 +29,7 @@ const formatTanggalWIB = (input: string): string => {
 
 const fetchBerita = async () => {
     try {
+        isLoading.value = true;
         const res = await apiGet("/berita", {
             status: "publish",
         });
@@ -47,13 +48,14 @@ const fetchBerita = async () => {
             newsList.value = apiData.slice(0, 4).map((item) => ({
                 id: item.id,
                 title: item.judul,
+                slug: item.slug,
                 image: item.thumbnail
                     ? `/storage/berita/${item.thumbnail}`
                     : "/images/berita-lain.png",
                 date: formatTanggalWIB(item.tanggal_post ?? item.created_at),
                 views: item.jumlah_dilihat,
-                excerpt: item.konten?.slice(0, 60) + "..." || "",
-                author: item.user?.name ?? "Admin",
+                excerpt: item.konten?.slice(0, 200) + "..." || "",
+                author: item.user?.username ?? "Admin",
             }));
         }
     } catch (error) {
@@ -68,7 +70,7 @@ onMounted(fetchBerita);
 </script>
 
 <template>
-    <section class="pt-5">
+    <section class="lg:px-12">
         <div class="mx-4 max-w-6xl lg:mx-auto">
             <!-- Header judul + tombol -->
             <div class="flex items-center justify-between mb-8">
@@ -115,7 +117,43 @@ onMounted(fetchBerita);
                 </div>
             </div>
 
-            <div v-else-if="isLoading">Loading berita...</div>
+            <!-- ... -->
+            <!-- Loading skeleton -->
+            <div
+                v-else-if="isLoading"
+                class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse"
+            >
+                <!-- Skeleton Berita utama (besar) -->
+                <div
+                    class="col-span-2 bg-white rounded-xl shadow overflow-hidden"
+                >
+                    <div class="w-full h-48 bg-gray-200"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="w-1/2 h-5 bg-gray-300 rounded"></div>
+                        <div class="w-full h-4 bg-gray-200 rounded"></div>
+                        <div class="w-1/2 h-4 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <!-- Skeleton 3 berita kecil -->
+                <div class="flex flex-col gap-6">
+                    <div
+                        v-for="i in 3"
+                        :key="i"
+                        class="bg-white rounded-xl shadow overflow-hidden flex"
+                    >
+                        <div class="w-24 h-24 bg-gray-200"></div>
+                        <div
+                            class="p-4 flex flex-col justify-between w-full space-y-2"
+                        >
+                            <div class="w-3/4 h-4 bg-gray-300 rounded"></div>
+                            <div class="w-full h-3 bg-gray-200 rounded"></div>
+                            <div class="w-1/2 h-3 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div v-else>Tidak ada berita ditemukan.</div>
         </div>
     </section>

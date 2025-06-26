@@ -17,10 +17,11 @@ const fetchGaleri = async () => {
         } else {
             galleryList.value = apiData
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                .slice(0, 8)
                 .map((item) => ({
                     id: item.id,
-                    image: item.foto ? item.foto : "fallback.png",
+                    image: item.url_public
+                        ? item.url_public
+                        : "/images/galeri-fallback.png",
                     alt: item.judul ?? "Foto Galeri",
                 }));
         }
@@ -36,9 +37,9 @@ onMounted(fetchGaleri);
 </script>
 
 <template>
-    <section>
+    <section class="lg:px-12">
         <div class="relative">
-            <div class="mx-4 max-w-6xl lg:mx-auto">
+            <div class="mx-4 max-w-4xl lg:max-w-6xl lg:mx-auto">
                 <!-- Header judul + tombol -->
                 <div class="flex items-center justify-between mb-8">
                     <div>
@@ -87,6 +88,7 @@ onMounted(fetchGaleri);
                         :src="image.image"
                         :alt="image.alt"
                         class="w-full rounded-xl object-cover"
+                        loading="lazy"
                     />
                 </div>
             </div>

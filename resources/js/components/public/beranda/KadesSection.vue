@@ -23,7 +23,7 @@ const toggleTab = (tab) => {
 </script>
 
 <template>
-    <section>
+    <section class="lg:px-12">
         <div
             class="flex gap-4 items-center justify-center w-full drop-shadow-md"
         >

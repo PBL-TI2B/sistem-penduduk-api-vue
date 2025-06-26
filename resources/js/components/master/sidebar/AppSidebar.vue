@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeMount, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
 import { ChevronDown, ChevronRight, LogOut } from "lucide-vue-next";
 import {
     Sidebar,
@@ -84,10 +84,10 @@ const logout = async () => {
         <SidebarContent>
             <SidebarGroup>
                 <SidebarHeader>
-                    <div>
+                    <Link href="/">
                         <h1 class="text-2xl font-bold">Desa Jabung</h1>
                         <p class="text-sm text-muted">Informasi Kependudukan</p>
-                    </div>
+                    </Link>
                 </SidebarHeader>
                 <SidebarGroupContent>
                     <SidebarMenu v-if="!isLoading" class="mb-24">

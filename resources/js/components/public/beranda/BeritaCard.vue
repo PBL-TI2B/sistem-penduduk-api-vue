@@ -3,11 +3,13 @@ import { computed } from "vue";
 import { CalendarDays, Eye, MoveRight, User } from "lucide-vue-next";
 import { motion } from "motion-v";
 import Button from "@/components/ui/button/Button.vue";
+import ToastViewer from "@/components/ToastViewer.vue";
 
 const props = defineProps({
     news: Object,
     index: Number,
     isLarge: Boolean,
+    isVerticalLayout: Boolean,
     hoverIndex: Number,
 });
 
@@ -16,6 +18,12 @@ const emit = defineEmits(["hover"]);
 const scaleValue = computed(() =>
     props.hoverIndex === props.index ? 1.05 : 1
 );
+
+const layoutType = computed(() => {
+    if (props.isLarge) return "large";
+    if (props.isVerticalLayout) return "vertical";
+    return "horizontal";
+});
 </script>
 
 <template>
@@ -24,16 +32,20 @@ const scaleValue = computed(() =>
         @mouseleave="$emit('hover', null)"
         :class="[
             'bg-white rounded-xl overflow-hidden',
-            isLarge
+            layoutType === 'large'
                 ? 'lg:col-span-2 flex flex-col drop-shadow-sm hover:drop-shadow-lg hover:text-emerald-700 duration-200 text-left'
+                : layoutType === 'vertical'
+                ? 'flex flex-col drop-shadow-sm hover:drop-shadow-lg hover:text-emerald-700 duration-200 text-left'
                 : 'flex gap-4 drop-shadow-sm hover:drop-shadow-lg hover:text-emerald-700',
         ]"
     >
         <div
             :class="[
                 'relative overflow-hidden',
-                isLarge
+                layoutType === 'large'
                     ? 'w-full h-72 rounded-t-xl'
+                    : layoutType === 'vertical'
+                    ? 'w-full h-48 rounded-t-xl'
                     : 'w-52 h-auto rounded-l-xl',
             ]"
         >
@@ -43,6 +55,7 @@ const scaleValue = computed(() =>
                 :animate="{ scale: scaleValue }"
                 :transition="{ duration: 0.3 }"
                 class="absolute w-full h-full inset-0 object-cover"
+                loading="lazy"
             />
 
             <motion.div
@@ -56,61 +69,74 @@ const scaleValue = computed(() =>
 
         <div
             :class="[
-                isLarge ? 'p-4' : 'flex flex-col justify-between py-2 pr-4',
+                layoutType === 'large'
+                    ? 'p-4'
+                    : layoutType === 'vertical'
+                    ? 'p-3'
+                    : 'flex flex-col justify-between py-2 pr-4',
             ]"
         >
-            <Link href="">
+            <Link :href="`/berita/${news.slug}`">
                 <h3
                     :class="[
                         'font-semibold',
-                        isLarge ? 'text-2xl mb-2' : 'text-sm mb-1',
+                        layoutType === 'large'
+                            ? 'text-2xl mb-2'
+                            : layoutType === 'vertical'
+                            ? 'text-lg mb-1'
+                            : 'text-sm mb-1',
                     ]"
                 >
-                    {{ news.title }}
+                    {{ news.title.substring(0, 50) + "..." }}
                 </h3>
             </Link>
 
             <div
                 :class="[
                     'text-gray-500',
-                    isLarge
+                    layoutType === 'large'
                         ? 'flex gap-8 text-sm mb-2'
-                        : 'flex gap-4 text-xs mb-1',
+                        : layoutType === 'vertical'
+                        ? 'flex gap-6 text-xs mb-1'
+                        : ' text-xs mb-1',
                 ]"
             >
                 <div class="flex items-center gap-1">
                     <CalendarDays
-                        :size="isLarge ? 16 : 12"
+                        :size="layoutType === 'large' ? 16 : 12"
                         class="text-emerald-600"
                     />
                     <span>{{ news.date }}</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <Eye :size="isLarge ? 16 : 12" class="text-emerald-600" />
-                    <span>{{ news.views }} Kali Dilihat</span>
+                    <Eye
+                        :size="layoutType === 'large' ? 16 : 12"
+                        class="text-emerald-600"
+                    />
+                    <span>{{ news.views }}x Dilihat</span>
                 </div>
             </div>
 
-            <p
-                :class="[
-                    isLarge
-                        ? 'text-base text-gray-700 leading-relaxed'
-                        : 'text-xs text-gray-700 line-clamp-2',
-                ]"
-            >
-                {{ news.description }}
-            </p>
+            <ToastViewer
+                v-if="layoutType === 'large'"
+                :content="news.excerpt"
+                class="text-gray-700 leading-relaxed"
+            />
 
             <div
                 :class="[
-                    'flex justify-between items-center mt-2',
-                    isLarge ? '' : 'text-xs',
+                    'flex justify-between gap-4 items-center mt-2',
+                    layoutType === 'large' ? '' : 'text-xs',
                 ]"
             >
                 <div class="flex items-center gap-1">
                     <User :size="16" class="text-emerald-600" />
                     <span
-                        :class="isLarge ? 'text-sm' : 'text-xs text-gray-500'"
+                        :class="
+                            layoutType === 'large'
+                                ? 'text-sm text-gray-500'
+                                : 'text-xs text-gray-500'
+                        "
                     >
                         {{ news.author }}
                     </span>
@@ -121,11 +147,15 @@ const scaleValue = computed(() =>
                     variant="frontendGhost"
                     :class="[
                         'flex items-center gap-2 group',
-                        isLarge ? '' : 'text-xs',
+                        layoutType === 'large' ? '' : 'text-xs',
                     ]"
                 >
-                    <Link href="../../pages/berita">
-                        {{ isLarge ? "Baca Selengkapnya" : "Selengkapnya" }}
+                    <Link :href="`/berita/${news.slug}`">
+                        {{
+                            layoutType === "large"
+                                ? "Baca Selengkapnya"
+                                : "Selengkapnya"
+                        }}
                         <MoveRight
                             class="transition-transform duration-300 group-hover:translate-x-1"
                         />
