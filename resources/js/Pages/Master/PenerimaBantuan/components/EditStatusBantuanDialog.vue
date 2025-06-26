@@ -101,6 +101,9 @@ watch(
                                     <SelectItem value="selesai">
                                         Selesai
                                     </SelectItem>
+                                    <SelectItem value="ditolak">
+                                        Ditolak
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

@@ -114,7 +114,7 @@ class PenerimaBantuanController extends Controller
 
         if ($request->has('status')) {
             $validator = Validator::make($request->all(), [
-                'status' => 'required|in:aktif,selesai',
+                'status' => 'required|in:aktif,selesai,ditolak',
             ]);
             $data = $request->only('status');
         } else {
