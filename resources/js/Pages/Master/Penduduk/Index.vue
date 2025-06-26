@@ -28,6 +28,7 @@ import {
 } from "lucide-vue-next";
 import Label from "@/components/ui/label/Label.vue";
 
+const user = ref(null);
 const items = ref([]);
 const totalPages = ref(1);
 const page = ref(1);
@@ -54,50 +55,92 @@ const pendidikanData = ref([]);
 const pekerjaanData = ref([]);
 
 const fetchData = async () => {
+    // try {
+    //     items.value = [];
+    //     isLoading.value = true;
+
+
+    //     // Kalau nilai filter '-' ubah jadi string kosong ''
+    //     const status = filter.value.status === "-" ? "" : filter.value.status;
+    //     const status_perkawinan =
+    //         filter.value.status_perkawinan === "-"
+    //             ? ""
+    //             : filter.value.status_perkawinan;
+    //     const jenis_kelamin =
+    //         filter.value.jenis_kelamin === "-"
+    //             ? ""
+    //             : filter.value.jenis_kelamin;
+    //     const domisili =
+    //         filter.value.domisili === "-" ? "" : filter.value.domisili;
+    //     const rt = filter.value.rt === "-" ? "" : filter.value.rt;
+    //     const rw = filter.value.rw === "-" ? "" : filter.value.rw;
+    //     const pekerjaan =
+    //         filter.value.pekerjaan === "-" ? "" : filter.value.pekerjaan;
+    //     const pendidikan =
+    //         filter.value.pendidikan === "-" ? "" : filter.value.pendidikan;
+    //     const agama = filter.value.agama === "-" ? "" : filter.value.agama;
+    //     const min_umur = filter.value.min_umur
+    //         ? parseInt(filter.value.min_umur)
+    //         : "";
+    //     const max_umur = filter.value.max_umur
+    //         ? parseInt(filter.value.max_umur)
+    //         : "";
+
+    //     const res = await apiGet("/penduduk", {
+    //         page: page.value,
+    //         search: searchPenduduk.value,
+    //         status,
+    //         status_perkawinan,
+    //         pendidikan,
+    //         agama,
+    //         jenis_kelamin,
+    //         domisili,
+    //         rt,
+    //         rw,
+    //         pekerjaan,
+    //         min_umur,
+    //         max_umur,
+    //     });
+
+    //     items.value = res.data.data;
+    //     perPage.value = res.data.per_page;
+    //     totalPages.value = res.data.last_page;
+    //     totalData.value = res.data.total;
+    // } catch (error) {
+    //     useErrorHandler(error, "Gagal memuat data penduduk");
+    // } finally {
+    //     isLoading.value = false;
+    // }
     try {
         items.value = [];
         isLoading.value = true;
 
-        // Kalau nilai filter '-' ubah jadi string kosong ''
-        const status = filter.value.status === "-" ? "" : filter.value.status;
-        const status_perkawinan =
-            filter.value.status_perkawinan === "-"
-                ? ""
-                : filter.value.status_perkawinan;
-        const jenis_kelamin =
-            filter.value.jenis_kelamin === "-"
-                ? ""
-                : filter.value.jenis_kelamin;
-        const domisili =
-            filter.value.domisili === "-" ? "" : filter.value.domisili;
-        const rt = filter.value.rt === "-" ? "" : filter.value.rt;
-        const rw = filter.value.rw === "-" ? "" : filter.value.rw;
-        const pekerjaan =
-            filter.value.pekerjaan === "-" ? "" : filter.value.pekerjaan;
-        const pendidikan =
-            filter.value.pendidikan === "-" ? "" : filter.value.pendidikan;
-        const agama = filter.value.agama === "-" ? "" : filter.value.agama;
-        const min_umur = filter.value.min_umur
-            ? parseInt(filter.value.min_umur)
-            : "";
-        const max_umur = filter.value.max_umur
-            ? parseInt(filter.value.max_umur)
-            : "";
+        // Ambil filter RT dari user jika role RT
+        let rt = filter.value.rt === "-" ? "" : filter.value.rt;
+        if (user.value?.role === "rt" && user.value?.perangkat_desa?.nomor_rt) {
+            rt = user.value.perangkat_desa.nomor_rt;
+        }
 
+        let rw = filter.value.rw === "-" ? "" : filter.value.rw;
+        if (user.value?.role === "rw" && user.value?.perangkat_desa?.nomor_rw) {
+            rw = user.value.perangkat_desa.nomor_rw;
+        }
+
+        // ...filter lain...
         const res = await apiGet("/penduduk", {
             page: page.value,
             search: searchPenduduk.value,
-            status,
-            status_perkawinan,
-            pendidikan,
-            agama,
-            jenis_kelamin,
-            domisili,
-            rt,
+            status: filter.value.status === "-" ? "" : filter.value.status,
+            status_perkawinan: filter.value.status_perkawinan === "-" ? "" : filter.value.status_perkawinan,
+            pendidikan: filter.value.pendidikan === "-" ? "" : filter.value.pendidikan,
+            agama: filter.value.agama === "-" ? "" : filter.value.agama,
+            jenis_kelamin: filter.value.jenis_kelamin === "-" ? "" : filter.value.jenis_kelamin,
+            domisili: filter.value.domisili === "-" ? "" : filter.value.domisili,
+            rt, // <-- gunakan hasil di atas
             rw,
-            pekerjaan,
-            min_umur,
-            max_umur,
+            pekerjaan: filter.value.pekerjaan === "-" ? "" : filter.value.pekerjaan,
+            min_umur: filter.value.min_umur ? parseInt(filter.value.min_umur) : "",
+            max_umur: filter.value.max_umur ? parseInt(filter.value.max_umur) : "",
         });
 
         items.value = res.data.data;
@@ -144,7 +187,8 @@ const resetFilter = () => {
 onMounted(async () => {
     try {
         isLoading.value = true;
-
+        const res = await apiGet("/auth/me");
+        user.value = res.data;
         // Fetch RT and RW data
         const [rtRes, rwRes, pendidikanRes, pekerjaanRes] = await Promise.all([
             apiGet("/rt"),
@@ -170,53 +214,39 @@ watch(page, fetchData);
 </script>
 
 <template>
+
     <Head title=" | Data Penduduk" />
     <div class="flex items-center justify-between py-3">
         <div class="grid gap-1">
             <h1 class="text-3xl font-bold">Data Penduduk</h1>
-            <BreadcrumbComponent
-                :items="[
-                    { label: 'Dashboard', href: '/admin/dashboard' },
-                    { label: 'Data Penduduk' },
-                ]"
-            />
+            <BreadcrumbComponent :items="[
+                { label: 'Dashboard', href: '/admin/dashboard' },
+                { label: 'Data Penduduk' },
+            ]" />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
             <Button asChild>
                 <Link :href="route('penduduk.create')">
-                    <SquarePlus /> Penduduk</Link
-                >
+                <SquarePlus /> Penduduk</Link>
             </Button>
         </div>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <div class="flex flex-wrap gap-2 justify-between">
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-1/2"
-            >
-                <Input
-                    v-model="searchPenduduk"
-                    @keyup.enter="onSearchEnter"
-                    placeholder="Cari data penduduk berdasarkan nama atau nik"
-                    class="pl-10 pr-8"
-                />
-                <span
-                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
-                >
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-1/2">
+                <Input v-model="searchPenduduk" @keyup.enter="onSearchEnter"
+                    placeholder="Cari data penduduk berdasarkan nama atau nik" class="pl-10 pr-8" />
+                <span class="absolute start-2 inset-y-0 flex items-center justify-center px-2">
                     <SearchIcon class="size-6 text-muted-foreground" />
                 </span>
-                <button
-                    v-if="searchPenduduk"
-                    @click="clearSearchPenduduk"
+                <button v-if="searchPenduduk" @click="clearSearchPenduduk"
                     class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                    title="Hapus pencarian"
-                >
+                    title="Hapus pencarian">
                     <XIcon />
                 </button>
             </div>
-            <div
-                class="lg:max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
-            >
+            <div class="lg:max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg">
                 <Select v-model="filter.status">
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
@@ -273,7 +303,7 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.rt">
+                <Select v-model="filter.rt" :disabled="user?.role === 'rt'">
                     <SelectTrigger>
                         <SelectValue placeholder="Nomor RT" />
                     </SelectTrigger>
@@ -281,17 +311,13 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Nomor RT</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem
-                                v-for="rt in rtData"
-                                :key="rt.id"
-                                :value="rt.nomor_rt"
-                            >
+                            <SelectItem v-for="rt in rtData" :key="rt.id" :value="rt.nomor_rt">
                                 {{ rt.nomor_rt }}
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.rw">
+                <Select v-model="filter.rw" :disabled="user?.role === 'rw'">
                     <SelectTrigger>
                         <SelectValue placeholder="Nomor RW" />
                     </SelectTrigger>
@@ -299,11 +325,7 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Nomor RW</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem
-                                v-for="rw in rwData"
-                                :key="rw.id"
-                                :value="rw.nomor_rw"
-                            >
+                            <SelectItem v-for="rw in rwData" :key="rw.id" :value="rw.nomor_rw">
                                 {{ rw.nomor_rw }}
                             </SelectItem>
                         </SelectGroup>
@@ -337,11 +359,8 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Pendidikan</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem
-                                v-for="pendidikan in pendidikanData"
-                                :key="pendidikan.id"
-                                :value="pendidikan.jenjang"
-                            >
+                            <SelectItem v-for="pendidikan in pendidikanData" :key="pendidikan.id"
+                                :value="pendidikan.jenjang">
                                 {{ pendidikan.jenjang }}
                             </SelectItem>
                         </SelectGroup>
@@ -355,11 +374,8 @@ watch(page, fetchData);
                         <SelectGroup>
                             <SelectLabel>Pekerjaan</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem
-                                v-for="pekerjaan in pekerjaanData"
-                                :key="pekerjaan.id"
-                                :value="pekerjaan.nama_pekerjaan"
-                            >
+                            <SelectItem v-for="pekerjaan in pekerjaanData" :key="pekerjaan.id"
+                                :value="pekerjaan.nama_pekerjaan">
                                 {{ pekerjaan.nama_pekerjaan }}
                             </SelectItem>
                         </SelectGroup>
@@ -367,18 +383,8 @@ watch(page, fetchData);
                 </Select>
                 <div class="flex gap-2 border border-gray-200 pl-2 rounded-md">
                     <Label class="text-right">Filter Umur</Label>
-                    <Input
-                        v-model="filter.min_umur"
-                        placeholder="Min"
-                        class="w-20"
-                        type="number"
-                    />
-                    <Input
-                        v-model="filter.max_umur"
-                        placeholder="Max"
-                        class="w-20"
-                        type="number"
-                    />
+                    <Input v-model="filter.min_umur" placeholder="Min" class="w-20" type="number" />
+                    <Input v-model="filter.max_umur" placeholder="Max" class="w-20" type="number" />
                 </div>
             </div>
             <div class="w-auto grid gap-2 bg-primary-foreground p-2 rounded-lg">
@@ -395,19 +401,8 @@ watch(page, fetchData);
             </div>
         </div>
 
-        <DataTable
-            label="Penduduk"
-            :items="items"
-            :columns="columnsIndex"
-            :actions="actionsIndex"
-            :totalPages="totalPages"
-            :totalData="totalData"
-            :page="page"
-            :per-page="perPage"
-            :is-loading="isLoading"
-            :is-exportable="true"
-            :export-route="'penduduk'"
-            @update:page="page = $event"
-        />
+        <DataTable label="Penduduk" :items="items" :columns="columnsIndex" :actions="actionsIndex"
+            :totalPages="totalPages" :totalData="totalData" :page="page" :per-page="perPage" :is-loading="isLoading"
+            :is-exportable="true" :export-route="'penduduk'" @update:page="page = $event" />
     </div>
 </template>
