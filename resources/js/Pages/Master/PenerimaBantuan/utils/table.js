@@ -144,16 +144,16 @@ const columnsShowPencairan = [
         key: "status",
         format: (val) => val ?? "-",
     },
-    // {
-    //     label: "Keterangan",
-    //     key: "keterangan",
-    //     format: (val) => val ?? "-",
-    // },
     {
         label: "Dibuat Pada",
         key: "created_at",
         format: formatDate,
 
+    },
+    {
+        label: "Keterangan",
+        key: "keterangan",
+        format: (val) => val ?? "-",
     },
     // {
     //     label: "Diperbarui Pada",
@@ -286,16 +286,16 @@ const rowsShow = [
 ];
 
 const actionShowPencairan =  (onClickDeleteButton, onClickChangeStatusPencairan) => [
+    // {
+    //     label: "Kelola",
+    //     icon: Eye,
+    //     class: "bg-blue-500 hover:bg-blue-600 text-white", // warna biru untuk lihat
+    //     handler: (item) => {
+    //         router.visit(route("penerima-bantuan.show", item.uuid));
+    //     },
+    // },
     {
-        label: "Kelola",
-        icon: Eye,
-        class: "bg-blue-500 hover:bg-blue-600 text-white", // warna biru untuk lihat
-        handler: (item) => {
-            router.visit(route("penerima-bantuan.show", item.uuid));
-        },
-    },
-    {
-        label: "Ubah Status Pencairan",
+        label: "Konfirmasi Pencairan",
         icon: PencilIcon,
         class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
         // handler: (item) => {

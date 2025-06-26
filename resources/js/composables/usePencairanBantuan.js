@@ -87,12 +87,12 @@ export function usePencairanBantuan() {
             const res = await apiPost("/riwayat-bantuan", values);
 
             if (res.success === false) {
-                toast.error("Penduduk kurang mampu dengan bantuan yang sama sudah ada");
+                toast.error("Penambahan data pencairan bantuan gagal");
                 return
             }
 
-            toast.success("Berhasil Tambah Data Penerima Bantuan");
-            router.visit("/admin/riwayat-bantuan");
+            toast.success("Berhasil menyimpan data pencairan bantuan");
+            // router.visit("/admin/riwayat-bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data pencairan bantuan");
         } finally {
@@ -150,7 +150,7 @@ export function usePencairanBantuan() {
             // isLoading.value = true;
             await apiDelete(`/riwayat-bantuan/${uuid}`);
             toast.success("Berhasil menghapus riwayat-bantuan");
-            router.visit("/admin/riwayat-bantuan");
+            // router.visit("/admin/riwayat-bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus pencairan bantuan");
         } finally {

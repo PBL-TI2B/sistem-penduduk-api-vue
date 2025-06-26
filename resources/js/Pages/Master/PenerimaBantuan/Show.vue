@@ -11,6 +11,7 @@ import {
 } from "./utils/table";
 import EditStatusBantuanDialog from "./components/EditStatusBantuanDialog.vue";
 import EditStatusPencairanDialog from "./components/EditStatusPencairanDialog.vue";
+import CreatePencairanDialog from "./components/CreatePencairanDialog.vue";
 import { onMounted, ref, computed, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
@@ -47,12 +48,13 @@ const {
     totalPages,
     totalItems,
     fetchData: fetchDataPencairan,
-    // editStatusBantuan,
+    deleteData,
 } = usePencairanBantuan();
 
 const isEditStatusBantuanDialogOpen = ref(false, itemPenerimaBantuan);
 const isEditStatusPencairanDialogOpen = ref(false, item);
 const isAlertDeleteOpen = ref(false);
+const isPencairanDialogOpen = ref(false);
 
 //! Handle Delete
 const selectedUuid = ref(null);
@@ -68,6 +70,7 @@ const onCancelDelete = () => {
 const onConfirmDelete = async () => {
     if (selectedUuid.value) {
         await deleteData(selectedUuid.value);
+        await fetchDataPencairan(idPenerimaBantuan.value);
         isAlertDeleteOpen.value = false;
         selectedUuid.value = null;
     }
@@ -91,11 +94,11 @@ onMounted(async () => {
     await fetchDetailPenerimaBantuan(uuid);
     if (itemPenerimaBantuan.value && itemPenerimaBantuan.value.id) {
         idPenerimaBantuan.value = itemPenerimaBantuan.value.id;
-        fetchDataPencairan(itemPenerimaBantuan.value.id);
+        fetchDataPencairan(idPenerimaBantuan.value);
     }
 });
 
-watch([page, isEditStatusPencairanDialogOpen.value == false], () => {
+watch(page, () => {
     if (idPenerimaBantuan.value) {
         fetchDataPencairan(idPenerimaBantuan.value);
     }
@@ -188,7 +191,7 @@ watch([page, isEditStatusPencairanDialogOpen.value == false], () => {
                 <h2 class="text-lg font-bold p-2">Riwayat Pencairan Bantuan</h2>
                 <div class="flex gap-2">
                     <Button
-                        @click="isEditStatusBantuanDialogOpen = true"
+                        @click="isPencairanDialogOpen = true"
                         variant="secondary"
                     >
                         Cairkan Bantuan
@@ -227,16 +230,27 @@ watch([page, isEditStatusPencairanDialogOpen.value == false], () => {
         :initial-data="selectedPencairan"
         @success="
             () => {
-                // fetchDataPencairan(idPenerimaBantuan.value);
                 isEditStatusPencairanDialogOpen = false;
+                fetchDataPencairan(idPenerimaBantuan);
             }
         "
     />
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
-        title="Hapus Penerima Bantuan"
+        title="Hapus Riwayat Pencairan Bantuan"
         description="Apakah anda yakin ingin menghapus?"
         :onConfirm="onConfirmDelete"
         :onCancel="onCancelDelete"
+    />
+    <CreatePencairanDialog
+        v-if="idPenerimaBantuan"
+        v-model:isOpen="isPencairanDialogOpen"
+        :penerima-bantuan-id="idPenerimaBantuan"
+        @success="
+            () => {
+                isPencairanDialogOpen = false;
+                fetchDataPencairan(idPenerimaBantuan);
+            }
+        "
     />
 </template>

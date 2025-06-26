@@ -72,11 +72,11 @@ watch(
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="onSubmit">
                 <DialogHeader>
-                    <DialogTitle>Ubah Status Pencairan</DialogTitle>
-                    <!-- <DialogDescription>
-                        Ubah status pencairan setelah penerima bantuan menerima
-                        penyaluran bantuan
-                    </DialogDescription> -->
+                    <DialogTitle>Konfirmasi Pencairan</DialogTitle>
+                    <DialogDescription>
+                        Konfirmasi penyaluran bantuan dengan merubah status
+                        pencairan
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
