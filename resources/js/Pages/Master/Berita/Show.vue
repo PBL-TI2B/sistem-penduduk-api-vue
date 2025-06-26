@@ -156,15 +156,21 @@ onMounted(fetchBerita);
                 </tbody>
             </table>
         </div>
-        <img
-            :src="
-                `/storage/berita/${berita.thumbnail}` ||
-                'https://placehold.co/400x300?text=No+Image'
-            "
-            alt="Thumbnail Berita"
-            loading="lazy"
-            class="rounded-md w-[400px] h-[300px] object-cover border"
-        />
+        <div class="flex flex-col lg:flex-row gap-8 justify-between">
+            <img
+                v-if="berita.thumbnail"
+                :src="`/storage/berita/${berita.thumbnail}`"
+                alt="Thumbnail Berita"
+                loading="lazy"
+                class="rounded-md w-[400px] h-[300px] object-cover border"
+            />
+            <img
+                v-else
+                src="https://placehold.co/400x300?text=No+Image"
+                alt="No Thumbnail"
+                class="rounded-md w-[400px] h-[300px] object-cover border"
+            />
+        </div>
     </div>
 
     <AlertDialog

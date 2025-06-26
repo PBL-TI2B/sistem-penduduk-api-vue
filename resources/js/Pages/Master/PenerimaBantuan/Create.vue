@@ -387,13 +387,13 @@ watch(pageBantuan, () => {
                             </Select>
                             -->
                             <!-- Hidden input to send value when field is hidden -->
-                            <!-- <input
+                            <input
                                 v-if="field.type === 'hidden'"
                                 type="hidden"
                                 :name="field.name"
                                 v-model="componentField.value"
                                 v-bind="componentField"
-                            /> -->
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

@@ -16,7 +16,9 @@
             <div
                 class="bg-white drop-shadow-md hover:drop-shadow-xl rounded-xl flex-grow flex flex-col md:w-1/2 text-center md:px-16 md:py-10 px-6 py-4"
             >
-                <h2 class="text-xl md:text-2xl font-bold text-[#E5A025] mb-4">
+                <h2
+                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-500 mb-4"
+                >
                     Visi
                 </h2>
                 <p class="text-gray-600 text-sm md:text-lg flex-grow">
@@ -30,7 +32,7 @@
                 class="bg-white drop-shadow-md hover:drop-shadow-xl rounded-xl flex-grow flex flex-col md:w-1/2 md:px-16 md:py-10 px-6 py-4"
             >
                 <h2
-                    class="text-xl md:text-2xl font-bold text-[#E5A025] mb-4 text-center"
+                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-500 mb-4 text-center"
                 >
                     Misi
                 </h2>

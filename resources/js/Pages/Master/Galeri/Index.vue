@@ -17,6 +17,7 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const search = ref("");
+// const totalData = ref(0);
 
 const fetchData = async () => {
     try {

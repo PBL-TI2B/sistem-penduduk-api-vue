@@ -6,6 +6,7 @@ import PerangkatDesaSection from "@/components/public/profilDesa/PerangkatDesaSe
 import SejarahDesaSection from "@/components/public/profilDesa/SejarahDesaSection.vue";
 import BatasWilayahSection from "@/components/public/profilDesa/BatasWilayahSection.vue";
 import PetaWilayahSection from "@/components/public/profilDesa/PetaWilayahSection.vue";
+import { motion } from "motion-v";
 
 defineOptions({
     layout: PublicLayout,
@@ -14,7 +15,7 @@ defineOptions({
 
 <template>
     <Head title=" - Profil Desa" />
-    <div class="bg-gray-50 min-h-screen px-6 lg:px-48 py-8 pt-15">
+    <div class="bg-gray-50 min-h-screen px-6 lg:px-12 py-8 pt-15">
         <div class="flex flex-col max-w-6xl mx-auto py-8">
             <div class="absolute top-0 left-0 w-full z-0">
                 <svg
@@ -54,26 +55,34 @@ defineOptions({
                 </svg>
             </div>
             <div
-                class="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center text-white"
+                class="relative z-10 max-w-5xl mx-auto px-6 py-10 md:py-20 text-center text-white"
             >
-                <h1
+                <motion.h1
                     class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 drop-shadow"
+                    :initial="{ opacity: 0, y: -40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
                 >
-                    PROFIL DESA JABUNG
-                </h1>
-                <h2 class="text-lg md:text-xl mb-4 mt-4 drop-shadow">
+                    Profil Desa Jabung
+                </motion.h1>
+                <motion.h2
+                    class="text-lg md:text-xl mb-4 mt-4 drop-shadow"
+                    :initial="{ opacity: 0, y: 40 }"
+                    :animate="{ opacity: 1, y: 0 }"
+                    :transition="{ duration: 1, delay: 0.2, ease: 'easeOut' }"
+                >
                     Mengenal Visi Misi, Struktur Perangkat Desa, dan Sejarah
                     Desa Jabung
-                </h2>
+                </motion.h2>
             </div>
-        </div>
-        <div class="relative z-10">
-            <DeskripsiSection />
-            <VisiMisiSection />
-            <PerangkatDesaSection />
-            <SejarahDesaSection />
-            <BatasWilayahSection />
-            <PetaWilayahSection />
+            <div class="relative z-10">
+                <DeskripsiSection />
+                <VisiMisiSection />
+                <PerangkatDesaSection />
+                <SejarahDesaSection />
+                <BatasWilayahSection />
+                <PetaWilayahSection />
+            </div>
         </div>
     </div>
 </template>

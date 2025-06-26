@@ -17,7 +17,8 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('user');
+        $query = Berita::with('user')
+            ->where('status', 'publish');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {
@@ -94,7 +95,7 @@ class BeritaController extends Controller
     {
         $berita = $berita->load('user');
         $berita->increment('jumlah_dilihat');
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Berita',
