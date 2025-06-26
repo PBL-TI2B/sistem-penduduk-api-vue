@@ -155,12 +155,22 @@ onMounted(() => {
     <EditStatusDialog
         v-model:isOpen="isEditStatusDialogOpen"
         :initial-data="item"
-        @success="fetchDetailData(uuid)"
+        @success="
+            () => {
+                fetchDetailData(uuid);
+                isEditStatusDialogOpen = false;
+            }
+        "
     />
 
     <EditDetailDialog
         v-model:isOpen="isEditDetailDialogOpen"
         :initial-data="item"
-        @success="fetchDetailData(uuid)"
+        @success="
+            () => {
+                fetchDetailData(uuid);
+                isEditDetailDialogOpen = false;
+            }
+        "
     />
 </template>

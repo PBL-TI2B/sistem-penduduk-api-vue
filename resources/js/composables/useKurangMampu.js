@@ -138,7 +138,7 @@ export function useKurangMampu() {
 
             await apiPost(`/kurang-mampu/${uuid}`, formData);
             toast.success("Berhasil memperbarui status validasi");
-            router.visit(`/kurang-mampu/${uuid}`);
+            // router.visit(`/kurang-mampu/${uuid}`);
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui status validasi");
         } finally {
@@ -169,7 +169,7 @@ export function useKurangMampu() {
 
             await apiPost(`/kurang-mampu/${uuid}`, formData);
             toast.success("Berhasil memperbarui data kurang mampu");
-            router.visit(`/kurang-mampu/${uuid}`);
+            // router.visit(`/admin/kurang-mampu/${uuid}`);
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data kurang mampu");
         } finally {
