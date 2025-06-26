@@ -125,8 +125,8 @@ export function usePencairanBantuan() {
         }
     };
 
-    //! Edit status validasi only
-    const editStatusPenerimaanBantuan = async (uuid, status) => {
+    //! Edit status pencairan only
+    const editStatusPencairan = async (uuid, status) => {
         try {
             isLoading.value = true;
 
@@ -135,10 +135,10 @@ export function usePencairanBantuan() {
             formData.append("status", status ?? "");
 
             await apiPost(`/riwayat-bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui status validasi");
-            router.visit(`/riwayat-bantuan/${uuid}`);
+            toast.success("Berhasil memperbarui status pencairan");
+            // router.visit(`/riwayat-bantuan/${uuid}`);
         } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui status validasi");
+            useErrorHandler(error, "Gagal memperbarui status pencairan");
         } finally {
             isLoading.value = false;
         }
@@ -174,7 +174,7 @@ export function usePencairanBantuan() {
         fetchDetailData,
         createData,
         editKeterangan,
-        editStatusPenerimaanBantuan,
+        editStatusPencairan,
         deleteData,
     };
 }

@@ -60,19 +60,24 @@ class RiwayatBantuanController extends Controller
 
     public function update(Request $request, RiwayatBantuan $riwayatBantuan)
     {
-        $validator = Validator::make($request->all(), [
-            'penerima_bantuan_id' => 'sometimes|exists:penerima_bantuan,id',
-            'status_pencairan' => 'sometimes|in:diterima,diproses,belum diterima',
-            'tanggal' => 'sometimes|date',
-            'dokumentasi' => 'nullable|string',
-            'keterangan' => 'nullable|string',
-        ]);
 
-        if ($validator->fails()) {
-            return new ApiResource(false, 'Validasi gagal', $validator->errors());
+        if ($request->has('status')) {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|in:diterima,belum diterima',
+            ]);
+            $data = $request->only('status');
+        } else {
+            $validator = Validator::make($request->all(), [
+                'keterangan' => 'nullable|string',
+            ]);
+            $data = $request->only('keterangan');
         }
 
-        $riwayatBantuan->update($validator->validated());
+        if ($validator->fails()) {
+            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
+        }
+
+        $riwayatBantuan->update($data);
 
         return new ApiResource(true, 'Data Riwayat Bantuan berhasil diperbarui', new RiwayatBantuanResource($riwayatBantuan));
     }

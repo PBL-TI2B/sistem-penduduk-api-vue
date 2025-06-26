@@ -4,7 +4,11 @@ import Button from "@/components/ui/button/Button.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import DataTable from "@/components/master/DataTable.vue";
 
-import { rowsShow, columnsIndexPencairan, actionsIndex } from "./utils/table";
+import {
+    rowsShow,
+    columnsIndexPencairan,
+    actionShowPencairan,
+} from "./utils/table";
 import EditStatusBantuanDialog from "./components/EditStatusBantuanDialog.vue";
 import EditStatusPencairanDialog from "./components/EditStatusPencairanDialog.vue";
 import { onMounted, ref, computed, watch } from "vue";
@@ -44,20 +48,58 @@ const {
     totalItems,
     fetchData: fetchDataPencairan,
     // editStatusBantuan,
-    // editDetailData,
 } = usePencairanBantuan();
 
 const isEditStatusBantuanDialogOpen = ref(false, itemPenerimaBantuan);
-// const isEditStatusPencairanDialogOpen = ref(false, item);
+const isEditStatusPencairanDialogOpen = ref(false, item);
+const isAlertDeleteOpen = ref(false);
+
+//! Handle Delete
+const selectedUuid = ref(null);
+
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
+
+const selectedPencairan = ref({});
+const idPenerimaBantuan = ref(null);
+
+const onClickChangeStatusPencairan = (item) => {
+    selectedPencairan.value = item;
+    isEditStatusPencairanDialogOpen.value = true;
+};
+
+// Setting Action Buttons Pencairan
+const actionPencairan = actionShowPencairan(
+    onClickDeleteButton,
+    onClickChangeStatusPencairan
+);
 
 onMounted(async () => {
     await fetchDetailPenerimaBantuan(uuid);
     if (itemPenerimaBantuan.value && itemPenerimaBantuan.value.id) {
+        idPenerimaBantuan.value = itemPenerimaBantuan.value.id;
         fetchDataPencairan(itemPenerimaBantuan.value.id);
     }
 });
 
-watch(page, fetchDataPencairan(itemPenerimaBantuan.value.id));
+watch([page, isEditStatusPencairanDialogOpen.value == false], () => {
+    if (idPenerimaBantuan.value) {
+        fetchDataPencairan(idPenerimaBantuan.value);
+    }
+});
 </script>
 
 <template>
@@ -158,7 +200,7 @@ watch(page, fetchDataPencairan(itemPenerimaBantuan.value.id));
                 <DataTable
                     :items="items"
                     :columns="columnsIndexPencairan"
-                    :actions="0"
+                    :actions="actionPencairan"
                     :totalPages="totalPages"
                     :totalData="totalItems"
                     :page="page"
@@ -180,15 +222,21 @@ watch(page, fetchDataPencairan(itemPenerimaBantuan.value.id));
             }
         "
     />
-
     <EditStatusPencairanDialog
         v-model:isOpen="isEditStatusPencairanDialogOpen"
-        :initial-data="item"
+        :initial-data="selectedPencairan"
         @success="
             () => {
-                fetchDataPencairan(itemPenerimaBantuan.value.id),
-                    (isEditStatusPencairanDialogOpen = false);
+                // fetchDataPencairan(idPenerimaBantuan.value);
+                isEditStatusPencairanDialogOpen = false;
             }
         "
+    />
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        title="Hapus Penerima Bantuan"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

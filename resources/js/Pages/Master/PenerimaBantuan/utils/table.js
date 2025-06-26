@@ -66,6 +66,7 @@ const columnsIndex = [
     },
 ];
 
+
 const columnsCreateBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
     { label: "Kategori",key: "kategori", },
@@ -253,7 +254,7 @@ const rowsShow = [
         },
     },
     {
-        label: "Status Bantuan",
+        label: "Status",
         key: "status",
         format: (val) => val ?? "-",
     },
@@ -264,7 +265,43 @@ const rowsShow = [
     },
 ];
 
+const actionShowPencairan =  (onClickDeleteButton, onClickChangeStatusPencairan) => [
+    {
+        label: "Kelola",
+        icon: Eye,
+        class: "bg-blue-500 hover:bg-blue-600 text-white", // warna biru untuk lihat
+        handler: (item) => {
+            router.visit(route("penerima-bantuan.show", item.uuid));
+        },
+    },
+    {
+        label: "Ubah Status Pencairan",
+        icon: PencilIcon,
+        class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
+        // handler: (item) => {
+        //     router.visit(route("penerima-bantuan.edit", item.uuid));
+        // },
+        handler: (item) => {
+            onClickChangeStatusPencairan(item);
+        },
 
+    },
+    {
+        label: "Hapus",
+        icon: Trash2Icon,
+        class: "bg-red-500 hover:bg-red-600 text-white", // warna merah untuk hapus
+        disabled: (item) => item.riwayat_bantuan_count > 0,
+        // handler: (item) => {
+        //     if (confirm("Yakin ingin menghapus data ini?")) {
+        //         router.delete(route("penerima-bantuan.destroy", item.uuid));
+        //     }
+        // },
+        // handler bisa diisi di tempat penggunaan
+        handler: (item) => {
+            onClickDeleteButton(item.uuid);
+        },
+    },
+];
 export {
     columnsIndex,
     columnsCreateBantuan as columnsIndexBantuan,
@@ -272,4 +309,5 @@ export {
     columnsShowPencairan as columnsIndexPencairan,
     rowsShow,
     actionsIndex,
+    actionShowPencairan,
 };

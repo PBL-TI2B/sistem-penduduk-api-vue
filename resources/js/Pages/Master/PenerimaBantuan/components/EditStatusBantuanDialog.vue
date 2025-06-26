@@ -76,16 +76,14 @@ watch(
             <form @submit.prevent="onSubmit">
                 <DialogHeader>
                     <DialogTitle>Ubah Status Bantuan</DialogTitle>
-                    <DialogDescription>
-                        Ubah validasi data bantuan
-                    </DialogDescription>
+                    <!-- <DialogDescription>
+                        Ubah status penerima bantuan
+                    </DialogDescription> -->
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
                     <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="status" class="text-right">
-                            Status Bantuan
-                        </Label>
+                        <Label for="status" class="text-right"> Status </Label>
                         <div class="col-span-3">
                             <Select v-model="status">
                                 <SelectTrigger>

@@ -18,7 +18,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import Label from "@/components/ui/label/Label.vue";
-import { useKurangMampu } from "@/composables/useKurangMampu";
+import { usePencairanBantuan } from "@/composables/usePencairanBantuan";
 
 const props = defineProps({
     isOpen: Boolean,
@@ -42,10 +42,10 @@ const status = computed({
 });
 
 const isFormValid = computed(() => {
-    return status.value !== "belum tervalidasi";
+    return status.value !== "diproses";
 });
 
-const { editStatusPencairan, isLoading } = useKurangMampu();
+const { editStatusPencairan, isLoading } = usePencairanBantuan();
 
 const onSubmit = handleSubmit(async (formValues) => {
     await editStatusPencairan(props.initialData.uuid, formValues.status);
@@ -73,9 +73,10 @@ watch(
             <form @submit.prevent="onSubmit">
                 <DialogHeader>
                     <DialogTitle>Ubah Status Pencairan</DialogTitle>
-                    <DialogDescription>
-                        Ubah validasi data bantuan
-                    </DialogDescription>
+                    <!-- <DialogDescription>
+                        Ubah status pencairan setelah penerima bantuan menerima
+                        penyaluran bantuan
+                    </DialogDescription> -->
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
