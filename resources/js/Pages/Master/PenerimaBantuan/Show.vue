@@ -144,7 +144,7 @@ watch([page, isEditStatusPencairanDialogOpen.value == false], () => {
                         @click="isEditStatusBantuanDialogOpen = true"
                         variant="secondary"
                     >
-                        Ubah Status Bantuan
+                        Ubah Status
                         <SquarePen />
                     </Button>
                     <!-- <Button

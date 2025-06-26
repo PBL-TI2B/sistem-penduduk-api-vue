@@ -75,7 +75,7 @@ watch(
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="onSubmit">
                 <DialogHeader>
-                    <DialogTitle>Ubah Status Bantuan</DialogTitle>
+                    <DialogTitle>Ubah Status</DialogTitle>
                     <!-- <DialogDescription>
                         Ubah status penerima bantuan
                     </DialogDescription> -->
@@ -87,7 +87,7 @@ watch(
                         <div class="col-span-3">
                             <Select v-model="status">
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Status Bantuan" />
+                                    <SelectValue placeholder="Status" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <!-- <SelectItem value="diajukan">

@@ -202,10 +202,13 @@ const actionsIndex =  (onClickDeleteButton) => [
 
 const rowsShow = [
 //     { label: "Nama Bantuan", key: "nama_bantuan" },
-{
-        label: "Nama Lengkap",
-        key: "kurang_mampu",
-        format: (val, row) => val?.penduduk.nama_lengkap || "-",
+    {
+    label: "Nama Lengkap",
+    key: "kurang_mampu",
+    format: (val, row) => {
+        const nama = val?.penduduk.nama_lengkap || "-";
+            return nama.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
     {
         label: "NIK",
@@ -213,9 +216,25 @@ const rowsShow = [
         format: (val, row) => val?.penduduk.nik || "-",
     },
     {
-        label: "Bantuan",
+        label: "Tanggungan",
+        key: "kurang_mampu",
+        format: (val) => val?.jumlah_tanggungan ?? "-",
+    },
+    {
+        label: "Kategori Bantuan",
         key: "bantuan",
-        format: (val, row) => val?.nama_bantuan || "-",
+        format: (val, row) => {
+            const kategori = val?.kategori || "-";
+            return kategori.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Nama Bantuan",
+        key: "bantuan",
+        format: (val, row) => {
+            const bantuan = val?.nama_bantuan || "-";
+            return bantuan.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
     {
         label: "Nominal",
@@ -225,17 +244,18 @@ const rowsShow = [
     {
         label: "Periode",
         key: "bantuan",
-        format: (val, row) => val?.periode || "-",
+        format: (val, row) => {
+        const periode = val?.periode || "-";
+            return periode.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
     {
         label: "Lama Periode",
         key: "bantuan",
-        format: (val, row) => val?.lama_periode || "-",
-    },
-    {
-        label: "Tanggungan",
-        key: "kurang_mampu",
-        format: (val) => val?.jumlah_tanggungan ?? "-",
+        format: (val, row) => {
+            const lama = val?.lama_periode || "-";
+            return lama.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
     {
         label: "Tanggal Pengajuan",
