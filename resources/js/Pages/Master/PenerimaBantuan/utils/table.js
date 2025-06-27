@@ -134,14 +134,14 @@ const actionsIndex =  (onClickDeleteButton) => [
             router.visit(route("penerima-bantuan.show", item.uuid));
         },
     },
-    {
-        label: "Ubah",
-        icon: PencilIcon,
-        class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
-        handler: (item) => {
-            router.visit(route("penerima-bantuan.edit", item.uuid));
-        },
-    },
+    // {
+    //     label: "Ubah",
+    //     icon: PencilIcon,
+    //     class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
+    //     handler: (item) => {
+    //         router.visit(route("penerima-bantuan.edit", item.uuid));
+    //     },
+    // },
     {
         label: "Hapus",
         icon: Trash2Icon,

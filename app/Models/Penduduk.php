@@ -56,6 +56,16 @@ class Penduduk extends Model
         return $this->hasMany(AnggotaKeluarga::class, 'penduduk_id', 'id');
     }
 
+    public function anakSebagaiAyah()
+    {
+        return $this->hasMany(Penduduk::class, 'ayah_id');
+    }
+
+    public function anakSebagaiIbu()
+    {
+        return $this->hasMany(Penduduk::class, 'ibu_id');
+    }
+
     protected function foto()
     {
         return Attribute::make(

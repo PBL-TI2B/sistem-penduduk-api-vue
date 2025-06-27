@@ -35,6 +35,15 @@ class PendudukController extends Controller
             });
         }
 
+        if ($request->boolean('exclude_ibu')) {
+            $query->whereDoesntHave('anakSebagaiIbu');
+        }
+        
+        if ($request->boolean('exclude_ayah')) {
+            $query->whereDoesntHave('anakSebagaiAyah');
+        }
+        
+
         $penduduk = $query->paginate($request->get('per_page', 10));
         $collection = PendudukResource::collection($penduduk->getCollection());
         $penduduk->setCollection(collect($collection));

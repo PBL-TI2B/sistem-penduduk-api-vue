@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useForm, Form as VeeForm } from "vee-validate"; // Menggunakan VeeForm untuk menghindari konflik nama
+import { useForm, Form as VeeForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 
 import { apiGet } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
-import { formSchemaPenduduk } from "../utils/form-schema"; // Sesuaikan path import
-import { getFields } from "../utils/fields"; // Sesuaikan path import
+import { formSchemaPenduduk } from "../utils/form-schema";
+import { getFields } from "../utils/fields";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,6 @@ const props = defineProps({
         type: String,
         default: null,
     },
-    // Menggunakan v-model untuk fotoFile
     fotoFile: {
         type: File,
         default: null,
@@ -49,7 +48,6 @@ const emit = defineEmits(["submit", "update:fotoFile", "update:fotoPreview"]);
 
 const fields = ref([]);
 
-// === FORM PENDUDUK ===
 const pendudukForm = useForm({
     validationSchema: formSchemaPenduduk,
 });
@@ -84,19 +82,59 @@ const onFileChange = (e) => {
 
 const loadSelectOptions = async () => {
     try {
-        const [pekerjaanRes, pendidikanRes] = await Promise.all([
-            apiGet("/pekerjaan"),
-            apiGet("/pendidikan"),
-        ]);
+        const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
+            await Promise.all([
+                apiGet("/pekerjaan"),
+                apiGet("/pendidikan"),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "L",
+                    status_perkawinan: "kawin",
+                    exclude_ayah: true,
+                }),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "P",
+                    status_perkawinan: "kawin",
+                    exclude_ibu: true,
+                }),
+            ]);
+
         const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.nama_pekerjaan,
         }));
+
         const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.jenjang,
         }));
-        fields.value = getFields(pekerjaanOptions, pendidikanOptions);
+
+        const ayahOptions = ayahRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        const ibuOptions = ibuRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        fields.value = [
+            ...getFields(pekerjaanOptions, pendidikanOptions),
+            {
+                name: "ayah_id",
+                label: "Nama Ayah",
+                type: "select",
+                options: ayahOptions,
+                placeholder: "Pilih Ayah",
+            },
+            {
+                name: "ibu_id",
+                label: "Nama Ibu",
+                type: "select",
+                options: ibuOptions,
+                placeholder: "Pilih Ibu",
+            },
+        ];
     } catch (error) {
         useErrorHandler(error);
     }
@@ -104,7 +142,6 @@ const loadSelectOptions = async () => {
 
 onMounted(loadSelectOptions);
 
-// Mengirimkan data saat formulir disubmit
 const handleSubmit = pendudukForm.handleSubmit((values) => {
     const rawTanggal = values.tanggal_lahir;
     const dateObj = new Date(rawTanggal);
@@ -207,24 +244,24 @@ const handleSubmit = pendudukForm.handleSubmit((values) => {
 
 <style scoped>
 :deep(.dp__cell_inner.dp__active_date) {
-    background-color: oklch(0.31 0.0702 152.07) !important; /* biru */
+    background-color: oklch(0.31 0.0702 152.07) !important;
     color: white !important;
     border-radius: 6px;
 }
 
 :deep(.dp__cell_inner.dp__today) {
-    border: 2px solid oklch(0.31 0.0702 152.07); /* border biru */
+    border: 2px solid oklch(0.31 0.0702 152.07);
     border-radius: 6px;
 }
 
 :deep(.dp__action_button) {
-    background-color: oklch(0.31 0.0702 152.07); /* warna latar */
-    color: white; /* warna teks */
+    background-color: oklch(0.31 0.0702 152.07);
+    color: white;
     border-radius: 6px;
     border: none;
 }
 
 :deep(.dp__action_button:hover) {
-    background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+    background-color: oklch(0.22 0.0049 158.96);
 }
 </style>

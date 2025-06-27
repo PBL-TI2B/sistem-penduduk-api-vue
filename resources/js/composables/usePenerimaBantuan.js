@@ -97,7 +97,13 @@ export function usePenerimaBantuan() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost("/penerima-bantuan", values);
+            const res = await apiPost("/penerima-bantuan", values);
+
+            if (res.success === false) {
+                toast.error("Penduduk kurang mampu dengan bantuan yang sama sudah ada");
+                return
+            }
+
             toast.success("Berhasil Tambah Data Penerima Bantuan");
             router.visit("/admin/penerima-bantuan");
         } catch (error) {
