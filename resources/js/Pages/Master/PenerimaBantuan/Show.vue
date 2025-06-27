@@ -9,7 +9,7 @@ import {
     columnsIndexPencairan,
     actionShowPencairan,
 } from "./utils/table";
-import EditStatusBantuanDialog from "./components/EditStatusBantuanDialog.vue";
+import EditStatusPenerimaBantuanDialog from "./components/EditStatusPenerimaBantuanDialog.vue";
 import EditStatusPencairanDialog from "./components/EditStatusPencairanDialog.vue";
 import CreatePencairanDialog from "./components/CreatePencairanDialog.vue";
 import { onMounted, ref, computed, watch } from "vue";
@@ -51,7 +51,7 @@ const {
     deleteData,
 } = usePencairanBantuan();
 
-const isEditStatusBantuanDialogOpen = ref(false, itemPenerimaBantuan);
+const isEditStatusPenerimaBantuanDialogOpen = ref(false, itemPenerimaBantuan);
 const isEditStatusPencairanDialogOpen = ref(false, item);
 const isAlertDeleteOpen = ref(false);
 const isPencairanDialogOpen = ref(false);
@@ -139,12 +139,18 @@ watch(page, () => {
                 <h2 class="text-lg font-bold p-2">
                     Detail Penerima Bantuan
                     <Badge variant="outline">
-                        {{ itemPenerimaBantuan.status }}
+                        {{
+                            itemPenerimaBantuan.status
+                                ? itemPenerimaBantuan.status
+                                      .toLowerCase()
+                                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                                : ""
+                        }}
                     </Badge>
                 </h2>
                 <div class="flex gap-2">
                     <Button
-                        @click="isEditStatusBantuanDialogOpen = true"
+                        @click="isEditStatusPenerimaBantuanDialogOpen = true"
                         variant="secondary"
                     >
                         Ubah Status
@@ -215,13 +221,13 @@ watch(page, () => {
         </div>
     </div>
 
-    <EditStatusBantuanDialog
-        v-model:isOpen="isEditStatusBantuanDialogOpen"
+    <EditStatusPenerimaBantuanDialog
+        v-model:isOpen="isEditStatusPenerimaBantuanDialogOpen"
         :initial-data="itemPenerimaBantuan"
         @success="
             () => {
                 fetchDetailPenerimaBantuan(uuid),
-                    (isEditStatusBantuanDialogOpen = false);
+                    (isEditStatusPenerimaBantuanDialogOpen = false);
             }
         "
     />

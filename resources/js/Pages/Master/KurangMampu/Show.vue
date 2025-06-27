@@ -71,7 +71,13 @@ onMounted(() => {
                 <h2 class="text-lg font-bold p-2">
                     Detail Kurang Mampu
                     <Badge variant="outline">
-                        {{ item.status_validasi }}
+                        {{
+                            item.status_validasi
+                                ? item.status_validasi
+                                      .toLowerCase()
+                                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                                : ""
+                        }}
                     </Badge>
                 </h2>
                 <div class="flex gap-2">
