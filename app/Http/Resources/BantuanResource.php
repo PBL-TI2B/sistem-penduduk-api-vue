@@ -24,6 +24,7 @@ class BantuanResource extends JsonResource
             // 'kategori'            => ucfirst($this->kategoriBantuan->kategori),
             'kategori'            => $this->kategoriBantuan->kategori,
             'nominal'             => $this->nominal,
+            'status'              => $this->status,
             'periode'             => $this->periode,
             'lama_periode'        => $this->lama_periode,
             'instansi'            => $this->instansi,

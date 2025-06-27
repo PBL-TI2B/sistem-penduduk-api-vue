@@ -37,6 +37,10 @@ class BantuanController extends Controller
             $query->where('kategori_bantuan_id', $request->kategori_bantuan_id);
         }
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
         //! Tambahkan eager loading untuk kategoriBantuan, menghindari N+1 query
         // $data = $query->withCount('penerimaBantuan')->paginate($perPage);
         $data = $query->with(['kategoriBantuan'])->withCount('penerimaBantuan')->paginate($perPage);
@@ -49,9 +53,9 @@ class BantuanController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'uuid' => 'nullable|uuid',
             'nama_bantuan' => 'required|string|max:50',
             'kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
+            'status' => 'nullable|in:aktif,nonaktif',
             'nominal' => 'nullable|string|max:50',
             'periode' => 'required|string|max:50',
             'lama_periode' => 'required|string|max:50',
@@ -66,7 +70,11 @@ class BantuanController extends Controller
             ], 422);
         }
 
-        $bantuan = Bantuan::create($validator->validated());
+        $data = $validator->validated();
+        if (!isset($data['status'])) {
+            $data['status'] = 'nonaktif';
+        }
+        $bantuan = Bantuan::create($data);
         $bantuan->load('kategoriBantuan');
 
         return new ApiResource(true, 'Data Bantuan Berhasil Ditambahkan', new BantuanResource($bantuan));
@@ -75,20 +83,58 @@ class BantuanController extends Controller
     public function show(Bantuan $bantuan)
     {
         $bantuan->load('kategoriBantuan');
+        $bantuan->loadCount('penerimaBantuan');
+
         return new ApiResource(true, 'Detail Data Bantuan', new BantuanResource($bantuan));
     }
 
     public function update(Request $request, Bantuan $bantuan)
     {
-        $validator = Validator::make($request->all(), [
-            'nama_bantuan' => 'required|string|max:50',
-            'kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
-            'nominal' => 'nullable|string|max:50',
-            'periode' => 'required|string|max:50',
-            'lama_periode' => 'required|string|max:50',
-            'instansi' => 'required|string|max:50',
-            'keterangan' => 'nullable|string',
-        ]);
+        $bantuan->loadCount('penerimaBantuan');
+
+        // Jika request HANYA untuk mengubah status
+        if ($request->has('status')) {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|in:aktif,nonaktif',
+            ]);
+            $message = 'Status berhasil diubah.';
+        } else {
+            // Guard clause untuk pembaruan data lengkap
+            $isActive = $bantuan->status === 'aktif';
+            $hasRecipients = $bantuan->penerima_bantuan_count > 0;
+
+            if ($isActive && $hasRecipients) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat memperbarui bantuan yang sedang aktif dan sudah memiliki penerima.',
+                ], 403);
+            }
+
+            if ($isActive) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat memperbarui bantuan yang sedang aktif. Harap nonaktifkan bantuan terlebih dahulu jika ingin mengubah data.',
+                ], 403);
+            }
+
+            if ($hasRecipients) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat memperbarui bantuan yang sudah memiliki penerima.',
+                ], 403);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'nama_bantuan' => 'required|string|max:50',
+                'kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
+                'nominal' => 'nullable|string|max:50',
+                'periode' => 'required|string|max:50',
+                'lama_periode' => 'required|string|max:50',
+                'instansi' => 'required|string|max:50',
+                'keterangan' => 'nullable|string',
+            ]);
+            $message = 'Data bantuan berhasil diubah.';
+        }
 
         if ($validator->fails()) {
             return response()->json([
@@ -100,11 +146,18 @@ class BantuanController extends Controller
         $bantuan->update($validator->validated());
         $bantuan->load('kategoriBantuan');
 
-        return new ApiResource(true, 'Data Bantuan Berhasil Diubah', new BantuanResource($bantuan));
+        return new ApiResource(true,  $message, new BantuanResource($bantuan));
     }
 
     public function destroy(Bantuan $bantuan)
     {
+        $bantuan->loadCount('penerimaBantuan');
+        if ($bantuan->status !== 'nonaktif' && $bantuan->penerima_bantuan_count > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hanya dapat dihapus jika status nonaktif atau belum memiliki penerima.',
+            ], 403);
+        }
         $bantuan->delete();
         return new ApiResource(true, 'Data Bantuan Berhasil Dihapus', null);
     }
