@@ -103,7 +103,7 @@ class PendidikanController extends Controller
     public function exportPdf()
     {
         $pendidikan = Pendidikan::get();
-        $pdf = \PDF::loadView('exports.pendidikan', compact('pendidikan'));
+        $pdf = PDF::loadView('exports.pendidikan', compact('pendidikan'));
         return $pdf->download('pendidikan.pdf');
     }
 }

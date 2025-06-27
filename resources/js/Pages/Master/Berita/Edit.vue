@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
+
 import { ref, onMounted, nextTick } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router, usePage, Head } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
+
 
 // Toast UI Editor
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -23,11 +25,37 @@ import { Editor } from "@toast-ui/editor";
 
 const { slug } = usePage().props;
 const fields = ref(getFields());
+const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
+
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
 
-const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
+const editor = useEditor({
+    content: '',
+    extensions: [
+        StarterKit,
+        TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    ],
+    editorProps: {
+        attributes: {
+            class: 'prose prose-sm dark:prose-invert max-w-none w-full border rounded-b-md p-2 focus:outline-none min-h-[300px]',
+        },
+    },
+    onUpdate: () => {
+        setFieldValue('konten', editor.value.getHTML());
+    },
+});
+
+onBeforeUnmount(() => {
+    if (editor.value) editor.value.destroy();
+});
+
+watch(() => values.konten, (newValue) => {
+    if (editor.value && editor.value.getHTML() !== newValue) {
+        editor.value.commands.setContent(newValue || '');
+    }
+});
 
 // Editor refs
 const editorRef = ref(null);
@@ -41,6 +69,7 @@ const onFileChange = (e) => {
         previewThumbnail.value = URL.createObjectURL(file);
     }
 };
+
 
 const initializeEditor = (initialContent = "") => {
     if (editorRef.value && !editorInstance) {
@@ -110,6 +139,7 @@ onMounted(async () => {
         // Get user ID
         const userRes = await apiGet("/auth/me");
         user_id.value = userRes.data?.id;
+
         if (!user_id.value) {
             throw new Error("user_id tidak ditemukan di response /auth/me");
         }
@@ -202,10 +232,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">
-                        Peringatan: Pastikan data berita sudah benar sebelum
-                        disimpan.
-                    </p>
+                    <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
                         <Button
                             @click="router.visit('/admin/berita')"
@@ -219,20 +246,9 @@ onMounted(async () => {
                 </div>
             </form>
 
-            <!-- Preview Section -->
             <div class="flex items-center justify-center">
-                <img
-                    v-if="previewThumbnail"
-                    :src="previewThumbnail"
-                    alt="Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
-                <img
-                    v-else
-                    src="https://placehold.co/400x300?text=No+Image"
-                    alt="No Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
+                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
+                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
             </div>
         </div>
     </div>

@@ -11,22 +11,23 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
+
 import { ref, onMounted, nextTick } from "vue";
 import { apiPost, apiGet } from "@/utils/api";
 import { router, Head } from "@inertiajs/vue3";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
-
 // Toast UI Editor
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/editor";
 
 const fields = ref(getFields());
-const { handleSubmit, resetForm, setFieldValue, values } = useForm();
+const { handleSubmit, resetForm, setFieldValue } = useForm();
 
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
+
 const username = ref("");
 
 // Editor refs
@@ -39,6 +40,7 @@ const onFileChange = (e) => {
     setFieldValue("thumbnail", file);
     previewThumbnail.value = file ? URL.createObjectURL(file) : null;
 };
+
 
 const initializeEditor = () => {
     if (editorRef.value && !editorInstance) {
@@ -146,20 +148,13 @@ const onSubmit = handleSubmit(async (values) => {
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-
                             <select
                                 v-else
                                 class="w-full border rounded p-2"
                                 v-bind="componentField"
                             >
                                 <option value="" disabled>Pilih status</option>
-                                <option
-                                    v-for="opt in field.options"
-                                    :key="opt.value"
-                                    :value="opt.value"
-                                >
-                                    {{ opt.label }}
-                                </option>
+                                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                             </select>
                         </FormControl>
                         <FormMessage />
@@ -176,22 +171,12 @@ const onSubmit = handleSubmit(async (values) => {
 
                 <!-- Upload Thumbnail -->
                 <div>
-                    <label class="block mb-2 font-medium"
-                        >Thumbnail Berita</label
-                    >
-                    <input
-                        type="file"
-                        accept="image/*"
-                        class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
-                        @change="onFileChange"
-                    />
+                    <label class="block mb-2 font-medium">Thumbnail Berita</label>
+                    <input type="file" accept="image/*" class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2" @change="onFileChange"/>
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">
-                        Peringatan: Pastikan data berita sudah benar sebelum
-                        disimpan.
-                    </p>
+                    <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
                         <Button
                             @click="router.visit('/admin/berita')"
@@ -205,23 +190,13 @@ const onSubmit = handleSubmit(async (values) => {
                 </div>
             </form>
 
-            <!-- Preview Thumbnail -->
             <div class="flex items-center justify-center">
-                <img
-                    v-if="previewThumbnail"
-                    :src="previewThumbnail"
-                    alt="Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
-                <img
-                    v-else
-                    src="https://placehold.co/400x300?text=No+Image"
-                    alt="No Preview"
-                    class="rounded-md w-[400px] h-[300px] object-cover border"
-                />
+                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
+                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
             </div>
         </div>
     </div>
+
 </template>
 
 <style scoped>
