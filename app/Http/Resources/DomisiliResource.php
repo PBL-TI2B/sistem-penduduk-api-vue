@@ -30,6 +30,9 @@ class DomisiliResource extends JsonResource
                     'nomor' => $this->rt->rw->nomor_rw,
                 ],
             ],
+            'alamat_asal' => $this->alamat_asal,
+            'alamat_saat_ini' => $this->alamat_saat_ini,
+
         ];
     }
     

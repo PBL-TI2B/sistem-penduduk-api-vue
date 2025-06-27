@@ -18,7 +18,7 @@ class PendudukController extends Controller
     public function index(Request $request)
     {
         $query = Penduduk::with(['pekerjaan', 'pendidikan', 'domisili'])
-        ->orderBy('status', 'asc');
+            ->orderBy('status', 'asc');
 
         $this->applyDirectFilters($query, $request);
 
@@ -30,8 +30,8 @@ class PendudukController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%$search%")
-                ->orWhere('nik', 'like', "%$search%")
-                ->orWhere('tempat_lahir', 'like', "%$search%");
+                    ->orWhere('nik', 'like', "%$search%")
+                    ->orWhere('tempat_lahir', 'like', "%$search%");
             });
         }
 
