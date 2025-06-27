@@ -60,7 +60,7 @@ const columnsIndex = [
         },
     },
     {
-        label: "Status Bantuan",
+        label: "Status",
         key: "status",
         format: (val) => val ?? "-",
     },
