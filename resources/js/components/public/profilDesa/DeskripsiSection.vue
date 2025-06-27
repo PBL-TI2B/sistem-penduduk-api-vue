@@ -19,7 +19,7 @@
                 class="bg-white drop-shadow-md hover:drop-shadow-xl rounded-xl px-10 py-6"
             >
                 <h3
-                    class="text-xl md:text-2xl font-bold text-[#E5A025] mb-4 text-center"
+                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-500 mb-4 text-center"
                 >
                     Informasi Desa
                 </h3>
@@ -157,7 +157,7 @@
                 class="bg-white drop-shadow-md hover:drop-shadow-xl rounded-xl px-10 py-6"
             >
                 <h3
-                    class="text-xl md:text-2xl font-bold text-[#E5A025] mb-4 text-center"
+                    class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-500 mb-4 text-center"
                 >
                     Kontak & Alamat
                 </h3>

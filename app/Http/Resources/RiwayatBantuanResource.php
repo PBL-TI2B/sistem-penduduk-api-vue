@@ -14,6 +14,16 @@ class RiwayatBantuanResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'penerima_bantuan_id' => $this->penerima_bantuan_id,
+            'status_pencairan' => $this->status_pencairan,
+            'tanggal' => $this->tanggal,
+            'dokumentasi' => $this->dokumentasi,
+            'keterangan' => $this->keterangan,
+
+            // Relasi ke penerima bantuan
+            'penerima_bantuan' => new PenerimaBantuanResource($this->whenLoaded('penerimaBantuan')),
+        ];
     }
 }

@@ -4,47 +4,25 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Resources\ApiResource;
 use App\Models\RiwayatBantuan;
+use App\Http\Resources\ApiResource;
 use App\Http\Resources\RiwayatBantuanResource;
 use Illuminate\Support\Facades\Validator;
 
 class RiwayatBantuanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
         $query = RiwayatBantuan::query();
 
-        //! Filter Search
-        // if ($request->filled('search')) {
-        //     $search = $request->search;
-
-        //     $query->where(function ($query) use ($search) {
-        //         // Cari di penduduk (nama_lengkap, nik)
-        //         $query->whereHas('kurangMampu.anggotaKeluarga.penduduk', function ($q) use ($search) {
-        //             $q->where('nama_lengkap', 'like', "%$search%")
-        //                 ->orWhere('nik', 'like', "%$search%");
-        //         })
-
-        //             // Cari di relasi bantuan
-        //             ->orWhereHas('bantuan', function ($q) use ($search) {
-        //                 $q->where('nama_bantuan', 'like', "%$search%");
-        //             });
-        //     });
-        // }
-
-        //! Filter berdasarkan penerima_bantuan_id
+        // Filter berdasarkan penerima_bantuan_id (wajib)
         if ($request->filled('penerima_bantuan_id')) {
             $query->where('penerima_bantuan_id', $request->penerima_bantuan_id);
         } else {
-            return new ApiResource(false, 'Harus mencantumkan id penerima bantuan', []); // Return empty if no penerima_bantuan_id is provided
+            return new ApiResource(false, 'Harus mencantumkan id penerima bantuan', []);
         }
 
-        // $data = $query->with(['bantuan.kategoriBantuan', 'kurangMampu.anggotaKeluarga.penduduk'])->paginate($perPage);
         $data = $query->paginate($perPage);
         $collection = RiwayatBantuanResource::collection($data->getCollection());
         $data->setCollection(collect($collection));
@@ -52,35 +30,53 @@ class RiwayatBantuanController extends Controller
         return new ApiResource(true, 'Daftar Data Riwayat Bantuan', $data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'penerima_bantuan_id' => 'required|exists:penerima_bantuan,id',
+            'status_pencairan' => 'required|in:diterima,diproses,belum diterima',
+            'tanggal' => 'required|date',
+            'dokumentasi' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return new ApiResource(false, 'Validasi gagal', $validator->errors());
+        }
+
+        $data = RiwayatBantuan::create($validator->validated());
+
+        return new ApiResource(true, 'Data Riwayat Bantuan berhasil ditambahkan', new RiwayatBantuanResource($data));
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(RiwayatBantuan $riwayatBantuan)
     {
-        //
+        return new ApiResource(true, 'Detail Riwayat Bantuan', new RiwayatBantuanResource($riwayatBantuan));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, RiwayatBantuan $riwayatBantuan)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'penerima_bantuan_id' => 'sometimes|exists:penerima_bantuan,id',
+            'status_pencairan' => 'sometimes|in:diterima,diproses,belum diterima',
+            'tanggal' => 'sometimes|date',
+            'dokumentasi' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return new ApiResource(false, 'Validasi gagal', $validator->errors());
+        }
+
+        $riwayatBantuan->update($validator->validated());
+
+        return new ApiResource(true, 'Data Riwayat Bantuan berhasil diperbarui', new RiwayatBantuanResource($riwayatBantuan));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(RiwayatBantuan $riwayatBantuan)
     {
-        //
+        $riwayatBantuan->delete();
+
+        return new ApiResource(true, 'Data Riwayat Bantuan berhasil dihapus', null);
     }
 }

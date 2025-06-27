@@ -48,7 +48,7 @@ console.log(page.url);
             }"
         >
             <div
-                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-sm hover:drop-shadow-lg"
             >
                 <img
                     src="@/images/ttlpenduduk.png"
@@ -57,7 +57,7 @@ console.log(page.url);
                 />
                 <div class="text-start">
                     <p class="text-sm md:text-lg text-[#40798C]">
-                        TOTAL PENDUDUK
+                        Total Penduduk
                     </p>
                     <p class="text-xl font-bold text-[#40798C]">
                         {{ statistik.total_penduduk }} Jiwa
@@ -65,7 +65,7 @@ console.log(page.url);
                 </div>
             </div>
             <div
-                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-sm hover:drop-shadow-lg"
             >
                 <img
                     src="@/images/kepalakeluarga.png"
@@ -74,7 +74,7 @@ console.log(page.url);
                 />
                 <div class="text-start">
                     <p class="text-sm md:text-lg text-[#70A9A1]">
-                        KEPALA KELUARGA
+                        Kepala Keluarga
                     </p>
                     <p class="text-xl font-bold text-[#70A9A1]">
                         {{ statistik.jumlah_kepala_keluarga }} Jiwa
@@ -82,7 +82,7 @@ console.log(page.url);
                 </div>
             </div>
             <div
-                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-sm hover:drop-shadow-lg"
             >
                 <img
                     src="@/images/laki.png"
@@ -90,14 +90,14 @@ console.log(page.url);
                     class="w-12 h-12"
                 />
                 <div class="text-start">
-                    <p class="text-sm md:text-lg text-[#CD8B76]">LAKI-LAKI</p>
+                    <p class="text-sm md:text-lg text-[#CD8B76]">Laki-Laki</p>
                     <p class="text-xl font-bold text-[#CD8B76]">
                         {{ statistik.jumlah_laki_laki }} Jiwa
                     </p>
                 </div>
             </div>
             <div
-                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-lg hover:drop-shadow-xl"
+                class="bg-white p-4 rounded-md flex items-center gap-3 shadow-sm hover:drop-shadow-lg"
             >
                 <img
                     src="@/images/perempuan.png"
@@ -105,7 +105,7 @@ console.log(page.url);
                     class="w-12 h-12"
                 />
                 <div class="text-start">
-                    <p class="text-sm md:text-lg text-[#734B5E]">PEREMPUAN</p>
+                    <p class="text-sm md:text-lg text-[#734B5E]">Perempuan</p>
                     <p class="text-xl font-bold text-[#734B5E]">
                         {{ statistik.jumlah_perempuan }} Jiwa
                     </p>

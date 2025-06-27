@@ -11,17 +11,15 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+
+import { ref, onMounted, nextTick } from "vue";
 import { apiPost, apiGet } from "@/utils/api";
-import { router } from "@inertiajs/vue3";
+import { router, Head } from "@inertiajs/vue3";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
-import { Head } from '@inertiajs/vue3';
-
-// Import Tiptap dan ekstensinya (tanpa Image)
-import { useEditor, EditorContent } from '@tiptap/vue-3';
-import StarterKit from '@tiptap/starter-kit';
-import TextAlign from '@tiptap/extension-text-align';
+// Toast UI Editor
+import "@toast-ui/editor/dist/toastui-editor.css";
+import { Editor } from "@toast-ui/editor";
 
 const fields = ref(getFields());
 const { handleSubmit, resetForm, setFieldValue } = useForm();
@@ -30,40 +28,39 @@ const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
 
-// Setup Tiptap Editor (tanpa ekstensi Image)
-const editor = useEditor({
-    content: '',
-    extensions: [
-        StarterKit,
-        TextAlign.configure({
-            types: ['heading', 'paragraph'],
-        }),
-    ],
-    editorProps: {
-        attributes: {
-            class: 'prose prose-sm dark:prose-invert max-w-none w-full border rounded-b-md p-2 focus:outline-none min-h-[300px]',
-        },
-    },
-    onUpdate: ({ editor }) => {
-        setFieldValue('konten', editor.getHTML());
-    },
-});
+const username = ref("");
 
-// Hancurkan editor untuk menghindari memory leak
-onBeforeUnmount(() => {
-    if (editor.value) {
-        editor.value.destroy();
-    }
-});
+// Editor refs
+const editorRef = ref(null);
+let editorInstance = null;
 
 const onFileChange = (e) => {
     const file = e.target.files?.[0] || null;
     thumbnailFile.value = file;
     setFieldValue("thumbnail", file);
-    if (file) {
-        previewThumbnail.value = URL.createObjectURL(file);
-    } else {
-        previewThumbnail.value = null;
+    previewThumbnail.value = file ? URL.createObjectURL(file) : null;
+};
+
+
+const initializeEditor = () => {
+    if (editorRef.value && !editorInstance) {
+        editorInstance = new Editor({
+            el: editorRef.value,
+            height: "400px",
+            initialEditType: "wysiwyg",
+            previewStyle: "vertical",
+            hideModeSwitch: true,
+            usageStatistics: false,
+            placeholder: "Tulis konten berita di sini...",
+            toolbarItems: [
+                ["heading", "bold", "italic", "strike"],
+                ["hr", "quote"],
+                ["ul", "ol", "task", "indent", "outdent"],
+                ["table", "image", "link"],
+                ["code", "codeblock"],
+                ["scrollSync"],
+            ],
+        });
     }
 };
 
@@ -71,10 +68,13 @@ onMounted(async () => {
     try {
         const res = await apiGet("/auth/me");
         user_id.value = res.data?.id;
-        if (!user_id.value) {
-            throw new Error("user_id tidak ditemukan di response /auth/me");
-        }
+        username.value = res.data?.username || "";
+        if (!user_id.value) throw new Error("user_id tidak ditemukan");
         setFieldValue("status", "draft");
+
+        // Initialize editor after DOM is ready
+        await nextTick();
+        initializeEditor();
     } catch (error) {
         useErrorHandler(error, "Gagal mengambil user_id");
     }
@@ -82,9 +82,11 @@ onMounted(async () => {
 
 const onSubmit = handleSubmit(async (values) => {
     try {
+        const content = editorInstance ? editorInstance.getMarkdown() : "";
+
         const formData = new FormData();
         formData.append("judul", values.judul);
-        formData.append("konten", values.konten || '');
+        formData.append("konten", content);
         formData.append("status", values.status);
         formData.append("jumlah_dilihat", 0);
         if (thumbnailFile.value) {
@@ -93,8 +95,15 @@ const onSubmit = handleSubmit(async (values) => {
         if (user_id.value) {
             formData.append("user_id", user_id.value);
         }
+
         await apiPost("/berita", formData);
         resetForm();
+
+        // Reset editor content
+        if (editorInstance) {
+            editorInstance.setMarkdown("");
+        }
+
         previewThumbnail.value = null;
         toast.success("Berhasil tambah data berita");
         router.visit("/admin/berita");
@@ -121,40 +130,26 @@ const onSubmit = handleSubmit(async (values) => {
     <div class="shadow-lg p-8 my-4 rounded-lg">
         <div class="flex flex-col lg:flex-row gap-8 justify-between">
             <form @submit="onSubmit" class="space-y-6 w-full">
+                <!-- Other Fields (excluding konten) -->
                 <FormField
-                    v-for="field in fields"
+                    v-for="field in fields.filter(
+                        (f) => f.name !== 'konten' && f.name !== 'thumbnail'
+                    )"
                     :key="field.name"
                     :name="field.name"
                     v-slot="{ componentField }"
                 >
-                    <FormItem v-if="field.name !== 'thumbnail'">
+                    <FormItem>
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
                             <Input
-                                v-if="field.type !== 'textarea' && field.type !== 'select'"
+                                v-if="field.type !== 'select'"
                                 :type="field.type"
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-                            <div v-else-if="field.name === 'konten' && editor">
-                                <div class="border rounded-t-md p-2 flex gap-2 items-center flex-wrap bg-gray-50">
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleBold().run()" :class="{ 'bg-gray-200': editor.isActive('bold') }">Bold</Button>
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'bg-gray-200': editor.isActive('italic') }">Italic</Button>
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'bg-gray-200': editor.isActive('strike') }">Strike</Button>
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setParagraph().run()" :class="{ 'bg-gray-200': editor.isActive('paragraph') }">Paragraph</Button>
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'bg-gray-200': editor.isActive('heading', { level: 2 }) }">H2</Button>
-                                    <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'bg-gray-200': editor.isActive('bulletList') }">List</Button>
-                                    <div class="flex gap-1">
-                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('left').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'left' }) }">Left</Button>
-                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('center').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'center' }) }">Center</Button>
-                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('right').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'right' }) }">Right</Button>
-                                        <Button type="button" variant="outline" size="sm" @click="editor.chain().focus().setTextAlign('justify').run()" :class="{ 'bg-gray-200': editor.isActive({ textAlign: 'justify' }) }">Justify</Button>
-                                    </div>
-                                </div>
-                                <EditorContent :editor="editor" />
-                            </div>
                             <select
-                                v-else-if="field.type === 'select'"
+                                v-else
                                 class="w-full border rounded p-2"
                                 v-bind="componentField"
                             >
@@ -166,6 +161,15 @@ const onSubmit = handleSubmit(async (values) => {
                     </FormItem>
                 </FormField>
 
+                <!-- Toast UI Editor -->
+                <div>
+                    <label class="block mb-2 font-semibold"
+                        >Konten Berita</label
+                    >
+                    <div ref="editorRef" class="toast-ui-editor-wrapper"></div>
+                </div>
+
+                <!-- Upload Thumbnail -->
                 <div>
                     <label class="block mb-2 font-medium">Thumbnail Berita</label>
                     <input type="file" accept="image/*" class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2" @change="onFileChange"/>
@@ -174,7 +178,13 @@ const onSubmit = handleSubmit(async (values) => {
                 <div class="flex justify-between items-center">
                     <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
-                        <Button @click="router.visit('/admin/berita')" type="button" variant="secondary">Batal</Button>
+                        <Button
+                            @click="router.visit('/admin/berita')"
+                            type="button"
+                            variant="secondary"
+                        >
+                            Batal
+                        </Button>
                         <Button type="submit">Simpan</Button>
                     </div>
                 </div>
@@ -186,4 +196,31 @@ const onSubmit = handleSubmit(async (values) => {
             </div>
         </div>
     </div>
+
 </template>
+
+<style scoped>
+.toast-ui-editor-wrapper {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+/* Override Toast UI Editor styles if needed */
+:deep(.toastui-editor-defaultUI) {
+    border: none;
+}
+
+:deep(.toastui-editor-toolbar) {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+:deep(.toastui-editor-md-container) {
+    background-color: white;
+}
+
+:deep(.toastui-editor-preview-container) {
+    background-color: #f9fafb;
+}
+</style>

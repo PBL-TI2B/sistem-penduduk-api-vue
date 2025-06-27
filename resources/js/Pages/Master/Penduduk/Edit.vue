@@ -91,11 +91,22 @@ const onSubmit = handleSubmit(async (values) => {
 // Load saat mount
 onMounted(async () => {
     try {
-        const [pendudukRes, pekerjaanRes, pendidikanRes] = await Promise.all([
-            apiGet(`/penduduk/${uuid}`),
-            apiGet("/pekerjaan"),
-            apiGet("/pendidikan"),
-        ]);
+        const [pendudukRes, pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
+            await Promise.all([
+                apiGet(`/penduduk/${uuid}`),
+                apiGet("/pekerjaan"),
+                apiGet("/pendidikan"),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "L",
+                    status_perkawinan: "kawin",
+                    exclude_ayah: true,
+                }),
+                apiGet("/penduduk", {
+                    jenis_kelamin: "P",
+                    status_perkawinan: "kawin",
+                    exclude_ibu: true,
+                }),
+            ]);
 
         const data = pendudukRes.data;
         setValues({
@@ -110,20 +121,49 @@ onMounted(async () => {
             status_perkawinan: data.status_perkawinan,
             tinggi_badan: data.tinggi_badan,
             status: data.status,
-            pekerjaan_id: data.pekerjaan.id.toString(),
-            pendidikan_id: data.pendidikan.id.toString(),
+            pekerjaan_id: data.pekerjaan?.id?.toString() || "",
+            pendidikan_id: data.pendidikan?.id?.toString() || "",
+            ayah_id: data.ayah_id?.toString() || "",
+            ibu_id: data.ibu_id?.toString() || "",
         });
 
-        fields.value = getFields(
-            pekerjaanRes.data.data.map((item) => ({
-                value: item.id.toString(),
-                label: item.nama_pekerjaan,
-            })),
-            pendidikanRes.data.data.map((item) => ({
-                value: item.id.toString(),
-                label: item.jenjang,
-            }))
-        );
+        const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_pekerjaan,
+        }));
+
+        const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.jenjang,
+        }));
+
+        const ayahOptions = ayahRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        const ibuOptions = ibuRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nama_lengkap,
+        }));
+
+        fields.value = [
+            ...getFields(pekerjaanOptions, pendidikanOptions),
+            {
+                name: "ayah_id",
+                label: "Nama Ayah",
+                type: "select",
+                options: ayahOptions,
+                placeholder: "Pilih Ayah",
+            },
+            {
+                name: "ibu_id",
+                label: "Nama Ibu",
+                type: "select",
+                options: ibuOptions,
+                placeholder: "Pilih Ibu",
+            },
+        ];
 
         if (data.foto) {
             const [imageRes] = await Promise.all([
