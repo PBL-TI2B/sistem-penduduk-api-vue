@@ -84,6 +84,7 @@ onMounted(() => {
                     <Button
                         @click="isEditStatusDialogOpen = true"
                         variant="secondary"
+                        :disabled="item.status_validasi === 'tervalidasi'"
                     >
                         Ubah Status Validasi
                         <SquarePen />
@@ -91,6 +92,7 @@ onMounted(() => {
                     <Button
                         @click="isEditDetailDialogOpen = true"
                         variant="secondary"
+                        :disabled="item.status_validasi === 'tervalidasi'"
                     >
                         Ubah Detail Data
                         <SquarePen />

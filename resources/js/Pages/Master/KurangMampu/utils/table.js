@@ -41,7 +41,11 @@ const columnsIndex = [
     },
     {
         label: "Status Validasi",
-        key: "status_validasi"
+        key: "status_validasi",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
 ];
 

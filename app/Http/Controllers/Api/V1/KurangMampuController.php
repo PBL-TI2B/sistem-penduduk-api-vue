@@ -131,7 +131,7 @@ class KurangMampuController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal' . $validator->errors(), null, 422);
         }
 
         $kurangMampu->update($validator->validated());

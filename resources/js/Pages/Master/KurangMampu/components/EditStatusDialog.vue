@@ -77,7 +77,7 @@ watch(
                 <DialogHeader>
                     <DialogTitle>Ubah Status Validasi</DialogTitle>
                     <DialogDescription>
-                        Ubah  validasi data kurang mampu
+                        Ubah validasi data kurang mampu
                     </DialogDescription>
                 </DialogHeader>
 
@@ -106,6 +106,16 @@ watch(
                                 </SelectContent>
                             </Select>
                         </div>
+                    </div>
+                    <div
+                        v-if="status_validasi === 'tervalidasi'"
+                        class="col-span-4 text-yellow-600 text-sm mt-2"
+                    >
+                        <span>
+                            Peringatan: Jika status validasi diubah menjadi
+                            <b>Tervalidasi</b>, maka data tidak akan bisa diubah
+                            kembali.
+                        </span>
                     </div>
                 </div>
 
