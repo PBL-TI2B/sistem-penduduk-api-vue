@@ -51,7 +51,7 @@ const {
     totalPages: totalPagesKurangMampu,
     totalItems: totalItemsKurangMampu,
     search: searchKurangMampu,
-    // selectedStatusValidasi,
+    selectedStatusValidasi,
     // statusValidasiOptions,
     // imageUrl,
     fetchData: fetchDataKurangMampu,
@@ -72,6 +72,7 @@ const {
     totalPages: totalPagesBantuan,
     totalData: totalDataBantuan,
     search: searchBantuan,
+    statusBantuan,
     // selectedKategori,
     fetchBantuan: fetchDataBantuan,
     // fetchDetailBantuan,
@@ -150,6 +151,10 @@ const actionPilihBantuan = [
 ];
 
 onMounted(() => {
+    perPageBantuan.value = 5;
+    perPageKurangMampu.value = 5;
+    statusBantuan.value = "aktif";
+    selectedStatusValidasi.value = "tervalidasi";
     fetchDataKurangMampu();
     fetchDataBantuan();
     // fields.value = getFields("-");

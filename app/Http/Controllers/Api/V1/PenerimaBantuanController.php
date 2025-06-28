@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Bantuan;
 use App\Http\Resources\ApiResource;
 use App\Models\PenerimaBantuan;
+use App\Models\KurangMampu;
 use App\Http\Resources\PenerimaBantuanResource;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -69,13 +71,27 @@ class PenerimaBantuanController extends Controller
             return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
 
+        // Ambil model induk
+        $kurangMampu = KurangMampu::find($request->kurang_mampu_id);
+        $bantuan = Bantuan::find($request->bantuan_id);
+
+        // Cek status validasi pada tabel kurang_mampu
+        if ($kurangMampu->status_validasi !== 'tervalidasi') {
+            return new ApiResource(false, 'Penduduk yang dipilih harus berstatus "tervalidasi".', null, 422);
+        }
+
+        // Cek status pada tabel bantuan
+        if ($bantuan->status !== 'aktif') {
+            return new ApiResource(false, 'Bantuan yang dipilih harus berstatus "aktif".', null, 422);
+        }
+
         // Cek kombinasi kurang_mampu_id dan bantuan_id sudah ada atau belum
         $exists = PenerimaBantuan::where('kurang_mampu_id', $request->kurang_mampu_id)
             ->where('bantuan_id', $request->bantuan_id)
             ->exists();
 
         if ($exists) {
-            return new ApiResource(false, 'Data dengan Penduduk Kurang Mampu dan Bantuan yang sama sudah', null, 409);
+            return new ApiResource(false, 'Data dengan Penduduk Kurang Mampu dan Bantuan yang sama sudah ada.', null, 409);
         }
 
         $tanggal_penerimaan = Carbon::parse($request->tanggal_penerimaan)->format('Y-m-d');

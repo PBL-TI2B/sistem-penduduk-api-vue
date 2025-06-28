@@ -45,7 +45,7 @@ const columnsIndex = [
         format: (val) => val?.jumlah_tanggungan ?? "-",
     },
     {
-        label: "Tanggal Penerimaan",
+        label: "Tanggal Pengajuan",
         key: "tanggal_penerimaan",
         format: (val) => {
             if (!val) return "-";
@@ -62,25 +62,43 @@ const columnsIndex = [
     {
         label: "Status",
         key: "status",
-        format: (val) => val ?? "-",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
 ];
 
 
 const columnsCreateBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
-    { label: "Kategori",key: "kategori", },
+    {
+        label: "Kategori",
+        key: "kategori",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
     { label: "Nominal", key: "nominal",
         format: formatCurrency
     },
     { label: "Periode", key: "periode" },
     { label: "Lama Periode", key: "lama_periode" },
     { label: "Instansi", key: "instansi" },
-    { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value?? '-';
+    {
+        label: "Status",
+        key: "status",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
         },
-    },
+     },
+    // { label: "Keterangan", key: "keterangan",
+    //     format: (value) => {
+    //         return value?? '-';
+    //     },
+    // },
 ];
 
 const columnsCreateKurangMampu = [
@@ -121,7 +139,11 @@ const columnsCreateKurangMampu = [
     },
     {
         label: "Status Validasi",
-        key: "status_validasi"
+        key: "status_validasi",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
 ];
 
@@ -142,7 +164,10 @@ const columnsShowPencairan = [
     {
         label: "Status",
         key: "status",
-        format: (val) => val ?? "-",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
     {
         label: "Dibuat Pada",

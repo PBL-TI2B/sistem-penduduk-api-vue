@@ -134,12 +134,22 @@ const rowsShow = [
     { label: "Pendidikan Terakhir", key: "penduduk", format: (value) => value?.pendidikan ?? '-' },
     { label: "Nomor KK", key: "penduduk", format: (value) => value?.no_kk ?? '-' },
     { label: "Status Keluarga", key: "penduduk", format: (value) => value?.status_keluarga ?? '-' },
-    { label: "Status Perkawinan", key: "penduduk", format: (value) => value?.status_perkawinan ?? '-' },
+    {
+        label: "Status Perkawinan",
+        key: "penduduk",
+        format: (value) => {
+            const str = value?.status_perkawinan ?? '-';
+            return str.replace(/\b\w/g, c => c.toUpperCase());
+        }
+    },
     { label: "Nomor RT", key: "penduduk", format: (value) => value?.nomor_rt ?? '-' },
     { label: "Nomor RW", key: "penduduk", format: (value) => value?.nomor_rw ?? '-' },
     { label: "Nama Dusun", key: "penduduk", format: (value) => value?.nama_dusun ?? '-' },
 
-    { label: "Status Validasi", key: "status_validasi" },
+    { label: "Status Validasi", key: "status_validasi", format: (val) => {
+        const value = val ?? "-";
+        return value.replace(/\b\w/g, c => c.toUpperCase());
+    },},
     { label: "Pendapatan Per-Hari", key: "pendapatan_per_hari", format: formatCurrency },
     { label: "Pendapatan Per-Bulan", key: "pendapatan_per_bulan", format: formatCurrency },
     { label: "Jumlah Tanggungan", key: "jumlah_tanggungan", format: (value) => value ?? '0' },
