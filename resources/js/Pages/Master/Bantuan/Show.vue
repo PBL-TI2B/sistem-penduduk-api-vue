@@ -134,31 +134,51 @@ onMounted(async () => {
                     </tr>
                 </tbody>
             </table>
-            <div class="flex mt-2 gap-2 items-center justify-end">
-                <!-- <Button @click="onClickUbahStatus(uuid)">
-                    <SquarePen /> Ubah Status
-                </Button> -->
-                <Button
-                    asChild
-                    :hidden="
-                        item.status === 'aktif' ||
-                        item.penerima_bantuan_count > 0
-                    "
-                >
-                    <Link :href="route('bantuan.edit', uuid)">
-                        <SquarePen /> Ubah Data
-                    </Link>
-                </Button>
-                <Button
-                    @click="onClickDeleteButton(uuid)"
-                    :hidden="
-                        // item.status === 'aktif'
-                        // &&
-                        item.penerima_bantuan_count > 0
-                    "
-                >
-                    <Trash2 /> Hapus
-                </Button>
+            <div class="flex flex-col mt-2 gap-2">
+                <div class="flex justify-between items-end w-full">
+                    <p class="text-sm text-gray-500 mt-2">
+                        <em
+                            >*Batuan yang sudah pernah disalurkan tidak dapat
+                            dihapus atau diubah.</em
+                        >
+                        <br />
+                        <em
+                            >*Hanya batuan dengan status
+                            <span class="font-semibold text-primary"
+                                >Nonaktif</span
+                            >
+                            dan belum pernah disalurkan yang dapat diubah.
+                        </em>
+                        <br />
+                        <em
+                            >*Hanya bantuan dengan status
+                            <span class="font-semibold text-primary"
+                                >Aktif</span
+                            >
+                            yang bisa dilakukan penyaluran kepada penerima
+                            bantuan.</em
+                        >
+                    </p>
+                    <div class="flex gap-2">
+                        <Button
+                            asChild
+                            :hidden="
+                                item.status === 'aktif' ||
+                                item.penerima_bantuan_count > 0
+                            "
+                        >
+                            <Link :href="route('bantuan.edit', uuid)">
+                                <SquarePen /> Ubah Data
+                            </Link>
+                        </Button>
+                        <Button
+                            @click="onClickDeleteButton(uuid)"
+                            :hidden="item.penerima_bantuan_count > 0"
+                        >
+                            <Trash2 /> Hapus
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

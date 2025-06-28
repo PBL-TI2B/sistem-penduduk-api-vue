@@ -44,7 +44,7 @@ const rowsShowBantuan = [
     },
     {
         label: "Status", key: "status",
-        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase()) : '-',
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase())+'*' : '-',
     },
     { label: "Nominal", key: "nominal",
         format: formatCurrency
