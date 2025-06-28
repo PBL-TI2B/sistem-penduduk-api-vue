@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RiwayatBantuan;
+use App\Models\PenerimaBantuan;
 use App\Http\Resources\ApiResource;
 use App\Http\Resources\RiwayatBantuanResource;
 use Illuminate\Support\Facades\Validator;
@@ -43,14 +44,25 @@ class RiwayatBantuanController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return new ApiResource(false, 'Validasi gagal', $validator->errors());
+            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
 
         $validated = $validator->validated();
+
+        // Cek status pada tabel induk (PenerimaBantuan dan Bantuan)
+        $penerimaBantuan = PenerimaBantuan::with('bantuan')->find($validated['penerima_bantuan_id']);
+        if ($penerimaBantuan->status !== 'aktif') {
+            return new ApiResource(false, 'Pencairan tidak dapat ditambahkan karena status penerima bantuan tidak aktif.', null, 403);
+        }
+
+        if ($penerimaBantuan->bantuan->status !== 'aktif') {
+            return new ApiResource(false, 'Pencairan tidak dapat ditambahkan karena program bantuan ini tidak aktif.', null, 403);
+        }
+
         $validated['status'] = 'diproses';
         $data = RiwayatBantuan::create($validated);
 
-        return new ApiResource(true, 'Data Riwayat Bantuan berhasil ditambahkan', new RiwayatBantuanResource($data));
+        return new ApiResource(true, 'Data Riwayat Bantuan berhasil ditambahkan', new RiwayatBantuanResource($data), 201);
     }
 
     public function show(RiwayatBantuan $riwayatBantuan)
@@ -60,6 +72,10 @@ class RiwayatBantuanController extends Controller
 
     public function update(Request $request, RiwayatBantuan $riwayatBantuan)
     {
+        // Cegah update jika status sudah 'diterima'
+        if ($riwayatBantuan->status === 'diterima') {
+            return new ApiResource(false, 'Data tidak dapat diubah karena status sudah diterima', null, 403);
+        }
 
         if ($request->has('status')) {
             $validator = Validator::make($request->all(), [
