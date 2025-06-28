@@ -149,10 +149,19 @@ watch(page, () => {
                     </Badge>
                 </h2>
                 <div class="flex gap-2">
+                    <!-- ! Edit Status Penerima Bantuan -->
                     <Button
                         @click="isEditStatusPenerimaBantuanDialogOpen = true"
                         variant="secondary"
                     >
+                        <!-- <Button
+                        @click="isEditStatusPenerimaBantuanDialogOpen = true"
+                        variant="secondary"
+                        :disabled="
+                            itemPenerimaBantuan.bantuan &&
+                            itemPenerimaBantuan.bantuan.status === 'nonaktif'
+                        "
+                    > -->
                         Ubah Status
                         <SquarePen />
                     </Button>
@@ -187,6 +196,17 @@ watch(page, () => {
                     </td>
                 </tr>
             </table>
+            <p class="text-sm text-gray-500 mt-2">
+                <em
+                    >*Jika status bantuan nonaktif, perubahan data atau
+                    pencairan tidak bisa dilakukan.</em
+                >
+                <br />
+                <em
+                    >**Pencairan bantuan hanya dapat dilakukan jika status
+                    penerima adalah aktif dan status bantuan juga aktif.</em
+                >
+            </p>
         </div>
     </div>
 
@@ -196,9 +216,19 @@ watch(page, () => {
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold p-2">Riwayat Pencairan Bantuan</h2>
                 <div class="flex gap-2">
+                    <!-- <Button
+                        @click="isPencairanDialogOpen = true"
+                        variant="secondary"
+                        :disabled="itemPenerimaBantuan.status !== 'Aktif' || itemPenerimaBantuan.status !== 'aktif'"
+                    > -->
                     <Button
                         @click="isPencairanDialogOpen = true"
                         variant="secondary"
+                        :disabled="
+                            itemPenerimaBantuan.status !== 'Aktif' ||
+                            (itemPenerimaBantuan.bantuan &&
+                                itemPenerimaBantuan.bantuan.status !== 'aktif')
+                        "
                     >
                         Cairkan Bantuan
                         <PackagePlus />

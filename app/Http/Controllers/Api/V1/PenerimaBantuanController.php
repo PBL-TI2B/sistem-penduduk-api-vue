@@ -127,8 +127,23 @@ class PenerimaBantuanController extends Controller
      */
     public function update(PenerimaBantuan $penerimaBantuan, Request $request)
     {
+        $riwayatBantuan = $penerimaBantuan->loadCount('riwayatBantuan');
 
-        if ($request->has('status')) {
+        if ($riwayatBantuan->riwayat_bantuan_count > 0 && $request->has('status')) {
+            return new ApiResource(false, "Status tidak bisa diubah menjadi 'Ditolak' karena sudah pernah melakukan pencarian sebelumnya.", null, 403);
+        }
+        if ($request->has('status') && $penerimaBantuan->bantuan->status === 'nonaktif') {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'status' => 'required|in:selesai,ditolak',
+                ],
+                [
+                    'status.in' => 'Status hanya boleh diisi dengan "Selesai" atau "Ditolak" karena bantuan sudah nonaktif.',
+                ]
+            );
+            $data = $request->only('status');
+        } else if ($request->has('status')) {
             $validator = Validator::make($request->all(), [
                 'status' => 'required|in:aktif,selesai,ditolak',
             ]);
@@ -141,7 +156,7 @@ class PenerimaBantuanController extends Controller
         }
 
         if ($validator->fails()) {
-            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal, ' . $validator->errors()->first(), null, 422);
         }
         // $data = $request->only(['status', 'keterangan']);
 

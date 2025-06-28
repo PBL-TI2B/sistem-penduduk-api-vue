@@ -133,7 +133,7 @@ export function usePenerimaBantuan() {
             toast.success("Berhasil memperbarui status validasi");
             // router.visit(`/penerima-bantuan/${uuid}`);
         } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui status validasi");
+            useErrorHandler(error, "Gagal memperbarui status penerima bantuan");
         } finally {
             isLoading.value = false;
         }

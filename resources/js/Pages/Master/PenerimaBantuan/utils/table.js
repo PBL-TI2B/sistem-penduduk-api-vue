@@ -47,17 +47,7 @@ const columnsIndex = [
     {
         label: "Tanggal Pengajuan",
         key: "tanggal_penerimaan",
-        format: (val) => {
-            if (!val) return "-";
-            const date = new Date(val);
-            const hari = date.toLocaleDateString('id-ID', { weekday: 'long' });
-            const tanggal = date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-            });
-            return `${hari}, ${tanggal}`;
-        },
+        format: (val) => formatDate(val, false, true),
     },
     {
         label: "Status",
@@ -138,7 +128,7 @@ const columnsCreateKurangMampu = [
         format: (value) => value?.pendidikan ?? '-',
     },
     {
-        label: "Status Validasi",
+        label: "Status",
         key: "status_validasi",
         format: (val) => {
             const value = val ?? "-";
@@ -151,18 +141,10 @@ const columnsShowPencairan = [
     {
         label: "Tanggal Pencairan",
         key: "tanggal_penerimaan",
-        format: (val) => {
-            if (!val) return "-";
-            const date = new Date(val);
-            return date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-            });
-        },
+        format: (val) => formatDate(val, false, true),
     },
     {
-        label: "Status",
+        label: "Status Pencairan",
         key: "status",
         format: (val) => {
             const value = val ?? "-";
@@ -246,6 +228,22 @@ const rowsShow = [
         format: (val) => val?.jumlah_tanggungan ?? "-",
     },
     {
+        label: "Status Kurang Mampu",
+        key: "kurang_mampu",
+        format: (val) => {
+            const value = val?.status_validasi ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Nama Bantuan Diterima",
+        key: "bantuan",
+        format: (val, row) => {
+            const bantuan = val?.nama_bantuan || "-";
+            return bantuan.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
         label: "Kategori Bantuan",
         key: "bantuan",
         format: (val, row) => {
@@ -254,18 +252,18 @@ const rowsShow = [
         },
     },
     {
-        label: "Nama Bantuan",
+        label: "Status Bantuan",
         key: "bantuan",
         format: (val, row) => {
-            const bantuan = val?.nama_bantuan || "-";
-            return bantuan.replace(/\b\w/g, c => c.toUpperCase());
+            const kategori = val?.status || "-";
+            return kategori.replace(/\b\w/g, c => c.toUpperCase())+'*';
         },
     },
-    {
-        label: "Nominal",
-        key: "bantuan",
-        format: (val, row) => formatCurrency(val?.nominal) || "-",
-    },
+    // {
+    //     label: "Nominal",
+    //     key: "bantuan",
+    //     format: (val, row) => formatCurrency(val?.nominal) || "-",
+    // },
     {
         label: "Periode",
         key: "bantuan",
@@ -299,9 +297,12 @@ const rowsShow = [
         },
     },
     {
-        label: "Status",
+        label: "Status Penerima",
         key: "status",
-        format: (val) => val ?? "-",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase())+"**";
+        },
     },
     {
         label: "Keterangan",
@@ -323,13 +324,10 @@ const actionShowPencairan =  (onClickDeleteButton, onClickChangeStatusPencairan)
         label: "Konfirmasi Pencairan",
         icon: PencilIcon,
         class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
-        // handler: (item) => {
-        //     router.visit(route("penerima-bantuan.edit", item.uuid));
-        // },
         handler: (item) => {
             onClickChangeStatusPencairan(item);
         },
-
+        disabled: (item) => item.status === 'diterima',
     },
     {
         label: "Hapus",
