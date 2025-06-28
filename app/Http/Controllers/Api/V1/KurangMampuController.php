@@ -18,8 +18,35 @@ class KurangMampuController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+
         $perPage = $request->input('per_page', 10);
         $query = KurangMampu::query();
+
+        //! Data Scoping berdasarkan Role
+        //! Jika user adalah RT, tampilkan hanya warga di RT-nya
+        if ($user->hasRole('rt')) {
+            $rtId = $user->perangkatDesa?->rt_id;
+
+            // Jika user RT tidak terhubung dengan data perangkat desa, kembalikan data kosong.
+            if (!$rtId) {
+                return new ApiResource(true, 'Daftar Data Kurang Mampu', KurangMampu::where('id', -1)->paginate($perPage));
+            }
+
+            $query->whereHas('anggotaKeluarga.penduduk.domisili', function ($q) use ($rtId) {
+                $q->where('rt_id', $rtId);
+            });
+        }
+
+        //! Jika user adalah RW, tampilkan hanya warga di RW-nya
+        if ($user->hasRole('rw')) {
+            $rwId = $user->perangkatDesa?->rw_id;
+            if ($rwId) {
+                $query->whereHas('anggotaKeluarga.penduduk.domisili.rt', function ($q) use ($rwId) {
+                    $q->where('rw_id', $rwId);
+                });
+            }
+        }
 
         //! Filter Search
         if ($request->filled('search')) {
@@ -104,7 +131,7 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        $rules = [];
+        $user = $request->user();
         $message = 'Data Kurang Mampu berhasil diubah.';
 
         // Jika status sudah tervalidasi, tidak boleh mengubah data apapun
@@ -112,28 +139,31 @@ class KurangMampuController extends Controller
             return new ApiResource(false, 'Data tidak dapat diubah karena status sudah tervalidasi.', null, 403);
         }
 
-        // Jika ingin mengubah status_validasi saja
-        if ($request->has('status_validasi')) {
-            $rules = [
-                'status_validasi' => 'required|in:tervalidasi,ditolak'
-            ];
+        // Aturan validasi dasar yang bisa diubah oleh semua role yang berwenang
+        $rules = [
+            'pendapatan_per_hari' => 'nullable|string',
+            'pendapatan_per_bulan' => 'nullable|string',
+            'jumlah_tanggungan' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ];
+
+        //! Logika untuk role Admin dan Superadmin
+        if ($user->hasAnyRole(['admin', 'superadmin']) && $request->has('status_validasi')) {
+            $rules['status_validasi'] = 'required|in:tervalidasi,ditolak';
             $message = 'Status validasi berhasil diubah.';
-        } else {
-            // Jika ingin mengubah data lain
-            $rules = [
-                'pendapatan_per_hari' => 'nullable|string',
-                'pendapatan_per_bulan' => 'nullable|string',
-                'jumlah_tanggungan' => 'nullable|string',
-                'keterangan' => 'nullable|string',
-            ];
+
+            //! Jika role selain admin mencoba mengubah status, tolak.
+        } elseif ($request->has('status_validasi')) {
+            return new ApiResource(false, 'Anda tidak memiliki izin untuk mengubah status validasi.', null, 403);
         }
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return new ApiResource(false, 'Validasi gagal' . $validator->errors(), null, 422);
+            return new ApiResource(false, 'Validasi gagal: ' . $validator->errors()->first(), null, 422);
         }
 
+        // Update hanya data yang divalidasi untuk mencegah pembaruan field yang tidak diizinkan
         $kurangMampu->update($validator->validated());
 
         return new ApiResource(true, $message, new KurangMampuResource($kurangMampu));
