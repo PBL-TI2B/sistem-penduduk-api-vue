@@ -63,30 +63,32 @@ class KurangMampuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'pendapatan_per_hari' => 'nullable|string',
-            'pendapatan_per_bulan' => 'nullable|string',
-            'jumlah_tanggungan' => 'nullable|string',
-            // 'status_validasi' => 'required|in:belum tervalidasi,tervalidasi,ditolak',
-            'keterangan' => 'nullable|string',
-            'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'pendapatan_per_hari' => 'nullable|string',
+                'pendapatan_per_bulan' => 'nullable|string',
+                'jumlah_tanggungan' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+                'anggota_keluarga_id' => 'required|exists:anggota_keluarga,id|unique:kurang_mampu,anggota_keluarga_id'
+            ],
+            [
+                'anggota_keluarga_id.required' => 'Penduduk harus dipilih.',
+                'anggota_keluarga_id.unique' => 'Penduduk yang dipilih sudah terdaftar sebagai Kurang Mampu.',
+            ]
+        );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal, ' . $validator->errors()->first(), null, 422);
         }
 
-        $kurangMampu = KurangMampu::create([
-            'pendapatan_per_hari' => $request->pendapatan_per_hari,
-            'pendapatan_per_bulan' => $request->pendapatan_per_bulan,
-            'jumlah_tanggungan' => $request->jumlah_tanggungan ?? 0,
-            // 'status_validasi' => $request->status_validasi,
-            'status_validasi' => 'belum tervalidasi',
-            'keterangan' => $request->keterangan,
-            'anggota_keluarga_id' => $request->anggota_keluarga_id,
-        ]);
+        $dataToCreate = $validator->validated();
+        $dataToCreate['status_validasi'] = 'belum tervalidasi';
+        $dataToCreate['jumlah_tanggungan'] = $dataToCreate['jumlah_tanggungan'] ?? 0;
 
-        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', new KurangMampuResource($kurangMampu));
+        $kurangMampu = KurangMampu::create($dataToCreate);
+
+        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', new KurangMampuResource($kurangMampu), 201);
     }
 
     /**
@@ -102,37 +104,39 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'pendapatan_per_hari' => 'nullable|string',
-        //     'pendapatan_per_bulan' => 'nullable|string',
-        //     'jumlah_tanggungan' => 'nullable|string',
-        //     'status_validasi' => 'required|in:belum tervalidasi,tervalidasi,ditolak',
-        //     'keterangan' => 'nullable|string',
-        //     // 'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
-        // ]);
+        $rules = [];
+        $message = 'Data Kurang Mampu berhasil diubah.';
 
+        // Jika status sudah tervalidasi, tidak boleh mengubah data apapun
+        if ($kurangMampu->status_validasi === 'tervalidasi') {
+            return new ApiResource(false, 'Data tidak dapat diubah karena status sudah tervalidasi.', null, 403);
+        }
+
+        // Jika ingin mengubah status_validasi saja
         if ($request->has('status_validasi')) {
-            $validator = Validator::make($request->all(), [
-                'status_validasi' => 'required|in:tervalidasi,ditolak',
-            ]);
+            $rules = [
+                'status_validasi' => 'required|in:tervalidasi,ditolak'
+            ];
+            $message = 'Status validasi berhasil diubah.';
         } else {
-            $validator = Validator::make($request->all(), [
+            // Jika ingin mengubah data lain
+            $rules = [
                 'pendapatan_per_hari' => 'nullable|string',
                 'pendapatan_per_bulan' => 'nullable|string',
                 'jumlah_tanggungan' => 'nullable|string',
                 'keterangan' => 'nullable|string',
-            ]);
+            ];
         }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal', $validator->errors(), 422);
         }
 
-        $data = $request->all();
+        $kurangMampu->update($validator->validated());
 
-        $kurangMampu->update($data);
-
-        return new ApiResource(true, 'Data Kurang Mampu Berhasil Diubah', $kurangMampu);
+        return new ApiResource(true, $message, new KurangMampuResource($kurangMampu));
     }
 
     /**
