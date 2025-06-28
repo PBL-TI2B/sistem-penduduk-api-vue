@@ -44,7 +44,7 @@ class BeritaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Berita',
-            'data'    => $berita,
+            'data' => $berita,
         ]);
     }
 
@@ -94,7 +94,9 @@ class BeritaController extends Controller
     public function show(Berita $berita)
     {
         $berita = $berita->load('user');
-        $berita->increment('jumlah_dilihat');
+        if ($berita->status === 'publish') {
+            $berita->increment('jumlah_dilihat');
+        }
 
         return response()->json([
             'success' => true,
