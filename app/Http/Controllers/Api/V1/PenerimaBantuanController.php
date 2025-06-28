@@ -129,7 +129,7 @@ class PenerimaBantuanController extends Controller
     {
         $riwayatBantuan = $penerimaBantuan->loadCount('riwayatBantuan');
 
-        if ($riwayatBantuan->riwayat_bantuan_count > 0 && $request->has('status')) {
+        if ($riwayatBantuan->riwayat_bantuan_count > 0 && $request->input('status') === 'ditolak') {
             return new ApiResource(false, "Status tidak bisa diubah menjadi 'Ditolak' karena sudah pernah melakukan pencarian sebelumnya.", null, 403);
         }
         if ($request->has('status') && $penerimaBantuan->bantuan->status === 'nonaktif') {
