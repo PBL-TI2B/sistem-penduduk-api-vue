@@ -58,10 +58,10 @@ const rowsShowBantuan = [
         },
     },
     { label: "Dibuat Pada", key: "created_at",
-        format: formatDate
+        format: (value) => formatDate(value, true, true, true)
     },
     { label: "Diperbarui Pada", key: "updated_at",
-        format: formatDate
+        format: (value) => formatDate(value, true, true, true)
     },
 ];
 
