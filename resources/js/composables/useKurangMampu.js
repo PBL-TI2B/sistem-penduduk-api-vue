@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { apiGet, apiPost, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
+import Cookies from "js-cookie";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 
@@ -69,9 +70,9 @@ export function useKurangMampu() {
             const res = await apiGet(`/kurang-mampu/${uuid}`);
             item.value = res.data;
 
-            if (items.value.penduduk.foto) {
+            if (item.value.penduduk.foto) {
                 const resImage = await axios.get(
-                    `/api/v1/penduduk/foto/${items.value.foto}`,
+                    `/api/v1/penduduk/foto/${item.value.penduduk.foto}`,
                     {
                         responseType: "blob",
                         headers: {
