@@ -143,21 +143,25 @@ onMounted(async () => {
                         >
                         <br />
                         <em
-                            >*Hanya batuan dengan status
-                            <span class="font-semibold text-primary"
-                                >Nonaktif</span
-                            >
-                            dan belum pernah disalurkan yang dapat diubah.
-                        </em>
-                        <br />
-                        <em
                             >*Hanya bantuan dengan status
                             <span class="font-semibold text-primary"
-                                >Aktif</span
+                                >aktif</span
                             >
-                            yang bisa dilakukan penyaluran kepada penerima
-                            bantuan.</em
+                            yang bisa disalurkan kepada penduduk kurang
+                            mampu.</em
                         >
+                        <br />
+                        <em
+                            >*Hanya batuan dengan status
+                            <span class="font-semibold text-primary"
+                                >nonaktif</span
+                            >
+                            dan
+                            <span class="font-semibold text-primary"
+                                >belum pernah disalurkan</span
+                            >
+                            yang dapat diubah atau dihapus.
+                        </em>
                     </p>
                     <div class="flex gap-2">
                         <Button
