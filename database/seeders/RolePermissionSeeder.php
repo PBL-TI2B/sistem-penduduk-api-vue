@@ -14,10 +14,10 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $superAdmin = Role::firstOrCreate(['name' => 'superadmin']);
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $rt = Role::firstOrCreate(['name' => 'rt']);
-        $rw = Role::firstOrCreate(['name' => 'rw']);
+        $superAdmin = Role::firstOrCreate(['name' => 'superadmin', 'guard_name'=>'sanctum']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name'=>'sanctum']);
+        $rt = Role::firstOrCreate(['name' => 'rt', 'guard_name'=>'sanctum']);
+        $rw = Role::firstOrCreate(['name' => 'rw', 'guard_name'=>'sanctum']);
 
         $resources = [
             'rt', 'rw', 'desa', 'user', 'dusun', 'berita', 'galeri', 'jabatan',
