@@ -24,6 +24,8 @@ export const formSchemaPenduduk = toTypedSchema(
         pendidikan_id: z
             .string("Pendidikan harus diisi")
             .min(1, "Pendidikan tidak boleh kosong"),
+        ayah_id: z.string("Ayah harus diisi"),
+        ibu_id: z.string("Ibu harus diisi"),
     })
 );
 

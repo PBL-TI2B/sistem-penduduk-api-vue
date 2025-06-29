@@ -2,7 +2,7 @@
 <script setup>
 import { ref } from "vue";
 import { toast } from "vue-sonner";
-import { Head, router } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 
 import { apiPost } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
@@ -86,6 +86,37 @@ const handleGoBack = () => {
     </div>
 
     <div class="mt-4">
+        <div class="flex items-center justify-center my-6">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <div
+                        :class="[
+                            'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                            step >= 1
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-200 text-gray-600',
+                        ]"
+                    >
+                        1
+                    </div>
+                    <span class="ml-2 text-sm font-medium">Data Penduduk</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-200"></div>
+                <div class="flex items-center">
+                    <div
+                        :class="[
+                            'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                            step >= 2
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-200 text-gray-600',
+                        ]"
+                    >
+                        2
+                    </div>
+                    <span class="ml-2 text-sm font-medium">Data Kelahiran</span>
+                </div>
+            </div>
+        </div>
         <!-- Render PendudukForm jika step === 1 -->
         <PendudukForm
             v-if="step === 1"
