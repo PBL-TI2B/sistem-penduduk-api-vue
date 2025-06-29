@@ -72,7 +72,7 @@ class KartuKeluargaController extends Controller
     {
         // Validasi data yang diperbarui
         $validator = Validator::make($request->all(), [
-            'nomor_kk' => 'required|max:50|unique:kartu_keluarga,nomor_kk,' . $kartuKeluarga->uuid,
+            'nomor_kk' => 'required|max:50|unique:kartu_keluarga,nomor_kk,' . $kartuKeluarga->uuid . ',uuid',
             'rt_id' => 'required',
             'kode_pos' => 'required|max:50',
             'kelurahan' => 'required|max:50',
@@ -104,5 +104,22 @@ class KartuKeluargaController extends Controller
         // Hapus data Kartu Keluarga
         $kartuKeluarga->delete();
         return new ApiResource(true, 'Kartu Keluarga Berhasil Dihapus', null);
+    }
+
+    public function checkNomorKK(Request $request) 
+    {
+        $request->validate(['nomor_kk' => 'required|string']);
+
+        $query = KartuKeluarga::where('nomor_kk', $request->nomor_kk);
+
+        if ($request->filled('ignore_uuid')) {
+            $query->where('uuid', '!=', $request->ignore_uuid);
+        }
+
+        $exists = $query->exists();
+
+        return response()->json([
+            'isAvailable' => !$exists, 
+        ]);
     }
 }
