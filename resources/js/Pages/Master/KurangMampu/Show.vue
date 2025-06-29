@@ -71,13 +71,20 @@ onMounted(() => {
                 <h2 class="text-lg font-bold p-2">
                     Detail Kurang Mampu
                     <Badge variant="outline">
-                        {{ item.status_validasi }}
+                        {{
+                            item.status_validasi
+                                ? item.status_validasi
+                                      .toLowerCase()
+                                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                                : ""
+                        }}
                     </Badge>
                 </h2>
                 <div class="flex gap-2">
                     <Button
                         @click="isEditStatusDialogOpen = true"
                         variant="secondary"
+                        :disabled="item.status_validasi === 'tervalidasi'"
                     >
                         Ubah Status Validasi
                         <SquarePen />
@@ -85,6 +92,7 @@ onMounted(() => {
                     <Button
                         @click="isEditDetailDialogOpen = true"
                         variant="secondary"
+                        :disabled="item.status_validasi === 'tervalidasi'"
                     >
                         Ubah Detail Data
                         <SquarePen />
@@ -155,12 +163,22 @@ onMounted(() => {
     <EditStatusDialog
         v-model:isOpen="isEditStatusDialogOpen"
         :initial-data="item"
-        @success="fetchDetailData(uuid)"
+        @success="
+            () => {
+                fetchDetailData(uuid);
+                isEditStatusDialogOpen = false;
+            }
+        "
     />
 
     <EditDetailDialog
         v-model:isOpen="isEditDetailDialogOpen"
         :initial-data="item"
-        @success="fetchDetailData(uuid)"
+        @success="
+            () => {
+                fetchDetailData(uuid);
+                isEditDetailDialogOpen = false;
+            }
+        "
     />
 </template>

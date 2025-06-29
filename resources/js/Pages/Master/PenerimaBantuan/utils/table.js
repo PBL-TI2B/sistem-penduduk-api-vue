@@ -42,47 +42,56 @@ const columnsIndex = [
     {
         label: "Tanggungan",
         key: "kurang_mampu",
-        format: (val) => val.jumlah_tanggungan ?? "-",
+        format: (val) => val?.jumlah_tanggungan ?? "-",
     },
     {
-        label: "Tanggal Penerimaan",
+        label: "Tanggal Pengajuan",
         key: "tanggal_penerimaan",
-        format: (val) => {
-            if (!val) return "-";
-            const date = new Date(val);
-            const hari = date.toLocaleDateString('id-ID', { weekday: 'long' });
-            const tanggal = date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-            });
-            return `${hari}, ${tanggal}`;
-        },
+        format: (val) => formatDate(val, false, true),
     },
     {
-        label: "Status Bantuan",
+        label: "Status",
         key: "status",
-        format: (val) => val ?? "-",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
 ];
 
-const columnsIndexBantuan = [
+
+const columnsCreateBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
-    { label: "Kategori",key: "kategori", },
+    {
+        label: "Kategori",
+        key: "kategori",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
     { label: "Nominal", key: "nominal",
         format: formatCurrency
     },
     { label: "Periode", key: "periode" },
     { label: "Lama Periode", key: "lama_periode" },
     { label: "Instansi", key: "instansi" },
-    { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value?? '-';
+    {
+        label: "Status",
+        key: "status",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
         },
-    },
+     },
+    // { label: "Keterangan", key: "keterangan",
+    //     format: (value) => {
+    //         return value?? '-';
+    //     },
+    // },
 ];
 
-const columnsIndexKurangMampu = [
+const columnsCreateKurangMampu = [
    {
         label: "Nama Penduduk",
         key: "penduduk",
@@ -119,11 +128,50 @@ const columnsIndexKurangMampu = [
         format: (value) => value?.pendidikan ?? '-',
     },
     {
-        label: "Status Validasi",
-        key: "status_validasi"
+        label: "Status",
+        key: "status_validasi",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
     },
 ];
 
+const columnsShowPencairan = [
+    {
+        label: "Tanggal Pencairan",
+        key: "tanggal_penerimaan",
+        format: (val) => formatDate(val, false, true),
+    },
+    {
+        label: "Status Pencairan",
+        key: "status",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Dibuat Pada",
+        key: "created_at",
+        format: formatDate,
+
+    },
+    {
+        label: "Keterangan",
+        key: "keterangan",
+        format: (val) => val ?? "-",
+    },
+    // {
+    //     label: "Diperbarui Pada",
+    //     key: "updated_at",
+    //     format: (val) => {
+    //         if (!val) return "-";
+    //         const date = new Date(val);
+    //         return date.toLocaleString('id-ID');
+    //     },
+    // },
+];
 
 const actionsIndex =  (onClickDeleteButton) => [
     {
@@ -161,17 +209,148 @@ const actionsIndex =  (onClickDeleteButton) => [
 
 const rowsShow = [
 //     { label: "Nama Bantuan", key: "nama_bantuan" },
-//     {
-//         label: "Kategori",
-//         key: "anggota_keluarga",
-//         format: (val, row) => row.anggota_keluarga?.kategori || "-",
-//     },
-//     { label: "Nominal (Rp.)", key: "nominal" },
-//     { label: "Periode", key: "periode" },
-//     { label: "Lama Periode", key: "lama_periode" },
-//     { label: "Instansi", key: "instansi" },
-//     { label: "Keterangan", key: "keterangan" },
+    {
+    label: "Nama Lengkap",
+    key: "kurang_mampu",
+    format: (val, row) => {
+        const nama = val?.penduduk.nama_lengkap || "-";
+            return nama.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "NIK",
+        key: "kurang_mampu",
+        format: (val, row) => val?.penduduk.nik || "-",
+    },
+    {
+        label: "Tanggungan",
+        key: "kurang_mampu",
+        format: (val) => val?.jumlah_tanggungan ?? "-",
+    },
+    {
+        label: "Status Kurang Mampu",
+        key: "kurang_mampu",
+        format: (val) => {
+            const value = val?.status_validasi ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Nama Bantuan Diterima",
+        key: "bantuan",
+        format: (val, row) => {
+            const bantuan = val?.nama_bantuan || "-";
+            return bantuan.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Kategori Bantuan",
+        key: "bantuan",
+        format: (val, row) => {
+            const kategori = val?.kategori || "-";
+            return kategori.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Status Bantuan",
+        key: "bantuan",
+        format: (val, row) => {
+            const kategori = val?.status || "-";
+            return kategori.replace(/\b\w/g, c => c.toUpperCase())+'*';
+        },
+    },
+    // {
+    //     label: "Nominal",
+    //     key: "bantuan",
+    //     format: (val, row) => formatCurrency(val?.nominal) || "-",
+    // },
+    {
+        label: "Periode",
+        key: "bantuan",
+        format: (val, row) => {
+        const periode = val?.periode || "-";
+            return periode.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Lama Periode",
+        key: "bantuan",
+        format: (val, row) => {
+            const lama = val?.lama_periode || "-";
+            return lama.replace(/\b\w/g, c => c.toUpperCase());
+        },
+    },
+    {
+        label: "Tanggal Pengajuan",
+        key: "tanggal_penerimaan",
+        // format: (val) => formatDate(val, false),
+        format: (val) => {
+            if (!val) return "-";
+            const date = new Date(val);
+            const hari = date.toLocaleDateString('id-ID', { weekday: 'long' });
+            const tanggal = date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+            });
+            return `${hari}, ${tanggal}`;
+        },
+    },
+    {
+        label: "Status Penerima",
+        key: "status",
+        format: (val) => {
+            const value = val ?? "-";
+            return value.replace(/\b\w/g, c => c.toUpperCase())+"**";
+        },
+    },
+    {
+        label: "Keterangan",
+        key: "keterangan",
+        format: (val) => val ?? "-",
+    },
 ];
 
-
-export { columnsIndex, columnsIndexBantuan, columnsIndexKurangMampu, actionsIndex, rowsShow };
+const actionShowPencairan =  (onClickDeleteButton, onClickChangeStatusPencairan) => [
+    // {
+    //     label: "Kelola",
+    //     icon: Eye,
+    //     class: "bg-blue-500 hover:bg-blue-600 text-white", // warna biru untuk lihat
+    //     handler: (item) => {
+    //         router.visit(route("penerima-bantuan.show", item.uuid));
+    //     },
+    // },
+    {
+        label: "Konfirmasi Pencairan",
+        icon: PencilIcon,
+        class: "bg-yellow-500 hover:bg-yellow-600 text-white", // warna kuning untuk edit
+        handler: (item) => {
+            onClickChangeStatusPencairan(item);
+        },
+        disabled: (item) => item.status === 'diterima',
+    },
+    {
+        label: "Hapus",
+        icon: Trash2Icon,
+        class: "bg-red-500 hover:bg-red-600 text-white", // warna merah untuk hapus
+        disabled: (item) => item.riwayat_bantuan_count > 0,
+        // handler: (item) => {
+        //     if (confirm("Yakin ingin menghapus data ini?")) {
+        //         router.delete(route("penerima-bantuan.destroy", item.uuid));
+        //     }
+        // },
+        // handler bisa diisi di tempat penggunaan
+        handler: (item) => {
+            onClickDeleteButton(item.uuid);
+        },
+    },
+];
+export {
+    columnsIndex,
+    columnsCreateBantuan as columnsIndexBantuan,
+    columnsCreateKurangMampu as columnsIndexKurangMampu,
+    columnsShowPencairan as columnsIndexPencairan,
+    rowsShow,
+    actionsIndex,
+    actionShowPencairan,
+};

@@ -10,11 +10,22 @@ export const formatCurrency = (value) => {
 };
 
 
-export const formatDate = (value, withTime = true) => {
+export const formatDate = (value, withTime = true, withDayName = false, withSeconds = false) => {
     if (value == null || value === '') return '-';
-    return new Date(value).toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        ...(withTime ? { timeStyle: 'short' } : {})
-    });
-
+    const date = new Date(value);
+    const tanggal = date.getDate();
+    const bulan = date.toLocaleDateString('id-ID', { month: 'long' });
+    const tahun = date.getFullYear();
+    const hari = withDayName ? date.toLocaleDateString('id-ID', { weekday: 'long' }) + ', ' : '';
+    let waktu = ' ';
+    if (withTime) {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        waktu = ` - ${hours}:${minutes}`;
+        if (withSeconds) {
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            waktu += `:${seconds}`;
+        }
+    }
+    return `${hari}${tanggal} ${bulan} ${tahun} ${waktu}`;
 };

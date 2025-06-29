@@ -53,6 +53,7 @@ const {
     perPage,
     search,
     selectedKategori,
+    statusBantuan,
     isLoading,
     fetchBantuan,
     deleteBantuan,
@@ -146,6 +147,7 @@ const applyFilter = () => {
 const resetFilter = () => {
     search.value = "";
     selectedKategori.value = "";
+    statusBantuan.value = "";
     applyFilter();
 };
 const clearSearchBantuan = () => {
@@ -271,6 +273,29 @@ const actionsKategori = actionsIndexKategori({
                 </div>
                 <div class="flex gap-2 items-center">
                     <!-- <Label for="kategori">Kategori:</Label> -->
+                    <Select
+                        v-model="statusBantuan"
+                        @update:modelValue="applyFilter"
+                        id="kategori"
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Status</SelectLabel>
+                                <SelectItem key="-" value="-">
+                                    Semua
+                                </SelectItem>
+                                <SelectItem key="aktif" value="aktif">
+                                    Aktif
+                                </SelectItem>
+                                <SelectItem key="nonaktif" value="nonaktif">
+                                    Nonaktif
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                     <Select
                         v-model="selectedKategori"
                         @update:modelValue="applyFilter"

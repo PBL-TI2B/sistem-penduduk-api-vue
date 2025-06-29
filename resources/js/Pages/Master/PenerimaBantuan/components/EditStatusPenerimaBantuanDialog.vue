@@ -18,7 +18,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import Label from "@/components/ui/label/Label.vue";
-import { useKurangMampu } from "@/composables/useKurangMampu";
+import { usePenerimaBantuan } from "@/composables/usePenerimaBantuan";
 
 const props = defineProps({
     isOpen: Boolean,
@@ -32,25 +32,25 @@ const emit = defineEmits(["update:isOpen", "success"]);
 
 const { handleSubmit, resetForm, setValues, values } = useForm({
     initialValues: {
-        status_validasi: "",
+        status: "",
     },
 });
 
-const status_validasi = computed({
-    get: () => values.status_validasi,
-    set: (val) => setValues({ status_validasi: val }),
+const status = computed({
+    get: () => values.status,
+    set: (val) => setValues({ status: val }),
 });
 
 const isFormValid = computed(() => {
-    return status_validasi.value !== "belum tervalidasi";
+    return status.value !== "belum tervalidasi";
 });
 
-const { editStatusValidasi, isLoading } = useKurangMampu();
+const { editStatusPenerimaanBantuan, isLoading } = usePenerimaBantuan();
 
 const onSubmit = handleSubmit(async (formValues) => {
-    await editStatusValidasi(
+    await editStatusPenerimaanBantuan(
         props.initialData.uuid,
-        formValues.status_validasi
+        formValues.status
     );
     emit("success");
 });
@@ -60,7 +60,7 @@ watch(
     (isOpen) => {
         if (isOpen) {
             setValues({
-                status_validasi: props.initialData.status_validasi || "",
+                status: props.initialData.status || "",
             });
         } else {
             resetForm();
@@ -75,47 +75,36 @@ watch(
         <DialogContent class="sm:max-w-[425px]">
             <form @submit.prevent="onSubmit">
                 <DialogHeader>
-                    <DialogTitle>Ubah Status Validasi</DialogTitle>
-                    <DialogDescription>
-                        Ubah validasi data kurang mampu
-                    </DialogDescription>
+                    <DialogTitle>Ubah Status</DialogTitle>
+                    <!-- <DialogDescription>
+                        Ubah status penerima bantuan
+                    </DialogDescription> -->
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
                     <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="status_validasi" class="text-right">
-                            Status Validasi
-                        </Label>
+                        <Label for="status" class="text-right"> Status </Label>
                         <div class="col-span-3">
-                            <Select v-model="status_validasi">
+                            <Select v-model="status">
                                 <SelectTrigger>
-                                    <SelectValue
-                                        placeholder="Status Validasi"
-                                    />
+                                    <SelectValue placeholder="Status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="tervalidasi">
-                                        Tervalidasi
-                                    </SelectItem>
-                                    <!-- <SelectItem value="belum tervalidasi">
-                                        Belum Tervalidasi
+                                    <!-- <SelectItem value="diajukan">
+                                        Diajukan
                                     </SelectItem> -->
+                                    <SelectItem value="aktif">
+                                        Aktif
+                                    </SelectItem>
+                                    <SelectItem value="selesai">
+                                        Selesai
+                                    </SelectItem>
                                     <SelectItem value="ditolak">
                                         Ditolak
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
-                    </div>
-                    <div
-                        v-if="status_validasi === 'tervalidasi'"
-                        class="col-span-4 text-yellow-600 text-sm mt-2"
-                    >
-                        <span>
-                            Peringatan: Jika status validasi diubah menjadi
-                            <b>Tervalidasi</b>, maka data tidak akan bisa diubah
-                            kembali.
-                        </span>
                     </div>
                 </div>
 

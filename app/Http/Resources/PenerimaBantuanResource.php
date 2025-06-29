@@ -56,6 +56,8 @@ class PenerimaBantuanResource extends JsonResource
             // 'instansi'            => $this->bantuan?->instansi,
             // 'keterangan'          => $this->bantuan?->keterangan,
 
+            // 'riwayat_bantuan' => new RiwayatBantuanResource($this->whenLoaded('riwayat_bantuan')),
+
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
