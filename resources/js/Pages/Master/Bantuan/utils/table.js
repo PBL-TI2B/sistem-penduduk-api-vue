@@ -6,37 +6,45 @@ import { formatCurrency, formatDate } from "@/composables/formatData";
 // Table Index
 const columnsIndexBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
-    { label: "Kategori",key: "kategori", },
+    { label: "Kategori", key: "kategori",
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase()) : '-',
+    },
     { label: "Nominal", key: "nominal",
         format: formatCurrency
     },
     { label: "Periode", key: "periode" },
     { label: "Lama Periode", key: "lama_periode" },
     { label: "Instansi", key: "instansi" },
-    { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value?? '-';
-        },
+    {
+        label: "Status", key: "status",
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase()) : '-',
     },
+    // { label: "Keterangan", key: "keterangan",
+    //     format: (value) => {
+    //         return value?? '-';
+    //     },
+    // },
 ];
 
 // Table Index
 const columnsIndexKategori = [
-    { label: "Kategori Bantuan", key: "kategori" },
+    { label: "Nama Kategori", key: "kategori",
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase()) : '-',
+    },
     { label: "Keterangan", key: "keterangan",
-        format: (value) => {
-            return value? '' || null : '-';
-        },
+        format: (value) => value ? value : '-',
     },
 ];
 
 // Row Show
-const rowsIndexBantuan = [
+const rowsShowBantuan = [
     { label: "Nama Bantuan", key: "nama_bantuan" },
+    { label: "Kategori Bantuan", key: "kategori",
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase()) : '-',
+    },
     {
-        label: "Kategori Bantuan",
-        key: "kategori",
-        // format: (val, row) => val?.kategori || "-",
+        label: "Status", key: "status",
+        format: (value) => value ? value.replace(/\b\w/g, c => c.toUpperCase())+'*' : '-',
     },
     { label: "Nominal", key: "nominal",
         format: formatCurrency
@@ -50,10 +58,10 @@ const rowsIndexBantuan = [
         },
     },
     { label: "Dibuat Pada", key: "created_at",
-        format: formatDate
+        format: (value) => formatDate(value, true, true, true)
     },
     { label: "Diperbarui Pada", key: "updated_at",
-        format: formatDate
+        format: (value) => formatDate(value, true, true, true)
     },
 ];
 
@@ -67,13 +75,13 @@ const actionsIndexBantuan = (
             router.visit(route("bantuan.show", item.uuid));
         },
     },
-    {
-        label: "Ubah",
-        icon: SquarePen,
-        handler: (item) => {
-            router.visit(route("bantuan.edit", item.uuid));
-        },
-    },
+    // {
+    //     label: "Ubah",
+    //     icon: SquarePen,
+    //     handler: (item) => {
+    //         router.visit(route("bantuan.edit", item.uuid));
+    //     },
+    // },
     {
         label: "Hapus",
         icon: Trash2,
@@ -119,7 +127,7 @@ const actionsIndexKategori = ({
 export {
     columnsIndexBantuan,
     columnsIndexKategori,
-    rowsIndexBantuan,
+    rowsShowBantuan as rowsIndexBantuan,
     actionsIndexBantuan,
     actionsIndexKategori,
 };

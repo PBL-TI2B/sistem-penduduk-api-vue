@@ -16,11 +16,14 @@ class RiwayatBantuanResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'uuid' => $this->uuid,
             'penerima_bantuan_id' => $this->penerima_bantuan_id,
-            'status_pencairan' => $this->status_pencairan,
-            'tanggal' => $this->tanggal,
-            'dokumentasi' => $this->dokumentasi,
+            'status' => $this->status,
+            'tanggal_penerimaan' => $this->tanggal_penerimaan,
+            // 'dokumentasi' => $this->dokumentasi,
             'keterangan' => $this->keterangan,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
 
             // Relasi ke penerima bantuan
             'penerima_bantuan' => new PenerimaBantuanResource($this->whenLoaded('penerimaBantuan')),

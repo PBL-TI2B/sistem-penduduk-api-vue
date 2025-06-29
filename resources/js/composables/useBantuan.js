@@ -14,6 +14,7 @@ export function useBantuan() {
     const totalData = ref(0);
     const search = ref(null);
     const selectedKategori = ref(null);
+    const statusBantuan = ref(null);
 
     // Fetch list bantuan
     const fetchBantuan = async () => {
@@ -27,6 +28,9 @@ export function useBantuan() {
             };
             if (selectedKategori.value && selectedKategori.value !== "-") {
                 params.kategori_bantuan_id = selectedKategori.value;
+            }
+            if (statusBantuan.value && statusBantuan.value !== "-") {
+                params.status = statusBantuan.value;
             }
             const res = await apiGet("/bantuan", params);
             items.value = res.data.data;
@@ -67,7 +71,7 @@ export function useBantuan() {
             }
             await apiPost("/bantuan", values);
             toast.success("Berhasil Tambah Data Bantuan");
-            router.visit("/bantuan");
+            router.visit(`/admin/bantuan`);
         } catch (error) {
             useErrorHandler(error, "Gagal menyimpan data bantuan");
         } finally {
@@ -75,8 +79,8 @@ export function useBantuan() {
         }
     };
 
-    // Edit bantuan
-    const editBantuan = async (uuid, values) => {
+    // Edit data bantuan
+    const editDataBantuan = async (uuid, values) => {
         try {
             isLoading.value = true;
 
@@ -87,9 +91,28 @@ export function useBantuan() {
             }
             await apiPost(`/bantuan/${uuid}`, formData);
             toast.success("Berhasil memperbarui data bantuan");
-            router.visit("/bantuan");
+            router.visit(`/admin/bantuan/${uuid}`);
+
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui data bantuan");
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    const editStatusBantuan = async (uuid, status) => {
+        try {
+            isLoading.value = true;
+
+            const formData = new FormData();
+            formData.append("_method", "PUT");
+            formData.append("status", status ?? "");
+
+            await apiPost(`/bantuan/${uuid}`, formData);
+            toast.success("Berhasil memperbarui status bantuan");
+            // router.visit(`/riwayat-bantuan/${uuid}`);
+        } catch (error) {
+            useErrorHandler(error, "Gagal memperbarui status bantuan");
         } finally {
             isLoading.value = false;
         }
@@ -101,7 +124,7 @@ export function useBantuan() {
             // isLoading.value = true;
             await apiDelete(`/bantuan/${uuid}`);
             toast.success("Berhasil menghapus bantuan");
-            router.visit("/bantuan");
+            router.visit("/admin/bantuan");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus bantuan");
         } finally {
@@ -119,10 +142,12 @@ export function useBantuan() {
         totalData,
         search,
         selectedKategori,
+        statusBantuan,
         fetchBantuan,
         fetchDetailBantuan,
         createBantuan,
-        editBantuan,
+        editBantuan: editDataBantuan,
+        editStatusBantuan,
         deleteBantuan,
     };
 }
