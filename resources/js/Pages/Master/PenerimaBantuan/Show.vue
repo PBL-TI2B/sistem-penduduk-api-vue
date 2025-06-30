@@ -37,6 +37,7 @@ const {
     fetchDetailData: fetchDetailPenerimaBantuan,
     // editStatusBantuan,
     // editDetailData,
+    deleteData: deleteDataPenerimaBantuan,
 } = usePenerimaBantuan();
 
 const {
@@ -53,26 +54,46 @@ const {
 
 const isEditStatusPenerimaBantuanDialogOpen = ref(false, itemPenerimaBantuan);
 const isEditStatusPencairanDialogOpen = ref(false, item);
-const isAlertDeleteOpen = ref(false);
 const isPencairanDialogOpen = ref(false);
 
-//! Handle Delete
-const selectedUuid = ref(null);
+//! Handle Delete Penerima
+const selectedUuidPenerima = ref(null);
+const isAlertDeletePenerimaOpen = ref(false);
 
-const onClickDeleteButton = (uuid) => {
-    selectedUuid.value = uuid;
-    isAlertDeleteOpen.value = true;
+const onClickDeletePenerimaButton = (uuid) => {
+    selectedUuidPenerima.value = uuid;
+    isAlertDeletePenerimaOpen.value = true;
 };
-const onCancelDelete = () => {
-    isAlertDeleteOpen.value = false;
-    selectedUuid.value = null;
+const onCancelDeletePenerima = () => {
+    isAlertDeletePenerimaOpen.value = false;
+    selectedUuidPenerima.value = null;
 };
-const onConfirmDelete = async () => {
-    if (selectedUuid.value) {
-        await deleteData(selectedUuid.value);
+const onConfirmDeletePenerima = async () => {
+    if (selectedUuidPenerima.value) {
+        await deleteDataPenerimaBantuan(selectedUuidPenerima.value);
+        // isAlertDeletePenerimaOpen.value = false;
+        // selectedUuidPenerima.value = null;
+    }
+};
+
+//! Handle Delete Riwayat
+const selectedUuidRiwayat = ref(null);
+const isAlertDeleteRiwayatOpen = ref(false);
+
+const onClickDeleteRiwayatButton = (uuid) => {
+    selectedUuidRiwayat.value = uuid;
+    isAlertDeleteRiwayatOpen.value = true;
+};
+const onCancelDeleteRiwayat = () => {
+    isAlertDeleteRiwayatOpen.value = false;
+    selectedUuidRiwayat.value = null;
+};
+const onConfirmDeleteRiwayat = async () => {
+    if (selectedUuidRiwayat.value) {
+        await deleteData(selectedUuidRiwayat.value);
         await fetchDataPencairan(idPenerimaBantuan.value);
-        isAlertDeleteOpen.value = false;
-        selectedUuid.value = null;
+        isAlertDeleteRiwayatOpen.value = false;
+        selectedUuidRiwayat.value = null;
     }
 };
 
@@ -86,7 +107,7 @@ const onClickChangeStatusPencairan = (item) => {
 
 // Setting Action Buttons Pencairan
 const actionPencairan = actionShowPencairan(
-    onClickDeleteButton,
+    onClickDeleteRiwayatButton,
     onClickChangeStatusPencairan
 );
 
@@ -162,16 +183,20 @@ watch(page, () => {
                             itemPenerimaBantuan.bantuan.status === 'nonaktif'
                         "
                     > -->
+                        <SquarePen />
                         Ubah Status
-                        <SquarePen />
                     </Button>
-                    <!-- <Button
-                        @click="isEditStatusPencairanDialogOpen = true"
-                        variant="secondary"
+                    <Button
+                        :disabled="
+                            itemPenerimaBantuan.status ===
+                                ('Aktif' || 'aktif') ||
+                            itemPenerimaBantuan.riwayat_bantuan_count > 0
+                        "
+                        @click="onClickDeletePenerimaButton(uuid)"
                     >
-                        Ubah Keterangan
-                        <SquarePen />
-                    </Button> -->
+                        <Trash2 />
+                        Hapus
+                    </Button>
                 </div>
             </div>
 
@@ -272,11 +297,18 @@ watch(page, () => {
         "
     />
     <AlertDialog
-        v-model:isOpen="isAlertDeleteOpen"
+        v-model:isOpen="isAlertDeleteRiwayatOpen"
         title="Hapus Riwayat Pencairan Bantuan"
         description="Apakah anda yakin ingin menghapus?"
-        :onConfirm="onConfirmDelete"
-        :onCancel="onCancelDelete"
+        :onConfirm="onConfirmDeleteRiwayat"
+        :onCancel="onCancelDeleteRiwayat"
+    />
+    <AlertDialog
+        v-model:isOpen="isAlertDeletePenerimaOpen"
+        title="Hapus Penerima Bantuan"
+        description="Apakah anda yakin ingin menghapus?"
+        :onConfirm="onConfirmDeletePenerima"
+        :onCancel="onCancelDeletePenerima"
     />
     <CreatePencairanDialog
         v-if="idPenerimaBantuan"
