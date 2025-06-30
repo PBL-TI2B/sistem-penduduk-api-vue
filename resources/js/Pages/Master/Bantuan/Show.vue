@@ -109,7 +109,10 @@ onMounted(async () => {
                     </Badge>
                 </h2>
 
-                <Button @click="onClickEditStatusButton(uuid)">
+                <Button
+                    variant="secondary"
+                    @click="onClickEditStatusButton(uuid)"
+                >
                     <SquarePen />
                     {{ labelButtonStatus }}
                 </Button>
@@ -164,23 +167,32 @@ onMounted(async () => {
                         </em>
                     </p>
                     <div class="flex gap-2">
-                        <Button
-                            asChild
-                            :hidden="
-                                item.status === 'aktif' ||
-                                item.penerima_bantuan_count > 0
+                        <template
+                            v-if="
+                                item.penerima_bantuan_count === 0 &&
+                                item.status !== 'aktif'
                             "
                         >
-                            <Link :href="route('bantuan.edit', uuid)">
-                                <SquarePen /> Ubah Data
+                            <Link
+                                :href="route('bantuan.edit', uuid)"
+                                class="inline-flex"
+                            >
+                                <Button variant="secondary" type="button">
+                                    <SquarePen /> Ubah Data
+                                </Button>
                             </Link>
-                        </Button>
-                        <Button
-                            @click="onClickDeleteButton(uuid)"
-                            :hidden="item.penerima_bantuan_count > 0"
-                        >
-                            <Trash2 /> Hapus
-                        </Button>
+                            <Button @click="onClickDeleteButton(uuid)">
+                                <Trash2 /> Hapus
+                            </Button>
+                        </template>
+                        <template v-else>
+                            <Button variant="secondary" type="button" disabled>
+                                <SquarePen /> Ubah Data
+                            </Button>
+                            <Button type="button" disabled>
+                                <Trash2 /> Hapus
+                            </Button>
+                        </template>
                     </div>
                 </div>
             </div>

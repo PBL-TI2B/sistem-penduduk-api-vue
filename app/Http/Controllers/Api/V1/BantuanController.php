@@ -152,7 +152,10 @@ class BantuanController extends Controller
     public function destroy(Bantuan $bantuan)
     {
         $bantuan->loadCount('penerimaBantuan');
-        if ($bantuan->status !== 'nonaktif' && $bantuan->penerima_bantuan_count > 0) {
+        if (
+            $bantuan->status !== 'nonaktif'
+            || $bantuan->penerima_bantuan_count > 0
+        ) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data hanya dapat dihapus jika status nonaktif atau belum memiliki penerima.',

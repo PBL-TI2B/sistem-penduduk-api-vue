@@ -88,7 +88,7 @@ const actionsIndexBantuan = (
         handler: (item) => {
             onClickDeleteBantuanButton(item.uuid);
         },
-        disabled: (item) => item.penerima_bantuan_count > 0,
+        disabled: (item) => (item.status === "aktif" || Number(item.penerima_bantuan_count) > 0) ?? false,
     },
 ];
 
