@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -15,14 +14,25 @@ class StatusKeluargaSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('status_keluarga')->insert([
-            [
-                'id' => 1,
+        $statusKeluarga = [
+            'Kepala Keluarga',
+            'Istri',
+            'Anak',
+            'Orang Tua',
+            'Menantu',
+            'Cucu',
+            'Famili Lain',
+            'Pembantu',
+        ];
+
+        foreach ($statusKeluarga as $index => $status) {
+            DB::table('status_keluarga')->insert([
+                'id' => $index + 1,
                 'uuid' => Str::uuid(),
-                'status_keluarga' => 'Kepala Keluarga',
+                'status_keluarga' => $status,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ]
-        ]);
+            ]);
+        }
     }
 }
