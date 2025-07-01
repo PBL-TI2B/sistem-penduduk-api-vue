@@ -116,4 +116,19 @@ class AnggotaKeluargaController extends Controller
         $pdf = Pdf::loadView('exports.anggota-keluarga', compact('anggotaKeluarga'));
         return $pdf->download('anggota-keluarga.pdf');
     }
+
+    public function storeBatch(Request $request)
+    {
+        $data = $request->all();
+
+        foreach ($data as $item) {
+            AnggotaKeluarga::create([
+                'kk_id' => $item['kk_id'],
+                'penduduk_id' => $item['penduduk_id'],
+                'status_keluarga_id' => $item['status_keluarga_id'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Anggota keluarga ditambahkan'], 201);
+    }
 }

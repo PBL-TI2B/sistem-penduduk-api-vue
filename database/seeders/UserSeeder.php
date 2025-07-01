@@ -28,8 +28,8 @@ class UserSeeder extends Seeder
             'id' => 1,
             'uuid' => (string) Str::uuid(),
             'username' => 'superadmin',
-            'password' => Hash::make('password'),
-            'status' => 'AKTIF',
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
             'perangkat_id' => null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -44,8 +44,8 @@ class UserSeeder extends Seeder
             'id' => 2,
             'uuid' => (string) Str::uuid(),
             'username' => 'admin',
-            'password' => Hash::make('password'),
-            'status' => 'AKTIF',
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
             'perangkat_id' => null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -56,33 +56,59 @@ class UserSeeder extends Seeder
 
     private function createUserRt()
     {
-        $user = User::create([
+        // User untuk Ketua RT 001
+        $userRt1 = User::create([
             'id' => 3,
             'uuid' => (string) Str::uuid(),
             'username' => 'rt001',
-            'password' => Hash::make('password'),
-            'status' => 'AKTIF',
-            'perangkat_id' => 1,
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
+            'perangkat_id' => 1, // Terhubung ke perangkat_desa.id = 1
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
+        $userRt1->assignRole('rt');
 
-        $user->assignRole('rt');
+        // User untuk Ketua RT 002
+        $userRt2 = User::create([
+            'id' => 4,
+            'uuid' => (string) Str::uuid(),
+            'username' => 'rt002',
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
+            'perangkat_id' => 2, // Terhubung ke perangkat_desa.id = 2
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+        $userRt2->assignRole('rt');
     }
 
     private function createUserRw()
     {
-        $user = User::create([
-            'id' => 4,
+        $userRw1 = User::create([
+            'id' => 5,
             'uuid' => (string) Str::uuid(),
             'username' => 'rw001',
-            'password' => Hash::make('password'),
-            'status' => 'AKTIF',
-            'perangkat_id' => 1,
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
+            'perangkat_id' => 3, // Terhubung ke perangkat_desa.id = 3
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
-        $user->assignRole('rw');
+        $userRw1->assignRole('rw');
+
+        $userRw2 = User::create([
+            'id' => 6,
+            'uuid' => (string) Str::uuid(),
+            'username' => 'rw002',
+            'password' => Hash::make('password'), // Ganti di production
+            'status' => 'aktif',
+            'perangkat_id' => 4, // Terhubung ke perangkat_desa.id = 4
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $userRw2->assignRole('rw');
     }
 }

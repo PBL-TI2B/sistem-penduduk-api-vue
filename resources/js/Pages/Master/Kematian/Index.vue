@@ -3,7 +3,15 @@ import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet } from "@/utils/api";
 import { columnsIndex } from "./utils/table";
-import { Funnel, PackagePlus, SearchIcon, XIcon } from "lucide-vue-next";
+import {
+    Eye,
+    Funnel,
+    SearchIcon,
+    XIcon,
+    SquarePen,
+    SquarePlus,
+    Trash2,
+} from "lucide-vue-next";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -11,9 +19,9 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import FormDialogKematian from "./components/FormDialogKematian.vue";
-import { SquarePen, SquarePlus, Trash2 } from "lucide-vue-next";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 import { useKematian } from "@/composables/useKematian";
+import { router } from "@inertiajs/vue3";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -34,6 +42,13 @@ const selectedUuid = ref(null);
 const searchKematian = ref("");
 
 const actionsIndex = (onClickDeleteBantuanButton) => [
+    {
+        label: "Penduduk",
+        icon: Eye,
+        handler: (item) => {
+            router.visit(route("penduduk.show", item.penduduk.uuid));
+        },
+    },
     {
         label: "Ubah",
         icon: SquarePen,

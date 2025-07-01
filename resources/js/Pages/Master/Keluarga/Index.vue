@@ -55,7 +55,6 @@ onMounted(() => {
             />
         </div>
         <div class="flex flex-wrap gap-4 items-center">
-            <Button @click=""> <SquarePlus /> Keluarga </Button>
             <Button asChild>
                 <Link
                     :href="route('keluarga.create')"

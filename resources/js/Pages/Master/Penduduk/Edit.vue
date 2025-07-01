@@ -81,8 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
         resetForm();
 
         toast.success("Berhasil memperbarui data");
-        // router.visit("/penduduk");
-        router.visit("../");
+        router.visit("/admin/penduduk");
     } catch (error) {
         useErrorHandler(error);
     }

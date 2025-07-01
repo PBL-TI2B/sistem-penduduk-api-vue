@@ -108,6 +108,7 @@ const actionPilihPenduduk = [
 ];
 
 onMounted(() => {
+    perPage.value = 5;
     fetchDataAnggotaKeluarga();
     // fields.value = getFields("-");
 });

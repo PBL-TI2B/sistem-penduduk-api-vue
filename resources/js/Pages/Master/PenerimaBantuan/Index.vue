@@ -159,7 +159,7 @@ watch(page, () => {
                         id="selection"
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder="Status Bantuan" />
+                            <SelectValue placeholder="Status Penerima" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
