@@ -15,9 +15,43 @@ import { useKartuKeluarga } from "@/composables/useKartuKeluarga";
 import { onMounted } from "vue";
 
 const { uuid } = usePage().props;
+const isFormDialogOpen = ref(false);
+const dialogMode = ref("create");
+const selectedKematian = ref(null);
+const isAlertDeleteOpen = ref(false);
+const selectedUuid = ref(null);
 
 console.log(uuid);
 const { item, fetchDetailData } = useKartuKeluarga(uuid);
+
+const onClickDeleteKematianButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+
+const editKematian = (kematian) => {
+    isFormDialogOpen.value = true;
+    dialogMode.value = "edit";
+    selectedKematian.value = kematian;
+};
+
+const createKematian = () => {
+    isFormDialogOpen.value = true;
+    dialogMode.value = "create";
+};
+
+const onCancelDeleteKematian = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+const onConfirmDeleteKematian = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
+
 onMounted(fetchDetailData);
 console.log(item);
 </script>
