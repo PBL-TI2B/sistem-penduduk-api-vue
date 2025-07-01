@@ -9,7 +9,7 @@ import EditDetailDialog from "./components/EditDetailDialog.vue";
 import { onMounted, ref, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { useKurangMampu } from "@/composables/useKurangMampu";
-// import AlertDialog from "@/components/master/AlertDialog.vue";
+import AlertDialog from "@/components/master/AlertDialog.vue";
 
 import {
     PackagePlus,
@@ -20,20 +20,36 @@ import {
     X,
     FunnelX,
     SquarePen,
+    Waypoints,
 } from "lucide-vue-next";
 
 const { uuid } = usePage().props;
 
-const {
-    item,
-    imageUrl,
-    fetchDetailData,
-    // editStatusValidasi,
-    editDetailData,
-} = useKurangMampu();
+const { item, imageUrl, fetchDetailData, deleteData } = useKurangMampu();
 
 const isEditStatusDialogOpen = ref(false, item);
 const isEditDetailDialogOpen = ref(false);
+const isAlertDeleteOpen = ref(false);
+
+//! Handle Delete
+const selectedUuid = ref(null);
+const onClickDeleteButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+};
+
+const onConfirmDelete = async () => {
+    if (selectedUuid.value) {
+        await deleteData(selectedUuid.value);
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+    }
+};
 
 onMounted(() => {
     fetchDetailData(uuid);
@@ -86,16 +102,22 @@ onMounted(() => {
                         variant="secondary"
                         :disabled="item.status_validasi === 'tervalidasi'"
                     >
+                        <Waypoints />
                         Ubah Status Validasi
-                        <SquarePen />
                     </Button>
                     <Button
                         @click="isEditDetailDialogOpen = true"
                         variant="secondary"
                         :disabled="item.status_validasi === 'tervalidasi'"
                     >
-                        Ubah Detail Data
                         <SquarePen />
+                        Ubah Detail Data
+                    </Button>
+                    <Button
+                        @click="onClickDeleteButton(uuid)"
+                        :disabled="item.penerima_bantuan_count > 0"
+                    >
+                        <Trash2 /> Hapus
                     </Button>
                 </div>
             </div>
@@ -180,5 +202,13 @@ onMounted(() => {
                 isEditDetailDialogOpen = false;
             }
         "
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        :title="'Hapus Data Bantuan'"
+        :description="'Apakah anda yakin ingin menghapus data bantuan ini?'"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
     />
 </template>

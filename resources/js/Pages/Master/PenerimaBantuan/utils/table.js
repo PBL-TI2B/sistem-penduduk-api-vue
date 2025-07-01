@@ -151,12 +151,12 @@ const columnsShowPencairan = [
             return value.replace(/\b\w/g, c => c.toUpperCase());
         },
     },
-    {
-        label: "Dibuat Pada",
-        key: "created_at",
-        format: formatDate,
+    // {
+    //     label: "Dibuat Pada",
+    //     key: "created_at",
+    //     format: formatDate,
 
-    },
+    // },
     {
         label: "Keterangan",
         key: "keterangan",
@@ -194,7 +194,7 @@ const actionsIndex =  (onClickDeleteButton) => [
         label: "Hapus",
         icon: Trash2Icon,
         class: "bg-red-500 hover:bg-red-600 text-white", // warna merah untuk hapus
-        disabled: (item) => item.riwayat_bantuan_count > 0,
+        disabled: (item) => item.riwayat_bantuan_count > 0 || item.status === 'Aktif' || item.status === 'aktif',
         // handler: (item) => {
         //     if (confirm("Yakin ingin menghapus data ini?")) {
         //         router.delete(route("penerima-bantuan.destroy", item.uuid));

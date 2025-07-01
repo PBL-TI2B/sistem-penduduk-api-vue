@@ -123,6 +123,9 @@ class KurangMampuController extends Controller
      */
     public function show(KurangMampu $kurangMampu)
     {
+        $kurangMampu->loadCount(
+            'penerimaBantuan'
+        );
         return new ApiResource(true, 'Detail Data Kurang Mampu', new KurangMampuResource($kurangMampu));
     }
 
@@ -174,6 +177,16 @@ class KurangMampuController extends Controller
      */
     public function destroy(KurangMampu $kurangMampu)
     {
+        $kurangMampu->loadCount('penerimaBantuan');
+        if (
+            $kurangMampu->status_validasi !== 'tervalidasi'
+            || $kurangMampu->penerima_bantuan_count > 0
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hanya dapat dihapus jika status tidak tervalidasi atau belum mengajukan bantuan.',
+            ], 403);
+        }
         $kurangMampu->delete();
         return new ApiResource(true, 'Data Kurang Mampu Berhasil Dihapus', null);
     }

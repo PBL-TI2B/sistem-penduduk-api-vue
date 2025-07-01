@@ -96,7 +96,7 @@ export function usePenerimaBantuan() {
     };
 
     //! Edit Keterangan Penerima Bantuan
-    const editKeterangan = async (uuid, values) => {
+    const editKeterangan = async (uuid, keterangan) => {
         try {
             isLoading.value = true;
 
@@ -120,7 +120,7 @@ export function usePenerimaBantuan() {
         }
     };
 
-    //! Edit status validasi only
+    //! Edit status penerima bantuan only
     const editStatusPenerimaanBantuan = async (uuid, status) => {
         try {
             isLoading.value = true;
@@ -130,7 +130,7 @@ export function usePenerimaBantuan() {
             formData.append("status", status ?? "");
 
             await apiPost(`/penerima-bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui status validasi");
+            toast.success("Berhasil memperbarui status penerima bantuan");
             // router.visit(`/penerima-bantuan/${uuid}`);
         } catch (error) {
             useErrorHandler(error, "Gagal memperbarui status penerima bantuan");

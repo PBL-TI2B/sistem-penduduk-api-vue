@@ -20,8 +20,35 @@ class PenerimaBantuanController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+
         $perPage = $request->input('per_page', 10);
         $query = PenerimaBantuan::query();
+
+        //! Data Scoping berdasarkan Role
+        //! Jika user adalah RT, tampilkan hanya warga di RT-nya
+        if ($user->hasRole('rt')) {
+            $rtId = $user->perangkatDesa?->rt_id;
+
+            // Jika user RT tidak terhubung dengan data perangkat desa, kembalikan data kosong.
+            if (!$rtId) {
+                return new ApiResource(true, 'Daftar Data Kurang Mampu', KurangMampu::where('id', -1)->paginate($perPage));
+            }
+
+            $query->whereHas('kurangMampu.anggotaKeluarga.penduduk.domisili', function ($q) use ($rtId) {
+                $q->where('rt_id', $rtId);
+            });
+        }
+
+        //! Jika user adalah RW, tampilkan hanya warga di RW-nya
+        if ($user->hasRole('rw')) {
+            $rwId = $user->perangkatDesa?->rw_id;
+            if ($rwId) {
+                $query->whereHas('kurangMampu.anggotaKeluarga.penduduk.domisili.rt', function ($q) use ($rwId) {
+                    $q->where('rw_id', $rwId);
+                });
+            }
+        }
 
         //! Filter Search
         if ($request->filled('search')) {
@@ -117,7 +144,9 @@ class PenerimaBantuanController extends Controller
             'bantuan.kategoriBantuan',
             'kurangMampu.anggotaKeluarga.penduduk',
             // 'riwayatBantuan'
-        ]);
+        ])->loadCount('riwayatBantuan');
+
+        // $penerimaBantuan->loadCount('riwayatBantuan');
         return new ApiResource(true, 'Detail Data Penerima Bantuan', new PenerimaBantuanResource($penerimaBantuan));
     }
 
@@ -171,6 +200,16 @@ class PenerimaBantuanController extends Controller
      */
     public function destroy(PenerimaBantuan $penerimaBantuan)
     {
+        $penerimaBantuan->loadCount('riwayatBantuan');
+        if (
+            $penerimaBantuan->status !== 'aktif'
+            || $penerimaBantuan->riwayat_bantuan_count > 0
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hanya dapat dihapus jika status tidak aktif atau belum menerima pencairan bantuan.',
+            ], 403);
+        }
         $penerimaBantuan->delete();
         return new ApiResource(true, 'Data penerima bantuan berhasil dihapus', null);
     }
