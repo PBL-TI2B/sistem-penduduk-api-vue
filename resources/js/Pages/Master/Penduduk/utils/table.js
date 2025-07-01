@@ -110,7 +110,7 @@ const rowsShow = [
     {
         label: "Pekerjaan",
         key: "pekerjaan",
-        format: (val, row) => row.pendidikan?.nama_pekerjaan || "-",
+        format: (val, row) => row.pekerjaan?.nama_pekerjaan || "-",
     },
     {
         label: "Pendidikan",

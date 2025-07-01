@@ -50,6 +50,8 @@ class DomisiliController extends Controller
             'penduduk_id' => 'required|exists:penduduk,id',
             'rt_id'       => 'required|exists:rt,id',
             'status_tempat_tinggal' => 'required|in:tetap,sementara',
+            'alamat_asal' => 'nullable|string|max:255', 
+            'alamat_saat_ini' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -60,6 +62,8 @@ class DomisiliController extends Controller
             'penduduk_id' => $request->penduduk_id,
             'rt_id'       => $request->rt_id,
             'status_tempat_tinggal' => $request->status_tempat_tinggal,
+            'alamat_asal' => $request->alamat_asal ?? '',
+            'alamat_saat_ini' => $request->alamat_saat_ini ?? '',     
         ]);
 
         return response()->json([
@@ -91,6 +95,8 @@ class DomisiliController extends Controller
             'penduduk_id' => 'required|exists:penduduk,id',
             'rt_id'       => 'required|exists:rt,id',
             'status_tempat_tinggal' => 'required|in:tetap,sementara',
+            'alamat_asal' => 'nullable|string|max:255',
+            'alamat_saat_ini' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
