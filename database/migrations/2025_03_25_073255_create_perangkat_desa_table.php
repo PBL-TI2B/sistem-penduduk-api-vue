@@ -19,11 +19,13 @@ return new class extends Migration
             $table->foreignId('penduduk_id')->constrained('penduduk')->onDelete('cascade');
             $table->foreignId('jabatan_id')->constrained('jabatan')->onDelete('cascade');
             $table->foreignId('periode_jabatan_id')->constrained('periode_jabatan')->onDelete('cascade');
-            $table->foreignId('desa_id')->constrained('desa')->onDelete('cascade');
-            $table->foreignId('dusun_id')->constrained('dusun')->onDelete('cascade');
-            $table->foreignId('rt_id')->constrained('rt')->onDelete('cascade');
-            $table->foreignId('rw_id')->constrained('rw')->onDelete('cascade');
-            
+
+            //! Relasi Wilayah Jabatan, hanya boleh mengisi salah satu
+            $table->foreignId('desa_id')->nullable()->constrained('desa')->onDelete('cascade');
+            $table->foreignId('dusun_id')->nullable()->constrained('dusun')->onDelete('cascade');
+            $table->foreignId('rt_id')->nullable()->constrained('rt')->onDelete('cascade');
+            $table->foreignId('rw_id')->nullable()->constrained('rw')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

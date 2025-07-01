@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useForm, Form as VeeForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
@@ -48,8 +48,31 @@ const emit = defineEmits(["submit", "update:fotoFile", "update:fotoPreview"]);
 
 const fields = ref([]);
 
-const pendudukForm = useForm({
+const { handleSubmit, values } = useForm({
     validationSchema: formSchemaPenduduk,
+});
+
+const isStep1Valid = computed(() => {
+    // Validasi field wajib untuk step 1
+    const requiredFields = [
+        "nik",
+        "nama_lengkap",
+        "jenis_kelamin",
+        "tempat_lahir",
+        "tanggal_lahir",
+        "agama",
+        "gol_darah",
+        "status_perkawinan",
+        "tinggi_badan",
+        "status",
+        "pekerjaan_id",
+        "pendidikan_id",
+        "ayah_id",
+        "ibu_id",
+    ];
+    return requiredFields.every(
+        (field) => values[field] && values[field].toString().trim() !== ""
+    );
 });
 
 const onFileChange = (e) => {
@@ -84,8 +107,8 @@ const loadSelectOptions = async () => {
     try {
         const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
             await Promise.all([
-                apiGet("/pekerjaan"),
-                apiGet("/pendidikan"),
+                apiGet("/pekerjaan", { per_page: 100 }),
+                apiGet("/pendidikan", { per_page: 100 }),
                 apiGet("/penduduk", {
                     jenis_kelamin: "L",
                     status_perkawinan: "kawin",
@@ -102,6 +125,8 @@ const loadSelectOptions = async () => {
             value: item.id.toString(),
             label: item.nama_pekerjaan,
         }));
+
+        console.log(pekerjaanOptions);
 
         const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
             value: item.id.toString(),
@@ -142,7 +167,7 @@ const loadSelectOptions = async () => {
 
 onMounted(loadSelectOptions);
 
-const handleSubmit = pendudukForm.handleSubmit((values) => {
+const onSubmit = handleSubmit((values) => {
     const rawTanggal = values.tanggal_lahir;
     const dateObj = new Date(rawTanggal);
 
@@ -153,11 +178,8 @@ const handleSubmit = pendudukForm.handleSubmit((values) => {
 </script>
 
 <template>
-    <div class="shadow-lg p-8 my-4 rounded-lg">
-        <form
-            @submit.prevent="handleSubmit"
-            class="grid lg:grid-cols-2 gap-4 mt-4"
-        >
+    <div class="shadow-lg px-8 py-4 my-4 rounded-lg">
+        <form @submit.prevent="onSubmit" class="grid lg:grid-cols-2 gap-4 mt-4">
             <FormField
                 v-for="field in fields"
                 :key="field.name"
@@ -233,9 +255,9 @@ const handleSubmit = pendudukForm.handleSubmit((values) => {
                 >
                     Batal
                 </Button>
-                <Button type="submit" :disabled="isLoading">
+                <Button type="submit" :disabled="isLoading || !isStep1Valid">
                     <span v-if="isLoading">Memproses...</span>
-                    <span v-else>Lanjut ke Data Kelahiran</span>
+                    <span v-else>Selanjutnya</span>
                 </Button>
             </div>
         </form>

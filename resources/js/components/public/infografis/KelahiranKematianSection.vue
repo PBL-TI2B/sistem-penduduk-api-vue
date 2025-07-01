@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import Chart from "chart.js/auto";
 import axios from "axios";
 
-const tahun = 2021;
+const tahun = new Date().getFullYear();
 const chartInstance = ref(null);
 
 const getDataPerBulan = (data) => {
@@ -23,8 +23,8 @@ onMounted(async () => {
 
     try {
         const [kematianRes, kelahiranRes] = await Promise.all([
-            axios.get("/api/v1/statistik/kematian?tahun=2021"),
-            axios.get("/api/v1/statistik/kelahiran?tahun=2021"),
+            axios.get(`/api/v1/statistik/kematian?tahun=${tahun}`),
+            axios.get(`/api/v1/statistik/kelahiran?tahun=${tahun}`),
         ]);
 
         const kematianData = getDataPerBulan(kematianRes.data.data);

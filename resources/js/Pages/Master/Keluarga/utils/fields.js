@@ -1,10 +1,9 @@
-export function getFields(rt = [], no_kk = []) {
+export function getFields(rt = []) {
     return [
         {
-            name: "no_kk",
+            name: "nomor_kk",
             label: "No. KK",
-            type: "select",
-            options: no_kk,
+            type: "text",
         },
         {
             name: "rt_id",
@@ -15,21 +14,27 @@ export function getFields(rt = [], no_kk = []) {
         {
             name: "kode_pos",
             label: "Kode Pos",
-            type: "input",
+            type: "text",
+        },
+        {
+            name: "kelurahan",
+            label: "Kelurahan",
+            type: "text",
         },
         {
             name: "kecamatan",
             label: "Kecamatan",
-            type: "input",
+            type: "text",
         },
         {
             name: "kabupaten",
             label: "Kabupaten",
-            type: "input",
+            type: "text",
         },
         {
             name: "provinsi",
             label: "Provinsi",
+            type: "text",
         },
     ];
 }

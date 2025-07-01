@@ -55,7 +55,7 @@ onMounted(async () => {
             keterangan: res.keterangan,
         });
     } catch (error) {
-        // useErrorHandler("Gagal mengambil data kelahiran.");
+        useErrorHandler("Gagal mengambil data kelahiran.");
     }
 });
 </script>

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status_validasi', ['belum tervalidasi', 'tervalidasi', 'ditolak'])->default('belum tervalidasi');
             $table->text('keterangan')->nullable();
 
-            $table->foreignId('anggota_keluarga_id')->constrained('anggota_keluarga')->onDelete('cascade');
+            $table->foreignId('anggota_keluarga_id')->unique()->constrained('anggota_keluarga')->onDelete('cascade');
 
             $table->timestamps();
         });

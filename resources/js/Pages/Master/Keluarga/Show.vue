@@ -185,12 +185,6 @@ console.log(item);
                     <PlusSquare />
                     Anggota Keluarga
                 </Button>
-                <Button asChild>
-                    <Link :href="route('penduduk.create')">
-                        <PenSquareIcon />
-                        Anggota Keluarga
-                    </Link>
-                </Button>
             </div>
         </div>
         <table class="w-full table-auto border-collapse">

@@ -23,7 +23,7 @@ export function getFields() {
         },
         {
             name: "tanggal_penerimaan",
-            label: "Tanggal Penerimaan",
+            label: "Tanggal Pengajuan",
             type: "datepicker",
         },
         {

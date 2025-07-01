@@ -38,11 +38,11 @@ class PenerimaBantuanController extends Controller
      */
     public function show(PenerimaBantuan $penerimaBantuan)
     {
-        abort(404);
+        // abort(404);
 
-        // return Inertia::render('Master/PenerimaBantuan/Show', [
-        //     'uuid' => $penerimaBantuan->uuid
-        // ]);
+        return Inertia::render('Master/PenerimaBantuan/Show', [
+            'uuid' => $penerimaBantuan->uuid
+        ]);
     }
 
     /**
