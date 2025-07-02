@@ -2,7 +2,7 @@
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
-import { PackagePlus, SearchIcon } from "lucide-vue-next";
+import { SquarePlus, SearchIcon } from "lucide-vue-next";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import FormDialogPekerjaan from "./components/FormDialogPekerjaan.vue";
@@ -157,7 +157,7 @@ const clearSearchPekerjaan = () => {
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
                 <Button @click="createPekerjaan"
-                    ><PackagePlus />Tambah Pekerjaan
+                    ><SquarePlus />Tambah Pekerjaan
                 </Button>
             </div>
         </div>

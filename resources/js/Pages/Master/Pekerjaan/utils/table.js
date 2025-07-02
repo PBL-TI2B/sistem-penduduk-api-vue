@@ -11,6 +11,7 @@ export function getActionsPekerjaan({ onEdit, onDelete }) {
             label: "Edit",
             icon: PenBoxIcon,
             handler: (item) => onEdit(item),
+            disabled: (item) => item.penduduk_count > 0,
         },
         {
             label: "Hapus",

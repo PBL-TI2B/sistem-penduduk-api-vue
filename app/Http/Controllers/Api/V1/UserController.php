@@ -22,7 +22,13 @@ class UserController extends Controller
             });
         }
 
-        $user = $query->paginate($request->get('per_page',10));
+        if ($request->filled('role')) {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->role);
+            });
+        }
+
+        $user = $query->paginate($request->get('per_page', 10));
         return new ApiResource(true, 'Daftar Data User', $user);
     }
 

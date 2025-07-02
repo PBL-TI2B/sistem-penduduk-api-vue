@@ -15,6 +15,7 @@ export function useUser() {
     const search = ref(null);
 
     // Fetch list bantuan
+    const roleFilter = ref("");
     const fetchData = async () => {
         try {
             items.value = [];
@@ -24,6 +25,7 @@ export function useUser() {
                 page: page.value,
                 per_page: perPage.value,
                 search: search.value,
+                role: roleFilter.value, // tambahkan ini
             };
 
             const res = await apiGet("/user", params);
@@ -116,6 +118,7 @@ export function useUser() {
         totalPages,
         totalData,
         search,
+        roleFilter,
         fetchData,
         fetchDetailData,
         createData,

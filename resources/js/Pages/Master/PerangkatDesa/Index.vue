@@ -77,6 +77,7 @@ const actionsJabatan = [
         handler: (item) => {
             editJabatan(item);
         },
+        disabled: (item) => item.perangkat_desa_count > 0,
     },
     {
         label: "Hapus",

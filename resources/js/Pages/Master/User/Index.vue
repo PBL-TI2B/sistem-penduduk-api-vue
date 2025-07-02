@@ -3,13 +3,15 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import Select from "@/components/ui/select/Select.vue";
-import SelectContent from "@/components/ui/select/SelectContent.vue";
-import SelectGroup from "@/components/ui/select/SelectGroup.vue";
-import SelectItem from "@/components/ui/select/SelectItem.vue";
-import SelectLabel from "@/components/ui/select/SelectLabel.vue";
-import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
-import SelectValue from "@/components/ui/select/SelectValue.vue";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import {
     PenBoxIcon,
     SearchIcon,
@@ -39,6 +41,7 @@ const {
     totalPages,
     totalData,
     search,
+    roleFilter,
     fetchData,
 } = useUser();
 
@@ -154,25 +157,21 @@ console.log(items);
                 </div>
             </div>
             <!-- filter -->
-            <div class="flex gap-4">
-                <Select>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Filter Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Role</SelectLabel>
-                            <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="superadmin">
-                                Superadmin
-                            </SelectItem>
-                            <SelectItem value="admin"> Admin </SelectItem>
-                            <SelectItem value="ketua rt"> Ketua RT </SelectItem>
-                            <SelectItem value="ketua rw"> Ketua RW </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
+            <div class="flex gap-4 items-center">
+                <select
+                    v-model="roleFilter"
+                    class="border border-gray-300 text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5"
+                >
+                    <option value="">Semua</option>
+                    <option value="superadmin">Superadmin</option>
+                    <option value="admin">Admin</option>
+                    <option value="rt">Ketua RT</option>
+                    <option value="rw">Ketua RW</option>
+                </select>
+
+                <Button class="cursor-pointer" @click="fetchData"
+                    >Terapkan</Button
+                >
             </div>
         </div>
 
