@@ -183,13 +183,11 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <div class="flex flex-wrap gap-4 items-center">
-            <Button asChild>
-                <Link :href="route('penduduk.create')">
-                    <SquarePlus /> Penduduk</Link
-                >
-            </Button>
-        </div>
+        <Button v-if="['admin', 'superadmin'].includes(user?.role)" asChild>
+            <Link :href="route('penduduk.create')">
+            <SquarePlus /> Penduduk
+            </Link>
+        </Button>
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <div class="flex flex-wrap gap-2 justify-between">
@@ -293,7 +291,7 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.rw" :disabled="user?.role === 'rw'">
+                <Select v-model="filter.rw" :disabled="user?.role === 'rt' || user?.role === 'rw'">
                     <SelectTrigger>
                         <SelectValue placeholder="Nomor RW" />
                     </SelectTrigger>

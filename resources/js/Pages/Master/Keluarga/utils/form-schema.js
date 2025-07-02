@@ -10,33 +10,33 @@ export const createFormSchema = (uuidToIgnore = null) => {
             nomor_kk: z
                 .string()
                 .min(16, "Nomor KK harus 16 digit")
-                .max(16, "Nomor KK harus 16 digit")
-                .refine(
-                    async (nomor_kk) => {
-                        if (nomor_kk.length !== 16) return true;
+                .max(16, "Nomor KK harus 16 digit"),
+                // .refine(
+                //     async (nomor_kk) => {
+                //         if (nomor_kk.length !== 16) return true;
 
-                        try {
-                            // [FIX] Bangun URL secara dinamis
-                            let url = `/kartu-keluarga/check-kk?nomor_kk=${nomor_kk}`;
+                //         try {
+                //             // [FIX] Bangun URL secara dinamis
+                //             let url = `/kartu-keluarga/check-kk?nomor_kk=${nomor_kk}`;
 
-                            // Jika kita sedang mengedit (uuidToIgnore ada isinya), tambahkan parameter ignore
-                            if (uuidToIgnore) {
-                                url += `&ignore_uuid=${uuidToIgnore}`;
-                            }
+                //             // Jika kita sedang mengedit (uuidToIgnore ada isinya), tambahkan parameter ignore
+                //             if (uuidToIgnore) {
+                //                 url += `&ignore_uuid=${uuidToIgnore}`;
+                //             }
 
-                            const response = await apiGet(url);
-                            // [FIX] Akses langsung ke response, bukan response.data
-                            // Sesuaikan ini jika struktur response Anda berbeda
-                            return response.isAvailable;
-                        } catch (error) {
-                            useErrorHandler(error);
-                            return false;
-                        }
-                    },
-                    {
-                        message: "Nomor KK sudah terdaftar",
-                    }
-                ),
+                //             const response = await apiGet(url);
+                //             // [FIX] Akses langsung ke response, bukan response.data
+                //             // Sesuaikan ini jika struktur response Anda berbeda
+                //             return response.isAvailable;
+                //         } catch (error) {
+                //             useErrorHandler(error);
+                //             return false;
+                //         }
+                //     },
+                //     {
+                //         message: "Nomor KK sudah terdaftar",
+                //     }
+                // ),
 
             // ... sisa field tidak berubah ...
             rt_id: z.string().min(1, "RT harus dipilih."),

@@ -38,6 +38,7 @@ const props = defineProps({
     },
 });
 
+
 // Emits
 const emit = defineEmits(["update:isOpen", "success"]);
 
@@ -73,35 +74,78 @@ const loadRtData = async () => {
     }
 };
 
-const onSubmit = handleSubmit(async (formValues) => {
-    try {
-        const formData = new FormData();
-        formData.append("penduduk_id", values.penduduk_id ?? "");
+const alamatAsal = computed({
+    get: () => values.alamat_asal,
+    set: (val) => setValues({ alamat_asal: val }),
+});
 
-        for (const [key, value] of Object.entries(formValues)) {
-            formData.append(key, value ?? "");
-        }
+const alamatSaatIni = computed({
+    get: () => values.alamat_saat_ini,
+    set: (val) => setValues({ alamat_saat_ini: val }),
+});
 
-        if (props.mode === "edit") {
-            formData.append("_method", "PUT");
-            await apiPost(
-                `/domisili/${props.initialData?.domisili?.uuid}`,
-                formData
-            );
-        } else {
-            await apiPost("/domisili", formData);
-        }
 
-        emit("success");
-        emit("update:isOpen", false);
-        toast.success(
-            props.mode === "edit"
-                ? "Berhasil memperbarui data domisili"
-                : "Berhasil menambahkan data domisili"
-        );
-    } catch (error) {
-        useErrorHandler(error, "Gagal menyimpan data domisili");
+// const onSubmit = handleSubmit(async (formValues) => {
+//     try {
+//         const formData = new FormData();
+//         formData.append("penduduk_id", values.penduduk_id ?? "");
+
+//         for (const [key, value] of Object.entries(formValues)) {
+//             formData.append(key, value ?? "");
+//         }
+
+//         if (props.mode === "edit") {
+//             formData.append("_method", "PUT");
+//             await apiPost(
+//                 `/domisili/${props.initialData?.domisili?.uuid}`,
+//                 formData
+//             );
+//         } else {
+//             await apiPost("/domisili", formData);
+//         }
+
+//         emit("success");
+//         emit("update:isOpen", false);
+//         toast.success(
+//             props.mode === "edit"
+//                 ? "Berhasil memperbarui data domisili"
+//                 : "Berhasil menambahkan data domisili"
+//         );
+//         // console.log("formValues", formValues);
+//         // for (let pair of formData.entries()) {
+//         //     console.log(pair[0] + ': ' + pair[1]);
+//         // }
+//     } catch (error) {
+//         useErrorHandler(error, "Gagal menyimpan data domisili");
+//     }
+// });
+
+const onSubmit = handleSubmit(async () => {
+  try {
+    const formData = new FormData();
+    formData.append("penduduk_id", values.penduduk_id ?? "");
+    formData.append("rt_id", values.rt_id ?? "");
+    formData.append("status_tempat_tinggal", values.status_tempat_tinggal ?? "");
+    formData.append("alamat_asal", values.alamat_asal ?? "");
+    formData.append("alamat_saat_ini", values.alamat_saat_ini ?? "");
+
+    if (props.mode === "edit") {
+      formData.append("_method", "PUT");
+      await apiPost(`/domisili/${props.initialData?.domisili?.uuid}`, formData);
+    } else {
+      await apiPost("/domisili", formData);
     }
+
+    emit("success");
+    emit("update:isOpen", false);
+    toast.success(
+      props.mode === "edit"
+        ? "Berhasil memperbarui data domisili"
+        : "Berhasil menambahkan data domisili"
+    );
+  } catch (error) {
+    useErrorHandler(error, "Gagal menyimpan data domisili");
+  }
 });
 
 watch(
@@ -158,11 +202,7 @@ const dialogTitle = computed(() =>
 
                 <div class="grid gap-4 py-4">
                     <!-- RT Selection -->
-                    <Input
-                        type="hidden"
-                        name="penduduk_id"
-                        v-model="values.penduduk_id"
-                    />
+                    <Input type="hidden" name="penduduk_id" v-model="values.penduduk_id" />
                     <div class="grid grid-cols-4 items-center gap-4">
                         <Label for="rt" class="text-right">RT</Label>
                         <div class="col-span-3">
@@ -171,11 +211,7 @@ const dialogTitle = computed(() =>
                                     <SelectValue placeholder="Pilih RT" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem
-                                        v-for="rt in fields"
-                                        :key="rt.id"
-                                        :value="rt.id"
-                                    >
+                                    <SelectItem v-for="rt in fields" :key="rt.id" :value="rt.id">
                                         RT {{ rt.nomor_rt }}
                                     </SelectItem>
                                 </SelectContent>
@@ -193,44 +229,25 @@ const dialogTitle = computed(() =>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="tetap">Tetap</SelectItem>
-                                    <SelectItem value="sementara"
-                                        >Sementara</SelectItem
-                                    >
+                                    <SelectItem value="sementara">Sementara</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
                     <!-- Alamat Asal -->
-                    <div
-                        class="grid grid-cols-4 items-center gap-4"
-                        v-if="selectedStatus === 'sementara'"
-                    >
-                        <Label for="status" class="text-right"
-                            >Alamat Asal</Label
-                        >
+                    <div class="grid grid-cols-4 items-center gap-4" v-if="selectedStatus === 'sementara'">
+                        <Label for="status" class="text-right">Alamat Asal</Label>
                         <div class="col-span-3">
-                            <Input
-                                type="text"
-                                name="alamat_asal"
-                                v-model="values.alamat_asal"
-                                placeholder="Alamat Asal"
-                            />
+                            <Input type="text" v-model="alamatAsal" placeholder="Alamat Asal" />
                         </div>
                     </div>
 
                     <!-- Alamat Saat Ini -->
                     <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="alamat_saat_ini" class="text-left"
-                            >Alamat Saat Ini</Label
-                        >
+                        <Label for="alamat_saat_ini" class="text-left">Alamat Saat Ini</Label>
                         <div class="col-span-3">
-                            <Input
-                                type="text"
-                                name="alamat_saat_ini"
-                                v-model="values.alamat_saat_ini"
-                                placeholder="Alamat Saat Ini"
-                            />
+                            <Input type="text" v-model="alamatSaatIni" placeholder="Alamat Saat Ini" />
                         </div>
                     </div>
                 </div>

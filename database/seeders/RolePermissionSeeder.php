@@ -53,14 +53,14 @@ class RolePermissionSeeder extends Seeder
 
         foreach ($resources as $resource) {
             foreach ($actions as $action) {
-                Permission::firstOrCreate(['name' => "{$resource}.{$action}"]);
+                Permission::firstOrCreate(['name' => "{$resource}.{$action}", 'guard_name' => 'sanctum']);
             }
         }
 
-        $superAdmin = Role::findByName('superadmin');
-        $admin = Role::findByName('admin');
-        $rt = Role::findByName('rt');
-        $rw = Role::findByName('rw');
+        $superAdmin = Role::findByName('superadmin', 'sanctum');
+        $admin = Role::findByName('admin', 'sanctum');
+        $rt = Role::findByName('rt', 'sanctum');
+        $rw = Role::findByName('rw', 'sanctum');
 
         $superAdmin->givePermissionTo(Permission::all());
         $admin->givePermissionTo([

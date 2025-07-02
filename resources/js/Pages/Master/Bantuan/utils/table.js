@@ -112,6 +112,8 @@ const actionsIndexKategori = ({
         handler: (item) => {
             editKategoriBantuan(item);
         },
+        disabled: (item) => item.bantuan_count > 0,
+
     },
     {
         label: "Hapus",
