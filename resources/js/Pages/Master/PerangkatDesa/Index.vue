@@ -1,13 +1,14 @@
 <script setup>
 import { route } from "ziggy-js";
 import { ref, onMounted, watch } from "vue";
+import { Head, Link } from "@inertiajs/vue3";
 
 import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectItem,
     SelectLabel,
+    SelectItem,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
@@ -37,6 +38,10 @@ const selectedJabatan = ref(null);
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 
+const searchPerangkat = ref("");
+const selectedStatusPerangkat = ref("-");
+const selectedJabatanIdForFilter = ref("-"); // Ini adalah v-model untuk filter jabatan perangkat desa
+
 const {
     fetchPerangkatDesa,
     items,
@@ -50,7 +55,7 @@ const {
 const {
     fetchJabatan,
     deleteJabatan,
-    itemsJabatan,
+    itemsJabatan, // Ini adalah data jabatan yang akan digunakan untuk mengisi dropdown filter
     perPageJabatan,
     pageJabatan,
     totalItemsJabatan,
@@ -68,6 +73,7 @@ const editJabatan = (jabatan) => {
 const createJabatan = () => {
     isFormDialogOpen.value = true;
     dialogMode.value = "create";
+    selectedJabatan.value = null;
 };
 
 const actionsJabatan = [
@@ -103,36 +109,60 @@ const onConfirmDelete = async () => {
         await deleteJabatan(selectedUuid.value);
         isAlertDeleteOpen.value = false;
         selectedUuid.value = null;
-    }
-};
-
-onMounted(() => {
-    fetchPerangkatDesa();
-    fetchJabatan();
-});
-
-const onSearchEnter = (e) => {
-    if (e.key === "Enter") {
-        pageJabatan.value = 1;
         fetchJabatan();
+        applyFilterPerangkat();
     }
 };
 
-const applyFilter = () => {
+const applyFilterPerangkat = () => {
+    console.log("DEBUG index.vue: applyFilterPerangkat called.");
+    console.log("DEBUG index.vue: Current searchPerangkat value:", searchPerangkat.value);
+    console.log("DEBUG index.vue: Filters sent to fetchPerangkatDesa:", {
+        jabatan: selectedJabatanIdForFilter.value, // Pastikan ini nilai yang benar
+        status_keaktifan: selectedStatusPerangkat.value,
+        search: searchPerangkat.value,
+    });
     page.value = 1;
+    fetchPerangkatDesa({
+        jabatan: selectedJabatanIdForFilter.value === '-' ? null : selectedJabatanIdForFilter.value,
+        status_keaktifan: selectedStatusPerangkat.value === '-' ? null : selectedStatusPerangkat.value,
+        search: searchPerangkat.value,
+    });
+};
+
+const onSearchEnterJabatan = () => {
+    pageJabatan.value = 1;
     fetchJabatan();
 };
 
 const clearSearchJabatan = () => {
     searchJabatan.value = "";
-    applyFilter();
+    pageJabatan.value = 1;
+    fetchJabatan();
 };
+
+onMounted(async () => {
+    console.log("DEBUG index.vue: Component mounted. Fetching initial data...");
+    await fetchJabatan(); // PENTING: Pastikan ini selesai sebelum merender dropdown
+    console.log("DEBUG index.vue: itemsJabatan after fetch:", itemsJabatan.value);
+    applyFilterPerangkat();
+    console.log("DEBUG index.vue: items Perangkat Desa after initial fetch:", items.value);
+});
+
 watch(page, () => {
-    fetchPerangkatDesa();
+    console.log("DEBUG index.vue: Page for Perangkat Desa changed to:", page.value);
+    applyFilterPerangkat();
 });
 
 watch(pageJabatan, () => {
+    console.log("DEBUG index.vue: Page for Jabatan changed to:", pageJabatan.value);
     fetchJabatan();
+});
+
+// Watch perubahan pada filter perangkat desa untuk memicu pembaruan data
+watch([selectedJabatanIdForFilter, selectedStatusPerangkat, searchPerangkat], (newValues, oldValues) => {
+    console.log("DEBUG index.vue: Perangkat Desa filter (jabatan, status, search) changed. New values:", newValues, "Old values:", oldValues);
+    applyFilterPerangkat();
 });
 </script>
 
@@ -149,6 +179,7 @@ watch(pageJabatan, () => {
             />
         </div>
     </div>
+
     <div class="drop-shadow-md w-full grid gap-2 mb-2">
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
@@ -156,7 +187,7 @@ watch(pageJabatan, () => {
             >
                 <Input
                     v-model="searchJabatan"
-                    @keyup.enter="onSearchEnter"
+                    @keyup.enter="onSearchEnterJabatan"
                     placeholder="Cari jabatan"
                     class="pl-10 pr8"
                 />
@@ -196,20 +227,18 @@ watch(pageJabatan, () => {
         />
     </div>
 
-    <!-- //- ! - PERANGKAT DESA :} -->
     <div class="drop-shadow-md w-full grid gap-2">
-        <!-- Search & Filter -->
         <div class="flex xl:flex-row flex-col gap-4 items-center">
             <div
                 class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
             >
                 <Input
                     id="searchPerangkat"
-                    v-model="search"
+                    v-model="searchPerangkat"
                     type="text"
                     placeholder="Cari perangkat desa berdasarkan nama"
                     class="pl-10 pr-8"
-                    @change="applySearchPerangkat"
+                    @keyup.enter="applyFilterPerangkat"
                 />
                 <span
                     class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
@@ -217,9 +246,9 @@ watch(pageJabatan, () => {
                     <SearchIcon class="size-6 text-muted-foreground" />
                 </span>
                 <button
-                    v-if="search"
+                    v-if="searchPerangkat"
                     class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                    @click="search = ''"
+                    @click="searchPerangkat = ''; applyFilterPerangkat();"
                     tabindex="-1"
                     type="button"
                 >
@@ -229,7 +258,7 @@ watch(pageJabatan, () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between items-center"
             >
-                <Select v-model="selectedStatus">
+                <Select v-model="selectedStatusPerangkat">
                     <SelectTrigger>
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
@@ -243,7 +272,9 @@ watch(pageJabatan, () => {
                     </SelectContent>
                 </Select>
 
-                <Select v-model="selectedJabatan">
+                <!-- DROPDOWN FILTER JABATAN PERANGKAT DESA -->
+                <!-- PENTING: Pastikan v-model dan v-for di sini benar -->
+                <Select v-model="selectedJabatanIdForFilter">
                     <SelectTrigger>
                         <SelectValue placeholder="Jabatan" />
                     </SelectTrigger>
@@ -251,8 +282,14 @@ watch(pageJabatan, () => {
                         <SelectGroup>
                             <SelectLabel>Jabatan</SelectLabel>
                             <SelectItem value="-">Semua</SelectItem>
-                            <SelectItem value="ketua">Ketua RT</SelectItem>
-                            <SelectItem value="ketua-rw">Ketua RW</SelectItem>
+                            <!-- KOREKSI DI SINI: Pastikan itemsJabatan diulang dengan benar -->
+                            <SelectItem
+                                v-for="jabatan in itemsJabatan"
+                                :key="jabatan.id"
+                                :value="jabatan.id"
+                            >
+                                {{ jabatan.nama_jabatan || jabatan.jabatan }} <!-- Gunakan nama_jabatan atau jabatan -->
+                            </SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -273,7 +310,7 @@ watch(pageJabatan, () => {
 
         <DataTable
             label="Perangkat Desa"
-            :items="items"
+            :items="items || []"
             :columns="columnsIndex"
             :actions="actionsIndex"
             :totalPages="totalPages"
