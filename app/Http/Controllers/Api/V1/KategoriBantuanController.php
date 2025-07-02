@@ -93,6 +93,16 @@ class KategoriBantuanController extends Controller
             ], 404);
         }
 
+        $kategoriBantuan->loadCount('bantuan');
+
+        if ($kategoriBantuan->bantuan_count > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori bantuan sudah digunakan, tidak dapat mengedit.',
+                'data' => null
+            ], 403);
+        }
+
         try {
             $kategoriBantuan->update([
                 'kategori' => $request->kategori,
@@ -119,6 +129,16 @@ class KategoriBantuanController extends Controller
                 'message' => 'Kategori Bantuan tidak ditemukan',
                 'data' => null
             ], 404);
+        }
+
+        $data->loadCount('bantuan');
+
+        if ($data->bantuan_count > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori bantuan sudah digunakan, tidak dapat dihapus.',
+                'data' => null
+            ], 403);
         }
 
         $data->delete();
