@@ -154,7 +154,15 @@ onMounted(fetchBerita);
                 </div>
             </div>
 
-            <div v-else>Tidak ada berita ditemukan.</div>
+            <div
+                v-else
+                class="text-center text-gray-500 flex flex-col items-center gap-4 py-10"
+            >
+                <p class="text-lg font-semibold">
+                    Belum ada berita yang tersedia.
+                </p>
+                <p class="text-sm text-gray-400">Silakan cek kembali nanti.</p>
+            </div>
         </div>
     </section>
 </template>

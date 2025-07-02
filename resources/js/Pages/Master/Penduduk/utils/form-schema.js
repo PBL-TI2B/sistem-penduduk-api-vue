@@ -5,7 +5,7 @@ export const formSchemaPenduduk = toTypedSchema(
     z.object({
         nik: z.string().length(16, "NIK harus 16 digit"),
         nama_lengkap: z.string().min(4, "Nama minimal 4 huruf"),
-        foto: z.any().optional(),
+        foto: z.any().nullable().optional(),
         jenis_kelamin: z.enum(["L", "P"]),
         tempat_lahir: z.string().min(1, "Tempat lahir tidak boleh kosong"),
         tanggal_lahir: z.preprocess((val) => {

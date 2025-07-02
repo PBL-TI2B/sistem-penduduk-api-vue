@@ -76,3 +76,32 @@ export function getFields(pekerjaanOptions = [], pendidikanOptions = []) {
         },
     ];
 }
+
+export function getFieldDomisili(rt_id = []) {
+    return [
+        {
+            name: "status_tempat_tinggal",
+            label: "Status Tempat Tinggal",
+            type: "select",
+            options: ["tetap", "sementara"],
+        },
+        {
+            name: "rt_id",
+            label: "RT",
+            type: "select",
+            options: rt_id,
+        },
+        {
+            name: "alamat_asal",
+            label: "Alamat Asal",
+            type: "text",
+            placeholder: "Masukkan alamat asal",
+        },
+        {
+            name: "alamat_saat_ini",
+            label: "Alamat saat ini",
+            type: "text",
+            placeholder: "Masukkan alamat saat ini",
+        },
+    ];
+}

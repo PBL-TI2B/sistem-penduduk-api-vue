@@ -25,6 +25,11 @@ class PenerimaBantuan extends Model
         return 'uuid';
     }
 
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_id');
+    }
+
     public function kurangMampu()
     {
         return $this->belongsTo(KurangMampu::class, 'kurang_mampu_id', 'id');

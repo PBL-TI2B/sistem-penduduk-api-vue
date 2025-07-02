@@ -18,7 +18,7 @@ export function getActionsDusun({ onEdit, onDelete }) {
             label: "Hapus",
             icon: Trash2,
             handler: (item) => onDelete(item),
-            disabled: (item) => item.perangkat_desa_count > 0,
+            disabled: (item) => item.rw_count > 0,
         },
     ];
 }

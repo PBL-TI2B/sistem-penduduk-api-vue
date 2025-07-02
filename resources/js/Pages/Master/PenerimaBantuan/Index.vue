@@ -208,8 +208,11 @@ watch(page, () => {
             :per-page="perPage"
             :is-loading="isLoading"
             @update:page="page = $event"
+            :is-exportable="true"
+            :export-route="'penerima-bantuan'"
         />
     </div>
+
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
         title="Hapus Penerima Bantuan"

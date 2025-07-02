@@ -20,7 +20,7 @@ class RtController extends Controller
             $rt->where('nomor_rt', $request->nomor_rt);
         }
 
-        $rt = $rt->paginate(10);
+        $rt = $rt->paginate(5);
         $collection = RtResource::collection($rt->getCollection());
         $rt->setCollection(collect($collection));
         
