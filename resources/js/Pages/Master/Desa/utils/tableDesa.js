@@ -13,8 +13,6 @@ export function getActionsDesa({ onEdit, onDelete }) {
             label: "Edit",
             icon: PenBoxIcon,
             handler: (item) => onEdit(item),
-            disabled: (item) =>
-                item.perangkat_desa_count > 0 || item.dusun_count > 0,
         },
         {
             label: "Hapus",

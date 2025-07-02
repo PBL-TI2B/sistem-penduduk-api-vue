@@ -14,7 +14,7 @@ class RwController extends Controller
 {
     public function index(Request $request)
     {
-        $rw = Rw::with(['dusun']);
+        $rw = Rw::with(['dusun'])->withCount('rt');;
 
         if ($request->has('nomor_rw')) {
             $rw->where('nomor_rw', $request->nomor_rw);
