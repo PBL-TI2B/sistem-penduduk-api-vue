@@ -28,6 +28,8 @@ class User extends Authenticatable
         'perangkat_id',
     ];
 
+    protected $guard_name = 'sanctum';
+
     protected static function boot()
     {
         parent::boot();

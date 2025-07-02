@@ -97,7 +97,7 @@ export function useKartuKeluarga(uuid) {
             // isLoading.value = true;
             await apiDelete(`/kartu-keluarga/${uuid}`);
             toast.success("Berhasil menghapus kartu keluarga");
-            router.visit("/admin/kartu-keluarga");
+            router.visit("/admin/keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus kartu keluarga");
         } finally {

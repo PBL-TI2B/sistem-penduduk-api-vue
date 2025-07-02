@@ -18,8 +18,35 @@ class KurangMampuController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+
         $perPage = $request->input('per_page', 10);
         $query = KurangMampu::query();
+
+        //! Data Scoping berdasarkan Role
+        //! Jika user adalah RT, tampilkan hanya warga di RT-nya
+        if ($user->hasRole('rt')) {
+            $rtId = $user->perangkatDesa?->rt_id;
+
+            // Jika user RT tidak terhubung dengan data perangkat desa, kembalikan data kosong.
+            if (!$rtId) {
+                return new ApiResource(true, 'Daftar Data Kurang Mampu', KurangMampu::where('id', -1)->paginate($perPage));
+            }
+
+            $query->whereHas('anggotaKeluarga.penduduk.domisili', function ($q) use ($rtId) {
+                $q->where('rt_id', $rtId);
+            });
+        }
+
+        //! Jika user adalah RW, tampilkan hanya warga di RW-nya
+        if ($user->hasRole('rw')) {
+            $rwId = $user->perangkatDesa?->rw_id;
+            if ($rwId) {
+                $query->whereHas('anggotaKeluarga.penduduk.domisili.rt', function ($q) use ($rwId) {
+                    $q->where('rw_id', $rwId);
+                });
+            }
+        }
 
         //! Filter Search
         if ($request->filled('search')) {
@@ -63,30 +90,32 @@ class KurangMampuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'pendapatan_per_hari' => 'nullable|string',
-            'pendapatan_per_bulan' => 'nullable|string',
-            'jumlah_tanggungan' => 'nullable|string',
-            // 'status_validasi' => 'required|in:belum tervalidasi,tervalidasi,ditolak',
-            'keterangan' => 'nullable|string',
-            'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'pendapatan_per_hari' => 'nullable|string',
+                'pendapatan_per_bulan' => 'nullable|string',
+                'jumlah_tanggungan' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+                'anggota_keluarga_id' => 'required|exists:anggota_keluarga,id|unique:kurang_mampu,anggota_keluarga_id'
+            ],
+            [
+                'anggota_keluarga_id.required' => 'Penduduk harus dipilih.',
+                'anggota_keluarga_id.unique' => 'Penduduk yang dipilih sudah terdaftar sebagai Kurang Mampu.',
+            ]
+        );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal, ' . $validator->errors()->first(), null, 422);
         }
 
-        $kurangMampu = KurangMampu::create([
-            'pendapatan_per_hari' => $request->pendapatan_per_hari,
-            'pendapatan_per_bulan' => $request->pendapatan_per_bulan,
-            'jumlah_tanggungan' => $request->jumlah_tanggungan ?? 0,
-            // 'status_validasi' => $request->status_validasi,
-            'status_validasi' => 'belum tervalidasi',
-            'keterangan' => $request->keterangan,
-            'anggota_keluarga_id' => $request->anggota_keluarga_id,
-        ]);
+        $dataToCreate = $validator->validated();
+        $dataToCreate['status_validasi'] = 'belum tervalidasi';
+        $dataToCreate['jumlah_tanggungan'] = $dataToCreate['jumlah_tanggungan'] ?? 0;
 
-        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', new KurangMampuResource($kurangMampu));
+        $kurangMampu = KurangMampu::create($dataToCreate);
+
+        return new ApiResource(true, 'Data Kurang Mampu Berhasil Ditambahkan', new KurangMampuResource($kurangMampu), 201);
     }
 
     /**
@@ -94,6 +123,9 @@ class KurangMampuController extends Controller
      */
     public function show(KurangMampu $kurangMampu)
     {
+        $kurangMampu->loadCount(
+            'penerimaBantuan'
+        );
         return new ApiResource(true, 'Detail Data Kurang Mampu', new KurangMampuResource($kurangMampu));
     }
 
@@ -102,37 +134,42 @@ class KurangMampuController extends Controller
      */
     public function update(Request $request, KurangMampu $kurangMampu)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'pendapatan_per_hari' => 'nullable|string',
-        //     'pendapatan_per_bulan' => 'nullable|string',
-        //     'jumlah_tanggungan' => 'nullable|string',
-        //     'status_validasi' => 'required|in:belum tervalidasi,tervalidasi,ditolak',
-        //     'keterangan' => 'nullable|string',
-        //     // 'anggota_keluarga_id' => 'nullable|exists:anggota_keluarga,id'
-        // ]);
+        $user = $request->user();
+        $message = 'Data Kurang Mampu berhasil diubah.';
 
-        if ($request->has('status_validasi')) {
-            $validator = Validator::make($request->all(), [
-                'status_validasi' => 'required|in:tervalidasi,ditolak',
-            ]);
-        } else {
-            $validator = Validator::make($request->all(), [
-                'pendapatan_per_hari' => 'nullable|string',
-                'pendapatan_per_bulan' => 'nullable|string',
-                'jumlah_tanggungan' => 'nullable|string',
-                'keterangan' => 'nullable|string',
-            ]);
+        // Jika status sudah tervalidasi, tidak boleh mengubah data apapun
+        if ($kurangMampu->status_validasi === 'tervalidasi') {
+            return new ApiResource(false, 'Data tidak dapat diubah karena status sudah tervalidasi.', null, 403);
         }
+
+        // Aturan validasi dasar yang bisa diubah oleh semua role yang berwenang
+        $rules = [
+            'pendapatan_per_hari' => 'nullable|string',
+            'pendapatan_per_bulan' => 'nullable|string',
+            'jumlah_tanggungan' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ];
+
+        //! Logika untuk role Admin dan Superadmin
+        if ($user->hasAnyRole(['admin', 'superadmin']) && $request->has('status_validasi')) {
+            $rules['status_validasi'] = 'required|in:tervalidasi,ditolak';
+            $message = 'Status validasi berhasil diubah.';
+
+            //! Jika role selain admin mencoba mengubah status, tolak.
+        } elseif ($request->has('status_validasi')) {
+            return new ApiResource(false, 'Anda tidak memiliki izin untuk mengubah status validasi.', null, 403);
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return new ApiResource(false, 'Validasi gagal: ' . $validator->errors()->first(), null, 422);
         }
 
-        $data = $request->all();
+        // Update hanya data yang divalidasi untuk mencegah pembaruan field yang tidak diizinkan
+        $kurangMampu->update($validator->validated());
 
-        $kurangMampu->update($data);
-
-        return new ApiResource(true, 'Data Kurang Mampu Berhasil Diubah', $kurangMampu);
+        return new ApiResource(true, $message, new KurangMampuResource($kurangMampu));
     }
 
     /**
@@ -140,6 +177,16 @@ class KurangMampuController extends Controller
      */
     public function destroy(KurangMampu $kurangMampu)
     {
+        $kurangMampu->loadCount('penerimaBantuan');
+        if (
+            $kurangMampu->status_validasi !== 'tervalidasi'
+            || $kurangMampu->penerima_bantuan_count > 0
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hanya dapat dihapus jika status tidak tervalidasi atau belum mengajukan bantuan.',
+            ], 403);
+        }
         $kurangMampu->delete();
         return new ApiResource(true, 'Data Kurang Mampu Berhasil Dihapus', null);
     }

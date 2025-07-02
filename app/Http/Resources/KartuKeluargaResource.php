@@ -16,6 +16,7 @@ class KartuKeluargaResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'uuid' => $this->uuid,
             'nomor_kk' => $this->nomor_kk,
             'rt' => [
@@ -30,6 +31,7 @@ class KartuKeluargaResource extends JsonResource
             'provinsi' => $this->provinsi,
             'anggota_keluarga' => $this->anggotaKeluarga->map(function ($anggota) {
                 return [
+                    'uuid' => $anggota->uuid,
                     'nama_lengkap' => $anggota->penduduk?->nama_lengkap,
                     'nik' => $anggota->penduduk?->nik,
                     'status_keluarga' => $anggota->statusKeluarga?->status_keluarga,

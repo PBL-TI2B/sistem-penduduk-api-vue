@@ -64,7 +64,7 @@ export function useAnggotaKeluarga() {
             for (const [key, value] of Object.entries(values)) {
                 formData.append(key, value ?? "");
             }
-            await apiPost("/anggota-keluarga", values);
+            await apiPost("/anggota-keluarga", formData);
             toast.success("Berhasil Tambah Data anggota keluarga");
             router.visit("/admin/anggota-keluarga");
         } catch (error) {
@@ -100,11 +100,21 @@ export function useAnggotaKeluarga() {
             // isLoading.value = true;
             await apiDelete(`/anggota-keluarga/${uuid}`);
             toast.success("Berhasil menghapus anggota keluarga");
-            router.visit("/admin/anggota-keluarga");
+            // router.visit("/admin/anggota-keluarga");
         } catch (error) {
             useErrorHandler(error, "Gagal menghapus anggota keluarga");
         } finally {
             // isLoading.value = false;
+        }
+    };
+
+    // Hapus anggota keluarga
+    const deleteAnggota = async (anggotaUuid) => {
+        try {
+            await apiDelete(`/anggota-keluarga/${anggotaUuid}`);
+            fetchDetailData(); // reload data keluarga
+        } catch (e) {
+            alert("Gagal menghapus anggota keluarga");
         }
     };
 
@@ -122,5 +132,6 @@ export function useAnggotaKeluarga() {
         createData,
         editData,
         deleteData,
+        deleteAnggota,
     };
 }

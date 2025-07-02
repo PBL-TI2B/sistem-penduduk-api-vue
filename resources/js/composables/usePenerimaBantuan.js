@@ -16,24 +16,6 @@ export function usePenerimaBantuan() {
 
     const search = ref("");
     const selectedStatusPenerimaanBantuan = ref("");
-    // const statusValidasiOptions = [
-    //     {
-    //         value: null,
-    //         label: "Semua",
-    //     },
-    //     {
-    //         value: "belum tervalidasi",
-    //         label: "Belum Tervalidasi",
-    //     },
-    //     {
-    //         value: "tervalidasi",
-    //         label: "Tervalidasi",
-    //     },
-    //     {
-    //         value: "ditolak",
-    //         label: "Ditolak",
-    //     },
-    // ];
 
     //! Fetch Data Penerima Bantuan
     const fetchData = async () => {
@@ -60,7 +42,7 @@ export function usePenerimaBantuan() {
         }
     };
 
-    // Fetch Detail Penerima Bantuan (untuk halaman edit/detail)
+    //! Fetch Detail Penerima Bantuan (untuk halaman edit/detail)
     const fetchDetailData = async (uuid) => {
         if (!uuid) return;
 
@@ -114,7 +96,7 @@ export function usePenerimaBantuan() {
     };
 
     //! Edit Keterangan Penerima Bantuan
-    const editKeterangan = async (uuid, values) => {
+    const editKeterangan = async (uuid, keterangan) => {
         try {
             isLoading.value = true;
 
@@ -138,7 +120,7 @@ export function usePenerimaBantuan() {
         }
     };
 
-    //! Edit status validasi only
+    //! Edit status penerima bantuan only
     const editStatusPenerimaanBantuan = async (uuid, status) => {
         try {
             isLoading.value = true;
@@ -148,10 +130,10 @@ export function usePenerimaBantuan() {
             formData.append("status", status ?? "");
 
             await apiPost(`/penerima-bantuan/${uuid}`, formData);
-            toast.success("Berhasil memperbarui status validasi");
-            router.visit(`/penerima-bantuan/${uuid}`);
+            toast.success("Berhasil memperbarui status penerima bantuan");
+            // router.visit(`/penerima-bantuan/${uuid}`);
         } catch (error) {
-            useErrorHandler(error, "Gagal memperbarui status validasi");
+            useErrorHandler(error, "Gagal memperbarui status penerima bantuan");
         } finally {
             isLoading.value = false;
         }

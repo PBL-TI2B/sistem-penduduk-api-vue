@@ -14,37 +14,56 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $superAdmin = Role::firstOrCreate(['name' => 'superadmin']);
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $rt = Role::firstOrCreate(['name' => 'rt']);
-        $rw = Role::firstOrCreate(['name' => 'rw']);
+        $superAdmin = Role::firstOrCreate(['name' => 'superadmin', 'guard_name'=>'sanctum']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name'=>'sanctum']);
+        $rt = Role::firstOrCreate(['name' => 'rt', 'guard_name'=>'sanctum']);
+        $rw = Role::firstOrCreate(['name' => 'rw', 'guard_name'=>'sanctum']);
 
         $resources = [
-            'rt', 'rw', 'desa', 'user', 'dusun', 'berita', 'galeri', 'jabatan',
-            'bantuan', 'kematian', 'penduduk', 'domisili', 'pindahan', 'pekerjaan',
-            'kelahiran', 'pendidikan', 'notifikasi', 'kurang-mampu', 'kartu-keluarga',
-            'perangkat-desa', 'status-keluarga', 'riwayat-bantuan', 'periode-jabatan',
-            'penerima-bantuan', 'anggota-keluarga', 'kategori-bantuan', 'notifikasi-penerima'
+            'rt',
+            'rw',
+            'desa',
+            'user',
+            'dusun',
+            'berita',
+            'galeri',
+            'jabatan',
+            'bantuan',
+            'kematian',
+            'penduduk',
+            'domisili',
+            'pindahan',
+            'pekerjaan',
+            'kelahiran',
+            'pendidikan',
+            'notifikasi',
+            'kurang-mampu',
+            'kartu-keluarga',
+            'perangkat-desa',
+            'status-keluarga',
+            'riwayat-bantuan',
+            'periode-jabatan',
+            'penerima-bantuan',
+            'anggota-keluarga',
+            'kategori-bantuan',
+            'notifikasi-penerima'
         ];
 
         $actions = ['create', 'read', 'update', 'delete'];
 
         foreach ($resources as $resource) {
             foreach ($actions as $action) {
-                Permission::firstOrCreate(['name' => "{$resource}.{$action}"]);
+                Permission::firstOrCreate(['name' => "{$resource}.{$action}", 'guard_name' => 'sanctum']);
             }
         }
 
-        $superAdmin = Role::findByName('superadmin');
-        $admin = Role::findByName('admin');
-        $rt = Role::findByName('rt');
-        $rw = Role::findByName('rw');
+        $superAdmin = Role::findByName('superadmin', 'sanctum');
+        $admin = Role::findByName('admin', 'sanctum');
+        $rt = Role::findByName('rt', 'sanctum');
+        $rw = Role::findByName('rw', 'sanctum');
 
         $superAdmin->givePermissionTo(Permission::all());
         $admin->givePermissionTo([
-            'penerima-bantuan.read',
-            'penerima-bantuan.create',
-            'penerima-bantuan.update',
             'anggota-keluarga.read',
             'anggota-keluarga.create',
             'anggota-keluarga.update',
@@ -59,9 +78,6 @@ class RolePermissionSeeder extends Seeder
             'kartu-keluarga.read',
             'kartu-keluarga.create',
             'kartu-keluarga.update',
-            'kurang-mampu.read',
-            'kurang-mampu.create',
-            'kurang-mampu.update',
             'notifikasi-penerima.read',
             'notifikasi-penerima.create',
             'kelahiran.read',
@@ -73,13 +89,28 @@ class RolePermissionSeeder extends Seeder
             'kematian.read',
             'kematian.create',
             'kematian.update',
-            'riwayat-bantuan.read',
-            'riwayat-bantuan.create',
             'notifikasi.read',
             'notifikasi.create',
             'pekerjaan.read',
             'pendidikan.read',
+
+            'kategori-bantuan.read',
             'bantuan.read',
+            'bantuan.create',
+            'bantuan.update',
+            'bantuan.delete',
+            'kurang-mampu.read',
+            'kurang-mampu.create',
+            'kurang-mampu.update',
+            'kurang-mampu.delete',
+            'penerima-bantuan.read',
+            'penerima-bantuan.create',
+            'penerima-bantuan.update',
+            'penerima-bantuan.delete',
+            'riwayat-bantuan.read',
+            'riwayat-bantuan.create',
+            'riwayat-bantuan.update',
+            'riwayat-bantuan.delete',
         ]);
 
         $rw->givePermissionTo([
@@ -95,17 +126,25 @@ class RolePermissionSeeder extends Seeder
             'pindahan.create',
             'pindahan.update',
 
+            'kategori-bantuan.read',
+
+            'bantuan.read',
+
             'kurang-mampu.read',
             'kurang-mampu.create',
             'kurang-mampu.update',
-            'notifikasi.read',
-            'notifikasi.create',
+            'kurang-mampu.delete',
 
             'penerima-bantuan.read',
             'penerima-bantuan.create',
             'penerima-bantuan.update',
+            'penerima-bantuan.delete',
+
             'riwayat-bantuan.read',
-            'riwayat-bantuan.create',
+            'riwayat-bantuan.update',
+
+            // 'notifikasi.read',
+            // 'notifikasi.create',
         ]);
 
         $rt->syncPermissions([
@@ -124,10 +163,22 @@ class RolePermissionSeeder extends Seeder
             'notifikasi.read',
             'notifikasi.create',
 
+            'kategori-bantuan.read',
+
+            'bantuan.read',
+
+            'kurang-mampu.read',
+            'kurang-mampu.create',
+            'kurang-mampu.update',
+            'kurang-mampu.delete',
+
             'penerima-bantuan.read',
             'penerima-bantuan.create',
+            'penerima-bantuan.update',
+            'penerima-bantuan.delete',
+
             'riwayat-bantuan.read',
-            'riwayat-bantuan.create',
+            'riwayat-bantuan.update',
         ]);
     }
 }

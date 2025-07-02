@@ -38,13 +38,13 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
 
     RoutePermission('galeri', GaleriController::class, 'galeri', true);
     RoutePermission('berita', BeritaController::class, 'berita', true);
-    RoutePermission('penduduk', PendudukController::class, 'penduduk', true);
-    RoutePermission('perangkat-desa', PerangkatDesaController::class, 'perangkatDesa', true);
     RoutePermission('dusun', DusunController::class, 'dusun', true);
     RoutePermission('desa', DesaController::class, 'desa', true);
     RoutePermission('bantuan', BantuanController::class, 'bantuan', true);
-    RoutePermission('pekerjaan', PekerjaanController::class, 'pekerjaan', true);
-    RoutePermission('pendidikan', PendidikanController::class, 'pendidikan', true);
+    RoutePermission('pekerjaan', PekerjaanController::class, 'pekerjaan');
+    RoutePermission('penduduk', PendudukController::class, 'penduduk');
+    RoutePermission('perangkat-desa', PerangkatDesaController::class, 'perangkatDesa');
+    RoutePermission('pendidikan', PendidikanController::class, 'pendidikan');
 
     Route::prefix('statistik')->controller(InfografisController::class)->group(function () {
         Route::get('/pendidikan', 'statistikPendidikan');
@@ -76,21 +76,28 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
         Route::get('/galeri/url_media/{filename}', [GaleriController::class, 'getGaleri']);
         Route::get('/berita/thumbnail/{filename}', [BeritaController::class, 'getBerita']);
 
-        RoutePermission('rt', RtController::class, 'rt');
-        RoutePermission('rw', RwController::class, 'rw');
-        RoutePermission('jabatan', JabatanController::class, 'jabatan');
-        RoutePermission('periode-jabatan', PeriodeJabatanController::class, 'periodeJabatan');
-        RoutePermission('user', UserController::class, 'user');
-        RoutePermission('kematian', KematianController::class, 'kematian');
-        RoutePermission('pindahan', PindahanController::class, 'pindahan');
-        RoutePermission('kartu-keluarga', KartuKeluargaController::class, 'kartuKeluarga');
-        RoutePermission('kurang-mampu', KurangMampuController::class, 'kurangMampu');
-        RoutePermission('anggota-keluarga', AnggotaKeluargaController::class, 'anggotaKeluarga');
-        RoutePermission('status-keluarga', StatusKeluargaController::class, 'statusKeluarga');
-        RoutePermission('kategori-bantuan', KategoriBantuanController::class, 'kategoriBantuan');
-        RoutePermission('domisili', DomisiliController::class, 'domisili');
-        RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
-        RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
-        RoutePermission('riwayat-bantuan', RiwayatBantuanController::class, 'riwayatBantuan');
+        Route::get('/kartu-keluarga/check-kk', [KartuKeluargaController::class, 'checkNomorKK']);
+        // ->middleware('permission:kartu-keluarga.create');
+        Route::post('/anggota-keluarga/batch', [AnggotaKeluargaController::class, 'storeBatch']);
+        // ->middleware('permission:anggota-keluarga.create');
     });
+
+    RoutePermission('rt', RtController::class, 'rt');
+    RoutePermission('rw', RwController::class, 'rw');
+    RoutePermission('jabatan', JabatanController::class, 'jabatan');
+    RoutePermission('periode-jabatan', PeriodeJabatanController::class, 'periodeJabatan');
+    RoutePermission('user', UserController::class, 'user');
+    RoutePermission('kematian', KematianController::class, 'kematian');
+    RoutePermission('pindahan', PindahanController::class, 'pindahan');
+    RoutePermission('kartu-keluarga', KartuKeluargaController::class, 'kartuKeluarga');
+    RoutePermission('kurang-mampu', KurangMampuController::class, 'kurangMampu');
+    RoutePermission('anggota-keluarga', AnggotaKeluargaController::class, 'anggotaKeluarga');
+    RoutePermission('status-keluarga', StatusKeluargaController::class, 'statusKeluarga');
+    RoutePermission('kategori-bantuan', KategoriBantuanController::class, 'kategoriBantuan');
+    RoutePermission('domisili', DomisiliController::class, 'domisili');
+    RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
+    RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
+    RoutePermission('riwayat-bantuan', RiwayatBantuanController::class, 'riwayatBantuan');
+    
+    
 });

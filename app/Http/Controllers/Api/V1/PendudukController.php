@@ -17,21 +17,35 @@ class PendudukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Penduduk::with(['pekerjaan', 'pendidikan', 'domisili'])
-        ->orderBy('status', 'asc');
+        $user = $request->user();
+
+        $query = Penduduk::with(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])
+            ->orderBy('status', 'asc');
+
+        if ($user) {
+            if ($user->hasRole('rt') && $user->perangkatDesa?->rt_id) {
+                $userRt = $user->perangkatDesa->rt_id;
+                $query->whereHas('domisili.rt', function ($q) use ($userRt) {
+                    $q->where('id', $userRt);
+                });
+            } elseif ($user->hasRole('rw') && $user->perangkatDesa?->rw_id) {
+                $userRw = $user->perangkatDesa->rw_id;
+                $query->whereHas('domisili.rt.rw', function ($q) use ($userRw) {
+                    $q->where('id', $userRw);
+                });
+            }
+        }
 
         $this->applyDirectFilters($query, $request);
-
         $this->applyRelationFilters($query, $request);
-
         $this->applyAgeFilter($query, $request);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%$search%")
-                ->orWhere('nik', 'like', "%$search%")
-                ->orWhere('tempat_lahir', 'like', "%$search%");
+                  ->orWhere('nik', 'like', "%$search%")
+                  ->orWhere('tempat_lahir', 'like', "%$search%");
             });
         }
 
@@ -43,7 +57,6 @@ class PendudukController extends Controller
             $query->whereDoesntHave('anakSebagaiAyah');
         }
         
-
         $penduduk = $query->paginate($request->get('per_page', 10));
         $collection = PendudukResource::collection($penduduk->getCollection());
         $penduduk->setCollection(collect($collection));

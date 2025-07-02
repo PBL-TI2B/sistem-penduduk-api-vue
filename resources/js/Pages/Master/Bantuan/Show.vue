@@ -2,8 +2,9 @@
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import { Button } from "@/components/ui/button";
 import { SquarePen, Trash2 } from "lucide-vue-next";
+import Badge from "@/components/ui/badge/Badge.vue";
 import { rowsIndexBantuan } from "./utils/table";
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import { useBantuan } from "@/composables/useBantuan";
@@ -12,14 +13,13 @@ import AlertDialog from "@/components/master/AlertDialog.vue";
 const { uuid } = usePage().props;
 
 const selectedUuid = ref(null);
-const isFormDialogDomisiliOpen = ref(false);
+const isEditStatusBantuanDialogOpen = ref(false);
 const isAlertDeleteOpen = ref(false);
-const dialogMode = ref("create");
 
-const { item, fetchDetailBantuan, deleteBantuan } = useBantuan();
+const { item, fetchDetailBantuan, editStatusBantuan, deleteBantuan } =
+    useBantuan();
 
-// const currentBantuanData = computed(() => item.value);
-
+//! Handle Delete
 const onClickDeleteButton = (uuid) => {
     selectedUuid.value = uuid;
     isAlertDeleteOpen.value = true;
@@ -38,8 +38,41 @@ const onConfirmDelete = async () => {
     }
 };
 
+//! Handle Edit Status
+const onClickEditStatusButton = (uuid) => {
+    selectedUuid.value = uuid;
+    isEditStatusBantuanDialogOpen.value = true;
+};
+
+const onCancelEditStatus = () => {
+    isEditStatusBantuanDialogOpen.value = false;
+    selectedUuid.value = null;
+};
+
+const onConfirmEditStatus = async () => {
+    if (selectedUuid.value) {
+        const status = item.value.status === "aktif" ? "nonaktif" : "aktif";
+        await editStatusBantuan(selectedUuid.value, status);
+        isEditStatusBantuanDialogOpen.value = false;
+        selectedUuid.value = null;
+        fetchDetailBantuan(uuid);
+        if (status === "aktif") {
+            labelButtonStatus.value = "Nonaktifkan Bantuan";
+        } else {
+            labelButtonStatus.value = "Aktifkan Bantuan";
+        }
+    }
+};
+
+const labelButtonStatus = ref("");
+
 onMounted(async () => {
     await fetchDetailBantuan(uuid);
+    if (item.value.status === "aktif") {
+        labelButtonStatus.value = "Nonaktifkan Bantuan";
+    } else {
+        labelButtonStatus.value = "Aktifkan Bantuan";
+    }
     // console.log(item.value);
 });
 </script>
@@ -62,9 +95,28 @@ onMounted(async () => {
         class="shadow-md p-4 rounded-lg flex flex-col lg:flex-row gap-4 justify-between"
     >
         <div class="w-full">
-            <h2 class="text-lg font-bold mb-4">
-                Detail Data - {{ item.nama_bantuan }}
-            </h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold">
+                    Detail Data
+                    <Badge variant="outline">
+                        {{
+                            item.status
+                                ? item.status
+                                      .toLowerCase()
+                                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                                : ""
+                        }}
+                    </Badge>
+                </h2>
+
+                <Button
+                    variant="secondary"
+                    @click="onClickEditStatusButton(uuid)"
+                >
+                    <SquarePen />
+                    {{ labelButtonStatus }}
+                </Button>
+            </div>
             <table class="w-full table-auto border-collapse">
                 <tbody>
                     <tr
@@ -85,15 +137,64 @@ onMounted(async () => {
                     </tr>
                 </tbody>
             </table>
-            <div class="flex mt-2 gap-2 items-center justify-end">
-                <Button asChild>
-                    <Link :href="route('bantuan.edit', uuid)">
-                        <SquarePen /> Ubah
-                    </Link>
-                </Button>
-                <Button @click="onClickDeleteButton(uuid)">
-                    <Trash2 /> Hapus
-                </Button>
+            <div class="flex flex-col mt-2 gap-2">
+                <div class="flex justify-between items-end w-full">
+                    <p class="text-sm text-gray-500 mt-2">
+                        <em
+                            >*Batuan yang sudah pernah disalurkan tidak dapat
+                            dihapus atau diubah.</em
+                        >
+                        <br />
+                        <em
+                            >*Hanya bantuan dengan status
+                            <span class="font-semibold text-primary"
+                                >aktif</span
+                            >
+                            yang bisa disalurkan kepada penduduk kurang
+                            mampu.</em
+                        >
+                        <br />
+                        <em
+                            >*Hanya batuan dengan status
+                            <span class="font-semibold text-primary"
+                                >nonaktif</span
+                            >
+                            dan
+                            <span class="font-semibold text-primary"
+                                >belum pernah disalurkan</span
+                            >
+                            yang dapat diubah atau dihapus.
+                        </em>
+                    </p>
+                    <div class="flex gap-2">
+                        <template
+                            v-if="
+                                item.penerima_bantuan_count === 0 &&
+                                item.status !== 'aktif'
+                            "
+                        >
+                            <Link
+                                :href="route('bantuan.edit', uuid)"
+                                class="inline-flex"
+                            >
+                                <Button variant="secondary" type="button">
+                                    <SquarePen /> Ubah Data
+                                </Button>
+                            </Link>
+                            <Button @click="onClickDeleteButton(uuid)">
+                                <Trash2 /> Hapus
+                            </Button>
+                        </template>
+                        <template v-else>
+                            <Button variant="secondary" type="button" disabled>
+                                <SquarePen /> Ubah Data
+                            </Button>
+                            <Button type="button" disabled>
+                                <Trash2 /> Hapus
+                            </Button>
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -125,7 +226,13 @@ onMounted(async () => {
             </table>
         </div>
     </div> -->
-
+    <AlertDialog
+        v-model:isOpen="isEditStatusBantuanDialogOpen"
+        :title="labelButtonStatus"
+        :description="'Apakah anda yakin ingin mengubah status bantuan ini?'"
+        :onConfirm="onConfirmEditStatus"
+        :onCancel="onCancelEditStatus"
+    />
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
         :title="'Hapus Data Bantuan'"
