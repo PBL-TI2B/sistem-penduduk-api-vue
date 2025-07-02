@@ -22,6 +22,7 @@ import { computed, ref } from "vue";
 import axios from "axios";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import Cookies from "js-cookie";
+import Sheet from "@/components/ui/sheet/Sheet.vue";
 
 const props = defineProps({
     items: Array,
