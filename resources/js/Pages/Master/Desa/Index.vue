@@ -11,10 +11,14 @@ import DataTable from "@/components/master/DataTable.vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import FormDialogDusun from "./components/FormDialogDusun.vue";
 import FormDialogDesa from "./components/FormDialogDesa.vue";
+import FormDialogRw from "./components/FormDialogRw.vue";
+import FormDialogRt from "./components/FormDialogRt.vue";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
 import { columnsIndex, getActionsDesa } from "./utils/tableDesa";
 import { columnsIndex2, getActionsDusun } from "./utils/tableDusun";
+import { columnsIndex3, getActionsRw } from "./utils/tableRw";
+import { columnsIndex4, getActionsRt } from "./utils/tableRt";
 
 // ======================= DESA ========================
 const items = ref([]);
@@ -156,11 +160,11 @@ const fetchData2 = async () => {
 };
 
 onMounted(fetchData2);
-watch(page, () => {
+watch(page2, () => {
     fetchData2();
 });
 const applyFilter2 = () => {
-    page.value = 1;
+    page2.value = 1;
     fetchData2();
 };
 
@@ -171,7 +175,7 @@ const clearSearchDusun = () => {
 // watch([page2, searchDusun], fetchData2);
 const onSearchEnterDusun = (e) => {
     if (e.key === "Enter") {
-        page.value = 1;
+        page2.value = 1;
         fetchData2();
     }
 };
@@ -220,6 +224,210 @@ const actionsIndex2 = getActionsDusun({
     onEdit: editDusun,
     onDelete: (item) => onClickDeleteDusun(item.uuid),
 });
+
+//======================== RW ========================
+
+const items3 = ref([]);
+const totalPages3 = ref(1);
+const page3 = ref(1);
+const perPage3 = ref(5);
+const isLoading3 = ref(false);
+const searchRw = ref("");
+const totalRwData = ref(0);
+
+// Dialog dan state hapus dusun
+const isFormDialogRwOpen = ref(false);
+const dialogModeRw = ref("create");
+const currentRwData = ref(null);
+
+const isAlertDeleteRwOpen = ref(false);
+const selectedRwUuid = ref(null);
+
+const fetchData3 = async () => {
+    try {
+        items3.value = [];
+        isLoading3.value = true;
+        const res = await apiGet("/rw", {
+            page: page3.value,
+            search: searchRw.value,
+            per_page: perPage3.value, // pakai searchRw
+        });
+        items3.value = res.data.data;
+        perPage3.value = res.data.per_page;
+        totalPages3.value = res.data.last_page;
+        totalRwData.value = res.data.total;
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data rw");
+    } finally {
+        isLoading3.value = false;
+    }
+};
+onMounted(fetchData3);
+watch(page3, () => {
+    fetchData3();
+});
+const applyFilter3 = () => {
+    page3.value = 1;
+    fetchData3();
+};
+
+const clearSearchRw = () => {
+    searchRw.value = "";
+    applyFilter3();
+};
+// watch([page2, searchDusun], fetchData2);
+const onSearchEnterRw = (e) => {
+    if (e.key === "Enter") {
+        page3.value = 1;
+        fetchData3();
+    }
+};
+
+const createRw = () => {
+    dialogModeRw.value = "create";
+    currentRwData.value = null;
+    isFormDialogRwOpen.value = true;
+};
+
+const editRw = (data) => {
+    dialogModeRw.value = "edit";
+    currentRwData.value = data;
+    isFormDialogRwOpen.value = true;
+};
+
+// Fungsi buka dialog konfirmasi hapus dusun
+const onClickDeleteRw = (uuid) => {
+    selectedRwUuid.value = uuid;
+    isAlertDeleteRwOpen.value = true;
+};
+
+// Konfirmasi hapus dusun
+const onConfirmDeleteRw = async () => {
+    if (selectedRwUuid.value) {
+        try {
+            await apiDelete(`/rw/${selectedRwUuid.value}`);
+            await fetchData3();
+        } catch (error) {
+            useErrorHandler(error, "Gagal menghapus rw");
+        } finally {
+            isAlertDeleteRwOpen.value = false;
+            selectedRwUuid.value = null;
+        }
+    }
+};
+
+// Batal hapus dusun
+const onCancelDeleteRw = () => {
+    isAlertRwDusunOpen.value = false;
+    selectedRwUuid.value = null;
+};
+
+const actionsIndex3 = getActionsRw({
+    onEdit: editRw,
+    onDelete: (item) => onClickDeleteRw(item.uuid), // Assuming you create onClickDeleteRw
+});
+
+//======================== RT ========================
+
+const items4 = ref([]);
+const totalPages4 = ref(1);
+const page4 = ref(1);
+const perPage4 = ref(5);
+const isLoading4 = ref(false);
+const searchRt = ref("");
+const totalRtData = ref(0);
+
+// Dialog dan state hapus dusun
+const isFormDialogRtOpen = ref(false);
+const dialogModeRt = ref("create");
+const currentRtData = ref(null);
+
+const isAlertDeleteRtOpen = ref(false);
+const selectedRtUuid = ref(null);
+
+const fetchData4 = async () => {
+    try {
+        items4.value = [];
+        isLoading4.value = true;
+        const res = await apiGet("/rt", {
+            page: page4.value,
+            search: searchRt.value,
+            per_page: perPage4.value, // pakai searchRw
+        });
+        items4.value = res.data.data;
+        perPage4.value = res.data.per_page;
+        totalPages4.value = res.data.last_page;
+        totalRtData.value = res.data.total;
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data rt");
+    } finally {
+        isLoading4.value = false;
+    }
+};
+onMounted(fetchData4);
+watch(page4, () => {
+    fetchData4();
+});
+const applyFilter4 = () => {
+    page4.value = 1;
+    fetchData4();
+};
+
+const clearSearchRt = () => {
+    searchRt.value = "";
+    applyFilter4();
+};
+// watch([page2, searchDusun], fetchData2);
+const onSearchEnterRt = (e) => {
+    if (e.key === "Enter") {
+        page4.value = 1;
+        fetchData4();
+    }
+};
+
+const createRt = () => {
+    dialogModeRt.value = "create";
+    currentRtData.value = null;
+    isFormDialogRtOpen.value = true;
+};
+
+const editRt = (data) => {
+    dialogModeRt.value = "edit";
+    currentRtData.value = data;
+    isFormDialogRtOpen.value = true;
+};
+
+// Fungsi buka dialog konfirmasi hapus dusun
+const onClickDeleteRt = (uuid) => {
+    selectedRtUuid.value = uuid;
+    isAlertDeleteRtOpen.value = true;
+};
+
+// Konfirmasi hapus dusun
+const onConfirmDeleteRt = async () => {
+    if (selectedRtUuid.value) {
+        try {
+            await apiDelete(`/rt/${selectedRtUuid.value}`);
+            await fetchData4();
+        } catch (error) {
+            useErrorHandler(error, "Gagal menghapus rt");
+        } finally {
+            isAlertDeleteRtOpen.value = false;
+            selectedRtUuid.value = null;
+        }
+    }
+};
+
+// Batal hapus dusun
+const onCancelDeleteRt = () => {
+    isAlertRtOpen.value = false;
+    selectedRtUuid.value = null;
+};
+
+const actionsIndex4 = getActionsRt({
+    onEdit: editRt,
+    onDelete: (item) => onClickDeleteRt(item.uuid), // Assuming you create onClickDeleteRw
+});
 </script>
 
 <template>
@@ -263,11 +471,11 @@ const actionsIndex2 = getActionsDusun({
                 </button>
                 <!-- <button class="cursor-pointer">Terapkan</button> -->
             </div>
-            <div
+            <!-- <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
                 <Button @click="createDesa"><SquarePlus />Desa </Button>
-            </div>
+            </div> -->
         </div>
         <!-- TABEL DESA -->
         <DataTable
@@ -343,7 +551,113 @@ const actionsIndex2 = getActionsDusun({
             :initialData="currentDusunData"
             @success="fetchData2"
         />
+
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    v-model="searchRw"
+                    @keyup.enter="onSearchEnterRw"
+                    placeholder="Cari rw berdasarkan nama"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchRw"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    @click="clearSearchDusun"
+                    tabindex="-1"
+                    type="button"
+                >
+                    <X class="size-5" />
+                </button>
+                <!-- <Button class="cursor-pointer">Terapkan</Button> -->
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="createRw"><SquarePlus />Rw </Button>
+            </div>
+        </div>
+        <DataTable
+            label="Rw"
+            :items="items3"
+            :totalData="totalRwData"
+            :columns="columnsIndex3"
+            :actions="actionsIndex3"
+            :totalPages="totalPages3"
+            :page="page3"
+            :per-page="perPage3"
+            :is-loading="isLoading3"
+            :is-exportable="true"
+            @update:page="page3 = $event"
+        />
+
+        <FormDialogRw
+            v-model:isOpen="isFormDialogRwOpen"
+            :mode="dialogModeRw"
+            :initialData="currentRwData"
+            @success="fetchData3"
+        />
     </div>
+
+    <div class="flex xl:flex-row flex-col gap-4 items-center">
+        <div
+            class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+        >
+            <Input
+                v-model="searchRw"
+                @keyup.enter="onSearchEnterRw"
+                placeholder="Cari rt berdasarkan nama"
+                class="pl-10 pr-8"
+            />
+            <span
+                class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+            >
+                <SearchIcon class="size-6 text-muted-foreground" />
+            </span>
+            <button
+                v-if="searchRw"
+                class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                @click="clearSearchDusun"
+                tabindex="-1"
+                type="button"
+            >
+                <X class="size-5" />
+            </button>
+            <!-- <Button class="cursor-pointer">Terapkan</Button> -->
+        </div>
+        <div
+            class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+        >
+            <Button @click="createRt"><SquarePlus />Rt </Button>
+        </div>
+    </div>
+    <DataTable
+        label="Rt"
+        :items="items4"
+        :totalData="totalRtData"
+        :columns="columnsIndex4"
+        :actions="actionsIndex4"
+        :totalPages="totalPages4"
+        :page="page4"
+        :per-page="perPage4"
+        :is-loading="isLoading4"
+        :is-exportable="true"
+        @update:page="page4 = $event"
+    />
+
+    <FormDialogRt
+        v-model:isOpen="isFormDialogRtOpen"
+        :mode="dialogModeRt"
+        :initialData="currentRtData"
+        @success="fetchData4"
+    />
 
     <AlertDialog
         v-model:isOpen="isAlertDeleteDusunOpen"
@@ -359,5 +673,21 @@ const actionsIndex2 = getActionsDusun({
         description="Apakah Anda yakin ingin menghapus desa ini?"
         :onConfirm="onConfirmDeleteDesa"
         :onCancel="onCancelDeleteDesa"
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteRwOpen"
+        title="Hapus Rw"
+        description="Apakah Anda yakin ingin menghapus rw ini?"
+        :onConfirm="onConfirmDeleteRw"
+        :onCancel="onCancelDeleteRw"
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteRtOpen"
+        title="Hapus Rt"
+        description="Apakah Anda yakin ingin menghapus rt ini?"
+        :onConfirm="onConfirmDeleteRt"
+        :onCancel="onCancelDeleteRt"
     />
 </template>
