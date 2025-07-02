@@ -12,19 +12,16 @@ import {
 import { route } from "ziggy-js";
 import { columnsKK, rowsShowKK } from "./utils/table";
 import { useKartuKeluarga } from "@/composables/useKartuKeluarga";
+
 import { ref, onMounted } from "vue";
 import { useAnggotaKeluarga } from "@/composables/useAnggotaKeluarga";
 import FormDialogAnggotaKeluarga from "./components/FormDialogAnggotaKeluarga.vue";
 import { toast } from "vue-sonner";
-import AlertDialog from "@/components/master/AlertDialog.vue"; 
-
+import AlertDialog from "@/components/master/AlertDialog.vue";
 
 const isFormAnggotaOpen = ref(false);
 
 const { uuid } = usePage().props;
-const isFormDialogOpen = ref(false);
-const dialogMode = ref("create");
-const selectedKematian = ref(null);
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 const { deleteAnggota } = useAnggotaKeluarga();
@@ -45,34 +42,6 @@ const confirmDeleteKK = () => {
     deleteType.value = "kk";
     selectedUuid.value = null;
     isAlertDeleteOpen.value = true;
-};
-
-const onClickDeleteKematianButton = (uuid) => {
-    selectedUuid.value = uuid;
-    isAlertDeleteOpen.value = true;
-};
-
-const editKematian = (kematian) => {
-    isFormDialogOpen.value = true;
-    dialogMode.value = "edit";
-    selectedKematian.value = kematian;
-};
-
-const createKematian = () => {
-    isFormDialogOpen.value = true;
-    dialogMode.value = "create";
-};
-
-const onCancelDeleteKematian = () => {
-    isAlertDeleteOpen.value = false;
-    selectedUuid.value = null;
-};
-const onConfirmDeleteKematian = async () => {
-    if (selectedUuid.value) {
-        await deleteData(selectedUuid.value);
-        isAlertDeleteOpen.value = false;
-        selectedUuid.value = null;
-    }
 };
 
 const onCancelDelete = () => {
@@ -114,6 +83,7 @@ onMounted(async () => {
         // opsional: handle error
     }
 });
+
 console.log(item);
 </script>
 
@@ -136,7 +106,9 @@ console.log(item);
                     <SquarePen /> Kartu Keluarga
                 </Link>
             </Button>
-            <Button @click="confirmDeleteKK"> <Trash2 /> Kartu Keluarga </Button>
+            <Button @click="confirmDeleteKK">
+                <Trash2 /> Kartu Keluarga
+            </Button>
         </div>
     </div>
     <div
@@ -242,10 +214,16 @@ console.log(item);
 
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
-        :title="deleteType === 'kk' ? 'Hapus Kartu Keluarga' : 'Hapus Anggota Keluarga'"
-        :description="deleteType === 'kk'
-            ? 'Apakah anda yakin ingin menghapus kartu keluarga ini? Semua anggota akan ikut terhapus.'
-            : 'Apakah anda yakin ingin menghapus anggota keluarga ini?'"
+        :title="
+            deleteType === 'kk'
+                ? 'Hapus Kartu Keluarga'
+                : 'Hapus Anggota Keluarga'
+        "
+        :description="
+            deleteType === 'kk'
+                ? 'Apakah anda yakin ingin menghapus kartu keluarga ini? Semua anggota akan ikut terhapus.'
+                : 'Apakah anda yakin ingin menghapus anggota keluarga ini?'
+        "
         :onConfirm="onConfirmDelete"
         :onCancel="onCancelDelete"
     />
