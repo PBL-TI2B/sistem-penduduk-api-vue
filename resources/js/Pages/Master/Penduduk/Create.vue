@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
-import { getFields } from "./utils/fields";
+import { getFieldDomisili, getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import { formSchemaPenduduk } from "./utils/form-schema";
@@ -31,19 +31,61 @@ import "@vuepic/vue-datepicker/dist/main.css";
 
 const fotoFile = ref(null);
 const fields = ref([]);
+const fieldsDomisili = ref([]);
+const currentStep = ref(1);
+const domisili = ref([]);
+const pendudukId = ref(null);
 
 const onFileChange = (e) => {
     const target = e.target;
     fotoFile.value = target.files?.[0] || null;
 };
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, values } = useForm({
     validationSchema: formSchemaPenduduk,
 });
 
 const { createPenduduk } = usePenduduk();
 
-const onSubmit = handleSubmit(async (values) => {
+const isStep1Valid = computed(() => {
+    // Validasi field wajib untuk step 1
+    const requiredFields = [
+        "nik",
+        "nama_lengkap",
+        "jenis_kelamin",
+        "tempat_lahir",
+        "tanggal_lahir",
+        "agama",
+        "status_perkawinan",
+        "status",
+        "pekerjaan_id",
+        "pendidikan_id",
+    ];
+    return requiredFields.every(
+        (field) => values[field] && values[field].toString().trim() !== ""
+    );
+});
+
+const canProceedToStep2 = computed(() => {
+    return isStep1Valid.value && pendudukId.value;
+});
+
+// Methods
+const nextStep = async () => {
+    if (currentStep.value === 1) {
+        await submitStep1();
+    } else if (currentStep.value === 2) {
+        await submitStep2();
+    }
+};
+
+const prevStep = () => {
+    if (currentStep.value > 1) {
+        currentStep.value--;
+    }
+};
+
+const submitStep1 = handleSubmit(async (values) => {
     try {
         const rawTanggal = values.tanggal_lahir;
         const dateObj = new Date(rawTanggal);
@@ -63,19 +105,90 @@ const onSubmit = handleSubmit(async (values) => {
             formData.append("foto", fotoFile.value);
         }
 
-        await apiPost("/penduduk", formData);
+        const response = await apiPost("/penduduk", formData);
+        pendudukId.value = response.data.id;
 
-        resetForm();
-        toast.success("Berhasil Tambah Data Penduduk");
+        toast.success("Data Penduduk berhasil disimpan");
+        currentStep.value = 2;
+    } catch (error) {
+        if (error.response) {
+            // Server responded with error status
+            const { status, data } = error.response;
+            console.log(status, data);
+
+            if (status === 422) {
+                // Check if data has direct field errors (not nested in errors object)
+                if (data.nik) {
+                    // Handle NIK error directly
+                    const nikErrors = Array.isArray(data.nik)
+                        ? data.nik
+                        : [data.nik];
+                    nikErrors.forEach((message) => {
+                        toast.error(`NIK: ${message}`);
+                    });
+                } else if (data.errors) {
+                    // Handle nested validation errors
+                    Object.keys(data.errors).forEach((field) => {
+                        const messages = data.errors[field];
+                        messages.forEach((message) => {
+                            toast.error(`${field}: ${message}`);
+                        });
+                    });
+                } else if (data.message) {
+                    toast.error(data.message);
+                } else {
+                    // Handle all direct field errors
+                    Object.keys(data).forEach((field) => {
+                        if (Array.isArray(data[field])) {
+                            data[field].forEach((message) => {
+                                toast.error(`${field}: ${message}`);
+                            });
+                        } else if (typeof data[field] === "string") {
+                            toast.error(`${field}: ${data[field]}`);
+                        }
+                    });
+                }
+            } else if (status === 409) {
+                // Conflict error (duplicate)
+                toast.error(data.message || "NIK sudah terdaftar");
+            } else {
+                // Other server errors
+                toast.error(data.message || "Terjadi kesalahan pada server");
+            }
+        } else if (error.request) {
+            // Network error
+            toast.error("Tidak dapat terhubung ke server");
+        } else {
+            // Other errors
+            toast.error("Terjadi kesalahan yang tidak diketahui");
+        }
+    }
+});
+
+const submitStep2 = async () => {
+    try {
+        const promises = domisili.value.map((domisili) =>
+            apiPost("/domisili", {
+                status_tempat_tinggal: domisili.status_tempat_tinggal,
+                penduduk_id: pendudukId.value,
+                rt_id: domisili.rt_id,
+                alamat_asal: domisili.alamat_asal,
+                alamat_saat_ini: domisili.alamat_saat_ini,
+            })
+        );
+
+        await Promise.all(promises);
+
+        toast.success("Data Domisili berhasil disimpan");
         router.visit("/admin/penduduk");
     } catch (error) {
         useErrorHandler(error);
     }
-});
+};
 
 onMounted(async () => {
     try {
-        const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
+        const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes, rtRes] =
             await Promise.all([
                 apiGet("/pekerjaan"),
                 apiGet("/pendidikan"),
@@ -89,6 +202,7 @@ onMounted(async () => {
                     status_perkawinan: "kawin",
                     exclude_ibu: true,
                 }),
+                apiGet("/rt"),
             ]);
 
         const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
@@ -111,6 +225,11 @@ onMounted(async () => {
             label: item.nama_lengkap,
         }));
 
+        const rtOptions = rtRes.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nomor_rt,
+        }));
+
         fields.value = [
             ...getFields(pekerjaanOptions, pendidikanOptions),
             {
@@ -128,6 +247,8 @@ onMounted(async () => {
                 placeholder: "Pilih Ibu",
             },
         ];
+
+        fieldsDomisili.value = getFieldDomisili(rtOptions);
     } catch (error) {
         useErrorHandler(error);
     }
@@ -148,8 +269,44 @@ onMounted(async () => {
         />
     </div>
 
-    <div class="shadow-lg p-8 my-4 rounded-lg">
-        <form @submit="onSubmit" class="space-y-6 grid grid-cols-2 gap-x-8">
+    <!-- Step Indicator -->
+    <div class="flex items-center justify-center my-6">
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+                <div
+                    :class="[
+                        'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                        currentStep >= 1
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-200 text-gray-600',
+                    ]"
+                >
+                    1
+                </div>
+                <span class="ml-2 text-sm font-medium">Data Penduduk</span>
+            </div>
+            <div class="w-16 h-0.5 bg-gray-200"></div>
+            <div class="flex items-center">
+                <div
+                    :class="[
+                        'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                        currentStep >= 2
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-200 text-gray-600',
+                    ]"
+                >
+                    2
+                </div>
+                <span class="ml-2 text-sm font-medium">Domisili</span>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="currentStep === 1" class="shadow-lg p-8 my-4 rounded-lg">
+        <form
+            @submit.prevent="nextStep"
+            class="space-y-6 grid grid-cols-2 gap-x-8"
+        >
             <!-- Loop all fields except foto -->
             <FormField
                 v-for="field in fields"
@@ -219,10 +376,64 @@ onMounted(async () => {
                         variant="secondary"
                         >Batal</Button
                     >
-                    <Button type="submit">Simpan</Button>
+                    <Button type="submit" :disabled="!isStep1Valid"
+                        >Selanjutnya</Button
+                    >
                 </div>
             </div>
         </form>
+    </div>
+    <div v-if="currentStep === 2" class="shadow-lg p-8 my-4 rounded-lg">
+        <!-- Loop all fields except foto -->
+        <div class="space-y-6 grid grid-cols-2 gap-x-8">
+            <FormField
+                v-for="field in fieldsDomisili"
+                :key="field.name"
+                :name="field.name"
+                v-slot="{ componentField }"
+            >
+                <FormItem>
+                    <FormLabel>{{ field.label }}</FormLabel>
+                    <FormControl>
+                        <Input
+                            v-if="
+                                field.type === 'text' || field.type === 'date'
+                            "
+                            :type="field.type"
+                            :placeholder="field.placeholder"
+                            v-bind="componentField"
+                        />
+                        <Select
+                            v-else-if="field.type === 'select'"
+                            v-bind="componentField"
+                        >
+                            <SelectTrigger class="w-full">
+                                <SelectValue placeholder="Pilih..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="option in field.options"
+                                    :key="option.value || option"
+                                    :value="option.value || option"
+                                >
+                                    {{ option.label || option }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+        </div>
+
+        <div class="flex col-span-2 justify-between items-center">
+            <div>
+                <p>Peringatan</p>
+            </div>
+            <div class="flex gap-2 items-center">
+                <Button type="submit" @click="submitStep2">Simpan</Button>
+            </div>
+        </div>
     </div>
 </template>
 

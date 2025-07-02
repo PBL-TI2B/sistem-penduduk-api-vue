@@ -80,11 +80,6 @@ onMounted(() => {
             v-else-if="!hasData"
             class="text-center text-gray-500 flex flex-col items-center gap-4 py-10"
         >
-            <img
-                src="https://placehold.co/300x400"
-                alt="Kosong"
-                class="w-40 opacity-70"
-            />
             <p class="text-lg font-semibold">Belum ada galeri yang tersedia.</p>
             <p class="text-sm text-gray-400">Silakan cek kembali nanti.</p>
         </div>

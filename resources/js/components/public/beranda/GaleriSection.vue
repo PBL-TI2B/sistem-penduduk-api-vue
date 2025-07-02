@@ -81,6 +81,7 @@ onMounted(fetchGaleri);
 
         <div class="max-w-6xl mx-4 lg:mx-auto py-4">
             <div
+                v-if="galleryList.length > 0"
                 class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4"
             >
                 <div v-for="image in galleryList" :key="image.id">
@@ -91,6 +92,15 @@ onMounted(fetchGaleri);
                         loading="lazy"
                     />
                 </div>
+            </div>
+            <div
+                v-else
+                class="text-center text-gray-500 flex flex-col items-center gap-4 py-10"
+            >
+                <p class="text-lg font-semibold">
+                    Belum ada galeri yang tersedia.
+                </p>
+                <p class="text-sm text-gray-400">Silakan cek kembali nanti.</p>
             </div>
         </div>
     </section>

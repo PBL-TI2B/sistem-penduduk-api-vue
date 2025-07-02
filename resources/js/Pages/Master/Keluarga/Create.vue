@@ -523,7 +523,6 @@ onMounted(async () => {
                 </p>
             </div>
             <div class="flex gap-2 items-center">
-                <Button @click="prevStep" variant="outline"> Kembali </Button>
                 <Button
                     @click="submitStep2"
                     :disabled="anggotaKeluarga.length === 0"
