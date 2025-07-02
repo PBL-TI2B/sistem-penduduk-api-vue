@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import { formSchemaPenduduk } from "./utils/form-schema";
@@ -32,12 +32,20 @@ import "@vuepic/vue-datepicker/dist/main.css";
 const fotoFile = ref(null);
 const fields = ref([]);
 
+const searchAyah = ref("");
+const ayahOptions = ref([]);
+const loadingAyah = ref(false);
+
+const searchIbu = ref("");
+const ibuOptions = ref([]);
+const loadingIbu = ref(false);
+
 const onFileChange = (e) => {
     const target = e.target;
     fotoFile.value = target.files?.[0] || null;
 };
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, setFieldValue, values } = useForm({
     validationSchema: formSchemaPenduduk,
 });
 
@@ -73,6 +81,66 @@ const onSubmit = handleSubmit(async (values) => {
     }
 });
 
+watch(searchAyah, async (val) => {
+    if (val.length < 2) {
+        ayahOptions.value = [];
+        return;
+    }
+    loadingAyah.value = true;
+    try {
+        const res = await apiGet(
+            `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=true`
+        );
+        ayahOptions.value = res.data.data.map((p) => ({
+            value: p.id.toString(),
+            label: p.nama_lengkap,
+        }));
+    } catch {
+        ayahOptions.value = [];
+    }
+    loadingAyah.value = false;
+});
+watch(searchAyah, (val) => {
+    if (values.ayah_id && val.length < 12) {
+        setFieldValue("ayah_id", "");
+    }
+});
+const selectAyah = (option) => {
+    setFieldValue("ayah_id", option.value);
+    searchAyah.value = option.label;
+    ayahOptions.value = [];
+};
+
+watch(searchIbu, async (val) => {
+    if (val.length < 2) {
+        ibuOptions.value = [];
+        return;
+    }
+    loadingIbu.value = true;
+    try {
+        const res = await apiGet(
+            `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=true`
+        );
+        ibuOptions.value = res.data.data.map((p) => ({
+            value: p.id.toString(),
+            label: p.nama_lengkap,
+        }));
+    } catch {
+        ibuOptions.value = [];
+    }
+    loadingIbu.value = false;
+});
+watch(searchIbu, (val) => {
+    if (values.ibu_id && val.length < 12) {
+        setFieldValue("ibu_id", "");
+    }
+});
+const selectIbu = (option) => {
+    setFieldValue("ibu_id", option.value);
+    searchIbu.value = option.label;
+    ibuOptions.value = [];
+};
+
 onMounted(async () => {
     try {
         const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
@@ -101,32 +169,32 @@ onMounted(async () => {
             label: item.jenjang,
         }));
 
-        const ayahOptions = ayahRes.data.data.map((item) => ({
-            value: item.id.toString(),
-            label: item.nama_lengkap,
-        }));
+        // const ayahOptions = ayahRes.data.data.map((item) => ({
+        //     value: item.id.toString(),
+        //     label: item.nama_lengkap,
+        // }));
 
-        const ibuOptions = ibuRes.data.data.map((item) => ({
-            value: item.id.toString(),
-            label: item.nama_lengkap,
-        }));
+        // const ibuOptions = ibuRes.data.data.map((item) => ({
+        //     value: item.id.toString(),
+        //     label: item.nama_lengkap,
+        // }));
 
         fields.value = [
             ...getFields(pekerjaanOptions, pendidikanOptions),
-            {
-                name: "ayah_id",
-                label: "Nama Ayah",
-                type: "select",
-                options: ayahOptions,
-                placeholder: "Pilih Ayah",
-            },
-            {
-                name: "ibu_id",
-                label: "Nama Ibu",
-                type: "select",
-                options: ibuOptions,
-                placeholder: "Pilih Ibu",
-            },
+            // {
+            //     name: "ayah_id",
+            //     label: "Nama Ayah",
+            //     type: "select",
+            //     options: ayahOptions,
+            //     placeholder: "Pilih Ayah",
+            // },
+            // {
+            //     name: "ibu_id",
+            //     label: "Nama Ibu",
+            //     type: "select",
+            //     options: ibuOptions,
+            //     placeholder: "Pilih Ibu",
+            // },
         ];
     } catch (error) {
         useErrorHandler(error);
@@ -197,6 +265,84 @@ onMounted(async () => {
                 </FormItem>
             </FormField>
 
+            <FormField name="ayah_id" v-slot="{ errorMessage }">
+                <FormItem>
+                    <FormLabel>Nama Ayah</FormLabel>
+                    <FormControl>
+                        <div class="autocomplete-wrapper" style="position: relative">
+                            <Input
+                                v-model="searchAyah"
+                                placeholder="Ketik nama ayah"
+                                autocomplete="off"
+                            />
+                            <div
+                                v-if="searchAyah.length >= 2 && !values.ayah_id"
+                                class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
+                            >
+                                <div v-if="loadingAyah" class="p-2 text-gray-500 text-center">
+                                    Memuat data...
+                                </div>
+                                <div
+                                    v-else-if="ayahOptions.length"
+                                    v-for="option in ayahOptions"
+                                    :key="option.value"
+                                    class="p-2 hover:bg-blue-100 cursor-pointer"
+                                    @click="selectAyah(option)"
+                                >
+                                    {{ option.label }}
+                                </div>
+                                <div
+                                    v-else
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Tidak ada hasil
+                                </div>
+                            </div>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+
+            <FormField name="ibu_id" v-slot="{ errorMessage }">
+                <FormItem>
+                    <FormLabel>Nama Ibu</FormLabel>
+                    <FormControl>
+                        <div class="autocomplete-wrapper" style="position: relative">
+                            <Input
+                                v-model="searchIbu"
+                                placeholder="Ketik nama ibu"
+                                autocomplete="off"
+                            />
+                            <div
+                                v-if="searchIbu.length >= 2 && !values.ibu_id"
+                                class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
+                            >
+                                <div v-if="loadingIbu" class="p-2 text-gray-500 text-center">
+                                    Memuat data...
+                                </div>
+                                <div
+                                    v-else-if="ibuOptions.length"
+                                    v-for="option in ibuOptions"
+                                    :key="option.value"
+                                    class="p-2 hover:bg-blue-100 cursor-pointer"
+                                    @click="selectIbu(option)"
+                                >
+                                    {{ option.label }}
+                                </div>
+                                <div
+                                    v-else
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Tidak ada hasil
+                                </div>
+                            </div>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+
             <!-- Upload Foto -->
             <div class="col-span-2">
                 <label class="block mb-2 font-medium">Foto (Opsional)</label>
@@ -247,5 +393,15 @@ onMounted(async () => {
 
 :deep(.dp__action_button:hover) {
     background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+.autocomplete-wrapper {
+    position: relative;
 }
 </style>

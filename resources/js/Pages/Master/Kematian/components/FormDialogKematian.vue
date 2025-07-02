@@ -37,6 +37,9 @@ const props = defineProps({
 
 const emit = defineEmits(["update:isOpen", "success"]);
 const penduduk = ref([]);
+const search = ref(""); // //
+const pendudukOptions = ref([]); // //
+const loadingPenduduk = ref(false); // //
 
 // Perbaikan: Tambahkan default values yang lebih eksplisit
 const defaultValues = {
@@ -79,6 +82,30 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 });
 
+watch(search, async (val) => {
+    if (val.length < 12) { 
+        pendudukOptions.value = [];
+        return;
+    }
+    loadingPenduduk.value = true;
+    try {
+        const res = await apiGet(`/penduduk?search=${val}&status=hidup`);
+        pendudukOptions.value = res.data.data.map((p) => ({
+            value: p.id,
+            label: p.nama_lengkap,
+        }));
+    } catch (error) {
+        pendudukOptions.value = [];
+    }
+    loadingPenduduk.value = false;
+});
+
+const selectPenduduk = (option) => {
+    penduduk_id.value = option.value;
+    search.value = option.label;
+    pendudukOptions.value = [];
+};
+
 onMounted(async () => {
     try {
         const res = await apiGet("/penduduk?status=hidup");
@@ -98,10 +125,12 @@ watch(
         if (isOpen && props.mode === "edit" && props.initialData) {
             // Perbaikan: Set nilai individual field
             penduduk_id.value = props.initialData.penduduk_id || "";
+            search.value = props.initialData.penduduk_nama || "";
             tanggal_kematian.value = props.initialData.tanggal_kematian || "";
             sebab_kematian.value = props.initialData.sebab_kematian || "";
         } else if (isOpen && props.mode === "create") {
             penduduk_id.value = "";
+            search.value = "";
             tanggal_kematian.value = "";
             sebab_kematian.value = "";
         } else if (!isOpen) {
@@ -132,33 +161,33 @@ const dialogTitle = computed(() =>
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
-                    <div class="w-full grid items-center gap-2">
+                    <div class="w-full autocomplete-wrapper" style="position:relative;" >
                         <Label
                             for="penduduk_id"
                             class="text-right"
                             :hidden="props.mode === 'edit'"
-                            >Penduduk</Label
                         >
-                        <Select
-                            :modelValue="penduduk_id"
-                            @update:modelValue="penduduk_id = $event"
+                            Penduduk
+                        </Label>
+                        <Input
+                            v-model="search"
+                            placeholder="Ketik nama penduduk"
+                            autocomplete="off"
+                            :disabled="props.mode === 'edit'"
+                        />
+                        <div
+                            v-if="search.length >= 2 && pendudukOptions.length && !penduduk_id"
+                            class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                         >
-                            <SelectTrigger
-                                class="w-full"
-                                :hidden="props.mode === 'edit'"
+                            <div
+                                v-for="option in pendudukOptions"
+                                :key="option.value"
+                                class="p-2 hover:bg-blue-100 cursor-pointer"
+                                @click="selectPenduduk(option)"
                             >
-                                <SelectValue placeholder="Pilih..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="option in penduduk"
-                                    :key="option.value"
-                                    :value="option.value"
-                                >
-                                    {{ option.label }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
+                                {{ option.label }}
+                            </div>
+                        </div>
                         <span
                             v-if="pendudukIdError"
                             class="text-red-500 text-sm"
@@ -242,5 +271,15 @@ const dialogTitle = computed(() =>
 
 :deep(.dp__action_button:hover) {
     background-color: oklch(0.22 0.0049 158.96); /* saat hover */
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+.autocomplete-wrapper {
+    position: relative;
 }
 </style>
