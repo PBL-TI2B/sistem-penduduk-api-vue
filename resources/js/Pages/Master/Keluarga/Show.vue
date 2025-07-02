@@ -12,7 +12,7 @@ import {
 import { route } from "ziggy-js";
 import { columnsKK, rowsShowKK } from "./utils/table";
 import { useKartuKeluarga } from "@/composables/useKartuKeluarga";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 const { uuid } = usePage().props;
 const isFormDialogOpen = ref(false);
