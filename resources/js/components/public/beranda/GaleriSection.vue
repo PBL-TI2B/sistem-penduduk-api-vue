@@ -6,7 +6,6 @@ import { apiGet } from "@/utils/api";
 const galleryList = ref([]);
 const isLoading = ref(true);
 const hasData = ref(true);
-
 const fetchGaleri = async () => {
     try {
         const res = await apiGet("/galeri");

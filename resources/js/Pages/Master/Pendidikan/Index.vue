@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from "vue";
 import { apiGet, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { columnsIndex } from "./utils/table";
-import { PenBoxIcon, SquarePlus, Trash2 } from "lucide-vue-next";
+import { PenBoxIcon, SquarePlus, Trash2, SearchIcon } from "lucide-vue-next";
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import DataTable from "@/components/master/DataTable.vue";
@@ -21,19 +21,28 @@ const isLoading = ref(false);
 const isDialogOpen = ref(false);
 const dialogMode = ref("create");
 const selectedData = ref({});
-const search = ref("");
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 const totalData = ref(0);
 
+const searchPendidikan = ref("");
+
 // Fetch Data
 const fetchData = async () => {
     try {
+        items.value = [];
         isLoading.value = true;
-        const res = await apiGet("/pendidikan", { page: page.value });
-        items.value = res.data.data;
+        const res = await apiGet("/pendidikan", {
+            page: page.value,
+            search: searchPendidikan.value,
+        });
+        items.value = res.data.data.map((item) => ({
+            ...item,
+            jenjang: item.jenjang || "-",
+        }));
         perPage.value = res.data.per_page;
         totalPages.value = res.data.last_page;
+        totalData.value = res.data.total;
         totalData.value = res.data.total;
     } catch (error) {
         useErrorHandler(error, "Gagal memuat data pendidikan");
@@ -95,6 +104,7 @@ const actionsIndex = [
         label: "Edit",
         icon: PenBoxIcon,
         handler: (item) => openDialog("edit", item),
+        disabled: (item) => item.penduduk_count > 0,
     },
     {
         label: "Hapus",
@@ -114,6 +124,19 @@ watch(isDialogOpen, (newVal, oldVal) => {
         fetchData();
     }
 });
+
+const onSearchEnter = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
+
+const clearSearchPendidikan = () => {
+    searchPendidikan.value = "";
+    page.value = 1;
+    fetchData();
+};
 </script>
 
 <template>
@@ -130,36 +153,55 @@ watch(isDialogOpen, (newVal, oldVal) => {
                 ]"
             />
         </div>
-        <Button @click="openDialog('create')"><SquarePlus /> Pendidikan</Button>
     </div>
 
-    <!-- Filter -->
-    <div class="drop-shadow-md w-full grid gap-2">
-        <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
-        >
-            <Input
-                v-model="search"
-                placeholder="Cari pendidikan berdasarkan jenjang"
-                class="md:w-1/3"
-            />
-            <Button @click="applySearch">Terapkan</Button>
+    <!-- Search -->
+    <div class="drop-shadow-md w-full grid gap-2 mb-3">
+        <div class="flex xl:flex-row flex-col gap-4 items-center">
+            <div
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
+            >
+                <Input
+                    v-model="searchPendidikan"
+                    @keyup.enter="onSearchEnter"
+                    placeholder="Cari data pendidikan"
+                    class="pl-10 pr-8"
+                />
+                <span
+                    class="absolute start-2 inset-y-0 flex items-center justify-center px-2"
+                >
+                    <SearchIcon class="size-6 text-muted-foreground" />
+                </span>
+                <button
+                    v-if="searchPendidikan"
+                    @click="clearSearchPendidikan"
+                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    title="Hapus pencarian"
+                >
+                    ✕
+                </button>
+            </div>
+            <div
+                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+            >
+                <Button @click="openDialog('create')"
+                    ><SquarePlus />Tambah Pendidikan
+                </Button>
+            </div>
         </div>
-
-        <DataTable
-            label="Pendidikan"
-            :items="items"
-            :columns="columnsIndex"
-            :actions="actionsIndex"
-            :totalPages="totalPages"
-            :totalData="totalData"
-            :page="page"
-            :per-page="perPage"
-            :is-loading="isLoading"
-            @update:page="page = $event"
-        />
     </div>
-
+    <DataTable
+        label="Pendidikan"
+        :items="items"
+        :columns="columnsIndex"
+        :actions="actionsIndex"
+        :totalPages="totalPages"
+        :totalData="totalData"
+        :page="page"
+        :per-page="perPage"
+        :is-loading="isLoading"
+        @update:page="page = $event"
+    />
     <FormDialogPendidikan
         v-model:isOpen="isDialogOpen"
         :mode="dialogMode"
