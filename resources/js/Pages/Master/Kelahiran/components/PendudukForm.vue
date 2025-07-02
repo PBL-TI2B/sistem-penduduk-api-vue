@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
-import { useForm, Form as VeeForm } from "vee-validate";
+import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { router } from "@inertiajs/vue3";
 
@@ -47,8 +47,15 @@ const props = defineProps({
 const emit = defineEmits(["submit", "update:fotoFile", "update:fotoPreview"]);
 
 const fields = ref([]);
+const searchAyah = ref("");
+const ayahOptions = ref([]);
+const loadingAyah = ref(false);
 
-const { handleSubmit, values } = useForm({
+const searchIbu = ref("");
+const ibuOptions = ref([]);
+const loadingIbu = ref(false);
+
+const { handleSubmit, values, errors , setFieldValue} = useForm({
     validationSchema: formSchemaPenduduk,
 });
 
@@ -105,60 +112,24 @@ const onFileChange = (e) => {
 
 const loadSelectOptions = async () => {
     try {
-        const [pekerjaanRes, pendidikanRes, ayahRes, ibuRes] =
-            await Promise.all([
-                apiGet("/pekerjaan", { per_page: 100 }),
-                apiGet("/pendidikan", { per_page: 100 }),
-                apiGet("/penduduk", {
-                    jenis_kelamin: "L",
-                    status_perkawinan: "kawin",
-                    exclude_ayah: true,
-                }),
-                apiGet("/penduduk", {
-                    jenis_kelamin: "P",
-                    status_perkawinan: "kawin",
-                    exclude_ibu: true,
-                }),
-            ]);
+        const [pekerjaanRes, pendidikanRes] = await Promise.all([
+            apiGet("/pekerjaan", { per_page: 100 }),
+            apiGet("/pendidikan", { per_page: 100 }),
+        ]);
 
         const pekerjaanOptions = pekerjaanRes.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.nama_pekerjaan,
         }));
 
-        console.log(pekerjaanOptions);
-
         const pendidikanOptions = pendidikanRes.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.jenjang,
         }));
 
-        const ayahOptions = ayahRes.data.data.map((item) => ({
-            value: item.id.toString(),
-            label: item.nama_lengkap,
-        }));
-
-        const ibuOptions = ibuRes.data.data.map((item) => ({
-            value: item.id.toString(),
-            label: item.nama_lengkap,
-        }));
-
         fields.value = [
             ...getFields(pekerjaanOptions, pendidikanOptions),
-            {
-                name: "ayah_id",
-                label: "Nama Ayah",
-                type: "select",
-                options: ayahOptions,
-                placeholder: "Pilih Ayah",
-            },
-            {
-                name: "ibu_id",
-                label: "Nama Ibu",
-                type: "select",
-                options: ibuOptions,
-                placeholder: "Pilih Ibu",
-            },
+            // ayah_id dan ibu_id dihapus dari fields, autocomplete di luar v-for
         ];
     } catch (error) {
         useErrorHandler(error);
@@ -166,6 +137,60 @@ const loadSelectOptions = async () => {
 };
 
 onMounted(loadSelectOptions);
+
+// Autocomplete Ayah
+watch(searchAyah, async (val) => {
+    if (val.length < 12) {
+        ayahOptions.value = [];
+        return;
+    }
+    loadingAyah.value = true;
+    try {
+        const res = await apiGet(
+            `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=true`
+        );
+        ayahOptions.value = res.data.data.map((p) => ({
+            value: p.id.toString(),
+            label: p.nama_lengkap,
+        }));
+    } catch {
+        ayahOptions.value = [];
+    }
+    loadingAyah.value = false;
+});
+
+// Autocomplete Ibu
+watch(searchIbu, async (val) => {
+    if (val.length < 12) {
+        ibuOptions.value = [];
+        return;
+    }
+    loadingIbu.value = true;
+    try {
+        const res = await apiGet(
+            `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=true`
+        );
+        ibuOptions.value = res.data.data.map((p) => ({
+            value: p.id.toString(),
+            label: p.nama_lengkap,
+        }));
+    } catch {
+        ibuOptions.value = [];
+    }
+    loadingIbu.value = false;
+});
+
+const selectAyah = (option) => {
+    setFieldValue('ayah_id', option.value);
+    searchAyah.value = option.label;
+    ayahOptions.value = [];
+};
+
+const selectIbu = (option) => {
+    setFieldValue('ibu_id', option.value);
+    searchIbu.value = option.label;
+    ibuOptions.value = [];
+};
 
 const onSubmit = handleSubmit((values) => {
     const rawTanggal = values.tanggal_lahir;
@@ -187,7 +212,14 @@ const onSubmit = handleSubmit((values) => {
                 v-slot="{ componentField }"
             >
                 <FormItem>
-                    <FormLabel>{{ field.label }}</FormLabel>
+                    <FormLabel>
+                        <template v-if="field.name === 'tinggi_badan'">
+                            Tinggi Badan (cm)
+                        </template>
+                        <template v-else>
+                            {{ field.label }}
+                        </template>
+                    </FormLabel>
                     <FormControl>
                         <Input
                             v-if="
@@ -224,6 +256,98 @@ const onSubmit = handleSubmit((values) => {
                                 componentField['onUpdate:modelValue']
                             "
                         />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+
+            <!-- Autocomplete Ayah -->
+            <FormField name="ayah_id" v-slot="{ errorMessage }">
+                <FormItem>
+                    <FormLabel>Nama Ayah</FormLabel>
+                    <FormControl>
+                        <div
+                            class="autocomplete-wrapper"
+                            style="position: relative"
+                        >
+                            <Input
+                                v-model="searchAyah"
+                                placeholder="Ketik nama ayah"
+                                autocomplete="off"
+                            />
+                            <div
+                                v-if="searchAyah.length >= 2 && !values.ayah_id"
+                                class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
+                            >
+                                <div
+                                    v-if="loadingAyah"
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Memuat data...
+                                </div>
+                                <div
+                                    v-else-if="ayahOptions.length"
+                                    v-for="option in ayahOptions"
+                                    :key="option.value"
+                                    class="p-2 hover:bg-blue-100 cursor-pointer"
+                                    @click="selectAyah(option)"
+                                >
+                                    {{ option.label }}
+                                </div>
+                                <div
+                                    v-else
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Tidak ada hasil
+                                </div>
+                            </div>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+
+            <!-- Autocomplete Ibu -->
+            <FormField name="ibu_id" v-slot="{ errorMessage }">
+                <FormItem>
+                    <FormLabel>Nama Ibu</FormLabel>
+                    <FormControl>
+                        <div
+                            class="autocomplete-wrapper"
+                            style="position: relative"
+                        >
+                            <Input
+                                v-model="searchIbu"
+                                placeholder="Ketik nama ibu"
+                                autocomplete="off"
+                            />
+                            <div
+                                v-if="searchIbu.length >= 2 && !values.ibu_id"
+                                class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
+                            >
+                                <div
+                                    v-if="loadingIbu"
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Memuat data...
+                                </div>
+                                <div
+                                    v-else-if="ibuOptions.length"
+                                    v-for="option in ibuOptions"
+                                    :key="option.value"
+                                    class="p-2 hover:bg-blue-100 cursor-pointer"
+                                    @click="selectIbu(option)"
+                                >
+                                    {{ option.label }}
+                                </div>
+                                <div
+                                    v-else
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Tidak ada hasil
+                                </div>
+                            </div>
+                        </div>
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -285,5 +409,16 @@ const onSubmit = handleSubmit((values) => {
 
 :deep(.dp__action_button:hover) {
     background-color: oklch(0.22 0.0049 158.96);
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+
+.autocomplete-wrapper {
+    position: relative;
 }
 </style>

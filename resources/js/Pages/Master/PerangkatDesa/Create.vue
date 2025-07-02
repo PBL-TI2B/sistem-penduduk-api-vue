@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "vee-validate";
 import { getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
 import dayjs from "dayjs";
@@ -30,15 +30,53 @@ import { usePerangkatDesa } from "@/composables/usePerangkatDesa";
 const fields = ref([]);
 const customInputMode = ref({});
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, setFieldValue, values } = useForm({
     validationSchema: formSchemaPerangkatDesa,
 });
 
 const { createPerangkatDesa } = usePerangkatDesa();
 
 const onSubmit = handleSubmit(async (values) => {
-    createPerangkatDesa(values, resetForm);
+    createPerangkatDesa(values, () => {
+        resetForm();
+        searchPenduduk.value = "";
+    });
 });
+
+const searchPenduduk = ref("");
+const pendudukOptions = ref([]);
+const loadingPenduduk = ref(false);
+
+watch(searchPenduduk, async (val) => {
+    if (val.length < 2) {
+        pendudukOptions.value = [];
+        return;
+    }
+    loadingPenduduk.value = true;
+    try {
+        const res = await apiGet(`/penduduk?search=${val}`);
+        pendudukOptions.value = res.data.data.map((p) => ({
+            value: p.id.toString(),
+            label: p.nama_lengkap,
+        }));
+    } catch {
+        pendudukOptions.value = [];
+    }
+    loadingPenduduk.value = false;
+});
+
+watch(searchPenduduk, (val) => {
+    if (values.penduduk_id && val.length < 12) {
+        setFieldValue("penduduk_id", "");
+    }
+});
+
+const selectPenduduk = (option) => {
+    //
+    setFieldValue("penduduk_id", option.value);
+    searchPenduduk.value = option.label;
+    pendudukOptions.value = [];
+};
 
 onMounted(async () => {
     const [
@@ -107,9 +145,57 @@ onMounted(async () => {
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
         <form @submit="onSubmit" class="space-y-6 grid grid-cols-2 gap-x-8">
+            <FormField name="penduduk_id" v-slot="{ errorMessage }">
+                <FormItem>
+                    <FormLabel>Nama Penduduk</FormLabel>
+                    <FormControl>
+                        <div
+                            class="autocomplete-wrapper"
+                            style="position: relative"
+                        >
+                            <Input
+                                v-model="searchPenduduk"
+                                placeholder="Ketik nama penduduk"
+                                autocomplete="off"
+                            />
+                            <div
+                                v-if="
+                                    searchPenduduk.length >= 2 &&
+                                    !values.penduduk_id
+                                "
+                                class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
+                            >
+                                <div
+                                    v-if="loadingPenduduk"
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Memuat data...
+                                </div>
+                                <div
+                                    v-else-if="pendudukOptions.length"
+                                    v-for="option in pendudukOptions"
+                                    :key="option.value"
+                                    class="p-2 hover:bg-blue-100 cursor-pointer"
+                                    @click="selectPenduduk(option)"
+                                >
+                                    {{ option.label }}
+                                </div>
+                                <div
+                                    v-else
+                                    class="p-2 text-gray-500 text-center"
+                                >
+                                    Tidak ada hasil
+                                </div>
+                            </div>
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+
             <!-- Loop all fields except foto -->
             <FormField
-                v-for="field in fields"
+                v-for="field in fields.filter((f) => f.name !== 'penduduk_id')"
                 :key="field.name"
                 :name="field.name"
                 v-slot="{ componentField }"
@@ -215,3 +301,15 @@ onMounted(async () => {
         </form>
     </div>
 </template>
+
+<style>
+.autocomplete-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+.autocomplete-wrapper {
+    position: relative;
+}
+</style>

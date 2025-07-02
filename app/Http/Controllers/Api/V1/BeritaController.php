@@ -17,8 +17,8 @@ class BeritaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Berita::with('user')
-            ->where('status', 'publish');
+        $query = Berita::with('user');
+        // ->where('status', 'publish');
 
         // Fitur pencarian (search)
         if ($request->filled('search')) {
@@ -33,6 +33,10 @@ class BeritaController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
+
+        // Tambahkan filter arah urutan
+        $orderDir = $request->get('order_dir', 'desc'); // default desc
+        $query->orderBy('published_at', $orderDir);
 
         $berita = $query->paginate($request->get('per_page', 10));
 
@@ -82,6 +86,7 @@ class BeritaController extends Controller
             'konten' => $request->konten,
             'jumlah_dilihat' => $request->input('jumlah_dilihat', 0),
             'status' => $request->input('status', 'draft'),
+            'published_at' => $request->input('status') === 'publish' ? now() : null,
             'user_id' => $request->user_id,
         ]);
         return response()->json([
@@ -94,6 +99,7 @@ class BeritaController extends Controller
     public function show(Berita $berita)
     {
         $berita = $berita->load('user');
+
         if ($berita->status === 'publish') {
             $berita->increment('jumlah_dilihat');
         }
@@ -140,6 +146,19 @@ class BeritaController extends Controller
             $data['thumbnail'] = $thumbnail->hashName();
         } else {
             $data['thumbnail'] = $berita->thumbnail;
+        }
+
+        // Logika published_at
+        if ($berita->published_at) {
+            // Jika sudah pernah publish, jangan ubah published_at
+            $data['published_at'] = $berita->published_at;
+        } else {
+            // Jika dari draft ke publish, isi published_at
+            if ($request->input('status') === 'publish') {
+                $data['published_at'] = now();
+            } else {
+                $data['published_at'] = null;
+            }
         }
 
         $berita->update($data);

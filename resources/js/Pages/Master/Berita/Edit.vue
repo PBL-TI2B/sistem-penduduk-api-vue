@@ -18,7 +18,6 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router, usePage, Head } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
 
-
 // Toast UI Editor
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/editor";
@@ -30,32 +29,33 @@ const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm();
 const thumbnailFile = ref(null);
 const previewThumbnail = ref(null);
 const user_id = ref(null);
+const isPublished = ref(false);
 
-const editor = useEditor({
-    content: '',
-    extensions: [
-        StarterKit,
-        TextAlign.configure({ types: ['heading', 'paragraph'] }),
-    ],
-    editorProps: {
-        attributes: {
-            class: 'prose prose-sm dark:prose-invert max-w-none w-full border rounded-b-md p-2 focus:outline-none min-h-[300px]',
-        },
-    },
-    onUpdate: () => {
-        setFieldValue('konten', editor.value.getHTML());
-    },
-});
+// const editor = useEditor({
+//     content: '',
+//     extensions: [
+//         StarterKit,
+//         TextAlign.configure({ types: ['heading', 'paragraph'] }),
+//     ],
+//     editorProps: {
+//         attributes: {
+//             class: 'prose prose-sm dark:prose-invert max-w-none w-full border rounded-b-md p-2 focus:outline-none min-h-[300px]',
+//         },
+//     },
+//     onUpdate: () => {
+//         setFieldValue('konten', editor.value.getHTML());
+//     },
+// });
 
-onBeforeUnmount(() => {
-    if (editor.value) editor.value.destroy();
-});
+// onBeforeUnmount(() => {
+//     if (editor.value) editor.value.destroy();
+// });
 
-watch(() => values.konten, (newValue) => {
-    if (editor.value && editor.value.getHTML() !== newValue) {
-        editor.value.commands.setContent(newValue || '');
-    }
-});
+// watch(() => values.konten, (newValue) => {
+//     if (editor.value && editor.value.getHTML() !== newValue) {
+//         editor.value.commands.setContent(newValue || '');
+//     }
+// });
 
 // Editor refs
 const editorRef = ref(null);
@@ -69,7 +69,6 @@ const onFileChange = (e) => {
         previewThumbnail.value = URL.createObjectURL(file);
     }
 };
-
 
 const initializeEditor = (initialContent = "") => {
     if (editorRef.value && !editorInstance) {
@@ -125,10 +124,15 @@ onMounted(async () => {
         const beritaRes = await apiGet(`/berita/${slug}`);
         const data = beritaRes.data;
 
+        // Cek jika berita sudah di-publish
+        if (data.published_at) {
+            isPublished.value = true;
+        }
+
         // Set form values
         setValues({
             judul: data.judul ?? "",
-            status: data.status && data.status !== "" ? data.status : "draft",
+            status: data.published_at ? "publish" : "draft",
         });
 
         // Set thumbnail preview
@@ -188,20 +192,18 @@ onMounted(async () => {
                                 :placeholder="field.placeholder"
                                 v-bind="componentField"
                             />
-                            <select
-                                v-else
-                                class="w-full border rounded p-2"
-                                v-bind="componentField"
-                            >
-                                <option value="" disabled>Pilih status</option>
-                                <option
-                                    v-for="opt in field.options"
-                                    :key="opt.value"
-                                    :value="opt.value"
+                            <div v-else>
+                                <select
+                                    class="w-full border rounded p-2"
+                                    v-bind="componentField"
                                 >
-                                    {{ opt.label }}
-                                </option>
-                            </select>
+                                    <option value="">
+                                        Pilih status
+                                    </option>
+                                    <option value="draft">Draft</option>
+                                    <option value="publish">Publish</option>
+                                </select>
+                            </div>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -232,7 +234,9 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex justify-between items-center">
-                    <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
+                    <p class="text-xs text-gray-500">
+                        Pastikan data berita sudah benar sebelum disimpan.
+                    </p>
                     <div class="flex gap-2 items-center">
                         <Button
                             @click="router.visit('/admin/berita')"
@@ -247,8 +251,18 @@ onMounted(async () => {
             </form>
 
             <div class="flex items-center justify-center">
-                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
-                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
+                <img
+                    v-if="previewThumbnail"
+                    :src="previewThumbnail"
+                    alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
+                <img
+                    v-else
+                    src="https://placehold.co/400x300?text=No+Image"
+                    alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border"
+                />
             </div>
         </div>
     </div>

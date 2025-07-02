@@ -20,6 +20,7 @@ return new class extends Migration
             $table->longText('konten');
             $table->string('jumlah_dilihat')->default(0);
             $table->enum('status', ['draft', 'publish'])->default('draft');
+            $table->timestamp('published_at')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->timestamps();

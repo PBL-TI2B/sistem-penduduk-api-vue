@@ -1,6 +1,7 @@
 import { Eye, Edit, Trash } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import dayjs from "dayjs";
 
 export const columnsIndex = [
     {
@@ -8,8 +9,17 @@ export const columnsIndex = [
         key: "judul",
         format: (val, row) => row.judul.substring(0, 30) + "...",
     },
-    { label: "Tanggal Posting", key: "tanggal_post" },
-    { label: "Terakhir Diubah", key: "terakhir_diubah" },
+    // { label: "Tanggal Posting", key: "tanggal_post" },
+    {
+        label: "Tanggal Posting", // Diubah dari "Tanggal Publish"
+        key: "published_at",
+        format: (val) => val ? dayjs(val).format("DD MMM YYYY HH:mm") : "-",
+    },
+    { 
+        label: "Terakhir Diubah", 
+        key: "updated_at", // Menggunakan updated_at
+        format: (val) => dayjs(val).format("DD MMM YYYY HH:mm"),
+    },
     { label: "Status", key: "status" },
     {
         label: "Penulis",
