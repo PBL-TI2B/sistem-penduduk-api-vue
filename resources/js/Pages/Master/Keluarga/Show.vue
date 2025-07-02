@@ -189,10 +189,21 @@ console.log(item);
                     <td class="p-2">{{ anggota.tanggal_lahir }}</td>
                     <td class="p-2">{{ anggota.pendidikan }}</td>
                     <td class="flex gap-2">
-                        <Button variant="secondary">
+                        <!-- <Button
+                            variant="secondary"
+                            @click="
+                                router.visit(
+                                    route(
+                                        'penduduk.show',
+                                        anggota.penduduk.uuid
+                                    )
+                                )
+                            "
+                        >
                             <Eye />
-                            Detail
-                        </Button>
+                            Penduduk
+                        </Button> -->
+
                         <Button
                             variant="secondary"
                             @click="confirmDeleteAnggota(anggota.uuid)"

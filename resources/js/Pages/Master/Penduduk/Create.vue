@@ -82,12 +82,12 @@ onMounted(async () => {
                 apiGet("/penduduk", {
                     jenis_kelamin: "L",
                     status_perkawinan: "kawin",
-                    exclude_ayah: true,
+                    // exclude_ayah: true,
                 }),
                 apiGet("/penduduk", {
                     jenis_kelamin: "P",
                     status_perkawinan: "kawin",
-                    exclude_ibu: true,
+                    // exclude_ibu: true,
                 }),
             ]);
 
