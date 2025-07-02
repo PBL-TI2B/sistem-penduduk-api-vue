@@ -114,6 +114,7 @@ onMounted(async () => {
         // opsional: handle error
     }
 });
+
 console.log(item);
 </script>
 
