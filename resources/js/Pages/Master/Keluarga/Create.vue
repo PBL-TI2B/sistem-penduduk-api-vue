@@ -81,6 +81,13 @@ const prevStep = () => {
 
 const submitStep1 = handleSubmit(async (values) => {
     try {
+        // Cek nomor KK unik ke API
+        const checkUrl = `/kartu-keluarga/check-kk?nomor_kk=${values.nomor_kk}`;
+        const checkResponse = await apiGet(checkUrl);
+        if (!checkResponse.isAvailable) {
+            toast.error("Nomor KK sudah terdaftar");
+            return;
+        }
         const formData = new FormData();
         for (const [key, value] of Object.entries(values)) {
             formData.append(key, value ?? "");

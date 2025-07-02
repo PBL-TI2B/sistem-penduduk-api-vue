@@ -12,7 +12,14 @@ import {
 import { route } from "ziggy-js";
 import { columnsKK, rowsShowKK } from "./utils/table";
 import { useKartuKeluarga } from "@/composables/useKartuKeluarga";
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
+import { useAnggotaKeluarga } from "@/composables/useAnggotaKeluarga";
+import FormDialogAnggotaKeluarga from "./components/FormDialogAnggotaKeluarga.vue";
+import { toast } from "vue-sonner";
+import AlertDialog from "@/components/master/AlertDialog.vue"; 
+
+
+const isFormAnggotaOpen = ref(false);
 
 const { uuid } = usePage().props;
 const isFormDialogOpen = ref(false);
@@ -20,9 +27,25 @@ const dialogMode = ref("create");
 const selectedKematian = ref(null);
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
+const { deleteAnggota } = useAnggotaKeluarga();
+const statusKeluargaOptions = ref([]);
+const kkData = ref({});
+const deleteType = ref(""); // "anggota" atau "kk"
 
 console.log(uuid);
-const { item, fetchDetailData } = useKartuKeluarga(uuid);
+const { item, fetchDetailData, deleteData } = useKartuKeluarga(uuid);
+
+const confirmDeleteAnggota = (uuid) => {
+    deleteType.value = "anggota";
+    selectedUuid.value = uuid;
+    isAlertDeleteOpen.value = true;
+};
+
+const confirmDeleteKK = () => {
+    deleteType.value = "kk";
+    selectedUuid.value = null;
+    isAlertDeleteOpen.value = true;
+};
 
 const onClickDeleteKematianButton = (uuid) => {
     selectedUuid.value = uuid;
@@ -52,7 +75,46 @@ const onConfirmDeleteKematian = async () => {
     }
 };
 
-onMounted(fetchDetailData);
+const onCancelDelete = () => {
+    isAlertDeleteOpen.value = false;
+    selectedUuid.value = null;
+    deleteType.value = "";
+};
+
+const onConfirmDelete = async () => {
+    try {
+        if (deleteType.value === "anggota" && selectedUuid.value) {
+            await deleteAnggota(selectedUuid.value);
+            toast.success("Anggota keluarga berhasil dihapus");
+            await fetchDetailData();
+        } else if (deleteType.value === "kk") {
+            await deleteData();
+            toast.success("Kartu Keluarga berhasil dihapus");
+            window.location.href = "/admin/keluarga";
+        }
+    } catch (e) {
+        toast.error("Gagal menghapus data");
+    } finally {
+        isAlertDeleteOpen.value = false;
+        selectedUuid.value = null;
+        deleteType.value = "";
+    }
+};
+
+onMounted(async () => {
+    await fetchDetailData();
+    // Fetch status keluarga dari API
+    try {
+        const resStatus = await apiGet("/status-keluarga");
+        statusKeluargaOptions.value = resStatus.data.data.map((item) => ({
+            value: item.id.toString(),
+            label: item.status_keluarga,
+        }));
+    } catch (error) {
+        // opsional: handle error
+    }
+});
+
 console.log(item);
 </script>
 
@@ -75,7 +137,7 @@ console.log(item);
                     <SquarePen /> Kartu Keluarga
                 </Link>
             </Button>
-            <Button @click=""> <Trash2 /> Kartu Keluarga </Button>
+            <Button @click="confirmDeleteKK"> <Trash2 /> Kartu Keluarga </Button>
         </div>
     </div>
     <div
@@ -117,7 +179,10 @@ console.log(item);
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold p-2">Anggota Keluarga</h2>
             <div class="flex gap-2">
-                <Button class="flex items-center gap-1">
+                <Button
+                    class="flex items-center gap-1"
+                    @click="isFormAnggotaOpen = true"
+                >
                     <PlusSquare />
                     Anggota Keluarga
                 </Button>
@@ -155,9 +220,12 @@ console.log(item);
                     <td class="flex gap-2">
                         <Button variant="secondary">
                             <Eye />
-                            Detail</Button
+                            Detail
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            @click="confirmDeleteAnggota(anggota.uuid)"
                         >
-                        <Button variant="secondary">
                             <Trash2 />
                             Hapus
                         </Button>
@@ -166,4 +234,20 @@ console.log(item);
             </tbody>
         </table>
     </div>
+    <FormDialogAnggotaKeluarga
+        :isOpen="isFormAnggotaOpen"
+        :kkId="item.id"
+        @update:isOpen="isFormAnggotaOpen = $event"
+        @success="fetchDetailData"
+    />
+
+    <AlertDialog
+        v-model:isOpen="isAlertDeleteOpen"
+        :title="deleteType === 'kk' ? 'Hapus Kartu Keluarga' : 'Hapus Anggota Keluarga'"
+        :description="deleteType === 'kk'
+            ? 'Apakah anda yakin ingin menghapus kartu keluarga ini? Semua anggota akan ikut terhapus.'
+            : 'Apakah anda yakin ingin menghapus anggota keluarga ini?'"
+        :onConfirm="onConfirmDelete"
+        :onCancel="onCancelDelete"
+    />
 </template>
