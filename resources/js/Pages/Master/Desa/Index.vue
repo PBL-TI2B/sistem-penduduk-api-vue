@@ -333,6 +333,7 @@ const actionsIndex2 = getActionsDusun({
             :page="page2"
             :per-page="perPage2"
             :is-loading="isLoading2"
+            :is-exportable="true"
             @update:page="page2 = $event"
         />
 
