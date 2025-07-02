@@ -54,7 +54,7 @@ const fetchBerita = async () => {
                 image: item.thumbnail
                     ? `/storage/berita/${item.thumbnail}`
                     : "/images/berita-lain.png",
-                date: formatTanggalWIB(item.created_at),
+                date: formatTanggalWIB(item.published_at),
                 views: item.jumlah_dilihat,
                 excerpt: item.konten.slice(0, 60) + "...",
                 author: item.user?.username ?? "Admin",

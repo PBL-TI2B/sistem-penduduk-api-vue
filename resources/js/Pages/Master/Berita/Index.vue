@@ -12,15 +12,13 @@ import { SquarePlus } from "lucide-vue-next";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 dayjs.locale("id");
-// import {
-//     Select,
-//     SelectContent,
-//     SelectGroup,
-//     SelectItem,
-//     SelectLabel,
-//     SelectTrigger,
-//     SelectValue,
-// } from "@/components/ui/select";
+import Select from "@/components/ui/select/Select.vue";
+import SelectContent from "@/components/ui/select/SelectContent.vue";
+import SelectGroup from "@/components/ui/select/SelectGroup.vue";
+import SelectItem from "@/components/ui/select/SelectItem.vue";
+import SelectLabel from "@/components/ui/select/SelectLabel.vue";
+import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
+import SelectValue from "@/components/ui/select/SelectValue.vue";
 
 const items = ref([]);
 const totalPages = ref(1);
@@ -29,7 +27,8 @@ const page = ref(1);
 const perPage = ref(10);
 const isLoading = ref(false);
 const search = ref("");
-const statusFilter = ref("");
+const statusFilter = ref("all");
+const orderDir = ref("desc");
 
 const fetchData = async () => {
     try {
@@ -38,14 +37,15 @@ const fetchData = async () => {
         const res = await apiGet("/berita", {
             page: page.value,
             search: search.value,
-            status: statusFilter.value,
+            status: statusFilter.value === "all" ? "" : statusFilter.value,
+            order_dir: orderDir.value,
         });
         items.value = res.data.data.map((item) => ({
             ...item,
             uuid: item.uuid ?? null,
-            username: item.user_id?.username ?? "-",
-            tanggal_post: item.created_at
-                ? dayjs(item.created_at).format("dddd, DD MMMM YYYY HH:mm")
+            username: item.user?.username ?? "-",
+            tanggal_post: item.published_at
+                ? dayjs(item.published_at).format("dddd, DD MMMM YYYY HH:mm")
                 : "-",
             terakhir_diubah: item.updated_at
                 ? dayjs(item.updated_at).format("dddd, DD MMMM YYYY HH:mm")
@@ -67,7 +67,9 @@ const applySearch = () => {
 };
 
 const resetFilter = () => {
-    statusFilter.value = "";
+    statusFilter.value = "all";
+    search.value = "";
+    orderDir.value = "desc";
     applySearch();
 };
 
@@ -97,28 +99,45 @@ watch(page, fetchData);
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+            class="bg-primary-foreground p-2 rounded-lg flex items-center justify-between gap-2"
         >
-            <Input
-                v-model="search"
-                @keyup.enter="applySearch"
-                placeholder="Cari berita berdasarkan judul"
-                class="md:w-1/3"
-            />
-            <Button
-                asChild
-                @click="
-                    () => {
-                        statusFilter = '';
-                        applySearch();
-                    }
-                "
-            >
-                <div>
-                    <FunnelX />
-                    Reset
-                </div>
-            </Button>
+            <div class="flex items-center gap-2 flex-1">
+                <Input
+                    v-model="search"
+                    @keyup.enter="applySearch"
+                    placeholder="Cari berita berdasarkan judul"
+                    class="w-full max-w-xs"
+                />
+            </div>
+            <div class="flex items-center gap-2">
+                <Select v-model="statusFilter" class="w-28">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Status</SelectLabel>
+                            <SelectItem value="all">Semua</SelectItem>
+                            <SelectItem value="publish">Publish</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                 <Select v-model="orderDir" class="w-32">
+                    <SelectTrigger>
+                        <SelectValue placeholder="Urutkan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Urutkan</SelectLabel>
+                            <SelectItem value="desc">Terbaru</SelectItem>
+                            <SelectItem value="asc">Terlama</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Button @click="applySearch">Terapkan</Button>
+                <Button @click="resetFilter" variant="secondary">Reset</Button>
+            </div>
         </div>
         <DataTable
             label="Berita"

@@ -81,7 +81,13 @@ onMounted(fetchBeritaDetail);
             <div class="text-xs sm:text-sm flex flex-wrap gap-4">
                 <div class="flex gap-2 items-center text-emerald-600">
                     <Calendar :size="15" />
-                    {{ formatTanggalWIB(berita.created_at) }}
+                    {{ formatTanggalWIB(berita.published_at) }}
+                    <span
+                        v-if="berita.published_at !== berita.updated_at"
+                        class="ml-2 text-yellow-600 font-semibold"
+                    >
+                        (Telah disunting)
+                    </span>
                 </div>
 
                 <div class="flex gap-2 items-center text-emerald-600">

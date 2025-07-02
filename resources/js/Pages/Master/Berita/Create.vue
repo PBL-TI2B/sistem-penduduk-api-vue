@@ -114,47 +114,34 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
+
     <Head title="Tambah Berita" />
 
     <div class="grid gap-1">
         <h1 class="text-3xl font-bold">Tambah Data Berita</h1>
-        <BreadcrumbComponent
-            :items="[
-                { label: 'Dashboard', href: '/admin/dashboard' },
-                { label: 'Berita', href: '/admin/berita' },
-                { label: 'Tambah Data Berita' },
-            ]"
-        />
+        <BreadcrumbComponent :items="[
+            { label: 'Dashboard', href: '/admin/dashboard' },
+            { label: 'Berita', href: '/admin/berita' },
+            { label: 'Tambah Data Berita' },
+        ]" />
     </div>
 
     <div class="shadow-lg p-8 my-4 rounded-lg">
         <div class="flex flex-col lg:flex-row gap-8 justify-between">
             <form @submit="onSubmit" class="space-y-6 w-full">
                 <!-- Other Fields (excluding konten) -->
-                <FormField
-                    v-for="field in fields.filter(
-                        (f) => f.name !== 'konten' && f.name !== 'thumbnail'
-                    )"
-                    :key="field.name"
-                    :name="field.name"
-                    v-slot="{ componentField }"
-                >
+                <FormField v-for="field in fields.filter(
+                    (f) => f.name !== 'konten' && f.name !== 'thumbnail'
+                )" :key="field.name" :name="field.name" v-slot="{ componentField }">
                     <FormItem>
                         <FormLabel>{{ field.label }}</FormLabel>
                         <FormControl>
-                            <Input
-                                v-if="field.type !== 'select'"
-                                :type="field.type"
-                                :placeholder="field.placeholder"
-                                v-bind="componentField"
-                            />
-                            <select
-                                v-else
-                                class="w-full border rounded p-2"
-                                v-bind="componentField"
-                            >
+                            <Input v-if="field.type !== 'select'" :type="field.type" :placeholder="field.placeholder"
+                                v-bind="componentField" />
+                            <select v-else class="w-full border rounded p-2" v-bind="componentField">
                                 <option value="" disabled>Pilih status</option>
-                                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                                <option v-for="opt in field.options" :key="opt.value" :value="opt.value">{{ opt.label }}
+                                </option>
                             </select>
                         </FormControl>
                         <FormMessage />
@@ -163,26 +150,22 @@ const onSubmit = handleSubmit(async (values) => {
 
                 <!-- Toast UI Editor -->
                 <div>
-                    <label class="block mb-2 font-semibold"
-                        >Konten Berita</label
-                    >
+                    <label class="block mb-2 font-semibold">Konten Berita</label>
                     <div ref="editorRef" class="toast-ui-editor-wrapper"></div>
                 </div>
 
                 <!-- Upload Thumbnail -->
                 <div>
                     <label class="block mb-2 font-medium">Thumbnail Berita</label>
-                    <input type="file" accept="image/*" class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2" @change="onFileChange"/>
+                    <input type="file" accept="image/*"
+                        class="block w-full text-sm text-gray-600 border border-gray-300 rounded-lg p-2"
+                        @change="onFileChange" />
                 </div>
 
                 <div class="flex justify-between items-center">
                     <p class="text-xs text-gray-500">Pastikan data berita sudah benar sebelum disimpan.</p>
                     <div class="flex gap-2 items-center">
-                        <Button
-                            @click="router.visit('/admin/berita')"
-                            type="button"
-                            variant="secondary"
-                        >
+                        <Button @click="router.visit('/admin/berita')" type="button" variant="secondary">
                             Batal
                         </Button>
                         <Button type="submit">Simpan</Button>
@@ -191,8 +174,10 @@ const onSubmit = handleSubmit(async (values) => {
             </form>
 
             <div class="flex items-center justify-center">
-                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
-                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview" class="rounded-md w-[400px] h-[300px] object-cover border"/>
+                <img v-if="previewThumbnail" :src="previewThumbnail" alt="Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border" />
+                <img v-else src="https://placehold.co/400x300?text=No+Image" alt="No Preview"
+                    class="rounded-md w-[400px] h-[300px] object-cover border" />
             </div>
         </div>
     </div>
