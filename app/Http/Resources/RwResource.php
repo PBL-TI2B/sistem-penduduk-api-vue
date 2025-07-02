@@ -19,6 +19,7 @@ class RwResource extends JsonResource
             'uuid' => $this->uuid,
             'nomor_rw' => $this->nomor_rw,
             'dusun' => ($this->dusun)->nama,
+            'rt_count' => $this->rt_count, // Tambahkan ini untuk menghitung jumlah RT
         ];
     }
 }

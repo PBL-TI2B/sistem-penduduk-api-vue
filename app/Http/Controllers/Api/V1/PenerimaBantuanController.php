@@ -214,10 +214,84 @@ class PenerimaBantuanController extends Controller
         return new ApiResource(true, 'Data penerima bantuan berhasil dihapus', null);
     }
 
-    public function exportPdf()
+    public function exportPdf(Request $request)
     {
-        $kurangMampu = PenerimaBantuan::get();
+        // GANTI relasi 'penduduk' menjadi 'kurangMampu.anggotaKeluarga.penduduk'
+        $query = PenerimaBantuan::query()->with(['kurangMampu.anggotaKeluarga.penduduk', 'bantuan']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            // GANTI relasi 'penduduk' menjadi 'kurangMampu.anggotaKeluarga.penduduk'
+            $query->whereHas('kurangMampu.anggotaKeluarga.penduduk', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%")
+                  ->orWhere('nik', 'like', "%$search%");
+            });
+        }
+        if ($request->filled('status')) {
+            // Ini sudah benar, nama kolom di tabel penerima_bantuan adalah 'status'
+            $query->where('status', $request->status);
+        }
+
+        $penerimaBantuan = $query->get();
         $pdf = Pdf::loadView('exports.penerima-bantuan', compact('penerimaBantuan'));
-        return $pdf->download('penerima-bantuan.pdf');
+        return $pdf->download('laporan-penerima-bantuan.pdf');
+    }
+
+    public function exportExcel(Request $request)
+{
+    // 1. Definisikan variabel $headers di sini
+    $headers = [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+        'Content-Disposition' => 'attachment; filename="laporan-penerima-bantuan.csv"',
+    ];
+
+    // 2. Buat fungsi callback untuk menulis data
+    $callback = function () use ($request) {
+        $handle = fopen('php://output', 'w');
+        fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        fputcsv($handle, ['Nama Lengkap', 'NIK', 'Nama Bantuan', 'Status', 'Tanggal Pengajuan'], ';');
+
+        // Logika query yang sudah diperbaiki
+        $query = PenerimaBantuan::query()->with(['kurangMampu.anggotaKeluarga.penduduk', 'bantuan']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('kurangMampu.anggotaKeluarga.penduduk', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%$search%")
+                  ->orWhere('nik', 'like', "%$search%");
+            });
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $query->get()->each(function ($data) use ($handle) {
+            $penduduk = optional(optional($data->kurangMampu)->anggotaKeluarga)->penduduk;
+            
+            fputcsv($handle, [
+                optional($penduduk)->nama_lengkap ?? 'Data Hilang',
+                "'" . (optional($penduduk)->nik ?? 'N/A'),
+                optional($data->bantuan)->nama_bantuan ?? 'Bantuan Dihapus',
+                $data->status,
+                \Carbon\Carbon::parse($data->created_at)->format('d-m-Y'),
+            ], ';');
+        });
+        
+        fclose($handle);
+    };
+
+    // 3. Kembalikan response stream dengan variabel $headers dan $callback
+    return response()->stream($callback, 200, $headers);
+}
+    /**
+     * Fungsi untuk Ekspor Detail Penerima Bantuan + Riwayat (dari Show PenerimaBantuan)
+     */
+    public function exportDetailPdf(PenerimaBantuan $penerimaBantuan)
+    {
+        // Eager load relasi yang dibutuhkan
+        $penerimaBantuan->load(['penduduk', 'bantuan', 'riwayatBantuan']);
+
+        $pdf = Pdf::loadView('exports.detail_penerima_bantuan', compact('penerimaBantuan'));
+        return $pdf->download('detail-penerima-'.$penerimaBantuan->penduduk->nik.'.pdf');
     }
 }

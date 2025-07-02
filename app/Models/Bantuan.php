@@ -20,6 +20,11 @@ class Bantuan extends Model
         });
     }
 
+    public function penduduk()
+    {
+        return $this->belongsTo(Penduduk::class, 'penduduk_id', 'id');
+    }
+
     public function kategoriBantuan()
     {
         return $this->belongsTo(KategoriBantuan::class, 'kategori_bantuan_id', 'id');
