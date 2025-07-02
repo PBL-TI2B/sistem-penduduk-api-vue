@@ -94,7 +94,7 @@ watch(
 );
 
 const dialogTitle = computed(() =>
-    props.mode === "create" ? "Tambah Dusun" : "Edit Dusun"
+    props.mode === "create" ? "Tambah Pekerjaan" : "Edit Pekerjaan"
 );
 </script>
 
@@ -104,7 +104,7 @@ const dialogTitle = computed(() =>
             <DialogHeader>
                 <DialogTitle>{{ dialogTitle }}</DialogTitle>
                 <DialogDescription>
-                    Lengkapi form berikut untuk menyimpan data dusun.
+                    Lengkapi form berikut untuk menyimpan data pekerjaan.
                 </DialogDescription>
             </DialogHeader>
 
