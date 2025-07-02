@@ -189,14 +189,14 @@ class PendudukController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data penduduk',
-            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+            'data' => new PendudukResource($penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
         ]);
     }
 
     public function show(Penduduk $penduduk)
     {
         // Panggil load untuk memuat semua relasi yang diperlukan
-        $penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw']);
+        $penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw']);
 
         return response()->json([
             'success' => true,
@@ -252,7 +252,7 @@ class PendudukController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ubah data penduduk',
-            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+            'data' => new PendudukResource($penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
         ]);
     }
 

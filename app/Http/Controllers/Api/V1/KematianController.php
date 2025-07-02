@@ -24,14 +24,18 @@ class KematianController extends Controller
                 ->orWhere('sebab_kematian', 'like', "%$search%");
             });
         }
+        if ($request->filled('month') && $request->filled('year')) {
+        $query->whereMonth('tanggal_kematian', $request->month)
+          ->whereYear('tanggal_kematian', $request->year);
+}
 
-        if ($request->filled('start_date')) {
-            $query->whereDate('tanggal_kematian', '>=', $request->start_date);
-        }
+        // if ($request->filled('start_date')) {
+        //     $query->whereDate('tanggal_kematian', '>=', $request->start_date);
+        // }
 
-        if ($request->filled('end_date')) {
-            $query->whereDate('tanggal_kematian', '<=', $request->end_date);
-        }
+        // if ($request->filled('end_date')) {
+        //     $query->whereDate('tanggal_kematian', '<=', $request->end_date);
+        // }
 
         $kematian = $query->paginate($request->get('per_page', 10));
 

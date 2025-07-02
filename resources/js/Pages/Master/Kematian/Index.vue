@@ -40,6 +40,8 @@ const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
 
 const searchKematian = ref("");
+const selectedMonth = ref(null);
+const selectedYear = ref(null);
 
 const actionsIndex = (onClickDeleteBantuanButton) => [
     {
@@ -79,6 +81,8 @@ const fetchData = async () => {
         const res = await apiGet("/kematian", {
             page: page.value,
             search: searchKematian.value,
+            month: selectedMonth.value,
+            year: selectedYear.value,
         });
         items.value = res.data.data.map((item) => ({
             ...item,
@@ -134,6 +138,39 @@ const clearSearchKematian = () => {
     page.value = 1;
     fetchData();
 };
+
+const monthOptions = [
+    { label: "Januari", value: 1 },
+    { label: "Februari", value: 2 },
+    { label: "Maret", value: 3 },
+    { label: "April", value: 4 },
+    { label: "Mei", value: 5 },
+    { label: "Juni", value: 6 },
+    { label: "Juli", value: 7 },
+    { label: "Agustus", value: 8 },
+    { label: "September", value: 9 },
+    { label: "Oktober", value: 10 },
+    { label: "November", value: 11 },
+    { label: "Desember", value: 12 },
+];
+
+const yearOptions = [];
+const currentYear = new Date().getFullYear();
+for (let i = currentYear; i >= 1990; i--) {
+    yearOptions.push({ label: i.toString(), value: i });
+}
+
+const onClickFilterBulanTahun = () => {
+    page.value = 1;
+    fetchData();
+};
+const onResetFilter = () => {
+    searchKematian.value = "";
+    selectedMonth.value = null;
+    selectedYear.value = null;
+    page.value = 1;
+    fetchData();
+};
 </script>
 
 <template>
@@ -183,12 +220,45 @@ const clearSearchKematian = () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Datepicker
-                    locale="id"
-                    :enable-time-picker="false"
-                    :format="'dd MMMM yyyy'"
-                />
-                <Button @click="createKematian"> <Funnel /> Terapkan </Button>
+                <select
+                    v-model="selectedMonth"
+                    class="border rounded-md px-3 py-2"
+                >
+                    <option :value="null" disabled>Pilih Bulan</option>
+                    <option
+                        v-for="month in monthOptions"
+                        :key="month.value"
+                        :value="month.value"
+                    >
+                        {{ month.label }}
+                    </option>
+                </select>
+
+                <select
+                    v-model="selectedYear"
+                    class="border rounded-md px-3 py-2"
+                >
+                    <option :value="null" disabled>Pilih Tahun</option>
+                    <option
+                        v-for="year in yearOptions"
+                        :key="year.value"
+                        :value="year.value"
+                    >
+                        {{ year.label }}
+                    </option>
+                </select>
+
+                <Button @click="onClickFilterBulanTahun">
+                    <Funnel /> Terapkan
+                </Button>
+                <Button
+                    @click="onResetFilter"
+                    variant="ghost"
+                    class="p-2 w-8 h-8 flex items-center justify-center text-muted-foreground"
+                    title="Reset Filter"
+                >
+                    <XIcon class="w-4 h-4" />
+                </Button>
             </div>
         </div>
 

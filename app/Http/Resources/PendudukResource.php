@@ -50,6 +50,19 @@ class PendudukResource extends JsonResource
                 'alamat_asal' => $this->domisili?->alamat_asal,
                 'alamat_saat_ini' => $this->domisili?->alamat_saat_ini,
              ],
+            
+             'ayah' => $this->ayah ? [
+            'id' => $this->ayah->id,
+            'uuid' => $this->ayah->uuid,
+            'nama_lengkap' => $this->ayah->nama_lengkap,
+            ] : null,
+
+            'ibu' => $this->ibu ? [
+                'id' => $this->ibu->id,
+                'uuid' => $this->ibu->uuid,
+                'nama_lengkap' => $this->ibu->nama_lengkap,
+            ] : null,
+
          ];
      }
      
