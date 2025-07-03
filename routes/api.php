@@ -66,16 +66,16 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
         Route::get('/pendidikan/export/pdf', [PendidikanController::class, 'exportPdf']);
         Route::get('/perangkat-desa/export/pdf', [PerangkatDesaController::class, 'exportPdf']);
         Route::get('/pindahan/export/pdf', [PindahanController::class, 'exportPdf']);
-        Route::get('/bantuan/export/pdf', [BantuanController::class, 'exportPdf']);
-        Route::get('/bantuan/export/excel', [BantuanController::class, 'exportExcel']);
+
         Route::get('/bantuan/export/pdf', [BantuanController::class, 'exportPdf']);
         Route::get('/bantuan/export/excel', [BantuanController::class, 'exportExcel']);
 
-        // Route Baru untuk Penerima Bantuan
+        Route::get('/kurang-mampu/export/pdf', [KurangMampuController::class, 'exportPdf']);
+        Route::get('/kurang-mampu/export/excel', [KurangMampuController::class, 'exportExcel']);
+
         Route::get('/penerima-bantuan/export/pdf', [PenerimaBantuanController::class, 'exportPdf']);
         Route::get('/penerima-bantuan/export/excel', [PenerimaBantuanController::class, 'exportExcel']);
         Route::get('/penerima-bantuan/{penerimaBantuan}/export/pdf', [PenerimaBantuanController::class, 'exportDetailPdf']);
-
 
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -105,6 +105,4 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
     RoutePermission('kelahiran', KelahiranController::class, 'kelahiran');
     RoutePermission('penerima-bantuan', PenerimaBantuanController::class, 'penerimaBantuan');
     RoutePermission('riwayat-bantuan', RiwayatBantuanController::class, 'riwayatBantuan');
-    
-    
 });

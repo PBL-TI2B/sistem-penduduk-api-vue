@@ -3,7 +3,6 @@ import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import DataTable from "@/components/master/DataTable.vue";
-
 import {
     rowsShow,
     columnsIndexPencairan,
@@ -28,8 +27,11 @@ import {
     FunnelX,
     SquarePen,
 } from "lucide-vue-next";
+import { apiGet } from "@/utils/api";
 
 const { uuid } = usePage().props;
+
+//! handle export
 
 const {
     item: itemPenerimaBantuan,
@@ -37,6 +39,7 @@ const {
     fetchDetailData: fetchDetailPenerimaBantuan,
     // editStatusBantuan,
     // editDetailData,
+    exportShowPenerimaBantuan,
     deleteData: deleteDataPenerimaBantuan,
 } = usePenerimaBantuan();
 
@@ -169,6 +172,14 @@ watch(page, () => {
                         }}
                     </Badge>
                 </h2>
+                <div class="flex gap-2">
+                    <Button
+                        @click="exportShowPenerimaBantuan(uuid)"
+                        variant="secondary"
+                    >
+                        Export PDF
+                    </Button>
+                </div>
                 <div class="flex gap-2">
                     <!-- ! Edit Status Penerima Bantuan -->
                     <Button

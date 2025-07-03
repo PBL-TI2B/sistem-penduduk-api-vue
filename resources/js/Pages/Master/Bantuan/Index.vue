@@ -235,6 +235,7 @@ onMounted(async () => {
             </div>
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                :hidden="user?.role === 'rt' || 'rw'"
             >
                 <Button
                     @click="createKategoriBantuan"
@@ -354,8 +355,9 @@ onMounted(async () => {
             </div>
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                :hidden="user?.role === 'rt' || 'rw'"
             >
-                <Button asChild :hidden="user?.role === 'rt' || 'rw'">
+                <Button asChild>
                     <Link :href="route('bantuan.create')">
                         <PackagePlus />
                         Tambah Bantuan

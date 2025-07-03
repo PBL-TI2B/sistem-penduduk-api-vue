@@ -203,58 +203,6 @@ class BantuanController extends Controller
             fclose($handle);
         };
 
-        
-
         return response()->stream($callback, 200, $headers);
     }
-
-  public function exportKurangMampuPdf()
-    {
-        $bantuan = Bantuan::with('kategoriBantuan')
-            ->where('status', 'nonaktif') // Asumsi bantuan aktif tidak perlu ditampilkan disini
-            ->whereHas('kategoriBantuan', function ($query) {
-                $query->where('kategori', 'like', '%Kurang Mampu%');
-            })
-            ->orWhereRaw('CAST(nominal as UNSIGNED) < 500000')
-            ->get();
-
-        $pdf = Pdf::loadView('exports.bantuan_kurang_mampu', compact('bantuan'));
-        return $pdf->download('laporan-bantuan-kurang-mampu.pdf');
-    }
-
-    public function exportKurangMampuExcel()
-    {
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="laporan-bantuan-kurang-mampu.csv"',
-        ];
-
-        $callback = function () {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
-            fputcsv($handle, ['Nama Bantuan', 'Kategori', 'Nominal (Rp)', 'Periode', 'Status'], ';');
-
-            Bantuan::with('kategoriBantuan')
-                ->where('status', 'nonaktif')
-                ->whereHas('kategoriBantuan', function ($query) {
-                    $query->where('kategori', 'like', '%Kurang Mampu%');
-                })
-                ->orWhereRaw('CAST(nominal as UNSIGNED) < 500000')
-                ->get()
-                ->each(function ($data) use ($handle) {
-                    fputcsv($handle, [
-                        $data->nama_bantuan,
-                        optional($data->kategoriBantuan)->kategori,
-                        $data->nominal,
-                        $data->periode,
-                        $data->status,
-                    ], ';');
-                });
-
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
 }

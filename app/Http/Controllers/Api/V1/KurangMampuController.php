@@ -193,8 +193,51 @@ class KurangMampuController extends Controller
 
     public function exportPdf()
     {
-        $kurangMampu = KurangMampu::get();
+        $kurangMampu = KurangMampu::with(['anggotaKeluarga.penduduk', 'anggotaKeluarga.penduduk.pekerjaan', 'anggotaKeluarga.penduduk.pendidikan'])->get();
         $pdf = Pdf::loadView('exports.kurang-mampu', compact('kurangMampu'));
-        return $pdf->download('kurang-mampu.pdf');
+        return $pdf->download('laporan-kurang-mampu.pdf');
+    }
+
+    public function exportExcel()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="laporan-kurang-mampu.csv"',
+        ];
+
+        $callback = function () {
+            $handle = fopen('php://output', 'w');
+
+            // Add BOM UTF-8
+            fwrite($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Use semicolon as delimiter
+            fputcsv($handle, ['NIK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Agama', 'Pekerjaan', 'Pendidikan', 'Status Validasi', 'Pendapatan per Hari', 'Pendapatan per Bulan', 'Jumlah Tanggungan', 'Keterangan'], ';');
+
+            KurangMampu::with(['anggotaKeluarga.penduduk', 'anggotaKeluarga.penduduk.pekerjaan', 'anggotaKeluarga.penduduk.pendidikan'])
+                ->get()
+                ->each(function ($data) use ($handle) {
+                    $penduduk = $data->anggotaKeluarga->penduduk;
+                    fputcsv($handle, [
+                        $penduduk->nik,
+                        $penduduk->nama_lengkap,
+                        $penduduk->jenis_kelamin,
+                        $penduduk->tempat_lahir,
+                        $penduduk->tanggal_lahir,
+                        $penduduk->agama,
+                        $penduduk->pekerjaan->nama_pekerjaan ?? '',
+                        $penduduk->pendidikan->jenjang ?? '',
+                        $data->status_validasi,
+                        $data->pendapatan_per_hari,
+                        $data->pendapatan_per_bulan,
+                        $data->jumlah_tanggungan,
+                        $data->keterangan,
+                    ], ';');
+                });
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
