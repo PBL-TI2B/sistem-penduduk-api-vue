@@ -14,15 +14,22 @@ class GaleriController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $galeri = Galeri::with('user')->paginate(10);
+        $query = Galeri::with('user');
+
+        // Tambahkan filter search
+        if ($request->has('search') && $request->search) {
+            $query->where('judul', 'like', '%' . $request->search . '%');
+        }
+
+        $galeri = $query->paginate(10);
         $collection = GaleriResource::collection($galeri->getCollection());
         $galeri->setCollection(collect($collection));
         return response()->json([
             'success' => true,
             'message' => 'Daftar Data Galeri',
-            'data'    => $galeri,
+            'data' => $galeri,
         ]);
     }
 
@@ -50,7 +57,7 @@ class GaleriController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Galeri Berhasil Ditambahkan',
-            'data'    => new GaleriResource($galeri->load('user'))
+            'data' => new GaleriResource($galeri->load('user'))
         ]);
     }
 
@@ -63,7 +70,7 @@ class GaleriController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail Data Galeri',
-            'data'    => new GaleriResource($galeri->load('user'))
+            'data' => new GaleriResource($galeri->load('user'))
         ]);
     }
 
@@ -93,7 +100,7 @@ class GaleriController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Galeri Berhasil Diubah',
-            'data'    => new GaleriResource($galeri->load('user'))
+            'data' => new GaleriResource($galeri->load('user'))
         ]);
     }
 
@@ -107,22 +114,22 @@ class GaleriController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data Galeri Berhasil Dihapus',
-            'data'    => null
+            'data' => null
         ]);
     }
 
-    public function getGaleri($filename, Request $request) 
+    public function getGaleri($filename, Request $request)
     {
         if (!$request->user()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-    
+
         $path = storage_path('app/private/galeri/' . $filename);
-    
+
         if (!file_exists($path)) {
             return response()->json(['message' => 'File not found'], 404);
         }
-    
+
         return response()->file($path);
     }
 }

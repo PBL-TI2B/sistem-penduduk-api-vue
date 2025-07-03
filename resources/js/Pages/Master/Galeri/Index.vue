@@ -47,6 +47,12 @@ const applySearch = () => {
     fetchData();
 };
 
+const resetFilter = () => {
+    search.value = "";
+    page.value = 1;
+    fetchData();
+};
+
 onMounted(fetchData);
 watch(page, fetchData);
 </script>
@@ -80,9 +86,18 @@ watch(page, fetchData);
                 placeholder="Cari galeri berdasarkan judul"
                 class="md:w-1/3"
             />
-            <Button class="cursor-pointer" @click="applySearch"
-                >Terapkan</Button
-            >
+            <div class="flex gap-2">
+                <Button class="cursor-pointer" @click="applySearch">
+                    Terapkan
+                </Button>
+                <Button
+                    class="cursor-pointer"
+                    variant="secondary"
+                    @click="resetFilter"
+                >
+                    Reset
+                </Button>
+            </div>
         </div>
         <DataTable
             label="Galeri"
