@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Rw;
-use App\Http\Resources\ApiResource;
 use App\Http\Resources\RwResource;
-use App\http\Resources\PaginatedResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,13 +12,23 @@ class RwController extends Controller
 {
     public function index(Request $request)
     {
-        $rw = Rw::with(['dusun'])->withCount('rt');;
+        $rw = Rw::with(['dusun'])->withCount('rt');
 
+        // Filter by nomor_rw (exact)
         if ($request->has('nomor_rw')) {
             $rw->where('nomor_rw', $request->nomor_rw);
         }
 
+        // Filter by search (partial)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $rw->where('nomor_rw', 'like', "%{$search}%");
+        }
+
+        // Pagination
         $rw = $rw->paginate(10);
+
+        // Wrap with resource
         $collection = RwResource::collection($rw->getCollection());
         $rw->setCollection(collect($collection));
 
@@ -29,12 +37,10 @@ class RwController extends Controller
             'message' => 'Berhasil ambil data RW',
             'data' => $rw,
         ]);
-
     }
 
     public function store(Request $request)
     {
-        // Validate and create a new RW
         $validator = Validator::make($request->all(), [
             'nomor_rw' => 'required|string|max:255',
             'dusun_id' => 'required|exists:dusun,id',
@@ -49,7 +55,7 @@ class RwController extends Controller
             'dusun_id' => $request->dusun_id,
         ]);
 
-        $rw->load('dusun'); // <<< Tambahkan ini
+        $rw->load('dusun');
 
         return response()->json([
             'success' => true,
@@ -60,7 +66,7 @@ class RwController extends Controller
 
     public function show(Rw $rw)
     {
-        $rw->load(['dusun']);
+        $rw->load('dusun');
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data RW',
@@ -70,7 +76,6 @@ class RwController extends Controller
 
     public function update(Request $request, Rw $rw)
     {
-        // Validate and update the RW
         $validator = Validator::make($request->all(), [
             'nomor_rw' => 'required|string|max:255',
             'dusun_id' => 'required|exists:dusun,id',
@@ -94,7 +99,6 @@ class RwController extends Controller
 
     public function destroy(Rw $rw)
     {
-        // Delete the RW
         $rw->delete();
         return response()->json([
             'success' => true,
