@@ -26,10 +26,8 @@ export function useKelahiran() {
                 search: search.value,
                 bulan: filter.value.bulan,
                 tahun: filter.value.tahun,
-                min_berat: filter.value.min_berat,
-                max_berat: filter.value.max_berat,
-                min_panjang: filter.value.min_panjang,
-                max_panjang: filter.value.max_panjang,
+                berat: filter.value.berat,
+                panjang: filter.panjang,
                 anak_ke: filter.value.anak_ke,
             };
 

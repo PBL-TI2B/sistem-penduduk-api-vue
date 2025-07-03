@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "vue-sonner";
 import { Head } from "@inertiajs/vue3";
 
-const currentStep = ref(2);
+const currentStep = ref(1);
 const fields = ref([]);
 const anggotaKeluarga = ref([]);
 const statusKeluargaOptions = ref([]);
