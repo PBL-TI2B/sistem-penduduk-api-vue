@@ -188,7 +188,7 @@ watch(page, () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Button asChild>
+                <Button asChild :hidden="user?.role === 'rt' || 'rw'">
                     <Link :href="route('penerima-bantuan.create')">
                         <PackagePlus /> Tambah Penerima Bantuan
                     </Link>
