@@ -183,9 +183,9 @@ watch(page, fetchData);
                 ]"
             />
         </div>
-        <Button v-if="['admin', 'superadmin'].includes(user?.role)" asChild>
+        <Button asChild>
             <Link :href="route('penduduk.create')">
-            <SquarePlus /> Penduduk
+                <SquarePlus /> Penduduk
             </Link>
         </Button>
     </div>
@@ -291,7 +291,10 @@ watch(page, fetchData);
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select v-model="filter.rw" :disabled="user?.role === 'rt' || user?.role === 'rw'">
+                <Select
+                    v-model="filter.rw"
+                    :disabled="user?.role === 'rt' || user?.role === 'rw'"
+                >
                     <SelectTrigger>
                         <SelectValue placeholder="Nomor RW" />
                     </SelectTrigger>

@@ -27,7 +27,6 @@ class StatusKeluargaSeeder extends Seeder
 
         foreach ($statusKeluarga as $index => $status) {
             DB::table('status_keluarga')->insert([
-                'id' => $index + 1,
                 'uuid' => Str::uuid(),
                 'status_keluarga' => $status,
                 'created_at' => Carbon::now(),

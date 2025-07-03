@@ -17,6 +17,7 @@ export function getActionsRt({ onEdit, onDelete }) {
             label: "Hapus",
             icon: Trash2,
             handler: (item) => onDelete(item),
+            disabled: (item) => item.domisili_count > 0,
         },
     ];
 }

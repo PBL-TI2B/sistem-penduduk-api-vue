@@ -14,7 +14,7 @@ class RtController extends Controller
 {
     public function index(Request $request)
     {
-        $rt = Rt::with(['rw']);
+        $rt = Rt::with(['rw'])->withCount('domisili');
 
         if ($request->has('nomor_rt')) {
             $rt->where('nomor_rt', $request->nomor_rt);

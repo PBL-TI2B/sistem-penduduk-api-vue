@@ -44,8 +44,8 @@ class PendudukController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%$search%")
-                  ->orWhere('nik', 'like', "%$search%")
-                  ->orWhere('tempat_lahir', 'like', "%$search%");
+                ->orWhere('nik', 'like', "%$search%")
+                ->orWhere('tempat_lahir', 'like', "%$search%");
             });
         }
 
@@ -55,6 +55,10 @@ class PendudukController extends Controller
         
         if ($request->boolean('exclude_ayah')) {
             $query->whereDoesntHave('anakSebagaiAyah');
+        }
+
+        if ($request->boolean('exclude_kk')) {
+            $query->whereDoesntHave('anggotaKeluarga');
         }
         
         $penduduk = $query->paginate($request->get('per_page', 10));

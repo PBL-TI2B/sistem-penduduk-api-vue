@@ -19,7 +19,7 @@ import { useForm } from "vee-validate";
 import { getFieldDomisili, getFields } from "./utils/fields";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
@@ -428,7 +428,10 @@ onMounted(async () => {
                 <FormItem>
                     <FormLabel>Nama Ayah</FormLabel>
                     <FormControl>
-                        <div class="autocomplete-wrapper" style="position: relative">
+                        <div
+                            class="autocomplete-wrapper"
+                            style="position: relative"
+                        >
                             <Input
                                 v-model="searchAyah"
                                 placeholder="Ketik nama ayah"
@@ -438,7 +441,10 @@ onMounted(async () => {
                                 v-if="searchAyah.length >= 2 && !values.ayah_id"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
-                                <div v-if="loadingAyah" class="p-2 text-gray-500 text-center">
+                                <div
+                                    v-if="loadingAyah"
+                                    class="p-2 text-gray-500 text-center"
+                                >
                                     Memuat data...
                                 </div>
                                 <div
@@ -467,7 +473,10 @@ onMounted(async () => {
                 <FormItem>
                     <FormLabel>Nama Ibu</FormLabel>
                     <FormControl>
-                        <div class="autocomplete-wrapper" style="position: relative">
+                        <div
+                            class="autocomplete-wrapper"
+                            style="position: relative"
+                        >
                             <Input
                                 v-model="searchIbu"
                                 placeholder="Ketik nama ibu"
@@ -477,7 +486,10 @@ onMounted(async () => {
                                 v-if="searchIbu.length >= 2 && !values.ibu_id"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
-                                <div v-if="loadingIbu" class="p-2 text-gray-500 text-center">
+                                <div
+                                    v-if="loadingIbu"
+                                    class="p-2 text-gray-500 text-center"
+                                >
                                     Memuat data...
                                 </div>
                                 <div
