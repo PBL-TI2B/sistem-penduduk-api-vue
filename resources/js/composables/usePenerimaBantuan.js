@@ -2,6 +2,8 @@ import { ref } from "vue";
 import { apiGet, apiPost, apiDelete } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { router } from "@inertiajs/vue3";
 
 export function usePenerimaBantuan() {
@@ -153,6 +155,31 @@ export function usePenerimaBantuan() {
         }
     };
 
+    //! Export Show Penerima Bantuan
+
+    const exportShowPenerimaBantuan = async (uuid) => {
+        try {
+            const response = await axios.get(`/api/v1/penerima-bantuan/${uuid}/export/pdf`, {
+                responseType: "blob",
+                headers: {
+                    Authorization: `Bearer ${Cookies.get("token")}`, // if needed
+                },
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `detail-penerima-${uuid}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Failed to export PDF:", error);
+            toast.error("Gagal mengekspor PDF penerima bantuan");
+        }
+    };
+
+
     return {
         items,
         item,
@@ -165,7 +192,7 @@ export function usePenerimaBantuan() {
         selectedStatusPenerimaanBantuan,
         // statusValidasiOptions,
         // imageUrl,
-        fetchData,
+        fetchData,exportShowPenerimaBantuan,
         fetchDetailData,
         createData,
         editKeterangan,
