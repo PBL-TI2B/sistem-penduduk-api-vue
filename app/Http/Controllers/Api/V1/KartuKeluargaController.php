@@ -14,7 +14,13 @@ class KartuKeluargaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = KartuKeluarga::query()->with(['rt', 'anggotaKeluarga.penduduk', 'anggotaKeluarga.statusKeluarga', 'anggotaKeluarga.kurangMampu']);
+        $user = $request->user();
+
+        $query = KartuKeluarga::query()->with([
+            'rt', 
+            'anggotaKeluarga.penduduk', 
+            'anggotaKeluarga.statusKeluarga'
+        ]);
         
         if ($request->filled('search')) {
     $search = $request->search;
@@ -43,6 +49,18 @@ if ($request->filled('rt') && $request->rt !== '-') {
 }
 
 
+        if ($user) {
+            if ($user->hasRole('rt') && $user->perangkatDesa?->rt_id) {
+                $query->where('rt_id', $user->perangkatDesa->rt_id);
+
+            } elseif ($user->hasRole('rw') && $user->perangkatDesa?->rw_id) {
+                $userRw = $user->perangkatDesa->rw_id;
+                $query->whereHas('rt', function ($q) use ($userRw) {
+                    $q->where('rw_id', $userRw);
+                });
+            }
+        }
+        
         $kartukeluarga = $query->paginate($request->get('per_page', 10));
         return new ApiResource(true, 'Daftar Kartu Keluarga', $kartukeluarga);
     }

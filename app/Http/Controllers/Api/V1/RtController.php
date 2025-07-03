@@ -13,24 +13,29 @@ use Illuminate\Http\Request;
 class RtController extends Controller
 {
     public function index(Request $request)
-    {
-        $rt = Rt::with(['rw'])->withCount('domisili');
+{
+    $rt = Rt::with(['rw'])->withCount('domisili');
 
-        if ($request->has('nomor_rt')) {
-            $rt->where('nomor_rt', $request->nomor_rt);
-        }
-
-        $rt = $rt->paginate(5);
-        $collection = RtResource::collection($rt->getCollection());
-        $rt->setCollection(collect($collection));
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Berhasil ambil data RT',
-            'data' => $rt,
-        ]);
-
+    if ($request->has('nomor_rt')) {
+        $rt->where('nomor_rt', $request->nomor_rt);
     }
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $rt->where('nomor_rt', 'like', "%$search%");
+    }
+
+    $rt = $rt->paginate(5);
+    $collection = RtResource::collection($rt->getCollection());
+    $rt->setCollection(collect($collection));
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Berhasil ambil data RT',
+        'data' => $rt,
+    ]);
+}
+
 
     public function store(Request $request)
     {

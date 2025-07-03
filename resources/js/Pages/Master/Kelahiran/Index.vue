@@ -78,11 +78,8 @@ const resetFilter = () => {
     filter.value = {
         bulan: "",
         tahun: "",
-        anak_ke: "",
-        min_berat: "",
-        max_berat: "",
-        min_panjang: "",
-        max_panjang: "",
+        berat: "",
+        panjang: "",
     };
     selectedMonth.value = null;
     fetchData();
@@ -172,12 +169,6 @@ watch(selectedMonth, (val) => {
             <div
                 class="lg:max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
             >
-                <Input
-                    v-model="filter.anak_ke"
-                    placeholder="Anak ke-"
-                    class="w-24"
-                />
-
                 <!-- Bulan & Tahun -->
                 <div class="grid gap-2">
                     <select
@@ -204,13 +195,8 @@ watch(selectedMonth, (val) => {
                     <!-- Berat -->
                     <div class="flex gap-2">
                         <Input
-                            v-model="filter.min_berat"
-                            placeholder="Min Berat"
-                            class="w-28"
-                        />
-                        <Input
-                            v-model="filter.max_berat"
-                            placeholder="Max Berat"
+                            v-model="filter.berat"
+                            placeholder="Berat"
                             class="w-28"
                         />
                     </div>
@@ -218,13 +204,8 @@ watch(selectedMonth, (val) => {
                     <!-- Panjang -->
                     <div class="flex gap-2">
                         <Input
-                            v-model="filter.min_panjang"
-                            placeholder="Min Panjang"
-                            class="w-28"
-                        />
-                        <Input
-                            v-model="filter.max_panjang"
-                            placeholder="Max Panjang"
+                            v-model="filter.panjang"
+                            placeholder="Panjang"
                             class="w-28"
                         />
                     </div>
