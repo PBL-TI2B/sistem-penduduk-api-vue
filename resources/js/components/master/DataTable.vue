@@ -117,7 +117,7 @@ const handleExport = async (format) => {
             }
         );
 
-        const fileExtension = format === "pdf" ? "pdf" : "xlsx";
+        const fileExtension = format === "pdf" ? "pdf" : "csv";
         const filename = `data-${props.exportRoute}.${fileExtension}`;
 
         const url = window.URL.createObjectURL(new Blob([response.data]));
