@@ -51,15 +51,15 @@ class KurangMampuResource extends JsonResource
                 //! Tabel Kartu Keluarga
                 // 'id_kk' => $this->anggotaKeluarga?->kk?->id,
                 // 'uuid_kk' => $this->anggotaKeluarga?->kk?->uuid,
-                'no_kk' => $this->anggotaKeluarga?->kk?->nomor_kk,
+                'no_kk' => $this->anggotaKeluarga?->kk->nomor_kk,
                 //! Tabel StatusKeluarga
                 'status_keluarga' => $this->anggotaKeluarga?->statusKeluarga?->status_keluarga,
                 //! Tabel RT
-                'nomor_rt' => $this->anggotaKeluarga?->kk?->rt?->nomor_rt,
+                'nomor_rt' => $this->anggotaKeluarga?->penduduk->domisili->rt?->nomor_rt,
                 //! Tabel RW
-                'nomor_rw' => $this->anggotaKeluarga?->kk?->rt?->rw?->nomor_rw,
+                'nomor_rw' => $this->anggotaKeluarga?->penduduk->domisili->rt?->rw?->nomor_rw,
                 //! Tabel Dusun
-                'nama_dusun' => $this->anggotaKeluarga?->kk?->rt?->rw?->dusun?->nama,
+                'nama_dusun' => $this->anggotaKeluarga?->penduduk->domisili->rt?->rw?->dusun?->nama,
             ],
 
             'penerima_bantuan_count' => $this->penerima_bantuan_count,
