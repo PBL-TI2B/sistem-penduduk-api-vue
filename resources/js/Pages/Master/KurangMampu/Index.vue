@@ -34,7 +34,6 @@ import {
 
 const isAlertDeleteOpen = ref(false);
 const selectedUuid = ref(null);
-const user = ref(null);
 
 const {
     items,
@@ -90,16 +89,8 @@ const onConfirmDelete = async () => {
 // Setting Action Buttons
 const actionsIndexKurangMampu = actionsIndex(onClickDeleteButton);
 
-onMounted(async () => {
+onMounted(() => {
     fetchData();
-    try {
-        const res = await apiGet("/auth/me");
-        user.value = res.data;
-    } catch (error) {
-        useErrorHandler(error, {
-            message: "Gagal mendapatkan data user",
-        });
-    }
 });
 watch(page, () => {
     fetchData();
@@ -191,7 +182,6 @@ watch(page, () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <!-- <Button asChild :hidden="user?.role === 'rt' || 'rw'"> -->
                 <Button asChild>
                     <Link :href="route('kurang-mampu.create')">
                         <PackagePlus /> Tambah Kurang Mampu

@@ -43,7 +43,7 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
     RoutePermission('bantuan', BantuanController::class, 'bantuan', true);
     RoutePermission('pekerjaan', PekerjaanController::class, 'pekerjaan');
     RoutePermission('penduduk', PendudukController::class, 'penduduk');
-    RoutePermission('perangkat-desa', PerangkatDesaController::class, 'perangkatDesa');
+    RoutePermission('perangkat-desa', PerangkatDesaController::class, 'perangkatDesa', true);
     RoutePermission('pendidikan', PendidikanController::class, 'pendidikan');
 
     Route::prefix('statistik')->controller(InfografisController::class)->group(function () {

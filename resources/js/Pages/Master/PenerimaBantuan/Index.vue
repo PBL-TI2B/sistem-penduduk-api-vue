@@ -54,7 +54,6 @@ const {
 } = usePenerimaBantuan();
 
 const isAlertDeleteOpen = ref(false);
-const user = ref(null);
 const selectedUuid = ref(null);
 
 const clearSearch = () => {
@@ -93,16 +92,8 @@ const onConfirmDelete = async () => {
 // Setting Action Buttons
 const actionsIndexPenerimaBantuan = actionsIndex(onClickDeleteButton);
 
-onMounted(async () => {
-    try {
-        fetchData();
-        const res = await apiGet("/auth/me");
-        user.value = res.data;
-    } catch (error) {
-        useErrorHandler(error, {
-            message: "Gagal mendapatkan data user",
-        });
-    }
+onMounted(() => {
+    fetchData();
 });
 
 watch(page, () => {
@@ -197,7 +188,6 @@ watch(page, () => {
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <!-- <Button asChild :hidden="user?.role === 'rt' || 'rw'"> -->
                 <Button asChild>
                     <Link :href="route('penerima-bantuan.create')">
                         <PackagePlus /> Tambah Penerima Bantuan

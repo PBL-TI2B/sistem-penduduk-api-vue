@@ -70,14 +70,13 @@ export const items = [
             {
                 title: "Berita",
                 to: "/admin/berita",
-                roles: ["admin", "superadmin"],
             },
             {
                 title: "Galeri",
                 to: "/admin/galeri",
-                roles: ["admin", "superadmin"],
             },
         ],
+        roles: ["admin", "superadmin"],
     },
     {
         title: "Pendidikan",

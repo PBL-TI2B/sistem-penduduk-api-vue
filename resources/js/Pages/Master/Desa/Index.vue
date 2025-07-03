@@ -420,7 +420,7 @@ const onConfirmDeleteRt = async () => {
 
 // Batal hapus dusun
 const onCancelDeleteRt = () => {
-    isAlertRtOpen.value = false;
+    isAlertDeleteRtOpen.value = false;
     selectedRtUuid.value = null;
 };
 
@@ -570,7 +570,7 @@ const actionsIndex4 = getActionsRt({
                 <button
                     v-if="searchRw"
                     class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                    @click="clearSearchDusun"
+                    @click="clearSearchRw"
                     tabindex="-1"
                     type="button"
                 >
@@ -611,8 +611,8 @@ const actionsIndex4 = getActionsRt({
             class="flex bg-primary-foreground relative items-center p-2 rounded-lg gap-2 justify-between w-full"
         >
             <Input
-                v-model="searchRw"
-                @keyup.enter="onSearchEnterRw"
+                v-model="searchRt"
+                @keyup.enter="onSearchEnterRt"
                 placeholder="Cari rt berdasarkan nama"
                 class="pl-10 pr-8"
             />
@@ -622,9 +622,9 @@ const actionsIndex4 = getActionsRt({
                 <SearchIcon class="size-6 text-muted-foreground" />
             </span>
             <button
-                v-if="searchRw"
+                v-if="searchRt"
                 class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
-                @click="clearSearchDusun"
+                @click="clearSearchRt"
                 tabindex="-1"
                 type="button"
             >

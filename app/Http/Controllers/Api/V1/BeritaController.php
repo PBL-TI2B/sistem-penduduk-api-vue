@@ -98,9 +98,30 @@ class BeritaController extends Controller
 
     public function show(Berita $berita)
     {
-        $berita = $berita->load('user');
+        // $berita = $berita->load('user');
 
-        if ($berita->status === 'publish') {
+        // if ($berita->status === 'publish') {
+        //     $berita->increment('jumlah_dilihat');
+        // }
+
+        $user = auth('sanctum')->user(); // Bisa null jika guest
+        $role = null;
+
+        if ($user) {
+            // Jika pakai Spatie
+            $role = $user->getRoleNames()->first();
+        }
+
+        // Increment hanya jika:
+        // - status publish
+        // - (guest ATAU user login tapi bukan superadmin/admin)
+        if (
+            $berita->status === 'publish' &&
+            (
+                !$role // guest
+                || !in_array($role, ['superadmin', 'admin'])
+            )
+        ) {
             $berita->increment('jumlah_dilihat');
         }
 

@@ -11,11 +11,11 @@ import SelectLabel from "@/components/ui/select/SelectLabel.vue";
 import SelectTrigger from "@/components/ui/select/SelectTrigger.vue";
 import SelectValue from "@/components/ui/select/SelectValue.vue";
 import { useKartuKeluarga } from "@/composables/useKartuKeluarga";
-import { SquarePlus } from "lucide-vue-next";
+import { SquarePlus, X } from "lucide-vue-next";
 import { route } from "ziggy-js";
 import { columnsIndexKK } from "./utils/table";
 import { actionsIndexKK } from "./utils/table";
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 
 const {
     items,
@@ -24,11 +24,10 @@ const {
     page,
     perPage,
     totalPages,
-    totalItems,
     totalData,
     search,
-    selectedStatusValidasi,
-    statusValidasiOptions,
+    statusPerkawinan,
+    rtFilter,
     fetchData,
     fetchDetailData,
     createData,
@@ -36,10 +35,31 @@ const {
     deleteData,
 } = useKartuKeluarga();
 
-console.log(items);
+const searchInput = ref("");
+
 onMounted(() => {
     fetchData();
 });
+
+const onSearchEnter = () => {
+    search.value = searchInput.value;
+    page.value = 1;
+    fetchData();
+};
+
+const clearSearch = () => {
+    searchInput.value = "";
+    search.value = null;
+    page.value = 1;
+    fetchData();
+};
+
+const resetFilters = () => {
+    statusPerkawinan.value = "-";
+    rtFilter.value = "-";
+    page.value = 1;
+    fetchData();
+};
 </script>
 
 <template>
@@ -67,15 +87,22 @@ onMounted(() => {
     </div>
     <div class="drop-shadow-md w-full grid gap-2">
         <div
-            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between"
+            class="bg-primary-foreground p-2 rounded-lg flex flex-wrap gap-2 justify-between items-center"
         >
-            <Input
-                placeholder="Cari keluarga (No. KK atau Kepala Keluarga)"
-                class="md:w-1/3"
-            />
-            <!-- filter -->
-            <div class="flex gap-4">
-                <Select>
+            <div class="relative md:w-1/3">
+                <Input
+                    v-model="searchInput"
+                    @keydown.enter="onSearchEnter"
+                    placeholder="Cari keluarga (No. KK atau Kepala Keluarga)"
+                />
+                <X
+                    v-if="searchInput"
+                    class="absolute right-2 top-2.5 cursor-pointer w-4 h-4 text-gray-500"
+                    @click="clearSearch"
+                />
+            </div>
+            <div class="flex gap-4 items-center">
+                <Select v-model="statusPerkawinan">
                     <SelectTrigger>
                         <SelectValue placeholder="Status Perkawinan" />
                     </SelectTrigger>
@@ -83,14 +110,20 @@ onMounted(() => {
                         <SelectGroup>
                             <SelectLabel>Status Perkawinan</SelectLabel>
                             <SelectItem value="-"> Semua </SelectItem>
-                            <SelectItem value="kawin"> Kawin </SelectItem>
-                            <SelectItem value="belum kawin">
-                                Belum Kawin
-                            </SelectItem>
+                            <SelectItem value="kawin">Kawin</SelectItem>
+                            <SelectItem value="belum kawin"
+                                >Belum Kawin</SelectItem
+                            >
+                            <SelectItem value="cerai hidup"
+                                >Cerai Hidup</SelectItem
+                            >
+                            <SelectItem value="cerai mati"
+                                >Cerai Mati</SelectItem
+                            >
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Select>
+                <Select v-model="rtFilter">
                     <SelectTrigger>
                         <SelectValue placeholder="No. RT" />
                     </SelectTrigger>
@@ -100,10 +133,13 @@ onMounted(() => {
                             <SelectItem value="-"> Semua </SelectItem>
                             <SelectItem value="001"> 001 </SelectItem>
                             <SelectItem value="002"> 002 </SelectItem>
+                            <SelectItem value="003"> 003 </SelectItem>
+                            <SelectItem value="004"> 004 </SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button class="cursor-pointer">Terapkan</Button>
+                <Button @click="fetchData">Terapkan</Button>
+                <Button variant="outline" @click="resetFilters">Reset</Button>
             </div>
         </div>
 

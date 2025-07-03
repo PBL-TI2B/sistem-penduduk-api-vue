@@ -49,8 +49,8 @@ class DusunController extends Controller
 
         $dusun = Dusun::create([
             'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
-            'lokasi' => $request->lokasi,
+            'deskripsi' => $request->deskripsi ?: null,
+            'lokasi' => $request->lokasi ?: null,
             'desa_id' => $request->desa_id,
         ]);
 
