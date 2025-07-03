@@ -13,6 +13,8 @@ export function useKartuKeluarga(uuid) {
     const totalPages = ref(1);
     const totalData = ref(0);
     const search = ref(null);
+    const statusPerkawinan = ref("null");
+    const rtFilter = ref("null");
 
     // Fetch list bantuan
     const fetchData = async () => {
@@ -24,9 +26,15 @@ export function useKartuKeluarga(uuid) {
                 per_page: perPage.value,
                 search: search.value,
             };
-            // if (selectedKategori.value && selectedKategori.value !== "-") {
-            //     params.kategori_bantuan_id = selectedKategori.value;
-            // }
+
+            if (statusPerkawinan.value !== "-") {
+                params.status_perkawinan = statusPerkawinan.value;
+            }
+
+            if (rtFilter.value !== "-") {
+                params.rt = rtFilter.value;
+            }
+
             const res = await apiGet("/kartu-keluarga", params);
             items.value = res.data.data;
             perPage.value = res.data.per_page;
@@ -114,6 +122,8 @@ export function useKartuKeluarga(uuid) {
         totalPages,
         totalData,
         search,
+        statusPerkawinan,
+        rtFilter,
         fetchData,
         fetchDetailData,
         createData,

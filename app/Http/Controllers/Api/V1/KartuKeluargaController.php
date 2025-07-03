@@ -17,10 +17,32 @@ class KartuKeluargaController extends Controller
         $query = KartuKeluarga::query()->with(['rt', 'anggotaKeluarga.penduduk', 'anggotaKeluarga.statusKeluarga', 'anggotaKeluarga.kurangMampu']);
         
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('nomor_kk', 'like', "%$search%");
-        }
-        
+    $search = $request->search;
+    $query->where(function ($q) use ($search) {
+        $q->where('nomor_kk', 'like', "%$search%")
+          ->orWhereHas('anggotaKeluarga', function ($subQ) use ($search) {
+              $subQ->where('status_keluarga_id', 1) // kepala keluarga
+                   ->whereHas('penduduk', function ($pendudukQ) use ($search) {
+                       $pendudukQ->where('nama_lengkap', 'like', "%$search%");
+                   });
+          });
+    });
+}
+
+        if ($request->filled('status_perkawinan') && $request->status_perkawinan !== '-') {
+    $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($request) {
+        $q->where('status_perkawinan', $request->status_perkawinan);
+    });
+}
+
+
+if ($request->filled('rt') && $request->rt !== '-') {
+    $query->whereHas('rt', function ($q) use ($request) {
+        $q->where('nomor_rt', $request->rt); // ✅ sesuai kolom di tabel
+    });
+}
+
+
         $kartukeluarga = $query->paginate($request->get('per_page', 10));
         return new ApiResource(true, 'Daftar Kartu Keluarga', $kartukeluarga);
     }

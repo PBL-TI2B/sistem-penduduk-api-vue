@@ -164,7 +164,7 @@ watch(selectedMonth, (val) => {
                     class="absolute right-2 top-2.5 text-muted-foreground hover:text-primary"
                     title="Hapus pencarian"
                 >
-                    <XIcon class="size-5" />
+                    <XIcon class="size-6 text-muted-foreground" />
                 </button>
             </div>
 
