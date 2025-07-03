@@ -2,6 +2,13 @@ import { Eye, PenBoxIcon, Trash2 } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 
+function getKepalaKeluarga(anggota_keluarga) {
+    if (!anggota_keluarga || anggota_keluarga.length === 0) return null;
+    return anggota_keluarga.find(
+        (a) => a.status_keluarga?.status_keluarga === "Kepala Keluarga"
+    );
+}
+
 const columnsIndexKK = [
     {
         label: "No KK",
@@ -11,36 +18,45 @@ const columnsIndexKK = [
     {
         label: "NIK",
         key: "penduduk.nik",
-        format: (val, row) => row?.anggota_keluarga[0].penduduk?.nik || "-",
+        format: (val, row) => {
+            const kepala = getKepalaKeluarga(row.anggota_keluarga);
+            return kepala?.penduduk?.nik || "-";
+        },
     },
     {
         label: "Kepala Keluarga",
         key: "penduduk.nama_lengkap",
-        format: (val, row) =>
-            row?.anggota_keluarga[0].penduduk?.nama_lengkap || "-",
+        format: (val, row) => {
+            const kepala = getKepalaKeluarga(row.anggota_keluarga);
+            return kepala?.penduduk?.nama_lengkap || "-";
+        },
     },
     {
         label: "Jenis Kelamin",
         key: "jenis_kelamin",
-        format: (val, row) =>
-            row.anggota_keluarga[0].penduduk?.jenis_kelamin === "L"
+        format: (val, row) => {
+            const kepala = getKepalaKeluarga(row.anggota_keluarga);
+            if (!kepala?.penduduk?.jenis_kelamin) return "-";
+            return kepala.penduduk.jenis_kelamin === "L"
                 ? "Laki-laki"
-                : "Perempuan",
+                : "Perempuan";
+        },
     },
     {
         label: "No. RT",
         key: "no_rt",
         format: (val, row) => row.rt?.nomor_rt || "-",
     },
-
     {
         label: "Status Perkawinan",
         key: "penduduk.status_perkawinan",
-        format: (val, row) =>
-            row?.anggota_keluarga[0].penduduk?.status_perkawinan || "-",
+        format: (val, row) => {
+            const kepala = getKepalaKeluarga(row.anggota_keluarga);
+            return kepala?.penduduk?.status_perkawinan || "-";
+        },
         customClass: (val, row) => {
-            const status =
-                row?.anggota_keluarga?.[0]?.penduduk?.status_perkawinan;
+            const kepala = getKepalaKeluarga(row.anggota_keluarga);
+            const status = kepala?.penduduk?.status_perkawinan;
 
             if (status === "belum kawin") {
                 return "text-blue-600 bg-blue-100 px-2 py-1 rounded";

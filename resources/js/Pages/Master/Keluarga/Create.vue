@@ -120,6 +120,29 @@ watch(
     (newAnggotaList) => {
         newAnggotaList.forEach((anggota) => {
             watch(
+                () => anggota.penduduk_id,
+                (val) => {
+                    if (!val) {
+                        anggota.nama_penduduk = null;
+                        return;
+                    }
+                    // Cari label dari options
+                    const found = anggota.pendudukOptions.find(
+                        (opt) => opt.value === val
+                    );
+                    anggota.nama_penduduk = found ? found.label : null;
+                }
+            );
+        });
+    },
+    { deep: true }
+);
+
+watch(
+    anggotaKeluarga,
+    (newAnggotaList) => {
+        newAnggotaList.forEach((anggota) => {
+            watch(
                 () => anggota.searchPenduduk,
                 (val) => {
                     clearTimeout(anggota.pendudukDebounceTimer);
@@ -513,6 +536,7 @@ onMounted(async () => {
 
                         <Select
                             v-else
+                            v-model="anggota.penduduk_id"
                             v-model:open="anggota.isPendudukSelectOpen"
                         >
                             <SelectTrigger class="w-full">
