@@ -15,22 +15,52 @@ class KelahiranController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $query = Kelahiran::with('penduduk');
+{
+    $query = Kelahiran::with('penduduk');
 
-         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('penduduk', function ($subQuery) use ($search) {
-                    $subQuery->where('nama_lengkap', 'like', "%$search%");
-                });
-            });
-        }
-
-        $kelahiran = $query->paginate($request->get('per_page', 10));
-        //$kelahiran->setCollection(collect(KelahiranResource::collection($kelahiran->getCollection())));
-        return new ApiResource(true, 'Daftar Data Kelahiran', $kelahiran);
+    // Pencarian umum (nama penduduk)
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->whereHas('penduduk', function ($subQuery) use ($search) {
+                $subQuery->where('nama_lengkap', 'like', "%$search%");
+            })
+            ->orWhere('anak_ke', 'like', "%$search%")
+            ->orWhere('berat', 'like', "%$search%")
+            ->orWhere('panjang', 'like', "%$search%")
+            ->orWhere('lokasi', 'like', "%$search%")
+            ->orWhere('keterangan', 'like', "%$search%");
+        });
     }
+    if ($request->filled('anak_ke')) {
+    $query->where('anak_ke', $request->anak_ke);
+    }
+
+    // Filter berdasarkan bulan & tahun
+    if ($request->filled('bulan') && $request->filled('tahun')) {
+        $query->whereMonth('waktu_kelahiran', $request->bulan)
+              ->whereYear('waktu_kelahiran', $request->tahun);
+    }
+
+    // Filter berat bayi
+    if ($request->filled('min_berat')) {
+        $query->where('berat', '>=', $request->min_berat);
+    }
+    if ($request->filled('max_berat')) {
+        $query->where('berat', '<=', $request->max_berat);
+    }
+
+    // Filter panjang bayi
+    if ($request->filled('min_panjang')) {
+        $query->where('panjang', '>=', $request->min_panjang);
+    }
+    if ($request->filled('max_panjang')) {
+        $query->where('panjang', '<=', $request->max_panjang);
+    }
+
+    $kelahiran = $query->paginate($request->get('per_page', 10));
+    return new ApiResource(true, 'Daftar Data Kelahiran', $kelahiran);
+}
 
     /**
      * Store a newly created resource in storage.

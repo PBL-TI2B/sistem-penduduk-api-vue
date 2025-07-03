@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted, ref, watch } from "vue";
 import BreadcrumbComponent from "@/components/BreadcrumbComponent.vue";
 import DataTable from "@/components/master/DataTable.vue";
 import Button from "@/components/ui/button/Button.vue";
@@ -10,18 +11,14 @@ import {
     SquarePlus,
     Trash2,
     XIcon,
+    Funnel,
 } from "lucide-vue-next";
 import { route } from "ziggy-js";
-import { onMounted, ref } from "vue";
 import { useKelahiran } from "@/composables/useKelahiran";
 import { columnsIndexKelahiran } from "./utils/table";
 import { router } from "@inertiajs/vue3";
-
-import Datepicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 import AlertDialog from "@/components/master/AlertDialog.vue";
 
-const searchPenduduk = ref("");
 const selectedUuid = ref(null);
 const isAlertDeleteOpen = ref(false);
 
@@ -32,12 +29,9 @@ const {
     page,
     perPage,
     totalPages,
-    filter,
-    totalItems,
     totalData,
     search,
-    selectedStatusValidasi,
-    statusValidasiOptions,
+    filter,
     fetchData,
     fetchDetailData,
     createData,
@@ -45,32 +39,24 @@ const {
     deleteData,
 } = useKelahiran();
 
-const actionsIndexKelahiran = [
-    {
-        label: "Penduduk",
-        icon: Eye,
-        handler: (item) => {
-            router.visit(route("penduduk.show", item.penduduk.uuid));
-        },
-    },
-    {
-        label: "Ubah",
-        icon: PenBox,
-        class: "bg-yellow-500 hover:bg-yellow-600 text-white",
-        handler: (item) => {
-            router.visit(route("kelahiran.edit", item.uuid));
-        },
-    },
-    {
-        label: "Hapus",
-        icon: Trash2,
-        class: "bg-red-500 hover:bg-red-600 text-white",
-        disabled: (item) => item.riwayat_bantuan_count > 0,
-        handler: (item) => {
-            onClickDeleteButton(item.uuid);
-        },
-    },
-];
+const searchPenduduk = ref("");
+watch(searchPenduduk, (val) => {
+    search.value = val;
+});
+
+const onSearchEnter = (e) => {
+    if (e.key === "Enter") {
+        page.value = 1;
+        fetchData();
+    }
+};
+
+const clearSearchPenduduk = () => {
+    searchPenduduk.value = "";
+    search.value = "";
+    page.value = 1;
+    fetchData();
+};
 
 const onClickDeleteButton = (uuid) => {
     selectedUuid.value = uuid;
@@ -88,28 +74,45 @@ const onConfirmDelete = async () => {
     }
 };
 
-const onSearchEnter = (e) => {
-    if (e.key === "Enter") {
-        page.value = 1;
-        fetchData();
-    }
-};
-
-const clearSearchPenduduk = () => {
-    searchPenduduk.value = "";
-    page.value = 1;
-    fetchData();
-};
-
 const resetFilter = () => {
     filter.value = {
-        waktu_kelahiran: "",
+        bulan: "",
+        tahun: "",
+        anak_ke: "",
+        min_berat: "",
+        max_berat: "",
+        min_panjang: "",
+        max_panjang: "",
     };
+    selectedMonth.value = null;
     fetchData();
 };
 
 onMounted(() => {
     fetchData();
+});
+
+const selectedMonth = ref(null);
+const selectedYear = ref(null);
+
+// Daftar bulan (1–12)
+const monthOptions = [
+    { value: 1, label: "Januari" },
+    { value: 2, label: "Februari" },
+    { value: 3, label: "Maret" },
+    { value: 4, label: "April" },
+    { value: 5, label: "Mei" },
+    { value: 6, label: "Juni" },
+    { value: 7, label: "Juli" },
+    { value: 8, label: "Agustus" },
+    { value: 9, label: "September" },
+    { value: 10, label: "Oktober" },
+    { value: 11, label: "November" },
+    { value: 12, label: "Desember" },
+];
+
+watch(selectedMonth, (val) => {
+    filter.value.bulan = val;
 });
 </script>
 
@@ -136,15 +139,18 @@ onMounted(() => {
             </Button>
         </div>
     </div>
+
     <div class="drop-shadow-md w-full grid gap-2">
+        <!-- Search & Filter -->
         <div class="flex flex-wrap gap-2 justify-between">
+            <!-- Search -->
             <div
-                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-1/2"
+                class="flex bg-primary-foreground relative items-center p-2 rounded-lg justify-between w-full xl:w-1/2"
             >
                 <Input
                     v-model="searchPenduduk"
                     @keyup.enter="onSearchEnter"
-                    placeholder="Cari data Penduduk"
+                    placeholder="Cari Nama / Anak ke / Berat / Panjang / Lokasi / Keterangan"
                     class="pl-10 pr-8"
                 />
                 <span
@@ -155,29 +161,121 @@ onMounted(() => {
                 <button
                     v-if="searchPenduduk"
                     @click="clearSearchPenduduk"
-                    class="absolute end-2 inset-y-0 flex items-center px-2 text-muted-foreground hover:text-primary"
+                    class="absolute right-2 top-2.5 text-muted-foreground hover:text-primary"
                     title="Hapus pencarian"
                 >
-                    <XIcon />
+                    <XIcon class="size-5" />
                 </button>
             </div>
+
+            <!-- Filter Inputs -->
             <div
-                class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
+                class="lg:max-w-10/12 flex flex-wrap gap-2 bg-primary-foreground p-2 rounded-lg"
             >
-                <Datepicker
-                    locale="id"
-                    :enable-time-picker="false"
-                    :format="'dd MMMM yyyy'"
+                <Input
+                    v-model="filter.anak_ke"
+                    placeholder="Anak ke-"
+                    class="w-24"
                 />
-                <Button @click="createKematian"> <Funnel /> Terapkan </Button>
+
+                <!-- Bulan & Tahun -->
+                <div class="grid gap-2">
+                    <select
+                        v-model="selectedMonth"
+                        class="border rounded-md px-3 py-2 w-30 h-9 text-sm text-muted-foreground"
+                    >
+                        <option :value="null" disabled>Pilih Bulan</option>
+                        <option
+                            v-for="month in monthOptions"
+                            :key="month.value"
+                            :value="month.value"
+                        >
+                            {{ month.label }}
+                        </option>
+                    </select>
+
+                    <Input
+                        v-model="filter.tahun"
+                        placeholder="Tahun (2025)"
+                        class="w-28"
+                    />
+                </div>
+                <div class="grid gap-2">
+                    <!-- Berat -->
+                    <div class="flex gap-2">
+                        <Input
+                            v-model="filter.min_berat"
+                            placeholder="Min Berat"
+                            class="w-28"
+                        />
+                        <Input
+                            v-model="filter.max_berat"
+                            placeholder="Max Berat"
+                            class="w-28"
+                        />
+                    </div>
+
+                    <!-- Panjang -->
+                    <div class="flex gap-2">
+                        <Input
+                            v-model="filter.min_panjang"
+                            placeholder="Min Panjang"
+                            class="w-28"
+                        />
+                        <Input
+                            v-model="filter.max_panjang"
+                            placeholder="Max Panjang"
+                            class="w-28"
+                        />
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div
+                    class="w-auto grid gap-2 bg-primary-foreground p-2 rounded-lg"
+                >
+                    <Button asChild @click="fetchData">
+                        <div>
+                            <Funnel />
+                            Terapkan Filter
+                        </div>
+                    </Button>
+                    <Button @click="resetFilter">
+                        <FunnelX />
+                        Reset Filter
+                    </Button>
+                </div>
             </div>
         </div>
 
+        <!-- Table -->
         <DataTable
             label="Kelahiran"
             :items="items"
             :columns="columnsIndexKelahiran"
-            :actions="actionsIndexKelahiran"
+            :actions="[
+                {
+                    label: 'Penduduk',
+                    icon: Eye,
+                    handler: (item) =>
+                        router.visit(
+                            route('penduduk.show', item.penduduk.uuid)
+                        ),
+                },
+                {
+                    label: 'Ubah',
+                    icon: PenBox,
+                    class: 'bg-yellow-500 hover:bg-yellow-600 text-white',
+                    handler: (item) =>
+                        router.visit(route('kelahiran.edit', item.uuid)),
+                },
+                {
+                    label: 'Hapus',
+                    icon: Trash2,
+                    class: 'bg-red-500 hover:bg-red-600 text-white',
+                    disabled: (item) => item.riwayat_bantuan_count > 0,
+                    handler: (item) => onClickDeleteButton(item.uuid),
+                },
+            ]"
             :totalPages="totalPages"
             :totalData="totalData"
             :page="page"
@@ -186,6 +284,8 @@ onMounted(() => {
             @update:page="page = $event"
         />
     </div>
+
+    <!-- Hapus Dialog -->
     <AlertDialog
         v-model:isOpen="isAlertDeleteOpen"
         title="Hapus Kelahiran"

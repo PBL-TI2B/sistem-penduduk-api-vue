@@ -8,7 +8,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { getFields } from "./utils/fields";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import {
     Select,
     SelectContent,
@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, Upload, Download } from "lucide-vue-next";
+import { Trash2, Plus, Upload, Download, X } from "lucide-vue-next";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { apiGet, apiPost } from "@/utils/api";
 import { router } from "@inertiajs/vue3";
@@ -27,25 +27,21 @@ import { createFormSchema } from "./utils/form-schema";
 import { useForm } from "vee-validate";
 import { Input } from "@/components/ui/input";
 import { toast } from "vue-sonner";
+import { Head } from "@inertiajs/vue3";
 
-// Data
-const currentStep = ref(1);
+const currentStep = ref(2);
 const fields = ref([]);
 const anggotaKeluarga = ref([]);
-const pendudukOptions = ref([]);
 const statusKeluargaOptions = ref([]);
 const kartuKeluargaId = ref(null);
 const isInputMassal = ref(false);
 const massalData = ref("");
 
-// Form setup
-const { handleSubmit, resetForm, values } = useForm({
+const { handleSubmit, values } = useForm({
     validationSchema: createFormSchema(),
 });
 
-// Computed
 const isStep1Valid = computed(() => {
-    // Validasi field wajib untuk step 1
     const requiredFields = [
         "nomor_kk",
         "rt_id",
@@ -60,11 +56,6 @@ const isStep1Valid = computed(() => {
     );
 });
 
-const canProceedToStep2 = computed(() => {
-    return isStep1Valid.value && kartuKeluargaId.value;
-});
-
-// Methods
 const nextStep = async () => {
     if (currentStep.value === 1) {
         await submitStep1();
@@ -73,23 +64,17 @@ const nextStep = async () => {
     }
 };
 
-const prevStep = () => {
-    if (currentStep.value > 1) {
-        currentStep.value--;
-    }
-};
-
-const submitStep1 = handleSubmit(async (values) => {
+const submitStep1 = handleSubmit(async (formValues) => {
     try {
-        // Cek nomor KK unik ke API
-        const checkUrl = `/kartu-keluarga/check-kk?nomor_kk=${values.nomor_kk}`;
+        const checkUrl = `/kartu-keluarga/check-kk?nomor_kk=${formValues.nomor_kk}`;
         const checkResponse = await apiGet(checkUrl);
         if (!checkResponse.isAvailable) {
             toast.error("Nomor KK sudah terdaftar");
             return;
         }
+
         const formData = new FormData();
-        for (const [key, value] of Object.entries(values)) {
+        for (const [key, value] of Object.entries(formValues)) {
             formData.append(key, value ?? "");
         }
 
@@ -105,9 +90,12 @@ const submitStep1 = handleSubmit(async (values) => {
 
 const submitStep2 = async () => {
     try {
-        if (anggotaKeluarga.value.length === 0) {
-            toast.error("Minimal harus ada 1 anggota keluarga");
-            return;
+        for (const anggota of anggotaKeluarga.value) {
+            if (!anggota.penduduk_id || !anggota.status_keluarga_id) {
+                toast.error("Harap lengkapi semua data anggota keluarga.");
+                console.log(anggota);
+                return;
+            }
         }
 
         const promises = anggotaKeluarga.value.map((anggota) =>
@@ -209,8 +197,14 @@ const clearPilihanPenduduk = (anggota) => {
 const addAnggotaKeluarga = () => {
     anggotaKeluarga.value.push({
         id: Date.now(),
-        penduduk_id: "",
         status_keluarga_id: "",
+        penduduk_id: null,
+        nama_penduduk: null,
+        searchPenduduk: "",
+        pendudukOptions: [],
+        loadingPenduduk: false,
+        isPendudukSelectOpen: false,
+        pendudukDebounceTimer: null,
     });
 };
 
@@ -232,13 +226,19 @@ const prosesInputMassal = () => {
             .filter((line) => line.trim());
         const newAnggota = [];
 
-        lines.forEach((line, index) => {
+        lines.forEach((line) => {
             const parts = line.split(",").map((part) => part.trim());
             if (parts.length >= 2) {
                 newAnggota.push({
-                    id: Date.now() + index,
+                    id: Date.now() + newAnggota.length,
                     penduduk_id: parts[0],
                     status_keluarga_id: parts[1],
+                    nama_penduduk: null,
+                    searchPenduduk: "",
+                    pendudukOptions: [],
+                    loadingPenduduk: false,
+                    isPendudukSelectOpen: false,
+                    pendudukDebounceTimer: null,
                 });
             }
         });
@@ -269,7 +269,6 @@ const downloadTemplate = () => {
 # Catatan:
 # - Setiap baris adalah satu anggota keluarga
 # - Gunakan koma (,) sebagai pemisah
-# - Jangan ada spasi di sekitar koma
 # - Hapus baris yang dimulai dengan # sebelum input`;
 
     const blob = new Blob([template], { type: "text/plain" });
@@ -281,11 +280,6 @@ const downloadTemplate = () => {
     window.URL.revokeObjectURL(url);
 };
 
-const getPendudukName = (pendudukId) => {
-    const penduduk = pendudukOptions.value.find((p) => p.value === pendudukId);
-    return penduduk ? penduduk.label : "Tidak ditemukan";
-};
-
 const getStatusKeluargaName = (statusId) => {
     const status = statusKeluargaOptions.value.find(
         (s) => s.value === statusId
@@ -293,32 +287,24 @@ const getStatusKeluargaName = (statusId) => {
     return status ? status.label : "Tidak ditemukan";
 };
 
-// Lifecycle
 onMounted(async () => {
     try {
-        // Load RT options
-        const resRT = await apiGet("/rt");
+        const [resRT, resStatus] = await Promise.all([
+            apiGet("/rt"),
+            apiGet("/status-keluarga"),
+        ]);
+
         const rtOptions = resRT.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.nomor_rt,
         }));
         fields.value = [...getFields(rtOptions)];
 
-        // Load Penduduk options
-        const resPenduduk = await apiGet("/penduduk");
-        pendudukOptions.value = resPenduduk.data.data.map((item) => ({
-            value: item.id.toString(),
-            label: `${item.nama_lengkap} (${item.nik})`,
-        }));
-
-        // Load Status Keluarga options
-        const resStatus = await apiGet("/status-keluarga");
         statusKeluargaOptions.value = resStatus.data.data.map((item) => ({
             value: item.id.toString(),
             label: item.status_keluarga,
         }));
 
-        // Add initial anggota keluarga
         addAnggotaKeluarga();
     } catch (error) {
         useErrorHandler(error);
@@ -340,7 +326,6 @@ onMounted(async () => {
         />
     </div>
 
-    <!-- Step Indicator -->
     <div class="flex items-center justify-center my-6">
         <div class="flex items-center space-x-4">
             <div class="flex items-center">
@@ -375,7 +360,6 @@ onMounted(async () => {
         </div>
     </div>
 
-    <!-- Step 1: Data Kartu Keluarga -->
     <div v-if="currentStep === 1" class="shadow-lg p-8 my-4 rounded-lg">
         <h2 class="text-xl font-semibold mb-6">Step 1: Data Kartu Keluarga</h2>
         <form
@@ -439,7 +423,6 @@ onMounted(async () => {
         </form>
     </div>
 
-    <!-- Step 2: Anggota Keluarga -->
     <div v-if="currentStep === 2" class="shadow-lg p-8 my-4 rounded-lg">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold">Step 2: Anggota Keluarga</h2>
@@ -473,7 +456,6 @@ onMounted(async () => {
             </div>
         </div>
 
-        <!-- Input Massal Modal -->
         <Card v-if="isInputMassal" class="mb-6">
             <CardHeader>
                 <CardTitle class="text-lg"
@@ -509,8 +491,7 @@ onMounted(async () => {
             </CardContent>
         </Card>
 
-        <!-- Daftar Anggota Keluarga -->
-        <div class="space-y-4">
+        <div class="space-y-6">
             <div
                 v-for="(anggota, index) in anggotaKeluarga"
                 :key="anggota.id"
@@ -531,7 +512,7 @@ onMounted(async () => {
                     </Button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-2"
                             >Penduduk</label
@@ -559,15 +540,43 @@ onMounted(async () => {
                             v-model:open="anggota.isPendudukSelectOpen"
                         >
                             <SelectTrigger class="w-full">
-                                <SelectValue placeholder="Pilih Penduduk..." />
+                                <SelectValue
+                                    placeholder="Ketik nama penduduk atau NIK..."
+                                />
                             </SelectTrigger>
                             <SelectContent>
+                                <div class="p-2">
+                                    <Input
+                                        v-model="anggota.searchPenduduk"
+                                        placeholder="Ketik untuk mencari..."
+                                        class="mb-2"
+                                    />
+                                </div>
+                                <div
+                                    v-if="anggota.loadingPenduduk"
+                                    class="p-2 text-center text-sm text-gray-500"
+                                >
+                                    Mencari...
+                                </div>
+                                <div
+                                    v-else-if="
+                                        anggota.pendudukOptions.length === 0 &&
+                                        anggota.searchPenduduk.length >= 2
+                                    "
+                                    class="p-2 text-center text-sm text-gray-500"
+                                >
+                                    Data tidak ditemukan
+                                </div>
                                 <SelectItem
-                                    v-for="option in pendudukOptions"
+                                    v-else
+                                    v-for="option in anggota.pendudukOptions"
                                     :key="option.value"
                                     :value="option.value"
+                                    @click.prevent="
+                                        selectPenduduk(anggota, option)
+                                    "
                                 >
-                                    {{ option.label }}
+                                    <span>{{ option.label }}</span>
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -594,16 +603,18 @@ onMounted(async () => {
                     </div>
                 </div>
 
-                <!-- Preview data yang dipilih -->
                 <div
-                    v-if="anggota.penduduk_id && anggota.status_keluarga_id"
+                    v-if="anggota.penduduk_id || anggota.status_keluarga_id"
                     class="mt-3 p-3 bg-gray-50 rounded"
                 >
-                    <div class="flex gap-4">
-                        <Badge variant="secondary">
-                            {{ getPendudukName(anggota.penduduk_id) }}
+                    <div class="flex flex-wrap gap-2">
+                        <Badge v-if="anggota.penduduk_id" variant="secondary">
+                            {{ anggota.nama_penduduk }}
                         </Badge>
-                        <Badge variant="outline">
+                        <Badge
+                            v-if="anggota.status_keluarga_id"
+                            variant="outline"
+                        >
                             {{
                                 getStatusKeluargaName(
                                     anggota.status_keluarga_id
@@ -623,7 +634,13 @@ onMounted(async () => {
                 </p>
             </div>
             <div class="flex gap-2 items-center">
-                <Button @click="prevStep" variant="outline"> Kembali </Button>
+                <Button
+                    @click="currentStep = 1"
+                    type="button"
+                    variant="secondary"
+                >
+                    Kembali
+                </Button>
                 <Button
                     @click="submitStep2"
                     :disabled="anggotaKeluarga.length === 0"

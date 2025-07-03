@@ -44,8 +44,8 @@ class PendudukController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%$search%")
-                  ->orWhere('nik', 'like', "%$search%")
-                  ->orWhere('tempat_lahir', 'like', "%$search%");
+                ->orWhere('nik', 'like', "%$search%")
+                ->orWhere('tempat_lahir', 'like', "%$search%");
             });
         }
 
@@ -55,6 +55,10 @@ class PendudukController extends Controller
         
         if ($request->boolean('exclude_ayah')) {
             $query->whereDoesntHave('anakSebagaiAyah');
+        }
+
+        if ($request->boolean('exclude_kk')) {
+            $query->whereDoesntHave('anggotaKeluarga');
         }
         
         $penduduk = $query->paginate($request->get('per_page', 10));
@@ -189,14 +193,14 @@ class PendudukController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ambil data penduduk',
-            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+            'data' => new PendudukResource($penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
         ]);
     }
 
     public function show(Penduduk $penduduk)
     {
         // Panggil load untuk memuat semua relasi yang diperlukan
-        $penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw']);
+        $penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw']);
 
         return response()->json([
             'success' => true,
@@ -252,7 +256,7 @@ class PendudukController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Berhasil ubah data penduduk',
-            'data' => new PendudukResource($penduduk->load(['pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
+            'data' => new PendudukResource($penduduk->load(['ayah','ibu','pekerjaan', 'pendidikan', 'domisili.rt.rw'])),
         ]);
     }
 

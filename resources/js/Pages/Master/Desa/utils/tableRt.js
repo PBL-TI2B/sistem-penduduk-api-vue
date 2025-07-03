@@ -1,25 +1,30 @@
 import { PenBoxIcon, Trash2 } from "lucide-vue-next";
 import { router } from "@inertiajs/vue3";
 
-export const columnsIndex = [
-    { label: "Nama Pekerjaan", key: "nama_pekerjaan" },
+export const columnsIndex4 = [
+    { label: "Nomor Rt", key: "nomor_rt" },
+    { label: "Nomor Rw", key: "rw" },
 ];
 
-export function getActionsPekerjaan({ onEdit, onDelete }) {
+export function getActionsRt({ onEdit, onDelete }) {
     return [
         {
             label: "Edit",
             icon: PenBoxIcon,
             handler: (item) => onEdit(item),
-            disabled: (item) => item.penduduk_count > 0,
         },
         {
             label: "Hapus",
             icon: Trash2,
             handler: (item) => onDelete(item),
-            disabled: (item) => item.penduduk_count > 0,
+            disabled: (item) => item.domisili_count > 0,
         },
     ];
 }
 
-export const rowsShow = [{ label: "Nama Pekerjaan", key: "nama_pekerjaan" }];
+export const rowsShow = [
+    {
+        label: "Nomor RT",
+        key: "nomor_rt",
+    },
+];

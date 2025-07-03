@@ -19,6 +19,7 @@ class RtResource extends JsonResource
             'uuid' => $this->uuid,
             'nomor_rt' => $this->nomor_rt,
             'rw' => $this->rw->nomor_rw,
+            'domisili_count' => $this->domisili_count, 
         ];
     }
 }

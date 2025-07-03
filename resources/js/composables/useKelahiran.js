@@ -19,13 +19,22 @@ export function useKelahiran() {
         try {
             items.value = [];
             isLoading.value = true;
+
             const params = {
                 page: page.value,
                 per_page: perPage.value,
                 search: search.value,
+                bulan: filter.value.bulan,
+                tahun: filter.value.tahun,
+                min_berat: filter.value.min_berat,
+                max_berat: filter.value.max_berat,
+                min_panjang: filter.value.min_panjang,
+                max_panjang: filter.value.max_panjang,
+                anak_ke: filter.value.anak_ke,
             };
 
             const res = await apiGet("/kelahiran", params);
+
             items.value = res.data.data;
             perPage.value = res.data.per_page;
             totalPages.value = res.data.last_page;
@@ -105,6 +114,16 @@ export function useKelahiran() {
         }
     };
 
+    const filter = ref({
+        bulan: "",
+        tahun: "",
+        min_berat: "",
+        max_berat: "",
+        min_panjang: "",
+        max_panjang: "",
+        anak_ke: "",
+    });
+
     return {
         items,
         item,
@@ -114,6 +133,7 @@ export function useKelahiran() {
         totalPages,
         totalData,
         search,
+        filter,
         fetchData,
         fetchDetailData,
         createData,

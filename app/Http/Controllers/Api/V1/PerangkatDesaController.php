@@ -40,6 +40,24 @@ class PerangkatDesaController extends Controller
             });
         }
 
+        // Filter berdasarkan status_keaktifan
+        if ($request->filled('status_keaktifan') && $request->status_keaktifan !== '-') {
+            $query->where('status_keaktifan', $request->status_keaktifan);
+        }
+
+        // --- KOREKSI PENTING DI SINI: Perbaikan Logika Pencarian ---
+        // Gunakan has() untuk memeriksa keberadaan parameter, dan pastikan tidak null
+        if ($request->has('search') && $request->search !== null) {
+            $search = $request->search; // Ambil nilai pencarian (bisa string kosong)
+            // Hanya terapkan filter LIKE jika string pencarian tidak kosong
+            if (!empty($search)) {
+                $query->whereHas('penduduk', function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', '%' . $search . '%');
+                });
+            }
+        }
+        // --- AKHIR KOREKSI ---
+
         // Pagination (default 10)
         $perangkatDesa = $query->paginate($request->get('per_page', 10));
 

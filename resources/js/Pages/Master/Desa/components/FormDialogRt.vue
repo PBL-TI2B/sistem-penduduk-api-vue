@@ -20,6 +20,8 @@ import { useErrorHandler } from "@/composables/useErrorHandler";
 import { apiGet, apiPost } from "@/utils/api";
 import { toast } from "vue-sonner";
 import Input from "@/components/ui/input/Input.vue";
+// Textarea is not used, can be removed
+// import Textarea from "@/components/ui/textarea/Textarea.vue";
 
 // Props dan Emits
 const props = defineProps({
@@ -36,14 +38,31 @@ const props = defineProps({
 
 const emit = defineEmits(["update:isOpen", "success"]);
 
-// Setup form vee-validate tanpa initialValues karena nanti kita set manual via setValues
+// Load data dusun
+const rwOptions = ref([]);
+
+const loadRwOptions = async () => {
+    try {
+        // Always get all dusun for the dropdown
+        const res = await apiGet("/rw?all=true");
+        rwOptions.value = res.data.data;
+    } catch (error) {
+        useErrorHandler(error, "Gagal memuat data rw");
+    }
+};
+
+// Setup form vee-validate
 const { handleSubmit, resetForm, setValues } = useForm();
 
-// Setup fields
-const { value: nama_pekerjaan } = useField("nama_pekerjaan");
+// [FIX] Define fields that match the template
+const { value: nomor_rt } = useField("nomor_rt");
+const { value: rw_id } = useField("rw_id", (value) =>
+    value ? Number(value) : null
+);
 
 // Submit handler
 const onSubmit = handleSubmit(async (formValues) => {
+    console.log("Submitting these values:", formValues);
     try {
         const formData = new FormData();
 
@@ -53,35 +72,39 @@ const onSubmit = handleSubmit(async (formValues) => {
 
         if (props.mode === "edit") {
             formData.append("_method", "PUT");
-            await apiPost(`/pekerjaan/${props.initialData?.uuid}`, formData);
+            await apiPost(`/rt/${props.initialData?.uuid}`, formData);
         } else {
-            await apiPost("/pekerjaan", formData);
+            await apiPost("/rt", formData);
         }
 
         toast.success(
             props.mode === "edit"
-                ? "Berhasil memperbarui data pekerjaan"
-                : "Berhasil menambahkan data pekerjaan"
+                ? "Berhasil memperbarui data RT"
+                : "Berhasil menambahkan data RT"
         );
 
         emit("success");
         emit("update:isOpen", false);
     } catch (error) {
+        // This will now catch validation errors from the backend
         console.error("Error submitting:", error);
-        console.log("Form values:", formValues);
-        useErrorHandler(error, "Gagal menyimpan data pekerjaan");
+        useErrorHandler(error, "Gagal menyimpan data RT");
     }
 });
 
-// Watch props.isOpen untuk reset atau setValues sesuai mode
+// Watch props.isOpen to reset or setValues
 watch(
     () => props.isOpen,
     async (isOpen) => {
         if (isOpen) {
-            if (props.mode === "edit") {
-                // Set nilai field dari initialData
+            await loadRwOptions();
+            if (props.mode === "edit" && props.initialData) {
+                // [FIX] Correctly set values for edit mode
                 setValues({
-                    nama_pekerjaan: props.initialData.nama_pekerjaan || "",
+                    nomor_rt: props.initialData.nomor_rt || "",
+                    rw_id: props.initialData.rw
+                        ? Number(props.initialData.rw.id)
+                        : null,
                 });
             } else {
                 resetForm();
@@ -94,7 +117,7 @@ watch(
 );
 
 const dialogTitle = computed(() =>
-    props.mode === "create" ? "Tambah Pekerjaan" : "Edit Pekerjaan"
+    props.mode === "create" ? "Tambah RT" : "Edit RT"
 );
 </script>
 
@@ -104,14 +127,32 @@ const dialogTitle = computed(() =>
             <DialogHeader>
                 <DialogTitle>{{ dialogTitle }}</DialogTitle>
                 <DialogDescription>
-                    Lengkapi form berikut untuk menyimpan data pekerjaan.
+                    Lengkapi form berikut untuk menyimpan data rt.
                 </DialogDescription>
             </DialogHeader>
 
             <form @submit.prevent="onSubmit" class="space-y-4">
-                <div>
-                    <Label for="nama_pekerjaan">Nama Pekerjaan</Label>
-                    <Input id="nama_pekerjaan" v-model="nama_pekerjaan" />
+                <div class="space-y-2">
+                    <Label for="nomor_rt">Nomor rt</Label>
+                    <Input id="nomor_rt" v-model="nomor_rt" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label for="rw">Nomor RW</Label>
+                    <Select v-model="rw_id">
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Pilih RW" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="rw in rwOptions"
+                                :key="rw.id"
+                                :value="rw.id"
+                            >
+                                {{ rw.nomor_rw }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <DialogFooter>
