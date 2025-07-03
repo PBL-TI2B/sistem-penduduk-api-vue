@@ -23,14 +23,31 @@ class KartuKeluargaController extends Controller
         ]);
         
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nomor_kk', 'like', "%$search%")
-                ->orWhereHas('anggotaKeluarga.penduduk', function ($pendudukQuery) use ($search) {
-                    $pendudukQuery->where('nama_lengkap', 'like', "%$search%");
-                });
-            });
-        }
+    $search = $request->search;
+    $query->where(function ($q) use ($search) {
+        $q->where('nomor_kk', 'like', "%$search%")
+          ->orWhereHas('anggotaKeluarga', function ($subQ) use ($search) {
+              $subQ->where('status_keluarga_id', 1) // kepala keluarga
+                   ->whereHas('penduduk', function ($pendudukQ) use ($search) {
+                       $pendudukQ->where('nama_lengkap', 'like', "%$search%");
+                   });
+          });
+    });
+}
+
+        if ($request->filled('status_perkawinan') && $request->status_perkawinan !== '-') {
+    $query->whereHas('anggotaKeluarga.penduduk', function ($q) use ($request) {
+        $q->where('status_perkawinan', $request->status_perkawinan);
+    });
+}
+
+
+if ($request->filled('rt') && $request->rt !== '-') {
+    $query->whereHas('rt', function ($q) use ($request) {
+        $q->where('nomor_rt', $request->rt); // ✅ sesuai kolom di tabel
+    });
+}
+
 
         if ($user) {
             if ($user->hasRole('rt') && $user->perangkatDesa?->rt_id) {
