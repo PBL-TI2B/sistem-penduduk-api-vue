@@ -29,6 +29,8 @@ import {
     actionsIndexBantuan,
     actionsIndexKategori,
 } from "./utils/table";
+import { apiGet } from "@/utils/api";
+import { useErrorHandler } from "@/composables/useErrorHandler";
 
 // --- GUNAKAN useKategoriBantuan ---
 const {
@@ -58,6 +60,7 @@ const {
     fetchBantuan,
     deleteBantuan,
 } = useBantuan();
+const user = ref(null);
 
 // kategori dialog
 const isFormDialogOpen = ref(false);
@@ -175,6 +178,17 @@ const actionsKategori = actionsIndexKategori({
     editKategoriBantuan,
     onClickDeleteKategoriButton,
 });
+
+onMounted(async () => {
+    try {
+        const res = await apiGet("/auth/me");
+        user.value = res.data;
+    } catch (error) {
+        useErrorHandler(error, {
+            message: "Gagal mendapatkan data user",
+        });
+    }
+});
 </script>
 
 <template>
@@ -222,7 +236,10 @@ const actionsKategori = actionsIndexKategori({
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Button @click="createKategoriBantuan">
+                <Button
+                    @click="createKategoriBantuan"
+                    :hidden="user?.role === 'rt' || 'rw'"
+                >
                     <PackagePlus /> Tambah Kategori Bantuan
                 </Button>
             </div>
@@ -338,7 +355,7 @@ const actionsKategori = actionsIndexKategori({
             <div
                 class="flex bg-primary-foreground p-2 rounded-lg gap-2 justify-between"
             >
-                <Button asChild>
+                <Button asChild :hidden="user?.role === 'rt' || 'rw'">
                     <Link :href="route('bantuan.create')">
                         <PackagePlus />
                         Tambah Bantuan
