@@ -127,6 +127,85 @@ const submitStep2 = async () => {
     }
 };
 
+watch(
+    anggotaKeluarga,
+    (newAnggotaList) => {
+        newAnggotaList.forEach((anggota) => {
+            watch(
+                () => anggota.penduduk_id,
+                (val) => {
+                    if (!val) {
+                        anggota.nama_penduduk = null;
+                        return;
+                    }
+                    // Cari label dari options
+                    const found = anggota.pendudukOptions.find(
+                        (opt) => opt.value === val
+                    );
+                    anggota.nama_penduduk = found ? found.label : null;
+                }
+            );
+        });
+    },
+    { deep: true }
+);
+
+watch(
+    anggotaKeluarga,
+    (newAnggotaList) => {
+        newAnggotaList.forEach((anggota) => {
+            watch(
+                () => anggota.searchPenduduk,
+                (val) => {
+                    clearTimeout(anggota.pendudukDebounceTimer);
+
+                    if (!val || val.length < 2) {
+                        anggota.pendudukOptions = [];
+                        return;
+                    }
+
+                    if (anggota.penduduk_id && anggota.nama_penduduk === val)
+                        return;
+
+                    anggota.loadingPenduduk = true;
+                    anggota.pendudukDebounceTimer = setTimeout(async () => {
+                        try {
+                            const res = await apiGet(
+                                `/penduduk?search=${val}&tanpa_kk=true`
+                            );
+                            anggota.pendudukOptions = res.data.data.map(
+                                (p) => ({
+                                    value: p.id.toString(),
+                                    label: `${p.nama_lengkap} (${p.nik})`,
+                                })
+                            );
+                        } catch {
+                            anggota.pendudukOptions = [];
+                        } finally {
+                            anggota.loadingPenduduk = false;
+                        }
+                    }, 500);
+                }
+            );
+        });
+    },
+    { deep: true }
+);
+
+const selectPenduduk = (anggota, option) => {
+    anggota.penduduk_id = option.value;
+    anggota.nama_penduduk = option.label;
+    anggota.searchPenduduk = option.label;
+    anggota.isPendudukSelectOpen = false;
+};
+
+const clearPilihanPenduduk = (anggota) => {
+    anggota.penduduk_id = null;
+    anggota.nama_penduduk = null;
+    anggota.searchPenduduk = "";
+    anggota.pendudukOptions = [];
+};
+
 const addAnggotaKeluarga = () => {
     anggotaKeluarga.value.push({
         id: Date.now(),
@@ -457,7 +536,28 @@ onMounted(async () => {
                         <label class="block text-sm font-medium mb-2"
                             >Penduduk</label
                         >
-                        <Select v-model="anggota.penduduk_id">
+                        <div
+                            v-if="anggota.penduduk_id"
+                            class="flex items-center gap-2 p-2 border rounded-md bg-muted"
+                        >
+                            <span class="flex-1 text-sm">{{
+                                anggota.nama_penduduk
+                            }}</span>
+                            <Button
+                                @click="clearPilihanPenduduk(anggota)"
+                                variant="ghost"
+                                size="sm"
+                                class="p-1 h-auto"
+                            >
+                                <X class="w-4 h-4" />
+                            </Button>
+                        </div>
+
+                        <Select
+                            v-else
+                            v-model="anggota.penduduk_id"
+                            v-model:open="anggota.isPendudukSelectOpen"
+                        >
                             <SelectTrigger class="w-full">
                                 <SelectValue placeholder="Pilih Penduduk..." />
                             </SelectTrigger>
