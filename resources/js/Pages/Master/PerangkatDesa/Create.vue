@@ -26,6 +26,7 @@ import { formSchemaPerangkatDesa } from "./utils/form-schema";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { toast } from "vue-sonner";
 import { usePerangkatDesa } from "@/composables/usePerangkatDesa";
+import { debounce } from "lodash";
 
 const fields = ref([]);
 const customInputMode = ref({});
@@ -47,7 +48,7 @@ const searchPenduduk = ref("");
 const pendudukOptions = ref([]);
 const loadingPenduduk = ref(false);
 
-watch(searchPenduduk, async (val) => {
+watch(searchPenduduk, debounce(async (val) => {
     if (val.length < 2) {
         pendudukOptions.value = [];
         return;
@@ -63,10 +64,10 @@ watch(searchPenduduk, async (val) => {
         pendudukOptions.value = [];
     }
     loadingPenduduk.value = false;
-});
+}, 500));
 
 watch(searchPenduduk, (val) => {
-    if (values.penduduk_id && val.length < 12) {
+    if (values.penduduk_id && val.length < 2) {
         setFieldValue("penduduk_id", "");
     }
 });
@@ -159,10 +160,7 @@ onMounted(async () => {
                                 autocomplete="off"
                             />
                             <div
-                                v-if="
-                                    searchPenduduk.length >= 2 &&
-                                    !values.penduduk_id
-                                "
+                                v-if="pendudukOptions.length > 0"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
                                 <div

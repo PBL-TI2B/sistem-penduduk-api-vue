@@ -17,6 +17,7 @@ import SelectValue from "@/components/ui/select/SelectValue.vue";
 import SelectContent from "@/components/ui/select/SelectContent.vue";
 import SelectItem from "@/components/ui/select/SelectItem.vue";
 import { apiGet, apiPost } from "@/utils/api";
+import { debounce } from "lodash";
 
 const props = defineProps({
     isOpen: Boolean,
@@ -49,7 +50,7 @@ const fetchStatusKeluarga = async () => {
     }
 };
 
-watch(search, async (val) => {
+watch(search, debounce(async (val) => {
     if (val.length < 2) {
         pendudukOptions.value = [];
         return;
@@ -61,7 +62,7 @@ watch(search, async (val) => {
         label: `${p.nama_lengkap} (${p.nik})`,
     }));
     loadingPenduduk.value = false;
-});
+}, 500));
 
 onMounted(() => {
     fetchStatusKeluarga();
