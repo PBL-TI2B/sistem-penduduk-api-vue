@@ -83,7 +83,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 });
 
 watch(search, async (val) => {
-    if (val.length < 12) { 
+    if (val.length < 2) {
         pendudukOptions.value = [];
         return;
     }
@@ -161,7 +161,10 @@ const dialogTitle = computed(() =>
                 </DialogHeader>
 
                 <div class="grid gap-4 py-4">
-                    <div class="w-full autocomplete-wrapper" style="position:relative;" >
+                    <div
+                        class="w-full autocomplete-wrapper"
+                        style="position: relative"
+                    >
                         <Label
                             for="penduduk_id"
                             class="text-right"
@@ -176,7 +179,11 @@ const dialogTitle = computed(() =>
                             :disabled="props.mode === 'edit'"
                         />
                         <div
-                            v-if="search.length >= 2 && pendudukOptions.length && !penduduk_id"
+                            v-if="
+                                search.length >= 2 &&
+                                pendudukOptions.length &&
+                                !penduduk_id
+                            "
                             class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                         >
                             <div

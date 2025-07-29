@@ -55,7 +55,7 @@ const searchIbu = ref("");
 const ibuOptions = ref([]);
 const loadingIbu = ref(false);
 
-const { handleSubmit, values, errors , setFieldValue} = useForm({
+const { handleSubmit, values, errors, setFieldValue } = useForm({
     validationSchema: formSchemaPenduduk,
 });
 
@@ -140,14 +140,15 @@ onMounted(loadSelectOptions);
 
 // Autocomplete Ayah
 watch(searchAyah, async (val) => {
-    if (val.length < 12) {
+    if (val.length < 2) {
         ayahOptions.value = [];
         return;
     }
     loadingAyah.value = true;
     try {
         const res = await apiGet(
-            `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=true`
+            `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=false
+            `
         );
         ayahOptions.value = res.data.data.map((p) => ({
             value: p.id.toString(),
@@ -161,14 +162,14 @@ watch(searchAyah, async (val) => {
 
 // Autocomplete Ibu
 watch(searchIbu, async (val) => {
-    if (val.length < 12) {
+    if (val.length < 2) {
         ibuOptions.value = [];
         return;
     }
     loadingIbu.value = true;
     try {
         const res = await apiGet(
-            `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=true`
+            `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=false`
         );
         ibuOptions.value = res.data.data.map((p) => ({
             value: p.id.toString(),
@@ -181,13 +182,13 @@ watch(searchIbu, async (val) => {
 });
 
 const selectAyah = (option) => {
-    setFieldValue('ayah_id', option.value);
+    setFieldValue("ayah_id", option.value);
     searchAyah.value = option.label;
     ayahOptions.value = [];
 };
 
 const selectIbu = (option) => {
-    setFieldValue('ibu_id', option.value);
+    setFieldValue("ibu_id", option.value);
     searchIbu.value = option.label;
     ibuOptions.value = [];
 };
