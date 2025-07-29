@@ -8,6 +8,7 @@ import { apiGet } from "@/utils/api";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { formSchemaPenduduk } from "../utils/form-schema";
 import { getFields } from "../utils/fields";
+import { debounce } from "lodash";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -139,47 +140,54 @@ const loadSelectOptions = async () => {
 onMounted(loadSelectOptions);
 
 // Autocomplete Ayah
-watch(searchAyah, async (val) => {
-    if (val.length < 2) {
-        ayahOptions.value = [];
-        return;
-    }
-    loadingAyah.value = true;
-    try {
-        const res = await apiGet(
-            `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=false
+watch(
+    searchAyah,
+    debounce(async (val) => {
+        if (val.length < 12) {
+            ayahOptions.value = [];
+            return;
+        }
+        loadingAyah.value = true;
+        try {
+            const res = await apiGet(
+                `/penduduk?search=${val}&jenis_kelamin=L&status_perkawinan=kawin&exclude_ayah=false
             `
-        );
-        ayahOptions.value = res.data.data.map((p) => ({
-            value: p.id.toString(),
-            label: p.nama_lengkap,
-        }));
-    } catch {
-        ayahOptions.value = [];
-    }
-    loadingAyah.value = false;
-});
+            );
+            ayahOptions.value = res.data.data.map((p) => ({
+                value: p.id.toString(),
+                label: p.nama_lengkap,
+            }));
+        } catch {
+            ayahOptions.value = [];
+        }
+        loadingAyah.value = false;
+    }, 500)
+);
 
 // Autocomplete Ibu
-watch(searchIbu, async (val) => {
-    if (val.length < 2) {
-        ibuOptions.value = [];
-        return;
-    }
-    loadingIbu.value = true;
-    try {
-        const res = await apiGet(
-            `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=false`
-        );
-        ibuOptions.value = res.data.data.map((p) => ({
-            value: p.id.toString(),
-            label: p.nama_lengkap,
-        }));
-    } catch {
-        ibuOptions.value = [];
-    }
-    loadingIbu.value = false;
-});
+watch(
+    searchIbu,
+    async (val) => {
+        if (val.length < 12) {
+            ibuOptions.value = [];
+            return;
+        }
+        loadingIbu.value = true;
+        try {
+            const res = await apiGet(
+                `/penduduk?search=${val}&jenis_kelamin=P&status_perkawinan=kawin&exclude_ibu=false`
+            );
+            ibuOptions.value = res.data.data.map((p) => ({
+                value: p.id.toString(),
+                label: p.nama_lengkap,
+            }));
+        } catch {
+            ibuOptions.value = [];
+        }
+        loadingIbu.value = false;
+    },
+    500
+);
 
 const selectAyah = (option) => {
     setFieldValue("ayah_id", option.value);
@@ -277,7 +285,7 @@ const onSubmit = handleSubmit((values) => {
                                 autocomplete="off"
                             />
                             <div
-                                v-if="searchAyah.length >= 2 && !values.ayah_id"
+                                v-if="ayahOptions.length > 0"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
                                 <div
@@ -323,7 +331,7 @@ const onSubmit = handleSubmit((values) => {
                                 autocomplete="off"
                             />
                             <div
-                                v-if="searchIbu.length >= 2 && !values.ibu_id"
+                                v-if="ibuOptions.length > 0"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
                                 <div

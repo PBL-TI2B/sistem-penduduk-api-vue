@@ -27,6 +27,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { formSchemaPenduduk } from "./utils/form-schema";
 import { usePenduduk } from "@/composables/usePenduduk";
+import { debounce } from "lodash";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -62,7 +63,7 @@ const { handleSubmit, setValues, resetForm, setFieldValue, values } = useForm({
 
 const { editPenduduk } = usePenduduk();
 
-watch(searchAyah, async (val) => {
+watch(searchAyah, debounce(async (val) => {
     if (val.length < 2) {
         ayahOptions.value = [];
         return;
@@ -80,9 +81,9 @@ watch(searchAyah, async (val) => {
         ayahOptions.value = [];
     }
     loadingAyah.value = false;
-});
+}, 500));
 watch(searchAyah, (val) => {
-    if (values.ayah_id && val.length < 12) {
+    if (values.ayah_id && val.length < 2) {
         setFieldValue("ayah_id", "");
     }
 });
@@ -92,7 +93,7 @@ const selectAyah = (option) => {
     ayahOptions.value = [];
 };
 
-watch(searchIbu, async (val) => {
+watch(searchIbu, debounce(async (val) => {
     if (val.length < 2) {
         ibuOptions.value = [];
         return;
@@ -110,7 +111,7 @@ watch(searchIbu, async (val) => {
         ibuOptions.value = [];
     }
     loadingIbu.value = false;
-});
+}, 500));
 watch(searchIbu, (val) => {
     if (values.ibu_id && val.length < 12) {
         setFieldValue("ibu_id", "");
@@ -323,7 +324,7 @@ onMounted(async () => {
                                 autocomplete="off"
                             />
                             <div
-                                v-if="searchAyah.length >= 2 && !values.ayah_id"
+                                v-if="ayahOptions.length > 0"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
                                 <div v-if="loadingAyah" class="p-2 text-gray-500 text-center">
@@ -362,7 +363,7 @@ onMounted(async () => {
                                 autocomplete="off"
                             />
                             <div
-                                v-if="searchIbu.length >= 2 && !values.ibu_id"
+                                v-if="ibuOptions.length > 0"
                                 class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                             >
                                 <div v-if="loadingIbu" class="p-2 text-gray-500 text-center">
