@@ -83,28 +83,26 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 });
 
-<<<<<<< HEAD
-watch(search, async (val) => {
-    if (val.length < 2) {
-=======
-watch(search, debounce(async (val) => {
-    if (val.length < 2) { 
->>>>>>> 54a56523798b3e6e1c818af9bcfd7ef3c2a48bc8
-        pendudukOptions.value = [];
-        return;
-    }
-    loadingPenduduk.value = true;
-    try {
-        const res = await apiGet(`/penduduk?search=${val}&status=hidup`);
-        pendudukOptions.value = res.data.data.map((p) => ({
-            value: p.id,
-            label: p.nama_lengkap,
-        }));
-    } catch (error) {
-        pendudukOptions.value = [];
-    }
-    loadingPenduduk.value = false;
-}, 500));
+watch(
+    search,
+    debounce(async (val) => {
+        if (val.length < 2) {
+            pendudukOptions.value = [];
+            return;
+        }
+        loadingPenduduk.value = true;
+        try {
+            const res = await apiGet(`/penduduk?search=${val}&status=hidup`);
+            pendudukOptions.value = res.data.data.map((p) => ({
+                value: p.id,
+                label: p.nama_lengkap,
+            }));
+        } catch (error) {
+            pendudukOptions.value = [];
+        }
+        loadingPenduduk.value = false;
+    }, 500)
+);
 
 const selectPenduduk = (option) => {
     penduduk_id.value = option.value;
@@ -185,15 +183,11 @@ const dialogTitle = computed(() =>
                             :disabled="props.mode === 'edit'"
                         />
                         <div
-<<<<<<< HEAD
                             v-if="
                                 search.length >= 2 &&
                                 pendudukOptions.length &&
                                 !penduduk_id
                             "
-=======
-                            v-if="pendudukOptions.length > 0"
->>>>>>> 54a56523798b3e6e1c818af9bcfd7ef3c2a48bc8
                             class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                         >
                             <div
