@@ -19,6 +19,7 @@ import SelectValue from "@/components/ui/select/SelectValue.vue";
 import SelectContent from "@/components/ui/select/SelectContent.vue";
 import SelectItem from "@/components/ui/select/SelectItem.vue";
 import { apiGet } from "@/utils/api";
+import { debounce } from "lodash";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -82,8 +83,8 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 });
 
-watch(search, async (val) => {
-    if (val.length < 12) { 
+watch(search, debounce(async (val) => {
+    if (val.length < 2) { 
         pendudukOptions.value = [];
         return;
     }
@@ -98,7 +99,7 @@ watch(search, async (val) => {
         pendudukOptions.value = [];
     }
     loadingPenduduk.value = false;
-});
+}, 500));
 
 const selectPenduduk = (option) => {
     penduduk_id.value = option.value;
@@ -176,7 +177,7 @@ const dialogTitle = computed(() =>
                             :disabled="props.mode === 'edit'"
                         />
                         <div
-                            v-if="search.length >= 2 && pendudukOptions.length && !penduduk_id"
+                            v-if="pendudukOptions.length > 0"
                             class="autocomplete-dropdown border rounded bg-white shadow mt-1 max-h-40 overflow-auto z-50"
                         >
                             <div
