@@ -3,7 +3,10 @@ import Cookies from "js-cookie";
 import { toast } from "vue-sonner";
 
 const API = axios.create({
-    baseURL: import.meta.env.MODE === "production" ? "/api/v1" : "/api/v1",
+    baseURL:
+        import.meta.env.MODE === "production"
+            ? "https://pbl24250204.informatikapolines.id/api/v1"
+            : "/api/v1",
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",

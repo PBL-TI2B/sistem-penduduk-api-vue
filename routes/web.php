@@ -27,7 +27,7 @@ Route::inertia('/galeri', 'Galeri');
 
 Route::resource('/berita', BeritaController::class)->only(['index', 'show'])->parameters(['berita' => 'berita']);;
 
-Route::prefix('/admin')->middleware(['auth:sanctum', 'checkRole:superadmin,admin'])->group(function () {
+Route::prefix('/admin')->group(function () {
         Route::inertia('/dashboard', 'Master/Dashboard');
         Route::resource('/user', UserController::class);
         Route::resource('/penduduk', PendudukController::class);
