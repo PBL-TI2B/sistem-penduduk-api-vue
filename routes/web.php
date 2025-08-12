@@ -21,6 +21,8 @@ use App\Http\Controllers\Web\Public\BeritaController;
 
 Route::inertia('/', 'Beranda');
 Route::inertia('/login', 'Auth/Login');
+Route::inertia('/reset-password', 'Auth/ForgotPassword');
+Route::inertia('/change-password', 'Auth/ChangePassword');
 Route::inertia('/infografis', 'Infografis');
 Route::inertia('/profildesa', 'ProfilDesa');
 Route::inertia('/galeri', 'Galeri');

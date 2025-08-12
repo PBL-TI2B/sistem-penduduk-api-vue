@@ -35,6 +35,8 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
     // PUBLIC ROUTES
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/request-password-reset', [AuthController::class, 'requestPasswordReset']);
+    Route::post('/auth/reset-password-default', [AuthController::class, 'resetPasswordDefault']);
 
     RoutePermission('galeri', GaleriController::class, 'galeri', true);
     RoutePermission('berita', BeritaController::class, 'berita', true);
@@ -79,6 +81,8 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
 
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::post('/auth/reset-password', [AuthController::class, 'adminResetPassword']);
+        Route::post('/auth/reset-to-default', [AuthController::class, 'adminResetToDefault']);
         Route::get('/penduduk/foto/{filename}', [PendudukController::class, 'getFoto']);
         Route::get('/galeri/url_media/{filename}', [GaleriController::class, 'getGaleri']);
         Route::get('/berita/thumbnail/{filename}', [BeritaController::class, 'getBerita']);
