@@ -14,7 +14,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// import PublicLayout from "@/Layouts/PublicLayout.vue";
 import LoginLayout from "@/Layouts/LoginLayout.vue";
 import { useErrorHandler } from "@/composables/useErrorHandler";
 import { router } from "@inertiajs/vue3";
@@ -29,6 +28,7 @@ onBeforeMount(async () => {
         // user not logged in → biarkan tetap di halaman login
     }
 });
+
 const formSchema = toTypedSchema(
     z.object({
         username: z.string().min(4, "Username minimal 4 Karakter").max(50),
@@ -68,8 +68,11 @@ const onSubmit = form.handleSubmit(async () => {
     }
 });
 
+const goToForgotPassword = () => {
+    router.visit("/forgot-password");
+};
+
 defineOptions({
-    // layout: PublicLayout,
     layout: LoginLayout,
 });
 </script>
@@ -128,6 +131,17 @@ defineOptions({
                             <FormMessage />
                         </FormItem>
                     </FormField>
+
+                    <!-- Forgot Password Link -->
+                    <div class="text-right">
+                        <Link
+                            href="/reset-password"
+                            class="text-sm text-emerald-600 hover:text-emerald-800 hover:underline transition-colors"
+                        >
+                            Lupa Password?
+                        </Link>
+                    </div>
+
                     <div class="grid gap-2 my-4">
                         <Button variant="frontend" type="submit" class="w-full">
                             Masuk
